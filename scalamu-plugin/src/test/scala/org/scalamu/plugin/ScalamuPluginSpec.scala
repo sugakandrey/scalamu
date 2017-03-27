@@ -1,7 +1,7 @@
 package org.scalamu.plugin
 
 import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
-import org.scalamu.plugin.mutations.{NegateConditional, RemoveUnitMethodCall}
+import org.scalamu.plugin.mutations.{NegateConditionals, RemoveUnitMethodCalls}
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers._
 
@@ -36,9 +36,9 @@ class ScalamuPluginSpec extends FlatSpec with PluginRunner with SharedScalamuCom
     val mutationsInfo            = mutationReporter.mutationsForRunId(runId)
     val mutations: Seq[Mutation] = mutationsInfo.map(_.mutation)(collection.breakOut)
     mutations should contain theSameElementsAs Seq(
-      NegateConditional,
-      NegateConditional,
-      RemoveUnitMethodCall
+      NegateConditionals,
+      NegateConditionals,
+      RemoveUnitMethodCalls
     )
 
   }

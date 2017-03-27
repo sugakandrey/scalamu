@@ -7,7 +7,7 @@ import org.scalamu.plugin.mutations._
   */
 object ScalamuConfig {
   val allMutations: Seq[Mutation] = Seq(
-    NegateConditional,
-    RemoveUnitMethodCall
+    NegateConditionals,
+    RemoveUnitMethodCalls
   )
 }

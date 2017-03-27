@@ -5,7 +5,7 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
 /**
   * Created by sugakandrey.
   */
-case object NegateConditional extends Mutation { self =>
+object RemoveUnitMethodCalls extends Mutation { self =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
       import context.global._
@@ -13,13 +13,8 @@ case object NegateConditional extends Mutation { self =>
       override def mutation: Mutation = self
 
       override def transformer(): Transformer = {
-        case q"$lhs == $rhs" => q"$lhs != $rhs"
-        case q"$lhs != $rhs" => q"$lhs == $rhs"
-        case q"$lhs > $rhs"  => q"$lhs <= $rhs"
-        case q"$lhs < $rhs"  => q"$lhs >= $rhs"
-        case q"$lhs >= $rhs" => q"$lhs < $rhs"
-        case q"$lhs <= $rhs" => q"$lhs > $rhs"
-        case tree            => tree
+        case t @ Apply(fn, _) if t.tpe =:= typeOf[Unit] => q"()"
+        case tree                                       => tree
       }
     }
 }
