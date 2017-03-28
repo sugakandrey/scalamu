@@ -1,8 +1,5 @@
 package org.scalamu.plugin
 
-/**
- * Created by sugakandrey.
- */
 trait Mutation {
   def mutatingTransformer(ctx: MutationContext): MutatingTransformer
 }

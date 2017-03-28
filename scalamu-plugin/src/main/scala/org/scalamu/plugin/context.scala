@@ -3,9 +3,6 @@ package org.scalamu.plugin
 import scala.reflect.internal.util.Position
 import scala.tools.nsc.Global
 
-/**
-  * Created by sugakandrey.
-  */
 trait MutationReporter {
   def report(mutationInfo: MutationInfo): Unit
 }

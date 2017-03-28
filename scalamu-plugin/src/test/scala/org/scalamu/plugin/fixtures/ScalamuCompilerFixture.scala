@@ -6,9 +6,6 @@ import org.scalatest.{BeforeAndAfterAll, TestSuite}
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
 
-/**
-  * Created by sugakandrey.
-  */
 trait ScalamuCompilerFixture { self: PluginRunner =>
   def withScalamuCompiler(
     testCode: Global => Any

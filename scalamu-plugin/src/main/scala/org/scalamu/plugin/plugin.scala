@@ -4,9 +4,6 @@ import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.{Plugin, PluginComponent}
 import scala.tools.nsc.transform.{Transform, TypingTransformers}
 
-/**
-  * Created by sugakandrey.
-  */
 class ScalamuPlugin(
   val global: Global,
   val mutationReporter: MutationReporter,

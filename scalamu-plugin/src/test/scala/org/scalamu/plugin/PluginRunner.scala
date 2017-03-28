@@ -5,9 +5,6 @@ import scala.reflect.internal.util.{BatchSourceFile, NoFile}
 import scala.tools.nsc.reporters.{ConsoleReporter, Reporter}
 import scala.tools.nsc.{Global, Settings}
 
-/**
- * Created by sugakandrey.
- */
 trait PluginRunner {
   def mutations: Seq[Mutation]
   val mutationReporter: MutationReporter
