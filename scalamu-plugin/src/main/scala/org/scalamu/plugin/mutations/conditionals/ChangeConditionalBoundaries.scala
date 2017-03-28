@@ -3,8 +3,22 @@ package org.scalamu.plugin.mutations
 import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
 
 /**
-  * Created by sugakandrey.
-  */
+ * Mutation, that replaces boundaries on conditional operators { <, >, <=, >= }
+ * with their counterparts.
+ * e.g.
+ * {{{
+ * if (foo > bar) {
+ *   ...
+ * }
+ * }}}
+ * is mutated to
+ * {{{
+ * if (foo <= bar) {
+ *   ...
+ * }
+ * }}}
+ *
+ */
 case object ChangeConditionalBoundaries extends Mutation { self =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
