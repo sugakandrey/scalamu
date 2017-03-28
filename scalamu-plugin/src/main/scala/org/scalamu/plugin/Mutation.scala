@@ -38,9 +38,7 @@ abstract class MutatingTransformer(val context: MutationContext) {
 
   protected def mutation: Mutation
 
-  protected final def continue(tree: global.Tree): global.Tree = transformer.continue(tree)
-
-  protected val transformer: Transformer
+  protected def transformer: Transformer
 
   def apply(tree: global.Tree): global.Tree = transformer.transform(tree)
 }

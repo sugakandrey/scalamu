@@ -1,4 +1,4 @@
-package org.scalamu.plugin.mutations
+package org.scalamu.plugin.mutations.conditionals
 
 import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
 
@@ -17,16 +17,17 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
  * foo()
  * }}}
  */
-object AlwaysExecuteConditionals extends Mutation { self =>
+case object AlwaysExecuteConditionals extends ConditionalsMutation { self =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
       import context.global._
 
       override protected def mutation: Mutation = self
 
-      override protected def transformer(): Transformer = {
-        case q"if ($cond) $thenp else $elsep" => q"$thenp"
-        case tree                             => tree
+      override protected def transformer: Transformer = {
+        case q"if ($cond) $thenp else $elsep" =>
+          q"$thenp"
+        case tree => tree
       }
     }
 }

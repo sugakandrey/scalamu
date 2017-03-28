@@ -2,15 +2,15 @@ package org.scalamu.plugin
 
 import scala.collection.{mutable, Set}
 import scala.reflect.internal.util.{BatchSourceFile, NoFile}
-import scala.tools.nsc.reporters.Reporter
+import scala.tools.nsc.reporters.{ConsoleReporter, Reporter}
 import scala.tools.nsc.{Global, Settings}
 
 /**
-  * Created by sugakandrey.
-  */
+ * Created by sugakandrey.
+ */
 trait PluginRunner {
   def mutations: Seq[Mutation]
-  def mutationReporter: MutationReporter
+  val mutationReporter: MutationReporter
   def settings: Settings
   def reporter: Reporter
 
@@ -23,6 +23,22 @@ trait PluginRunner {
     run.compileSources(List(file))
     id
   }
+}
+
+trait MutationOnlyRunner extends PluginRunner {
+  override val mutationReporter: TestingReporter = new TestingReporter
+  override def settings: Settings = new Settings {
+    usejavacp.value = true
+    stopAfter.value = List("mutating-transform")
+  }
+  override def reporter: Reporter = new ConsoleReporter(settings)
+
+   def mutationsFor(
+    code: String
+  )(implicit
+    global: Global
+  ): Seq[MutationInfo] =
+    mutationReporter.mutationsForRunId(compile(code)).toSeq
 }
 
 class TestingReporter extends MutationReporter {

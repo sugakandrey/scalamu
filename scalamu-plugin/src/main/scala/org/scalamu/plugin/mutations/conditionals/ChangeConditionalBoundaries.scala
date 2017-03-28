@@ -1,6 +1,4 @@
-package org.scalamu.plugin.mutations
-
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
+package org.scalamu.plugin.mutations.conditionals
 
 /**
  * Mutation, that replaces boundaries on conditional operators { <, >, <=, >= }
@@ -19,19 +17,13 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
  * }}}
  *
  */
-case object ChangeConditionalBoundaries extends Mutation { self =>
-  override def mutatingTransformer(context: MutationContext): MutatingTransformer =
-    new MutatingTransformer(context) {
-      import context.global._
+case object ChangeConditionalBoundaries extends ConditionalsMutation {
+  override protected def mutationRules = Map(
+    "<"  -> "<=",
+    ">"  -> ">=",
+    "<=" -> "<",
+    ">=" -> ">"
+  )
 
-      override protected def mutation: Mutation = self
-
-      override protected def transformer(): Transformer = {
-        case q"$lhs < $rhs"  => q"$lhs <= $rhs"
-        case q"$lhs > $rhs"  => q"$lhs >= $rhs"
-        case q"$lhs <= $rhs" => q"$lhs < $rhs"
-        case q"$lhs >= $rhs" => q"$lhs > $rhs"
-        case tree            => tree
-      }
-    }
+  override protected def supportedOperators: Set[String] = comparisonOperators
 }

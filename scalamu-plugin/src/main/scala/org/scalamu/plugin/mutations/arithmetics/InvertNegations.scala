@@ -13,7 +13,7 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
  * val a = b
  * }}}
  */
-object InvertNegations extends ArithmeticOperatorMutation { self =>
+case object InvertNegations extends ArithmeticOperatorMutation { self =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
       import context.global
@@ -21,7 +21,7 @@ object InvertNegations extends ArithmeticOperatorMutation { self =>
 
       override protected def mutation: Mutation = self
 
-      override protected val transformer: Transformer = {
+      override protected def transformer: Transformer = {
         case q"${lit: Constant}" if lit.isNumeric && lit.doubleValue < 0 =>
           val value: Any = lit.value match {
             case v: Byte =>
