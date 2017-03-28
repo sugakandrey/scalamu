@@ -48,4 +48,22 @@ class ReplaceMathOperatorsSpec
     val mutationsInfo = mutationsFor(code)
     mutationsInfo should have size 9
   }
+
+  it should "not mutate unsupported types" in withScalamuCompiler { implicit global =>
+    val code =
+      """
+        |object Foo {
+        |  val a = Map.empty[Int, Int]
+        |  val b = a + (1 -> 2)
+        |  
+        |  case class A(val i: Int) {
+        |    def *(other: A): A = A(0)
+        |  }
+        |  
+        |  val c = A(2) * A(2)
+        |}
+        """.stripMargin
+    val mutationsInfo = mutationsFor(code)
+    mutationsInfo.shouldBe(empty)
+  }
 }

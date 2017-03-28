@@ -93,4 +93,19 @@ class InvertNegationsSpec
         "Foo.this.foo(10).unary_-" -> "Foo.this.foo(10)"
       )
   }
+
+  it should "not mutate unsupported types" in withScalamuCompiler { implicit global =>
+    val code =
+      """
+        |object Foo {
+        |  case class A(val i: Int) {
+        |    def unary_-(): A = A(0)
+        |  }
+        |  
+        |  val c = -A(2)
+        |}
+      """.stripMargin
+    val mutationsInfo = mutationsFor(code)
+    mutationsInfo.shouldBe(empty)
+  }
 }
