@@ -5,14 +5,14 @@ import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers._
 
-class ChangeConditionalBoundariesSpec
+class NegateConditionalsSpec
     extends FlatSpec
     with MutationOnlyRunner
     with SharedScalamuCompilerFixture {
-  
-  override def mutations: Seq[Mutation] = List(ChangeConditionalBoundaries)
-  
-  "ChangeConditionalBoundaries" should "change conditional boundaries" in withScalamuCompiler {
+
+  override def mutations: Seq[Mutation] = List(NegateConditionals)
+
+  "NegateConditionals" should "negate conditional operators" in withScalamuCompiler {
     implicit global =>
       val code =
         """
@@ -29,8 +29,8 @@ class ChangeConditionalBoundariesSpec
       val mutationsInfo = mutationsFor(code)
       mutationsInfo should have size 3
   }
-  
-  it should "not change conditional boundaries for unsupported types" in withScalamuCompiler {
+
+  it should "not negate conditionals operators on unsupported types" in withScalamuCompiler {
     implicit global =>
       val code =
         """
@@ -42,9 +42,11 @@ class ChangeConditionalBoundariesSpec
           |  if (A(1) < A(2)) {
           |    println(1)
           |  }
+          |  
+          |  val eq = A(1) == A(2)
           |}
         """.stripMargin
       val mutationsInfo = mutationsFor(code)
-      mutationsInfo shouldBe empty
+      mutationsInfo.shouldBe(empty)
   }
 }
