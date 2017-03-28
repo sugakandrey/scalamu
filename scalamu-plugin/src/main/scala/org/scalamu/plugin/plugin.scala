@@ -37,17 +37,25 @@ class ScalamuPlugin(
 
     class Transformer(unit: CompilationUnit) extends TypingTransformer(unit) {
       override def transform(tree: Tree): Tree = {
-        val modified = super.transform(tree)
-        val ctx      = MutationContext(global, mutationReporter)
+        tree match {
+          case DefDef(mods, _, _, _, _, _) if mods.isSynthetic => tree
+          case ClassDef(_, _, _, Template(parents, _, _))
+            if parents.map(_.tpe.typeSymbol.fullName).contains("scala.reflect.api.TypeCreator") =>
+            tree
+          case _ =>
+            val modified = super.transform(tree)
+            val ctx = MutationContext(global, mutationReporter)
 
-        def applyTransformations(tree: Tree, mutations: Seq[MutatingTransformer]): Tree =
-          mutations match {
-            case Nil => tree
-            case tr :: rest =>
-              val intermediate = tr(tree.asInstanceOf[tr.context.global.Tree])
-              applyTransformations(intermediate.asInstanceOf[Tree], rest)
-          }
-        applyTransformations(modified, mutations.map(_.mutatingTransformer(ctx)))
+            def applyTransformations(tree: Tree, mutations: Seq[MutatingTransformer]): Tree =
+              mutations match {
+                case Nil => tree
+                case tr :: rest =>
+                  val intermediate = tr(tree.asInstanceOf[tr.context.global.Tree])
+                  applyTransformations(intermediate.asInstanceOf[Tree], rest)
+              }
+
+            applyTransformations(modified, mutations.map(_.mutatingTransformer(ctx)))
+        }
       }
     }
   }
