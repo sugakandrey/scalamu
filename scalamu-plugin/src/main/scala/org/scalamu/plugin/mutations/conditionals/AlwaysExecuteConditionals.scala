@@ -25,9 +25,8 @@ case object AlwaysExecuteConditionals extends ConditionalsMutation { self =>
       override protected def mutation: Mutation = self
 
       override protected def transformer: Transformer = {
-        case q"if ($cond) $thenp else $elsep" =>
-          q"$thenp"
-        case tree => tree
+        case q"if ($cond) $thenp else $elsep" => q"$thenp"
+        case tree                             => tree
       }
     }
 }

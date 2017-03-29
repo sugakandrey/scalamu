@@ -30,7 +30,7 @@ trait SharedScalamuCompilerFixture
     testCode: Global => Any
   ): Any = {
     testCode(global)
-    reporter.hasErrors should be false
+    reporter.hasErrors should ===(false)
   }
 }
 
@@ -44,6 +44,6 @@ trait IsolatedScalamuCompilerFixture extends ScalamuCompilerFixture { self: Plug
     }
 
     testCode(global)
-    reporter.hasErrors should be false
+    reporter.hasErrors should ===(false)
   }
 }
