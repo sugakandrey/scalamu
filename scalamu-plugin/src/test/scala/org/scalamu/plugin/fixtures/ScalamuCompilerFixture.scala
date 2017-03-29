@@ -2,6 +2,7 @@ package org.scalamu.plugin.fixtures
 
 import org.scalamu.plugin.{PluginRunner, ScalamuPlugin}
 import org.scalatest.{BeforeAndAfterAll, TestSuite}
+import org.scalatest.Matchers._
 
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
@@ -27,8 +28,10 @@ trait SharedScalamuCompilerFixture
 
   override def withScalamuCompiler(
     testCode: Global => Any
-  ): Any =
+  ): Any = {
     testCode(global)
+    reporter.hasErrors should be false
+  }
 }
 
 trait IsolatedScalamuCompilerFixture extends ScalamuCompilerFixture { self: PluginRunner =>
@@ -41,5 +44,6 @@ trait IsolatedScalamuCompilerFixture extends ScalamuCompilerFixture { self: Plug
     }
 
     testCode(global)
+    reporter.hasErrors should be false
   }
 }
