@@ -1,5 +1,5 @@
 import sbt.Keys._
-import sbt._
+import sbt.{IntegrationTest => It, _}
 
 object ScalamuBuild {
   lazy val commonSettings = Seq(
@@ -21,17 +21,25 @@ object ScalamuBuild {
     fork in Test := true
   )
 
+  def testDependencies(configs: Configuration*) = Seq(
+    "org.scalactic" %% "scalactic" % "3.0.1" % configs.mkString(",") intransitive(),
+    "org.scalatest" %% "scalatest" % "3.0.1" % configs.mkString(",") intransitive()
+  )
+
+  lazy val testSettings = inConfig(Test)(
+    fullClasspath ++= (fullClasspath in Compile).value
+      .filter(_.data.getName.contains("org.scala-lang"))
+  )
+
   lazy val plugin = Project(id = "scalamu-plugin", base = file("scalamu-plugin"))
     .settings(commonSettings)
+    .configs(It)
+    .settings(testSettings, Defaults.itSettings)
     .settings(
       libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-compiler" % scalaVersion.value % Provided,
-        "org.scalactic"  %% "scalactic"     % "3.0.1" % Test intransitive(),
-        "org.scalatest"  %% "scalatest"     % "3.0.1" % Test intransitive(),
         "org.slf4j"      % "slf4j-api"      % "1.7.25"
-      ),
-      fullClasspath in Test ++= (fullClasspath in Compile).value
-        .filter(_.data.getName.contains("org.scala-lang"))
+      ) ++ testDependencies(Test, It)
     )
 
   lazy val commandLine = Project(id = "scalamu-command-line", base = file("scalamu-command-line"))
