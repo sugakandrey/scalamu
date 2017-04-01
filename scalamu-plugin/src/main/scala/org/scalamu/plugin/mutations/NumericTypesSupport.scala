@@ -21,11 +21,11 @@ trait NumericTypesSupport extends SupportedTypes { self: Mutation =>
     )
   }
 
-  override protected def isAppropriatelyTyped(global: Global)(tree: global.Tree): Boolean = {
+  protected def isAppropriatelyTyped(global: Global)(tree: global.Tree): Boolean = {
     import global._
     tree.tpe match {
       case TypeRef(tpe, sym, _) => supportedTypes(global).exists(_ =:= sym.asType.tpe)
-      case ustpe: SingletonType => supportedTypes(global).exists(_ =:= ustpe.underlying)
+      case ustpe: SingletonType => supportedTypes(global).exists(_ =:= ustpe.widen)
     }
   }
 }

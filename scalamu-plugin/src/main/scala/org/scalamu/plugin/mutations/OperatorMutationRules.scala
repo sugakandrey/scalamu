@@ -9,6 +9,4 @@ import org.scalamu.plugin.Mutation
 private[mutations] trait OperatorMutationRules { self: Mutation =>
   protected def supportedOperators: Set[String]
   protected def mutationRules: Map[String, String]
-
-  require(mutationRules.keySet == supportedOperators)
 }

@@ -39,14 +39,16 @@ class ReplaceMathOperatorsSpec
         |  val x = 123
         |  val y = 4d
         |  val z = 2f
+        |  def foo(a: Double): Double = a * 2
         |  
         | val b = x + y * z
         | val c = b * (x ^ 12)
         | val a = (x + (b - 2)) / (x | (x + 1))
+        | val f = a - foo(b * c / z)
         |}
         """.stripMargin
     val mutationsInfo = mutationsFor(code)
-    mutationsInfo should have size 9
+    mutationsInfo should have size 13
   }
 
   it should "not mutate unsupported types" in withScalamuCompiler { implicit global =>

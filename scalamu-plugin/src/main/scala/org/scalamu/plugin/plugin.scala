@@ -23,10 +23,7 @@ class ScalamuPlugin(
     import global._
 
     override def newPhase(prev: scala.tools.nsc.Phase): Phase = new Phase(prev) {
-      override def run(): Unit = {
-        reporter.echo(s"Running $phaseName phase.")
-        super.run()
-      }
+      override def run(): Unit = super.run()
     }
 
     override protected def newTransformer(unit: CompilationUnit): Transformer =
@@ -34,25 +31,17 @@ class ScalamuPlugin(
 
     class Transformer(unit: CompilationUnit) extends TypingTransformer(unit) {
       override def transform(tree: Tree): Tree = {
-        tree match {
-          case DefDef(mods, _, _, _, _, _) if mods.isSynthetic => tree
-          case ClassDef(_, _, _, Template(parents, _, _))
-            if parents.map(_.tpe.typeSymbol.fullName).contains("scala.reflect.api.TypeCreator") =>
-            tree
-          case _ =>
-            val modified = super.transform(tree)
-            val ctx = MutationContext(global, mutationReporter)
+        val ctx = MutationContext(global, mutationReporter)
 
-            def applyTransformations(tree: Tree, mutations: Seq[MutatingTransformer]): Tree =
-              mutations match {
-                case Nil => tree
-                case tr :: rest =>
-                  val intermediate = tr(tree.asInstanceOf[tr.context.global.Tree])
-                  applyTransformations(intermediate.asInstanceOf[Tree], rest)
-              }
+        def applyTransformations(tree: Tree, mutations: Seq[MutatingTransformer]): Tree =
+          mutations match {
+            case Nil => tree
+            case tr :: rest =>
+              val intermediate = tr(tree.asInstanceOf[tr.global.Tree])
+              applyTransformations(intermediate.asInstanceOf[Tree], rest)
+          }
 
-            applyTransformations(modified, mutations.map(_.mutatingTransformer(ctx)))
-        }
+        applyTransformations(tree, mutations.map(_.mutatingTransformer(ctx)))
       }
     }
   }

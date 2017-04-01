@@ -9,6 +9,4 @@ import scala.tools.nsc.Global
  */
 private[mutations] trait SupportedTypes { self: Mutation =>
   protected def supportedTypes(implicit global: Global): Seq[global.Type]
-  
-  protected def isAppropriatelyTyped(global: Global)(tree: global.Tree): Boolean
 }

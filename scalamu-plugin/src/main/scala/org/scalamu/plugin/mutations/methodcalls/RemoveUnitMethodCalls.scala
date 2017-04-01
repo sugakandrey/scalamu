@@ -1,9 +1,6 @@
 package org.scalamu.plugin.mutations.methodcalls
 
-import org.scalamu.plugin.mutations.SupportedTypes
 import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
-
-import scala.tools.nsc.Global
 
 /**
  * Mutation, that removes calls to methods with [[Unit]] return type.
@@ -18,24 +15,32 @@ import scala.tools.nsc.Global
  * ()
  * }}}
  */
-object RemoveUnitMethodCalls extends Mutation with SupportedTypes { self =>
-  override protected def supportedTypes(implicit global: Global): Seq[global.Type] =
-    Seq(global.definitions.UnitTpe)
-
-  override protected def isAppropriatelyTyped(global: Global)(tree: global.Tree): Boolean =
-    tree.tpe != null && tree.tpe =:= global.definitions.UnitTpe
-
+object RemoveUnitMethodCalls extends Mutation { self =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
-      import context.global._
-      import context.global
+      import global._
 
       override def mutation: Mutation = self
 
-      override val transformer: Transformer = {
-        case t @ q"$fn(..$args)" if isAppropriatelyTyped(global)(t)      => q"()"
-        case q"(..$args) => $expr" if isAppropriatelyTyped(global)(expr) => q"(..$args) => ()"
-        case tree                                                        => tree
+      override val transformer: Transformer = new Transformer {
+        override protected val mutate: PartialFunction[Tree, Tree] = {
+          case TreeWithType(
+              tree @ Apply(fn, args),
+              definitions.UnitTpe
+              ) =>
+            val mutatedArgs    = args.map(super.transform)
+            val mutationResult = q"()"
+            reportMutation(tree, mutationResult)
+            mutationGuard(mutationResult, q"$fn(..$mutatedArgs)")
+          case tree @ Function(
+                List(params),
+                TreeWithType(body, definitions.UnitTpe)
+              ) =>
+            val mutatedBody    = super.transform(body)
+            val mutationResult = q"(..$params) => ()"
+            reportMutation(tree, mutationResult)
+            mutationGuard(mutationResult, q"(..$params) => $mutatedBody")
+        }
       }
     }
 }

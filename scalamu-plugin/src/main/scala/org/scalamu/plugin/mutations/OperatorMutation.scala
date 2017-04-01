@@ -11,19 +11,28 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
 trait OperatorMutation extends Mutation with OperatorMutationRules { self: SupportedTypes =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
-      import context.global._
-      import context.global
+      import global._
 
       override protected def mutation: Mutation = self
 
-      override protected def transformer: Transformer = {
-        case Apply(Select(lhs, op @ TermName(_)), List(arg))
-            if supportedOperators.contains(op.decodedName.toString)
-              && isAppropriatelyTyped(global)(lhs)
-              && isAppropriatelyTyped(global)(arg) =>
-          val replacement = mutationRules(op.decodedName.toString)
-          q"$lhs.${encode(replacement)}(..$arg)"
-        case tree => tree
+      private def isAppropriateType(tpe: Type): Boolean = supportedTypes(global).exists(_ =:= tpe)
+
+      override protected def transformer: Transformer = new Transformer {
+        override val mutate: PartialFunction[Tree, Tree] = {
+          case tree @ Apply(
+                Select(TreeWithType(lhs, lhsTpe), op @ TermName(_)),
+                List(TreeWithType(rhs, rhsTpe))
+              )
+              if supportedOperators.contains(op.decodedName.toString)
+                && isAppropriateType(lhsTpe)
+                && isAppropriateType(rhsTpe) =>
+            val mutatedOp      = encode(mutationRules(op.decodedName.toString))
+            val mutatedLhs     = super.transform(lhs)
+            val mutatedRhs     = super.transform(rhs)
+            val mutationResult = q"$mutatedLhs.$mutatedOp(..$mutatedRhs)"
+            reportMutation(tree, mutationResult)
+            mutationGuard(mutationResult, tree)
+        }
       }
     }
 }

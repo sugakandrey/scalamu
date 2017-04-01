@@ -16,32 +16,38 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
 case object InvertNegations extends ArithmeticOperatorMutation { self =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
-      import context.global
-      import context.global._
+      import global._
 
       override protected def mutation: Mutation = self
 
-      override protected def transformer: Transformer = {
-        case q"${lit: Constant}" if lit.isNumeric && lit.doubleValue < 0 =>
-          val value: Any = lit.value match {
-            case v: Byte =>
-              if (v == Byte.MinValue) Byte.MaxValue
-              else -lit.byteValue
-            case v: Short =>
-              if (v == Short.MinValue) Short.MaxValue
-              else -lit.shortValue
-            case v: Int =>
-              if (v == Int.MinValue) Int.MaxValue
-              else -lit.intValue
-            case v: Long =>
-              if (v == Long.MinValue) Long.MaxValue
-              else -lit.longValue
-            case _: Float  => -lit.doubleValue
-            case _: Double => -lit.floatValue
-          }
-          Literal(Constant(value))
-        case q"-$term" if isAppropriatelyTyped(global)(term) => q"$term"
-        case tree                                            => tree
+      override protected def transformer: Transformer = new Transformer {
+        override protected val mutate: PartialFunction[Tree, Tree] = {
+          case tree @ q"${lit: Constant}" if lit.isNumeric && lit.doubleValue < 0 =>
+            val value: Any = lit.value match {
+              case v: Byte =>
+                if (v == Byte.MinValue) Byte.MaxValue
+                else -lit.byteValue
+              case v: Short =>
+                if (v == Short.MinValue) Short.MaxValue
+                else -lit.shortValue
+              case v: Int =>
+                if (v == Int.MinValue) Int.MaxValue
+                else -lit.intValue
+              case v: Long =>
+                if (v == Long.MinValue) Long.MaxValue
+                else -lit.longValue
+              case _: Float  => -lit.doubleValue
+              case _: Double => -lit.floatValue
+            }
+            val mutationResult = Literal(Constant(value))
+            reportMutation(tree, mutationResult)
+            mutationGuard(mutationResult, tree)
+          case tree @ q"-$term" if isAppropriatelyTyped(global)(term) =>
+            val mutatedTerm = super.transform(term)
+            val mutationResult = q"$mutatedTerm"
+            reportMutation(tree, mutationResult)
+            mutationGuard(mutationResult, tree)
+        }
       }
     }
 }

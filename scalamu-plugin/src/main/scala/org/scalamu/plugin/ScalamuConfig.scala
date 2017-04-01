@@ -2,7 +2,7 @@ package org.scalamu.plugin
 
 import org.scalamu.plugin.mutations.conditionals._
 import org.scalamu.plugin.mutations.arithmetics._
-import org.scalamu.plugin.mutations.methodcalls.RemoveUnitMethodCalls
+import org.scalamu.plugin.mutations.methodcalls._
 
 object ScalamuConfig {
   val allMutations: Seq[Mutation] = Seq(
@@ -13,6 +13,7 @@ object ScalamuConfig {
     NegateConditionals,
     ChangeConditionalBoundaries, 
     NegateConditionals,
-    RemoveUnitMethodCalls
+    RemoveUnitMethodCalls,
+    ReplaceWithIdentityFunction
   )
 }
