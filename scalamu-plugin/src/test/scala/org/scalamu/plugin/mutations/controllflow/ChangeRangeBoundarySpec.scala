@@ -1,14 +1,9 @@
 package org.scalamu.plugin.mutations.controllflow
 
-import org.scalamu.plugin.{Mutation, MutationOnlyRunner}
-import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
-class ChangeRangeBoundarySpec
-    extends FlatSpec
-    with MutationOnlyRunner
-    with SharedScalamuCompilerFixture {
+class ChangeRangeBoundarySpec extends SingleMutationSpec {
+  
   override def mutations: Seq[Mutation] = List(ChangeRangeBoundary)
 
   "ChangeRangeBoundarySpec" should "replace \'until\' with \'to\' (and vice verse) for numerical types" in

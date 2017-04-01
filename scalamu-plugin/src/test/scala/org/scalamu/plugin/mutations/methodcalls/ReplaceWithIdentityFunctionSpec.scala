@@ -1,19 +1,13 @@
 package org.scalamu.plugin.mutations.methodcalls
 
-import org.scalamu.plugin.{Mutation, MutationOnlyRunner}
-import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
-class ReplaceWithIdentityFunctionSpec
-    extends FlatSpec
-    with MutationOnlyRunner
-    with SharedScalamuCompilerFixture {
+class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
 
   override def mutations: Seq[Mutation] = List(ReplaceWithIdentityFunction)
 
-  "ReplaceWithIdentityFunction" should "replace method calls with type forall a. a => a with identity function" in withScalamuCompiler {
-    implicit global =>
+  "ReplaceWithIdentityFunction" should "replace appropriately typed method calls and function literals with id" in
+    withScalamuCompiler { implicit global =>
       val code =
         """
           |object Foo {

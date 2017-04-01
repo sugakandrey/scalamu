@@ -1,14 +1,8 @@
 package org.scalamu.plugin.mutations.controllflow
 
-import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
-import org.scalamu.plugin.{Mutation, MutationOnlyRunner}
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
-class NeverExecuteConditionalsSpec
-    extends FlatSpec
-    with MutationOnlyRunner
-    with SharedScalamuCompilerFixture {
+class NeverExecuteConditionalsSpec extends SingleMutationSpec {
 
   override def mutations: Seq[Mutation] = List(NeverExecuteConditionals)
 

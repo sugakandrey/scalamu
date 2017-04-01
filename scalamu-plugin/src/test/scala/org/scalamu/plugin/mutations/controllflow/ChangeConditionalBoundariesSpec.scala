@@ -1,14 +1,8 @@
 package org.scalamu.plugin.mutations.controllflow
 
-import org.scalamu.plugin.{Mutation, MutationOnlyRunner}
-import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
-class ChangeConditionalBoundariesSpec
-    extends FlatSpec
-    with MutationOnlyRunner
-    with SharedScalamuCompilerFixture {
+class ChangeConditionalBoundariesSpec extends SingleMutationSpec {
   
   override def mutations: Seq[Mutation] = List(ChangeConditionalBoundaries)
   

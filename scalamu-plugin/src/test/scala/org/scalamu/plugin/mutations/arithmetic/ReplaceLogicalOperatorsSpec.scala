@@ -1,14 +1,9 @@
 package org.scalamu.plugin.mutations.arithmetic
 
-import org.scalamu.plugin.{Mutation, MutationOnlyRunner}
-import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
-class ReplaceLogicalOperatorsSpec
-    extends FlatSpec
-    with MutationOnlyRunner
-    with SharedScalamuCompilerFixture {
+class ReplaceLogicalOperatorsSpec extends SingleMutationSpec {
+  
   override def mutations: Seq[Mutation] = List(ReplaceLogicalOperators)
   
   "ReplaceLogicalOperators" should "swap \'&&\' and \'||\' operators" in withScalamuCompiler {

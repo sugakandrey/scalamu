@@ -1,15 +1,9 @@
 package org.scalamu.plugin.mutations.arithmetic
 
-import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
-import org.scalamu.plugin.{Mutation, MutationOnlyRunner}
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
-class InvertNegationsSpec
-    extends FlatSpec
-    with MutationOnlyRunner
-    with SharedScalamuCompilerFixture {
-
+class InvertNegationsSpec extends SingleMutationSpec {
+  
   override def mutations: Seq[Mutation] = List(InvertNegations)
 
   "InvertNegations" should "mutate integer and floating point literals" in withScalamuCompiler {
