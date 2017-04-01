@@ -18,7 +18,7 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
  * }}}
  *
  */
-object ReplaceWithIdentityFunction extends Mutation { self =>
+case object ReplaceWithIdentityFunction extends Mutation { self =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
       import global._

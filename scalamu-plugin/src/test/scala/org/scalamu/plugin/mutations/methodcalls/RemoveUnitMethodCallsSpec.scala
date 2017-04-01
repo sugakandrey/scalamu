@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations.methodcalls
 
-import org.scalamu.plugin.{Mutation, MutationContext, MutationOnlyRunner}
+import org.scalamu.plugin.{Mutation, MutationOnlyRunner}
 import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers._

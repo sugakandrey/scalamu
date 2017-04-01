@@ -1,4 +1,4 @@
-package org.scalamu.plugin.mutations.arithmetics
+package org.scalamu.plugin.mutations.arithmetic
 
 import org.scalamu.plugin.mutations.{NumericTypesSupport, OperatorMutation}
 

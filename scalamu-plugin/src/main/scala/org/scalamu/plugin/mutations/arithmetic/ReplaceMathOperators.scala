@@ -1,4 +1,4 @@
-package org.scalamu.plugin.mutations.arithmetics
+package org.scalamu.plugin.mutations.arithmetic
 
 /**
  * Mutation, that replaces integer and floating point arithmetic operators with

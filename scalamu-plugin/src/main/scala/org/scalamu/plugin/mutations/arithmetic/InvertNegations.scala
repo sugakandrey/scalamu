@@ -1,5 +1,6 @@
-package org.scalamu.plugin.mutations.arithmetics
+package org.scalamu.plugin.mutations.arithmetic
 
+import org.scalamu.plugin.mutations.NumericTypesSupport
 import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
 
 /**
@@ -13,7 +14,7 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
  * val a = b
  * }}}
  */
-case object InvertNegations extends ArithmeticOperatorMutation { self =>
+case object InvertNegations extends Mutation with NumericTypesSupport { self =>
   override def mutatingTransformer(context: MutationContext): MutatingTransformer =
     new MutatingTransformer(context) {
       import global._
@@ -42,8 +43,9 @@ case object InvertNegations extends ArithmeticOperatorMutation { self =>
             val mutationResult = Literal(Constant(value))
             reportMutation(tree, mutationResult)
             mutationGuard(mutationResult, tree)
-          case tree @ q"-$term" if isAppropriatelyTyped(global)(term) =>
-            val mutatedTerm = super.transform(term)
+          case tree @ q"-$term"
+              if term.tpe != null && supportedTypes(global).exists(_ =:= term.tpe.simplify) =>
+            val mutatedTerm    = super.transform(term)
             val mutationResult = q"$mutatedTerm"
             reportMutation(tree, mutationResult)
             mutationGuard(mutationResult, tree)

@@ -1,4 +1,4 @@
-package org.scalamu.plugin.mutations.conditionals
+package org.scalamu.plugin.mutations.controllflow
 
 import org.scalamu.plugin.{Mutation, MutationOnlyRunner}
 import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
@@ -30,7 +30,7 @@ class NegateConditionalsSpec
       mutationsInfo should have size 3
   }
 
-  it should "not negate conditionals operators on unsupported types" in withScalamuCompiler {
+  it should "not negate controllflow operators on unsupported types" in withScalamuCompiler {
     implicit global =>
       val code =
         """

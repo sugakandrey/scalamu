@@ -1,4 +1,4 @@
-package org.scalamu.plugin.mutations.conditionals
+package org.scalamu.plugin.mutations.controllflow
 
 import org.scalamu.plugin.mutations.{NumericTypesSupport, OperatorMutation}
 

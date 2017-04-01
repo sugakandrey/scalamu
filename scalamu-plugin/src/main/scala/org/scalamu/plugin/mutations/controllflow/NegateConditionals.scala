@@ -1,4 +1,4 @@
-package org.scalamu.plugin.mutations.conditionals
+package org.scalamu.plugin.mutations.controllflow
 
 /**
  * Mutation, that replaces conditional operators with their logical counterparts.
