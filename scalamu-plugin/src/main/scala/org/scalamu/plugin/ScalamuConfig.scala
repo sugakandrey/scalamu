@@ -10,10 +10,11 @@ object ScalamuConfig {
     ReplaceMathOperators,
     AlwaysExecuteConditionals,
     NeverExecuteConditionals,
-    NegateConditionals,
     ChangeConditionalBoundaries, 
     NegateConditionals,
     RemoveUnitMethodCalls,
-    ReplaceWithIdentityFunction
+    ReplaceWithIdentityFunction,
+    ChangeRangeBoundary,
+    ReplaceLogicalOperators
   )
 }
