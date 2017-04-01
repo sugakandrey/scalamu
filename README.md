@@ -1,7 +1,7 @@
 ## Supported mutations
 
 Mutation | Description | Example
----|--------|-----------
+---|--------|------------
 InvertNegations | Removes negation of numerical values | `-0.5f` to `0.5f`, `-a + 1` to `a + 1`
 ReplaceMathOperators | Replaces arithmetic operations on numerical values | `a + b` to `a - b`, `c / d` to `c * d`
 AlwaysExecuteConditionals | Makes conditional statements always execute | `val foo = if (cond()) bar() else baz()` to `val foo = bar()`
@@ -11,6 +11,6 @@ ChangeConditionalBoundaries | Replaces boundaries on conditional operators `>, <
 RemoveUnitMethodCalls | Removes calls to methods returning `Unit` | `val a = 123; doSideEffects(a)` to `val a = 123; ()`
 ReplaceWithIdentityFunction | Replaces function literals typed `A => A` and method calls returning `this.type` with `id` | `Some("Hello").map(_ + "!")` to `Some("Hello").map(identity)`
 ChangeRangeBoundary | Swaps `to` and `until` | `1 until 10 by 1` to `1 to 10 by 1`, `-1f to -2f` to `-1f until -2f`
-ReplaceLogicalOperators | Swaps `&&` and `\|\|` operators on boolean values | `a && b` to `a \|\| b`
+ReplaceLogicalOperators | Swaps `&&` and `||` operators on boolean values | `a && b` to `a || b`
 
 
