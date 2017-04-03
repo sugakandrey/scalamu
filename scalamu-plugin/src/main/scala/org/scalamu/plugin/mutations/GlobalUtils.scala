@@ -1,8 +1,10 @@
 package org.scalamu.plugin.mutations
 
+import org.scalamu.plugin.ScalamuConfig.mutationGuardPrefix
+
 import scala.tools.nsc.Global
 
-class TypeEnrichment(val global: Global) {
+private[plugin] class GlobalUtils(val global: Global) {
   import global._
 
   implicit class RichType(tpe: Type) {
@@ -21,5 +23,14 @@ class TypeEnrichment(val global: Global) {
     def unapply(tree: Tree): Option[(Tree, Type)] =
       if (tree.tpe == null) None
       else Some((tree, tree.tpe.simplify))
+  }
+
+  object GuardedMutation {
+    def unapply(tree: Tree): Option[(TermName, Tree, Tree)] = tree match {
+      case q"if (${guard: TermName}) $thenp else $elsep"
+          if guard.containsName(mutationGuardPrefix) =>
+        Some((guard, thenp, elsep))
+      case _ => None
+    }
   }
 }

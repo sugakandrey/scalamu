@@ -17,4 +17,6 @@ object ScalamuConfig {
     ChangeRangeBoundary,
     ReplaceLogicalOperators
   )
+  
+  val mutationGuardPrefix: String = "org.scalamu.guards"
 }
