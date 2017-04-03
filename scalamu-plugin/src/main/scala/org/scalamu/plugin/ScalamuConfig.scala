@@ -1,5 +1,6 @@
 package org.scalamu.plugin
 
+import org.scalamu.plugin.mutations.{ReplaceWithNil, ReplaceWithNone}
 import org.scalamu.plugin.mutations.controllflow._
 import org.scalamu.plugin.mutations.arithmetic._
 import org.scalamu.plugin.mutations.methodcalls._
@@ -15,7 +16,9 @@ object ScalamuConfig {
     RemoveUnitMethodCalls,
     ReplaceWithIdentityFunction,
     ChangeRangeBoundary,
-    ReplaceLogicalOperators
+    ReplaceLogicalOperators,
+    ReplaceWithNone,
+    ReplaceWithNil
   )
   
   val mutationGuardPrefix: String = "org.scalamu.guards"

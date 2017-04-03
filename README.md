@@ -12,5 +12,7 @@ RemoveUnitMethodCalls | Removes calls to methods returning `Unit` | `val a = 123
 ReplaceWithIdentityFunction | Replaces function literals typed `A => A` and method calls returning `this.type` with `id` | `Some("Hello").map(_ + "!")` to `Some("Hello").map(identity)`
 ChangeRangeBoundary | Swaps `to` and `until` | `1 until 10 by 1` to `1 to 10 by 1`, `-1f to -2f` to `-1f until -2f`
 ReplaceLogicalOperators | Swaps `&&` and `||` operators on boolean values | `a && b` to `a || b`
+ReplaceWithNone | Replaces calls to `Option.apply` and `Some.apply` with `None` | `Some(1).map(_ + 1)` to `Option.empty[Int].map(_ + 1)`
+ReplaceWithNil | Replaces calls to `List.apply` with `Nil` | `List(0.5f, 0.6f, 0.7f)` to `List.empty[Float]`
 
 

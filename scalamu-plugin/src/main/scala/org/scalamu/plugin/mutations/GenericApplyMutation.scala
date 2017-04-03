@@ -4,6 +4,9 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
 
 import scala.tools.nsc.Global
 
+/**
+ * Base trait for mutations, which are applicable to `apply` method call trees.
+ */
 trait GenericApplyMutation extends Mutation { self: SupportedTypes =>
   protected def replaceWith(global: Global): global.Tree
 
