@@ -3,8 +3,7 @@ package org.scalamu.plugin.mutations.arithmetic
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class ReplaceLogicalOperatorsSpec extends SingleMutationSpec {
-  
-  override def mutations: Seq[Mutation] = List(ReplaceLogicalOperators)
+  override def mutation: Mutation = ReplaceLogicalOperators
   
   "ReplaceLogicalOperators" should "swap \'&&\' and \'||\' operators" in withScalamuCompiler {
     implicit global =>

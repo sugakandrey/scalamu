@@ -3,7 +3,7 @@ package org.scalamu.plugin.mutations
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class ReplaceWithNoneSpec extends SingleMutationSpec {
-  override def mutations: Seq[Mutation] = List(ReplaceWithNone)
+  override def mutation: Mutation = ReplaceWithNone
   
   "ReplaceWithNone" should "replace Option.apply and Some.apply with None" in withScalamuCompiler {
     implicit global =>

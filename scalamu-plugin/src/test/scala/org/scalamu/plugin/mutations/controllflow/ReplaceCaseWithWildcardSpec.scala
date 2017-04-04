@@ -3,7 +3,7 @@ package org.scalamu.plugin.mutations.controllflow
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
-  override def mutations: Seq[Mutation] = List(ReplaceCaseWithWildcard)
+  override def mutation: Mutation = ReplaceCaseWithWildcard
   
   "ReplaceCaseWithWildcard" should "replace case expressions with wildcard (if one is present)" in withScalamuCompiler {
     implicit global =>

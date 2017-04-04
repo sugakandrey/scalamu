@@ -3,8 +3,7 @@ package org.scalamu.plugin.mutations.arithmetic
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class InvertNegationsSpec extends SingleMutationSpec {
-  
-  override def mutations: Seq[Mutation] = List(InvertNegations)
+  override def mutation: Mutation = InvertNegations
 
   "InvertNegations" should "mutate integer and floating point literals" in withScalamuCompiler {
     implicit global =>

@@ -3,7 +3,7 @@ package org.scalamu.plugin.mutations
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class ReplaceWithNilSpec extends SingleMutationSpec {
-  override def mutations: Seq[Mutation] = List(ReplaceWithNil)
+  override def mutation: Mutation = ReplaceWithNil
   
   "ReplaceWithNil" should "replace List.apply calls with Nil" in withScalamuCompiler {
     implicit global =>

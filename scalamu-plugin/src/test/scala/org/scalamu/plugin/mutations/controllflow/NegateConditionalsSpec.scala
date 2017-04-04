@@ -3,8 +3,7 @@ package org.scalamu.plugin.mutations.controllflow
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class NegateConditionalsSpec extends SingleMutationSpec {
-
-  override def mutations: Seq[Mutation] = List(NegateConditionals)
+  override def mutation: Mutation = NegateConditionals
 
   "NegateConditionals" should "negate conditional operators" in withScalamuCompiler {
     implicit global =>

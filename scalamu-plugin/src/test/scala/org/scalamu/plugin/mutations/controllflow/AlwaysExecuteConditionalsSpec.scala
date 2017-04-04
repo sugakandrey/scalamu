@@ -3,8 +3,7 @@ package org.scalamu.plugin.mutations.controllflow
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class AlwaysExecuteConditionalsSpec extends SingleMutationSpec {
-  
-  override def mutations: Seq[Mutation] = List(AlwaysExecuteConditionals)
+  override def mutation: Mutation = AlwaysExecuteConditionals
   
   "AlwaysExecuteConditionals" should "replace conditional block with \'then\' branch" in withScalamuCompiler {
     implicit global =>

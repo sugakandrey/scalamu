@@ -3,8 +3,7 @@ package org.scalamu.plugin.mutations.controllflow
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class ChangeRangeBoundarySpec extends SingleMutationSpec {
-  
-  override def mutations: Seq[Mutation] = List(ChangeRangeBoundary)
+  override def mutation: Mutation = ChangeRangeBoundary
 
   "ChangeRangeBoundarySpec" should "replace \'until\' with \'to\' (and vice verse) for numerical types" in
     withScalamuCompiler { implicit global =>

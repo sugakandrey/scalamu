@@ -3,8 +3,7 @@ package org.scalamu.plugin.mutations.controllflow
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class NeverExecuteConditionalsSpec extends SingleMutationSpec {
-
-  override def mutations: Seq[Mutation] = List(NeverExecuteConditionals)
+  override def mutation: Mutation = NeverExecuteConditionals
 
   "NeverExecuteConditionals" should "replace all conditional block with \'else\' branch" in withScalamuCompiler {
     implicit global =>

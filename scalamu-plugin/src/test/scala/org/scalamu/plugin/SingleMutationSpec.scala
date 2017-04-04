@@ -7,4 +7,8 @@ trait SingleMutationSpec
     extends FlatSpec
     with Matchers
     with MutationOnlyRunner
-    with SharedScalamuCompilerFixture
+    with SharedScalamuCompilerFixture {
+
+  def mutation: Mutation
+  override final def mutations: Seq[Mutation] = List(mutation)
+}

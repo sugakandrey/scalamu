@@ -3,8 +3,7 @@ package org.scalamu.plugin.mutations.controllflow
 import org.scalamu.plugin.{Mutation, SingleMutationSpec}
 
 class ChangeConditionalBoundariesSpec extends SingleMutationSpec {
-  
-  override def mutations: Seq[Mutation] = List(ChangeConditionalBoundaries)
+  override def mutation: Mutation = ChangeConditionalBoundaries
   
   "ChangeConditionalBoundaries" should "change conditional boundaries" in withScalamuCompiler {
     implicit global =>
