@@ -1,6 +1,8 @@
 package org.scalamu.plugin.mutations.methodcalls
 
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
+import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationReporter}
+
+import scala.tools.nsc.Global
 
 /**
  * Mutation, that replaces appropriately typed method calls and function literals with identity.
@@ -19,32 +21,34 @@ import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationContext}
  *
  */
 case object ReplaceWithIdentityFunction extends Mutation { self =>
-  override def mutatingTransformer(context: MutationContext): MutatingTransformer =
-    new MutatingTransformer(context) {
-      import global._
+  override def mutatingTransformer(
+    global: Global,
+    mutationReporter: MutationReporter
+  ): MutatingTransformer = new MutatingTransformer(global, mutationReporter) {
+    import global._
 
-      override protected def mutation: Mutation = self
+    override protected def mutation: Mutation = self
 
-      override protected val transformer: Transformer = new Transformer {
-        override def mutate: PartialFunction[Tree, Tree] = {
-          case tree @ Function(
-                arg :: Nil,
-                TreeWithType(exprs, tpe)
-              ) if tpe ~ arg.tpt.tpe =>
-            val mutationResult = q"(..${List(arg)}) => ${arg.symbol}"
-            val mutatedExprs   = super.transform(exprs)
-            reportMutation(tree, mutationResult)
-            mutationGuard(mutationResult, q"(..${List(arg)}) => $mutatedExprs")
-          case TreeWithType(
-              tree @ Apply(Select(body, method @ TermName(name)), args),
-              tpe
-              ) if tpe ~ body.tpe && !name.contains("<init>") =>
-            val mutationResult = q"$body"
-            val mutatedBody    = super.transform(body)
-            val mutatedArgs    = args.map(super.transform)
-            reportMutation(tree, mutationResult)
-            mutationGuard(mutationResult, q"$mutatedBody.$method(..$mutatedArgs)")
-        }
+    override protected val transformer: Transformer = new Transformer {
+      override def mutate: PartialFunction[Tree, Tree] = {
+        case tree @ Function(
+              arg :: Nil,
+              TreeWithType(exprs, tpe)
+            ) if tpe ~ arg.tpt.tpe =>
+          val mutationResult = q"(..${List(arg)}) => ${arg.symbol}"
+          val mutatedExprs   = super.transform(exprs)
+          reportMutation(tree, mutationResult)
+          mutationGuard(mutationResult, q"(..${List(arg)}) => $mutatedExprs")
+        case TreeWithType(
+            tree @ Apply(Select(body, method @ TermName(name)), args),
+            tpe
+            ) if tpe ~ body.tpe && !name.contains("<init>") =>
+          val mutationResult = q"$body"
+          val mutatedBody    = super.transform(body)
+          val mutatedArgs    = args.map(super.transform)
+          reportMutation(tree, mutationResult)
+          mutationGuard(mutationResult, q"$mutatedBody.$method(..$mutatedArgs)")
       }
     }
+  }
 }

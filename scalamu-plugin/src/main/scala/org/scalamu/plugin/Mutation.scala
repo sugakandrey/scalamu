@@ -1,12 +1,20 @@
 package org.scalamu.plugin
 
-import org.scalamu.plugin.mutations.GlobalUtils
+import org.scalamu.plugin.mutations.{CompilerAccess, GlobalExtractors, TypeEnrichment}
+
+import scala.tools.nsc.Global
 
 trait Mutation {
-  def mutatingTransformer(ctx: MutationContext): MutatingTransformer
+  def mutatingTransformer(global: Global, mutationReporter: MutationReporter): MutatingTransformer
 }
 
-abstract class MutatingTransformer(val context: MutationContext) extends GlobalUtils(context.global) {
+abstract class MutatingTransformer(
+  override val global: Global,
+  val mutationReporter: MutationReporter
+) extends CompilerAccess
+    with GlobalExtractors
+    with TypeEnrichment {
+
   trait Transformer extends global.Transformer {
     import global._
     import typer.typed
@@ -34,7 +42,7 @@ abstract class MutatingTransformer(val context: MutationContext) extends GlobalU
         show(tree),
         show(mutated)
       )
-      context.mutationReporter.report(info)
+      mutationReporter.report(info)
     }
 
     protected final def continue: PartialFunction[Tree, Tree] = PartialFunction(super.transform)

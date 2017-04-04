@@ -31,7 +31,6 @@ class ScalamuPlugin(
 
     class Transformer(unit: CompilationUnit) extends TypingTransformer(unit) {
       override def transform(tree: Tree): Tree = {
-        val ctx = MutationContext(global, mutationReporter)
 
         def applyTransformations(tree: Tree, mutations: Seq[MutatingTransformer]): Tree =
           mutations match {
@@ -41,7 +40,10 @@ class ScalamuPlugin(
               applyTransformations(intermediate.asInstanceOf[Tree], rest)
           }
 
-        applyTransformations(tree, mutations.map(_.mutatingTransformer(ctx)))
+        applyTransformations(
+          tree,
+          mutations.map(_.mutatingTransformer(global, mutationReporter))
+        )
       }
     }
   }
