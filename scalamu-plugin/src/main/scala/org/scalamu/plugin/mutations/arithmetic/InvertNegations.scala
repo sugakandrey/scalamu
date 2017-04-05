@@ -46,6 +46,7 @@ case object InvertNegations extends Mutation with NumericTypesSupport { self =>
             case _: Double => -lit.floatValue
           }
           val mutationResult = Literal(Constant(value))
+          mutationResult.setType(tree.tpe)
           reportMutation(tree, mutationResult)
           guard(mutationResult, tree)
         case tree @ q"-${TreeWithType(term, tpe)}" if supportedTypes.exists(_ =:= tpe) =>
