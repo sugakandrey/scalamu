@@ -1,10 +1,11 @@
 package org.scalamu.plugin.mutations.methodcalls
 
-import org.scalamu.plugin.{Mutation, SingleMutationSpec}
+import org.scalamu.plugin.Mutation
+import org.scalamu.plugin.util.SingleMutationSpec
 
 class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
 
-  override def mutations: Seq[Mutation] = List(RemoveUnitMethodCalls)
+  override def mutation: Mutation = RemoveUnitMethodCalls
 
   "RemoveUnitMethodCalls" should "remove calls to methods returning Unit" in withScalamuCompiler {
     implicit global =>

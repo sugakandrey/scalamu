@@ -1,12 +1,14 @@
-package org.scalamu.plugin
+package org.scalamu.plugin.util
 
+import org.scalamu.plugin.Mutation
 import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
 import org.scalatest.{FlatSpec, Matchers}
 
 trait SingleMutationSpec
     extends FlatSpec
     with Matchers
-    with MutationOnlyRunner
+    with MutationPhaseOnlyRunner
+    with CompilationUtils
     with SharedScalamuCompilerFixture {
 
   def mutation: Mutation

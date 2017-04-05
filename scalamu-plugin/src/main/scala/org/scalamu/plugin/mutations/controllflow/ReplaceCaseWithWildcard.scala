@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations.controllflow
 
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationReporter}
+import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationGuard, MutationReporter}
 
 import scala.tools.nsc.Global
 
@@ -10,8 +10,9 @@ import scala.tools.nsc.Global
 case object ReplaceCaseWithWildcard extends Mutation { self =>
   override def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter
-  ): MutatingTransformer = new MutatingTransformer(global, mutationReporter) {
+    mutationReporter: MutationReporter,
+    mutationGuard: MutationGuard
+  ): MutatingTransformer = new MutatingTransformer(mutationReporter, mutationGuard)(global) {
     import global._
 
     override protected def mutation: Mutation = self
@@ -26,7 +27,7 @@ case object ReplaceCaseWithWildcard extends Mutation { self =>
           wildcard.fold(tree) { wc =>
             val mutationResult = q"$expr match { case ..${List(wc)} }"
             reportMutation(tree, mutationResult)
-            mutationGuard(mutationResult, tree)
+            guard(mutationResult, tree)
           }
       }
     }

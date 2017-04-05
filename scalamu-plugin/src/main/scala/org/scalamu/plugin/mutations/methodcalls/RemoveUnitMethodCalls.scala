@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations.methodcalls
 
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationReporter}
+import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationGuard, MutationReporter}
 
 import scala.tools.nsc.Global
 
@@ -20,8 +20,9 @@ import scala.tools.nsc.Global
 case object RemoveUnitMethodCalls extends Mutation { self =>
   override def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter
-  ): MutatingTransformer = new MutatingTransformer(global, mutationReporter) {
+    mutationReporter: MutationReporter,
+    mutationGuard: MutationGuard
+  ): MutatingTransformer = new MutatingTransformer(mutationReporter, mutationGuard)(global) {
     import global._
 
     override def mutation: Mutation = self
@@ -35,7 +36,7 @@ case object RemoveUnitMethodCalls extends Mutation { self =>
           val mutatedArgs    = args.map(super.transform)
           val mutationResult = q"()"
           reportMutation(tree, mutationResult)
-          mutationGuard(mutationResult, q"$fn(..$mutatedArgs)")
+          guard(mutationResult, q"$fn(..$mutatedArgs)")
         case tree @ Function(
               List(params),
               TreeWithType(body, definitions.UnitTpe)
@@ -43,7 +44,7 @@ case object RemoveUnitMethodCalls extends Mutation { self =>
           val mutatedBody    = super.transform(body)
           val mutationResult = q"(..$params) => ()"
           reportMutation(tree, mutationResult)
-          mutationGuard(mutationResult, q"(..$params) => $mutatedBody")
+          guard(mutationResult, q"(..$params) => $mutatedBody")
       }
     }
   }

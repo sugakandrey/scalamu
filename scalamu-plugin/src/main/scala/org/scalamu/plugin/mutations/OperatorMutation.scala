@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations
 
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationReporter}
+import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationGuard, MutationReporter}
 
 import scala.tools.nsc.Global
 
@@ -13,13 +13,14 @@ import scala.tools.nsc.Global
 trait OperatorMutation extends Mutation with OperatorMutationRules { self: SupportedTypes =>
   override def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter
-  ): MutatingTransformer = new MutatingTransformer(global, mutationReporter) {
+    mutationReporter: MutationReporter,
+    mutationGuard: MutationGuard
+  ): MutatingTransformer = new MutatingTransformer(mutationReporter, mutationGuard)(global) {
     import global._
 
     override protected def mutation: Mutation = self
 
-    private def isAppropriateType(tpe: Type): Boolean = supportedTypes(global).exists(_ =:= tpe)
+    private def isAppropriateType(tpe: Type): Boolean = supportedTypes.exists(_ =:= tpe)
 
     override protected def transformer: Transformer = new Transformer {
       override val mutate: PartialFunction[Tree, Tree] = {
@@ -31,11 +32,11 @@ trait OperatorMutation extends Mutation with OperatorMutationRules { self: Suppo
               && isAppropriateType(lhsTpe)
               && isAppropriateType(rhsTpe) =>
           val mutatedOp      = encode(mutationRules(op.decodedName.toString))
-          val mutatedLhs     = super.transform(lhs)
-          val mutatedRhs     = super.transform(rhs)
-          val mutationResult = q"$mutatedLhs.$mutatedOp(..$mutatedRhs)"
+          val mutationResult = q"$lhs.$mutatedOp(..$rhs)"
           reportMutation(tree, mutationResult)
-          mutationGuard(mutationResult, tree)
+          val mutatedLhs = super.transform(lhs)
+          val mutatedRhs = super.transform(rhs)
+          guard(mutationResult, q"$mutatedLhs.$op(..$mutatedRhs)")
       }
     }
   }

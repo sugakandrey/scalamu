@@ -1,6 +1,7 @@
 package org.scalamu.plugin.mutations.controllflow
 
-import org.scalamu.plugin.{Mutation, SingleMutationSpec}
+import org.scalamu.plugin.Mutation
+import org.scalamu.plugin.util.SingleMutationSpec
 
 class ChangeRangeBoundarySpec extends SingleMutationSpec {
   override def mutation: Mutation = ChangeRangeBoundary

@@ -1,6 +1,7 @@
 package org.scalamu.plugin.mutations
 
-import org.scalamu.plugin.{Mutation, SingleMutationSpec}
+import org.scalamu.plugin.Mutation
+import org.scalamu.plugin.util.SingleMutationSpec
 
 class ReplaceWithNoneSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceWithNone

@@ -1,7 +1,7 @@
 package org.scalamu.plugin.mutations.arithmetic
 
 import org.scalamu.plugin.mutations.NumericTypesSupport
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationReporter}
+import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationGuard, MutationReporter}
 
 import scala.tools.nsc.Global
 
@@ -19,8 +19,9 @@ import scala.tools.nsc.Global
 case object InvertNegations extends Mutation with NumericTypesSupport { self =>
   override def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter
-  ): MutatingTransformer = new MutatingTransformer(global, mutationReporter) {
+    mutationReporter: MutationReporter,
+    mutationGuard: MutationGuard
+  ): MutatingTransformer = new MutatingTransformer(mutationReporter, mutationGuard)(global) {
     import global._
 
     override protected def mutation: Mutation = self
@@ -46,13 +47,12 @@ case object InvertNegations extends Mutation with NumericTypesSupport { self =>
           }
           val mutationResult = Literal(Constant(value))
           reportMutation(tree, mutationResult)
-          mutationGuard(mutationResult, tree)
-        case tree @ q"-${TreeWithType(term, tpe)}"
-            if supportedTypes(global).exists(_ =:= tpe) =>
+          guard(mutationResult, tree)
+        case tree @ q"-${TreeWithType(term, tpe)}" if supportedTypes.exists(_ =:= tpe) =>
           val mutatedTerm    = super.transform(term)
           val mutationResult = q"$mutatedTerm"
           reportMutation(tree, mutationResult)
-          mutationGuard(mutationResult, tree)
+          guard(mutationResult, tree)
       }
     }
   }

@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations
 
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationReporter}
+import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationGuard, MutationReporter}
 
 import scala.tools.nsc.Global
 
@@ -12,8 +12,9 @@ trait GenericApplyMutation extends Mutation { self: SupportedTypes =>
 
   override def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter
-  ): MutatingTransformer = new MutatingTransformer(global, mutationReporter) {
+    mutationReporter: MutationReporter,
+    mutationGuard: MutationGuard
+  ): MutatingTransformer = new MutatingTransformer(mutationReporter, mutationGuard)(global) {
     import global._
 
     override protected def mutation: Mutation = self
@@ -21,10 +22,10 @@ trait GenericApplyMutation extends Mutation { self: SupportedTypes =>
     override protected def transformer: Transformer = new Transformer {
       override protected def mutate: PartialFunction[Tree, Tree] = {
         case expr @ q"${TreeWithType(tree, tpe)}.apply[$targs](..$_)"
-            if supportedTypes(global).exists(_ <:< tpe) =>
+            if supportedTypes.exists(_ <:< tpe) =>
           val mutationResult = q"${replaceWith(global)}[$targs]"
           reportMutation(expr, mutationResult)
-          mutationGuard(mutationResult, expr)
+          guard(mutationResult, expr)
       }
     }
   }

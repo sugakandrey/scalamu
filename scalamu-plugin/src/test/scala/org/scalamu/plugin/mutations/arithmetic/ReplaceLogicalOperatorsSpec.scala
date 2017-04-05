@@ -1,6 +1,7 @@
 package org.scalamu.plugin.mutations.arithmetic
 
-import org.scalamu.plugin.{Mutation, SingleMutationSpec}
+import org.scalamu.plugin.Mutation
+import org.scalamu.plugin.util.SingleMutationSpec
 
 class ReplaceLogicalOperatorsSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceLogicalOperators
