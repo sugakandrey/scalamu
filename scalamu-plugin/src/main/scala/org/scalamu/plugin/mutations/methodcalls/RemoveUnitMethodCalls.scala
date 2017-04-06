@@ -30,7 +30,7 @@ case object RemoveUnitMethodCalls extends Mutation { self =>
     override val transformer: Transformer = new Transformer {
       override protected val mutate: PartialFunction[Tree, Tree] = {
         case TreeWithType(
-            tree @ MaybeTypedApply(qualifier, _, args),
+            tree @ Apply(qualifier, args),
             definitions.UnitTpe
             ) =>
           val mutatedArgs    = args.map(super.transform)

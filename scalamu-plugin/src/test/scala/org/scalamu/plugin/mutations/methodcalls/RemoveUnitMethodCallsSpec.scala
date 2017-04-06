@@ -23,9 +23,33 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |  
           |  foo("123")
           |  
+          |  def poly[A](a: A): Unit = ???
+          |  
+          |  poly[String]("123")
           |}
         """.stripMargin
       val mutationsInfo = mutationsFor(code)
-      mutationsInfo should have size 5
+      mutationsInfo.foreach(println)
+      mutationsInfo should have size 6
   }
+
+  it should "handle partially functions with multiple parameter lists and implicit parameters" ignore
+    withScalamuCompiler { implicit global =>
+      val code =
+        """
+          |object Foo {
+          |  def bar(s: String)(implicit i: Int): Unit = ???
+          |  
+          |  implicit val i: Int = 123
+          |  bar("123")
+          |  
+          |  def baz(i: Int)(j: Int)(k: Int): Unit = ???
+          |  
+          |  baz(1)(2)(3)
+          |  
+          |}
+        """.stripMargin
+      val mutationsInfo = mutationsFor(code)
+      mutationsInfo should have size 2
+    }
 }
