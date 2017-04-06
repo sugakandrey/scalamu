@@ -30,25 +30,18 @@ case object ReplaceWithIdentityFunction extends Mutation { self =>
 
     override protected def mutation: Mutation = self
 
+    // @TODO: This does not play nicely with chained function calls, partially applied functions or implicit parameters.
     override protected val transformer: Transformer = new Transformer {
       override def mutate: PartialFunction[Tree, Tree] = {
-        case tree @ Function(
-              arg :: Nil,
-              TreeWithType(exprs, tpe)
-            ) if tpe ~ arg.tpt.tpe =>
-          val mutationResult = q"(..${List(arg)}) => ${arg.symbol}"
-          val mutatedExprs   = super.transform(exprs)
-          reportMutation(tree, mutationResult)
-          guard(mutationResult, q"(..${List(arg)}) => $mutatedExprs")
         case TreeWithType(
-            tree @ Apply(Select(body, method @ TermName(name)), args),
+            tree @ MaybeTypedApply(qualifier, name, args),
             tpe
-            ) if tpe ~ body.tpe && !name.contains("<init>") =>
-          val mutationResult = q"$body"
-          val mutatedBody    = super.transform(body)
+            ) if qualifier.tpe <~< tpe && !name.containsName(nme.CONSTRUCTOR) =>
+          val mutationResult = q"$qualifier"
+          val mutatedBody    = super.transform(qualifier)
           val mutatedArgs    = args.map(super.transform)
           reportMutation(tree, mutationResult)
-          guard(mutationResult, q"$mutatedBody.$method(..$mutatedArgs)")
+          guard(mutationResult, q"$mutatedBody.$name(..$mutatedArgs)")
       }
     }
   }

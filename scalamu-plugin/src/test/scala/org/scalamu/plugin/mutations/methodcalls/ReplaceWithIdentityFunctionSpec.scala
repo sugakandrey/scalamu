@@ -17,7 +17,7 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
           |  val ys = Set(3, 4, 5)
           |  
           |  val x = 123
-          |  val a = 1 - x
+          |  val a = (1 - x) - x
           |  
           |  (xs -- ys).foreach(println)
           |  
@@ -28,6 +28,18 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
           |}
         """.stripMargin
       val mutationsInfo = mutationsFor(code)
-      mutationsInfo should have size 10
+      mutationsInfo should have size 8
     }
+
+  it should "handle partially applied function, chained calls and implicit parameters" ignore withScalamuCompiler {
+    implicit global =>
+      val code =
+        """
+          |object Foo {
+          |  val xs = Set(1, 2, 3).map(x => x.toString())
+          |}
+        """.stripMargin
+      val mutationsInfo = mutationsFor(code)
+      mutationsInfo should have size 1
+  }
 }

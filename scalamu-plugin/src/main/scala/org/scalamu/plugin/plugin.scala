@@ -47,7 +47,7 @@ class ScalamuPlugin(
             case Nil => tree
             case tr :: rest =>
               val intermediate = tr(tree.asInstanceOf[tr.global.Tree])
-              typer.typed(applyTransformations(intermediate.asInstanceOf[Tree], rest))
+              applyTransformations(intermediate.asInstanceOf[Tree], rest)
           }
         val mutatedUnit = applyTransformations(
           tree,

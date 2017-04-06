@@ -16,7 +16,7 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |  
           |  def foo[A](a: A): Unit = ???
           |  
-          |  List(1, 2, 3).foreach { x => }
+          |  List(1, 2, 3).foreach(println)
           |  
           |  var mut = 0
           |  Some(1).map(x => mut += x)
@@ -26,6 +26,6 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |}
         """.stripMargin
       val mutationsInfo = mutationsFor(code)
-      mutationsInfo should have size 6
+      mutationsInfo should have size 5
   }
 }

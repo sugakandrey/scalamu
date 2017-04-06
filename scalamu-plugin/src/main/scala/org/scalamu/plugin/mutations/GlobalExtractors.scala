@@ -19,4 +19,16 @@ trait GlobalExtractors { self: CompilerAccess with TypeEnrichment =>
       case _ => None
     }
   }
+
+  object MaybeTypedApply {
+    def unapply(tree: Tree): Option[(Tree, TermName, List[Tree])] = tree match {
+      case Apply(inner, args) =>
+        inner match {
+          case Select(qualifier, name: TermName)               => Some((qualifier, name, args))
+          case TypeApply(Select(qualifier, name: TermName), _) => Some((qualifier, name, args))
+          case _                                               => None
+        }
+      case _ => None
+    }
+  }
 }

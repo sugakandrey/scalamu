@@ -4,11 +4,13 @@ trait TypeEnrichment { self: CompilerAccess =>
   import global._
 
   implicit class RichType(tpe: Type) {
-    def ~(other: Type): Boolean = isEquivalentTo(other)
+    def ~(other: Type): Boolean = conformsTo(other, _ =:= _)
 
-    def isEquivalentTo(other: Type): Boolean =
+    def <~<(other: Type): Boolean = conformsTo(other, _ <:< _)
+
+    def conformsTo(other: Type, op: (Type, Type) => Boolean): Boolean =
       if (tpe == null || other == null) false
-      else tpe.simplify =:= other.simplify
+      else op(tpe.simplify, other.simplify)
 
     def simplify: Type =
       if (tpe != null) tpe.dealiasWiden.deconst
