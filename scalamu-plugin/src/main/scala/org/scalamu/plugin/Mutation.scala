@@ -19,13 +19,15 @@ abstract class MutatingTransformer(
   override implicit val global: Global
 ) extends CompilerAccess
     with GlobalExtractors
-    with TypeEnrichment {
+    with TypeEnrichment
+    with TreeSanitizer {
 
   trait Transformer extends global.Transformer {
     import global._
 
     override final def transform(tree: Tree): Tree = tree match {
-      case DefDef(mods, _, _, _, _, _) if mods.isSynthetic => tree
+      case t if t.attachments.all.toString.contains("MacroExpansionAttachment") => tree
+      case DefDef(mods, _, _, _, _, _) if mods.isSynthetic                      => tree
       case ClassDef(_, _, _, Template(parents, _, _))
           if parents.map(_.tpe.typeSymbol.fullName).contains("scala.reflect.api.TypeCreator") =>
         tree
