@@ -1,6 +1,11 @@
 package org.scalamu.plugin
 
-import org.scalamu.plugin.mutations.{CompilerAccess, GlobalExtractors, TypeEnrichment}
+import org.scalamu.plugin.mutations.{
+  CompilerAccess,
+  GlobalExtractors,
+  TreeSanitizer,
+  TypeEnrichment
+}
 
 import scala.tools.nsc.Global
 
@@ -48,14 +53,14 @@ abstract class MutatingTransformer(
       mutationReporter.report(info)
     }
 
-    protected final def continue: PartialFunction[Tree, Tree] = PartialFunction(super.transform)
+    private def continue: PartialFunction[Tree, Tree] = PartialFunction(super.transform)
 
     protected final def retype: PartialFunction[Tree, Tree] = PartialFunction(typer.typed)
 
     protected def mutate: PartialFunction[Tree, Tree]
 
     protected final def guard(mutated: Tree, untouched: Tree): Tree =
-      mutationGuard(global)(mutated, untouched)
+      mutationGuard(global)(removeNestedMutants(mutated), untouched)
   }
 
   protected def mutation: Mutation

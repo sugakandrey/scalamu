@@ -2,7 +2,7 @@ package org.scalamu.plugin.mutations
 
 import org.scalamu.plugin.ScalamuConfig.mutationGuardPrefix
 
-trait GlobalExtractors { self: CompilerAccess with TypeEnrichment =>
+trait GlobalExtractors extends TypeEnrichment { self: CompilerAccess =>
   import global._
 
   object TreeWithType {

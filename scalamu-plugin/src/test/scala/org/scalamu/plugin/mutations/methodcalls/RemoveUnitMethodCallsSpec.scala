@@ -29,7 +29,6 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |}
         """.stripMargin
       val mutationsInfo = mutationsFor(code)
-      mutationsInfo.foreach(println)
       mutationsInfo should have size 6
   }
 

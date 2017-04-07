@@ -8,24 +8,14 @@ import org.scalamu.plugin.mutations.methodcalls._
 object ScalamuConfig {
 
   /**
-   * The order of mutations is important, in some cases wrong order can lead to nested mutations
-    * (unreachable code) being generated.
-    * e.g. if [[ReplaceMathOperators]] is applied after [[InvertNegations]] in x * -2
-    * {{{
-    * if (mu2) {
-    *   x / (if (mu1) 2 else -2)
-    * } else {
-    *   x * (if (mu1) 2 else -2)
-    * }
-    * }}}
-    * instead of
-    * {{{
-    * if (mu1) {
-    *   x / -2
-    * } else {
-    *   x * (if (mu2) 2 else -2)
-    * }
-    * }}}
+   * The order of mutations is important, although it is impossible to completely avoid generating
+   * nested mutants (essentially dead code) just by changing it,
+   * it is beneficial (where possible) to rearrange them, so that
+   * `∀ i,j i > j, ∀ t1 ∈ domain(mutations(j)), t2 ∈ domain(mutations(i)): t1 isNotSubtree t2`
+   *
+   * e.g. [[InvertNegations]] being applied after [[ReplaceMathOperators]] will avoid generating nested mutants,
+   * but the same is impossible for [[ReplaceMathOperators]] and [[ReplaceConditionalBoundaries]], since
+   * both of them can be applied to trees in each other's domain.
    */
   val allMutations: Seq[Mutation] = Seq(
     ReplaceCaseWithWildcard,
@@ -34,7 +24,7 @@ object ScalamuConfig {
     InvertNegations,
     AlwaysExecuteConditionals,
     NeverExecuteConditionals,
-    ChangeConditionalBoundaries,
+    ReplaceConditionalBoundaries,
     NegateConditionals,
     RemoveUnitMethodCalls,
     ChangeRangeBoundary,

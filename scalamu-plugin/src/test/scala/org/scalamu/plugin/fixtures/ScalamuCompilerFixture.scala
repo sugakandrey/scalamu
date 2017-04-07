@@ -8,9 +8,17 @@ import org.scalatest.Matchers._
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.Plugin
 
+/**
+ * Preferred way of testing scalamu compiler plugin.
+ */
 trait ScalamuCompilerFixture { self: PluginRunner =>
-  protected val config = MutationConfig(mutationReporter, guard, verifyTrees = true)
-  
+  val config = MutationConfig(
+    mutationReporter,
+    guard,
+    verifyTrees,
+    sanitizeTrees
+  )
+
   def withScalamuCompiler(
     testCode: Global => Any
   ): Any

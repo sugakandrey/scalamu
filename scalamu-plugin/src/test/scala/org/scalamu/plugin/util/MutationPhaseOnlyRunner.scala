@@ -11,8 +11,10 @@ trait MutationPhaseOnlyRunner extends PluginRunner with CompilationUtils {
     usejavacp.value = true
     stopAfter.value = List("mutating-transform")
   }
-  override def reporter: Reporter   = new ConsoleReporter(settings)
-  override def guard: MutationGuard = NoOpMutationGuard
+  override lazy val reporter: Reporter     = new ConsoleReporter(settings)
+  override lazy val guard: MutationGuard   = NoOpMutationGuard
+  override lazy val verifyTrees: Boolean   = false
+  override lazy val sanitizeTrees: Boolean = false
 
   def mutationsFor(
     code: String

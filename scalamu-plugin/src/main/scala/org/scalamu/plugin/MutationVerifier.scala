@@ -2,14 +2,14 @@ package org.scalamu.plugin
 
 import org.scalamu.plugin.mutations.{CompilerAccess, GlobalExtractors, TypeEnrichment}
 
-import scala.collection.mutable
+import scala.collection.{breakOut, mutable}
 import scala.collection.mutable.ListBuffer
 
 /**
  * Used to verify that given compilation unit contains no nested mutations in it.
  */
-private[plugin] trait MutationVerifier {
-  self: CompilerAccess with TypeEnrichment with GlobalExtractors =>
+private[plugin] trait MutationVerifier extends TypeEnrichment with GlobalExtractors {
+  self: CompilerAccess =>
   import global._
 
   private[this] class MutationCollector extends Traverser {
@@ -21,12 +21,18 @@ private[plugin] trait MutationVerifier {
     }
   }
 
-  def hasNoNestedMutations(tree: Tree, insideMutation: Boolean = false): Boolean = {
-    val mutations: mutable.ListBuffer[Tree] = new MutationCollector().results
+  def treesWithNestedMutations(tree: Tree, insideMutation: Boolean = false): List[Tree] = {
+    val collector = new MutationCollector()
+    collector.traverse(tree)
+    val mutations = collector.results
     mutations match {
-      case ms if ms.isEmpty     => true
-      case ms if insideMutation => false
-      case ms                   => ms.forall(hasNoNestedMutations(_, insideMutation = true))
+      case ms if ms.isEmpty     => Nil
+      case ms if insideMutation => List(tree)
+      case ms =>
+        ms.flatMap {
+          case GuardedMutation(_, mutated, _) =>
+            treesWithNestedMutations(mutated, insideMutation = true)
+        }(breakOut)
     }
   }
 }

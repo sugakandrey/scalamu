@@ -11,8 +11,10 @@ trait PluginRunner {
   def mutations: Seq[Mutation]
   val mutationReporter: MutationReporter
   def settings: Settings
-  def reporter: Reporter
-  def guard: MutationGuard
+  val reporter: Reporter
+  val guard: MutationGuard
+  val verifyTrees: Boolean
+  val sanitizeTrees: Boolean
 
   protected def compileFiles(files: Seq[SourceFile])(implicit global: Global): Int = {
     val run = new global.Run

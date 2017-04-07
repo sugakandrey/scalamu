@@ -1,6 +1,6 @@
 package org.scalamu.plugin
 
-import org.scalamu.plugin.mutations.{CompilerAccess, GlobalExtractors, TypeEnrichment}
+import org.scalamu.plugin.mutations.CompilerAccess
 
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.{Plugin, PluginComponent}
@@ -21,8 +21,6 @@ class ScalamuPlugin(
       with TypingTransformers
       with Transform
       with CompilerAccess
-      with TypeEnrichment
-      with GlobalExtractors
       with MutationVerifier {
 
     override val global: Global           = plugin.global
@@ -54,8 +52,12 @@ class ScalamuPlugin(
           mutations.map(_.mutatingTransformer(global, config.reporter, config.guard))
         )
         if (config.verifyTrees) {
-          val noNestedMutations = hasNoNestedMutations(mutatedUnit)
-          if (!noNestedMutations) reporter.error(NoPosition, s"Unit $unit contains nested mutations")
+          val nestedMutations = treesWithNestedMutations(mutatedUnit)
+          nestedMutations.foreach(
+            t =>
+              reporter
+                .error(NoPosition, s"Tree ${show(t)} in unit $unit contains nested mutations.")
+          )
         }
         mutatedUnit
       }
