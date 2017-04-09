@@ -9,6 +9,7 @@ object ScalamuBuild {
       "UTF-8",
       "-feature",
       "-deprecation",
+      "-unchecked",
       "-language:postfixOps",
       "-language:implicitConversions",
       "-Xlint",
@@ -18,7 +19,14 @@ object ScalamuBuild {
       "-Xfuture"
 //      "-Xfatal-warnings"
     ),
-    fork in Test := true
+    fork in Test := true,
+    initialCommands in console := """
+      import scala.reflect.runtime.universe._
+      import scala.reflect.runtime.currentMirror
+      import scala.tools.reflect.ToolBox
+      val tb = currentMirror.mkToolBox() 
+      """,
+    scalacOptions in (Compile, console) -= "-Ywarn-unused-import"
   )
 
   def testDependencies(configs: Configuration*) = Seq(
