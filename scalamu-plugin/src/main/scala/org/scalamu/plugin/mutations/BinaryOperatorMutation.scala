@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations
 
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationGuard, MutationReporter}
+import org.scalamu.plugin._
 
 import scala.tools.nsc.Global
 
@@ -10,12 +10,11 @@ import scala.tools.nsc.Global
  * must be in [[org.scalamu.plugin.mutations.OperatorMutationRules.supportedOperators]],
  * and is replaced according to [[org.scalamu.plugin.mutations.OperatorMutationRules.mutationRules]]
  */
-trait OperatorMutation extends Mutation with OperatorMutationRules { self: SupportedTypes =>
+trait BinaryOperatorMutation extends Mutation with OperatorMutationRules { self: SupportedTypes =>
   override def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter,
-    mutationGuard: MutationGuard
-  ): MutatingTransformer = new MutatingTransformer(mutationReporter, mutationGuard)(global) {
+    config: MutationConfig
+  ): MutatingTransformer = new MutatingTransformer(config)(global) {
     import global._
 
     override protected def mutation: Mutation = self

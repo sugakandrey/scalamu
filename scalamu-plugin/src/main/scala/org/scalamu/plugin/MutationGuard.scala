@@ -8,12 +8,12 @@ sealed trait MutationGuard {
   def apply(global: Global)(mutated: global.Tree, untouched: global.Tree): global.Tree
 }
 
-private[plugin] case object NoOpMutationGuard extends MutationGuard {
+private[plugin] case object NoOpGuard extends MutationGuard {
   override def apply(global: Global)(mutated: global.Tree, untouched: global.Tree): global.Tree =
     mutated
 }
 
-private[plugin] final case class FqnPrefixedMutationGuard(
+private[plugin] final case class FqnPrefixedGuard(
   guardPackagePrefix: String
 ) extends MutationGuard {
   private val currentMutationId = mutable.Map.empty[String, Int].withDefaultValue(1)

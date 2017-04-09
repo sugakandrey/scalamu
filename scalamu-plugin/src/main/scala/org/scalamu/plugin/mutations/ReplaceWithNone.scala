@@ -1,4 +1,5 @@
 package org.scalamu.plugin.mutations
+
 import scala.tools.nsc.Global
 
 case object ReplaceWithNone extends GenericApplyMutation with SupportedTypes {
@@ -8,7 +9,7 @@ case object ReplaceWithNone extends GenericApplyMutation with SupportedTypes {
   }
 
   override protected def supportedTypes(implicit global: Global): Seq[global.Type] = {
-    import global.definitions.{SomeModule, OptionModule}
+    import global.definitions.{OptionModule, SomeModule}
     Seq(
       SomeModule.tpe,
       OptionModule.tpe

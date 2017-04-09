@@ -1,7 +1,7 @@
 package org.scalamu.plugin.mutations.controllflow
 
 import org.scalamu.plugin.Mutation
-import org.scalamu.plugin.util.SingleMutationSpec
+import org.scalamu.plugin.testutil.SingleMutationSpec
 
 class NeverExecuteConditionalsSpec extends SingleMutationSpec {
   override def mutation: Mutation = NeverExecuteConditionals

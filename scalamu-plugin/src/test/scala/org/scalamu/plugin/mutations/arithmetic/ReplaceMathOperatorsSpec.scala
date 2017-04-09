@@ -1,7 +1,7 @@
 package org.scalamu.plugin.mutations.arithmetic
 
 import org.scalamu.plugin.Mutation
-import org.scalamu.plugin.util.SingleMutationSpec
+import org.scalamu.plugin.testutil.SingleMutationSpec
 
 class ReplaceMathOperatorsSpec extends SingleMutationSpec {
 
@@ -52,15 +52,15 @@ class ReplaceMathOperatorsSpec extends SingleMutationSpec {
         |object Foo {
         |  val a = Map.empty[Int, Int]
         |  val b = a + (1 -> 2)
-        |  
+        |
         |  case class A(val i: Int) {
         |    def *(other: A): A = A(0)
         |  }
-        |  
+        |
         |  val c = A(2) * A(2)
         |}
         """.stripMargin
     val mutationsInfo = mutationsFor(code)
-    mutationsInfo.shouldBe(empty)
+    mutationsInfo shouldBe empty
   }
 }

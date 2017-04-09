@@ -1,7 +1,7 @@
 package org.scalamu.plugin.fixtures
 
+import org.scalamu.plugin.testutil.PluginRunner
 import org.scalamu.plugin.{MutationConfig, ScalamuPlugin}
-import org.scalamu.plugin.util.PluginRunner
 import org.scalatest.{BeforeAndAfterAll, TestSuite}
 import org.scalatest.Matchers._
 
@@ -15,6 +15,7 @@ trait ScalamuCompilerFixture { self: PluginRunner =>
   val config = MutationConfig(
     mutationReporter,
     guard,
+    filter,
     verifyTrees,
     sanitizeTrees
   )

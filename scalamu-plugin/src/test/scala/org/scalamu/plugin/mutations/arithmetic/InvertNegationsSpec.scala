@@ -1,7 +1,7 @@
 package org.scalamu.plugin.mutations.arithmetic
 
 import org.scalamu.plugin.Mutation
-import org.scalamu.plugin.util.SingleMutationSpec
+import org.scalamu.plugin.testutil.SingleMutationSpec
 
 class InvertNegationsSpec extends SingleMutationSpec {
   override def mutation: Mutation = InvertNegations
@@ -93,6 +93,6 @@ class InvertNegationsSpec extends SingleMutationSpec {
         |}
       """.stripMargin
     val mutationsInfo = mutationsFor(code)
-    mutationsInfo.shouldBe(empty)
+    mutationsInfo shouldBe empty
   }
 }

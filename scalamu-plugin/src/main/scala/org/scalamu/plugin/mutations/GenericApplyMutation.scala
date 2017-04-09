@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations
 
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationGuard, MutationReporter}
+import org.scalamu.plugin._
 
 import scala.tools.nsc.Global
 
@@ -12,9 +12,8 @@ trait GenericApplyMutation extends Mutation { self: SupportedTypes =>
 
   override def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter,
-    mutationGuard: MutationGuard
-  ): MutatingTransformer = new MutatingTransformer(mutationReporter, mutationGuard)(global) {
+    config: MutationConfig
+  ): MutatingTransformer = new MutatingTransformer(config)(global) {
     import global._
 
     override protected def mutation: Mutation = self

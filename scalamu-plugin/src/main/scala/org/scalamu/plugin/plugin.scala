@@ -1,6 +1,6 @@
 package org.scalamu.plugin
 
-import org.scalamu.plugin.mutations.CompilerAccess
+import org.scalamu.plugin.util.CompilerAccess
 
 import scala.tools.nsc.Global
 import scala.tools.nsc.plugins.{Plugin, PluginComponent}
@@ -49,7 +49,7 @@ class ScalamuPlugin(
           }
         val mutatedUnit = applyTransformations(
           tree,
-          mutations.map(_.mutatingTransformer(global, config.reporter, config.guard))
+          mutations.map(_.mutatingTransformer(global, config))
         )
         if (config.verifyTrees) {
           val nestedMutations = treesWithNestedMutations(mutatedUnit)

@@ -1,4 +1,5 @@
 package org.scalamu.plugin.mutations
+
 import scala.tools.nsc.Global
 
 case object ReplaceWithNil extends GenericApplyMutation with SupportedTypes {

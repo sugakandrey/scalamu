@@ -2,11 +2,23 @@ package org.scalamu.plugin
 
 import scala.reflect.internal.util.Position
 
+/**
+ * Used to save information about inserted mutants.
+ */
 trait MutationReporter {
-  def report(mutationInfo: MutationInfo): Unit
+  def report(mutationInfo: MutantInfo): Unit
 }
 
-final case class MutationInfo(
+/**
+ * Holds information about single inserted mutant.
+ *
+ * @param mutation [[org.scalamu.plugin.Mutation]] that spawned this mutant
+ * @param runId Current global run id
+ * @param pos Original tree position
+ * @param oldTree Original tree
+ * @param mutated Mutated tree
+ */
+final case class MutantInfo(
   mutation: Mutation,
   runId: Int,
   pos: Position,

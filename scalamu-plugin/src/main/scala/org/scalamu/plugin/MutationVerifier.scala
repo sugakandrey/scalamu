@@ -1,14 +1,14 @@
 package org.scalamu.plugin
 
-import org.scalamu.plugin.mutations.{CompilerAccess, GlobalExtractors, TypeEnrichment}
+import org.scalamu.plugin.util.{CompilerAccess, GlobalExtractors}
 
-import scala.collection.{breakOut, mutable}
 import scala.collection.mutable.ListBuffer
+import scala.collection.{breakOut, mutable}
 
 /**
  * Used to verify that given compilation unit contains no nested mutations in it.
  */
-private[plugin] trait MutationVerifier extends TypeEnrichment with GlobalExtractors {
+private[plugin] trait MutationVerifier extends GlobalExtractors {
   self: CompilerAccess =>
   import global._
 

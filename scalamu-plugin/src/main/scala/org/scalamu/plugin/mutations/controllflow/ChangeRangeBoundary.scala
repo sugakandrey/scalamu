@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations.controllflow
 
-import org.scalamu.plugin.mutations.{NumericTypesSupport, OperatorMutation}
+import org.scalamu.plugin.mutations.{BinaryOperatorMutation, NumericTypesSupport}
 
 import scala.runtime._
 import scala.tools.nsc.Global
@@ -16,7 +16,7 @@ import scala.tools.nsc.Global
  * (1 until 10).foreach(println)
  * }}}
  */
-case object ChangeRangeBoundary extends OperatorMutation with NumericTypesSupport { self =>
+case object ChangeRangeBoundary extends BinaryOperatorMutation with NumericTypesSupport { self =>
   override protected def supportedTypes(implicit global: Global): Seq[global.Type] = {
     import global._
     super.supportedTypes ++ Seq(

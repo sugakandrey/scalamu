@@ -1,7 +1,7 @@
 package org.scalamu.plugin.mutations.controllflow
 
 import org.scalamu.plugin.Mutation
-import org.scalamu.plugin.util.SingleMutationSpec
+import org.scalamu.plugin.testutil.SingleMutationSpec
 
 class ChangeRangeBoundarySpec extends SingleMutationSpec {
   override def mutation: Mutation = ChangeRangeBoundary
@@ -24,19 +24,18 @@ class ChangeRangeBoundarySpec extends SingleMutationSpec {
       val mutationsInfo = mutationsFor(code)
       mutationsInfo should have size 4
     }
-  
-  it should "not support non-numeric types" in withScalamuCompiler {
-    implicit global =>
-      val code =
-        """
-          |object Foo {
-          |  case class Bar(i: Int) {
-          |    def to(j: Int): Range = ???
-          |  }
-          |  
-          |  val bar = Bar(123)
-          |  (bar to 10).foreach(println)
-          |}
+
+  it should "not support non-numeric types" in withScalamuCompiler { implicit global =>
+    val code =
+      """
+        |object Foo {
+        |  case class Bar(i: Int) {
+        |    def to(j: Int): Range = ???
+        |  }
+        |  
+        |  val bar = Bar(123)
+        |  (bar to 10).foreach(println)
+        |}
         """.stripMargin
       val mutationsInfo = mutationsFor(code)
       mutationsInfo shouldBe empty

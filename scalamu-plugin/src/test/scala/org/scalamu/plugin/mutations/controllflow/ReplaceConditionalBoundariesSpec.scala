@@ -1,11 +1,11 @@
 package org.scalamu.plugin.mutations.controllflow
 
 import org.scalamu.plugin.Mutation
-import org.scalamu.plugin.util.SingleMutationSpec
+import org.scalamu.plugin.testutil.SingleMutationSpec
 
 class ReplaceConditionalBoundariesSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceConditionalBoundaries
-  
+
   "ReplaceConditionalBoundaries" should "change conditional boundaries" in withScalamuCompiler {
     implicit global =>
       val code =
@@ -23,7 +23,7 @@ class ReplaceConditionalBoundariesSpec extends SingleMutationSpec {
       val mutationsInfo = mutationsFor(code)
       mutationsInfo should have size 3
   }
-  
+
   it should "not change conditional boundaries for unsupported types" in withScalamuCompiler {
     implicit global =>
       val code =

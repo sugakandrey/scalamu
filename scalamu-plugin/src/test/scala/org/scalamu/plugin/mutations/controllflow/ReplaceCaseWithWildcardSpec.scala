@@ -1,11 +1,11 @@
 package org.scalamu.plugin.mutations.controllflow
 
 import org.scalamu.plugin.Mutation
-import org.scalamu.plugin.util.SingleMutationSpec
+import org.scalamu.plugin.testutil.SingleMutationSpec
 
 class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceCaseWithWildcard
-  
+
   "ReplaceCaseWithWildcard" should "replace case expressions with wildcard (if one is present)" in withScalamuCompiler {
     implicit global =>
       val code =
@@ -26,7 +26,7 @@ class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
       val mutationsInfo = mutationsFor(code)
       mutationsInfo should have size 2
   }
-  
+
   it should "do nothing if wildcard patter is restricted with guard or type ascription" in withScalamuCompiler {
     implicit global =>
       val code =

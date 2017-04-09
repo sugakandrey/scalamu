@@ -1,8 +1,8 @@
 package org.scalamu.plugin.mutations.controllflow
 
-import org.scalamu.plugin.mutations.{NumericTypesSupport, OperatorMutation}
+import org.scalamu.plugin.mutations.{BinaryOperatorMutation, NumericTypesSupport}
 
-trait ConditionalsMutation extends OperatorMutation with NumericTypesSupport {
+trait ConditionalsMutation extends BinaryOperatorMutation with NumericTypesSupport {
   protected final def comparisonOperators = Set(
     ">",
     "<",

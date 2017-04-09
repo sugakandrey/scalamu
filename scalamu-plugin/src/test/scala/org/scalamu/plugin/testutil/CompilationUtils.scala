@@ -1,10 +1,10 @@
-package org.scalamu.plugin.util
+package org.scalamu.plugin.testutil
 
 import scala.reflect.internal.util.{BatchSourceFile, NoFile}
 import scala.tools.nsc.Global
 
 trait CompilationUtils { self: PluginRunner =>
-  protected final case class NamedSnippet(filename: String, code: String)
+  protected case class NamedSnippet(filename: String, code: String)
 
   protected def compile(
     code: NamedSnippet,

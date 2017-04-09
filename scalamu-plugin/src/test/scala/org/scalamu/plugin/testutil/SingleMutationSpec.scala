@@ -1,4 +1,4 @@
-package org.scalamu.plugin.util
+package org.scalamu.plugin.testutil
 
 import org.scalamu.plugin.Mutation
 import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture

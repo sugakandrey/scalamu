@@ -1,6 +1,6 @@
 package org.scalamu.plugin.mutations.methodcalls
 
-import org.scalamu.plugin.{MutatingTransformer, Mutation, MutationGuard, MutationReporter}
+import org.scalamu.plugin._
 
 import scala.tools.nsc.Global
 
@@ -23,9 +23,8 @@ import scala.tools.nsc.Global
 case object ReplaceWithIdentityFunction extends Mutation { self =>
   override def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter,
-    mutationGuard: MutationGuard
-  ): MutatingTransformer = new MutatingTransformer(mutationReporter, mutationGuard)(global) {
+    config: MutationConfig
+  ): MutatingTransformer = new MutatingTransformer(config)(global) {
     import global._
 
     override protected def mutation: Mutation = self

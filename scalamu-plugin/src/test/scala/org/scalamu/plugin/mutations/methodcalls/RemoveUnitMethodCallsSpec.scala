@@ -1,7 +1,7 @@
 package org.scalamu.plugin.mutations.methodcalls
 
 import org.scalamu.plugin.Mutation
-import org.scalamu.plugin.util.SingleMutationSpec
+import org.scalamu.plugin.testutil.SingleMutationSpec
 
 class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
 

@@ -1,37 +1,35 @@
 package org.scalamu.plugin
 
-import org.scalamu.plugin.mutations.{
-  CompilerAccess,
-  GlobalExtractors,
-  TreeSanitizer,
-  TypeEnrichment
-}
+import org.scalamu.plugin.util.{CompilerAccess, GlobalExtractors, TreeSanitizer}
 
 import scala.tools.nsc.Global
 
+/**
+ * Base trait for all mutations.
+ */
 trait Mutation {
   def mutatingTransformer(
     global: Global,
-    mutationReporter: MutationReporter,
-    mutationGuard: MutationGuard
+    config: MutationConfig
   ): MutatingTransformer
 }
 
 abstract class MutatingTransformer(
-  val mutationReporter: MutationReporter,
-  val mutationGuard: MutationGuard
+  private val config: MutationConfig
 )(
   override implicit val global: Global
 ) extends CompilerAccess
     with GlobalExtractors
-    with TypeEnrichment
     with TreeSanitizer {
 
   trait Transformer extends global.Transformer {
     import global._
 
+    private val fullName: Symbol => String = _.fullNameString
+
     override final def transform(tree: Tree): Tree = tree match {
       case t if t.attachments.all.toString.contains("MacroExpansionAttachment") => tree
+      case t if Option(t.symbol).exists(fullName andThen config.filter)         => tree
       case DefDef(mods, _, _, _, _, _) if mods.isSynthetic                      => tree
       case ClassDef(_, _, _, Template(parents, _, _))
           if parents.map(_.tpe.typeSymbol.fullName).contains("scala.reflect.api.TypeCreator") =>
@@ -43,14 +41,14 @@ abstract class MutatingTransformer(
     }
 
     protected final def reportMutation(tree: Tree, mutated: Tree): Unit = {
-      val info = MutationInfo(
+      val info = MutantInfo(
         mutation,
         currentRunId,
         tree.pos,
         show(tree),
         show(mutated)
       )
-      mutationReporter.report(info)
+      config.reporter.report(info)
     }
 
     private def continue: PartialFunction[Tree, Tree] = PartialFunction(super.transform)
@@ -59,8 +57,10 @@ abstract class MutatingTransformer(
 
     protected def mutate: PartialFunction[Tree, Tree]
 
-    protected final def guard(mutated: Tree, untouched: Tree): Tree =
-      mutationGuard(global)(removeNestedMutants(mutated), untouched)
+    protected final def guard(mutated: Tree, untouched: Tree): Tree = {
+      val sanitized = if (config.sanitizeTrees) removeNestedMutants(mutated) else mutated
+      config.guard(global)(sanitized, untouched)
+    }
   }
 
   protected def mutation: Mutation

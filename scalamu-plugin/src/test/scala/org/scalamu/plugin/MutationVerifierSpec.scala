@@ -1,13 +1,12 @@
-package org.scalamu.plugin.mutations
+package org.scalamu.plugin
 
-import org.scalamu.plugin._
 import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
 import org.scalamu.plugin.mutations.arithmetic.{InvertNegations, ReplaceMathOperators}
 import org.scalamu.plugin.mutations.controllflow.{
   ReplaceCaseWithWildcard,
   ReplaceConditionalBoundaries
 }
-import org.scalamu.plugin.util.{CompilationUtils, MutationPhaseOnlyRunner}
+import org.scalamu.plugin.testutil.{CompilationUtils, MutationPhaseOnlyRunner}
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.tools.nsc.reporters.{ConsoleReporter, Reporter}
@@ -26,7 +25,7 @@ class MutationVerifierSpec
     ReplaceConditionalBoundaries,
     ReplaceCaseWithWildcard
   )
-  override lazy val guard: MutationGuard = FqnPrefixedMutationGuard(
+  override lazy val guard: MutationGuard = FqnPrefixedGuard(
     ScalamuConfig.mutationGuardPrefix
   )
   override lazy val reporter: Reporter = new ConsoleReporter(settings) {
