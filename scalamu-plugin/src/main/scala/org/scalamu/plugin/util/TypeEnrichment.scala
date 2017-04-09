@@ -1,4 +1,4 @@
-package org.scalamu.plugin.mutations
+package org.scalamu.plugin.util
 
 trait TypeEnrichment { self: CompilerAccess =>
   import global._

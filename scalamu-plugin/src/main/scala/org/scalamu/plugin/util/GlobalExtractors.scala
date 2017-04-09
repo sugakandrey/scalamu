@@ -1,4 +1,4 @@
-package org.scalamu.plugin.mutations
+package org.scalamu.plugin.util
 
 import org.scalamu.plugin.ScalamuConfig.mutationGuardPrefix
 
