@@ -19,7 +19,7 @@ class ReplaceWithNilSpec extends SingleMutationSpec {
           |  class Bar(xs: List[String] = List("hello", "world"))
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 3
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 3
   }
 }

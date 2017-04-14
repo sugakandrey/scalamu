@@ -23,8 +23,8 @@ class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
           |  }
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 2
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 2
   }
 
   it should "do nothing if wildcard patter is restricted with guard or type ascription" in withScalamuCompiler {
@@ -44,7 +44,7 @@ class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
           |  }
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo shouldBe empty
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo shouldBe empty
   }
 }

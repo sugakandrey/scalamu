@@ -31,11 +31,11 @@ case object NeverExecuteConditionals extends ConditionalsMutation { self =>
     override protected def transformer: Transformer = new Transformer {
       override protected val mutate: PartialFunction[Tree, Tree] = {
         case q"if ($cond) $thenp else $elsep" =>
-          val mutationResult = q"false"
-          val guarded        = guard(mutationResult, cond)
-          val mutatedThen    = super.transform(thenp)
-          val mutatedElse    = super.transform(elsep)
-          reportMutation(cond, mutationResult)
+          val mutant      = q"false"
+          val guarded     = guard(mutant, cond)
+          val mutatedThen = super.transform(thenp)
+          val mutatedElse = super.transform(elsep)
+          generateMutantReport(cond, mutant)
           q"if ($guarded) $mutatedThen else $mutatedElse"
       }
     }

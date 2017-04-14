@@ -32,10 +32,10 @@ case object RemoveUnitMethodCalls extends Mutation { self =>
             tree @ Apply(qualifier, args),
             definitions.UnitTpe
             ) =>
-          val mutatedArgs    = args.map(super.transform)
-          val mutationResult = q"()"
-          reportMutation(tree, mutationResult)
-          guard(mutationResult, q"$qualifier(..$mutatedArgs)")
+          val mutatedArgs = args.map(super.transform)
+          val mutant      = q"()"
+          generateMutantReport(tree, mutant)
+          guard(mutant, q"$qualifier(..$mutatedArgs)")
       }
     }
   }

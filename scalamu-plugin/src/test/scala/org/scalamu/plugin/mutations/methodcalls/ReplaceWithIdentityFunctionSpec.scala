@@ -27,8 +27,8 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
           |  }
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 8
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 8
     }
 
   it should "handle functions with multiple parameter lists, chained function calls and implicit parameters" ignore
@@ -46,7 +46,7 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
           |  bar.bar(1)("123")
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 2
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 2
     }
 }

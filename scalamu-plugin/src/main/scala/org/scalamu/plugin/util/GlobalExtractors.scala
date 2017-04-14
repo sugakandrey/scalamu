@@ -11,7 +11,7 @@ trait GlobalExtractors extends TypeEnrichment { self: CompilerAccess =>
       else Some((tree, tree.tpe.simplify))
   }
 
-  object GuardedMutation {
+  object GuardedMutant {
     def unapply(tree: Tree): Option[(Tree, Tree, Tree)] = tree match {
       case If(cond @ q"${guard: Ident} == $lit", thenp, elsep)
           if guard.symbol.fullName.startsWith(mutationGuardPrefix) =>

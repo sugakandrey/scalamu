@@ -22,9 +22,9 @@ trait GenericApplyMutation extends Mutation { self: SupportedTypes =>
       override protected def mutate: PartialFunction[Tree, Tree] = {
         case expr @ q"${TreeWithType(tree, tpe)}.apply[$targs](..$_)"
             if supportedTypes.exists(_ <:< tpe) =>
-          val mutationResult = q"${replaceWith(global)}[$targs]"
-          reportMutation(expr, mutationResult)
-          guard(mutationResult, expr)
+          val mutant = q"${replaceWith(global)}[$targs]"
+          generateMutantReport(expr, mutant)
+          guard(mutant, expr)
       }
     }
   }

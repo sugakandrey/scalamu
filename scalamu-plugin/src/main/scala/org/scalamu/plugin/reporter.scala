@@ -6,7 +6,7 @@ import scala.reflect.internal.util.Position
  * Used to save information about inserted mutants.
  */
 trait MutationReporter {
-  def report(mutationInfo: MutantInfo): Unit
+  def report(mutantInfo: MutantInfo): Unit
   def mutantsForRunId(runId: Int): Set[MutantInfo]
 }
 

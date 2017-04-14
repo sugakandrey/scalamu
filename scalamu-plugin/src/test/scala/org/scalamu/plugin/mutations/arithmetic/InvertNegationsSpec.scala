@@ -24,9 +24,9 @@ class InvertNegationsSpec extends SingleMutationSpec {
           |  def foo(): Byte = -2
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 6
-      mutationsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain theSameElementsAs Seq(
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 6
+      mutantsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain theSameElementsAs Seq(
         "-1123.0"      -> "1123.0",
         "-125"         -> "125",
         "-1.0E-10"     -> "1.0E-10",
@@ -61,8 +61,8 @@ class InvertNegationsSpec extends SingleMutationSpec {
           |  val g = -poly(2f) + (-bar.polyParam)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 6
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 6
   }
 
   it should "behave correctly in the presence of type aliases" in withScalamuCompiler {
@@ -75,9 +75,9 @@ class InvertNegationsSpec extends SingleMutationSpec {
           | val long = -foo(10)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 1
-      mutationsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain(
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 1
+      mutantsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain(
         "Foo.this.foo(10).unary_-" -> "Foo.this.foo(10)"
       )
   }
@@ -93,7 +93,7 @@ class InvertNegationsSpec extends SingleMutationSpec {
         |  val c = -A(2)
         |}
       """.stripMargin
-    val mutationsInfo = mutantsFor(code)(global, config.reporter)
-    mutationsInfo shouldBe empty
+    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    mutantsInfo shouldBe empty
   }
 }

@@ -20,8 +20,8 @@ class NegateConditionalsSpec extends SingleMutationSpec {
           |  class Bar(val x: Int = if (a >= 0) 10 else 11)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 3
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 3
   }
 
   it should "not negate controllflow operators on unsupported types" in withScalamuCompiler {
@@ -40,7 +40,7 @@ class NegateConditionalsSpec extends SingleMutationSpec {
           |  val eq = A(1) == A(2)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo.shouldBe(empty)
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo.shouldBe(empty)
   }
 }

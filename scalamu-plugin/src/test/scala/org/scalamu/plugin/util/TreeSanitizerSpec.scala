@@ -42,7 +42,7 @@ class TreeSanitizerSpec
         |  val b = a * -2
         |  
         |  if (a * 2 >= 124) {
-        |    println("nested mutation")
+        |    println("nested mutant")
         |  }
         |  
         |  a match {

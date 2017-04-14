@@ -30,8 +30,8 @@ class MutationFilterSpec extends TestRunner with IsolatedScalamuCompilerFixture 
           |  }
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo shouldBe empty
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo shouldBe empty
     }
 
   it should "not ignore any symbols if AcceptAllFilter is used" in withMutations { mutations =>
@@ -53,8 +53,8 @@ class MutationFilterSpec extends TestRunner with IsolatedScalamuCompilerFixture 
             |  }
             |}
         """.stripMargin
-        val mutationsInfo = mutantsFor(code)(global, config.reporter)
-        mutationsInfo should have size 7
+        val mutantsInfo = mutantsFor(code)(global, config.reporter)
+        mutantsInfo should have size 7
       }
     }
   }

@@ -3,22 +3,21 @@ package org.scalamu.plugin
 import org.scalamu.plugin.util.{CompilerAccess, GlobalExtractors}
 
 /**
- * Used to verify that given compilation unit contains no nested mutations in it.
+ * Used to verify that given compilation unit contains no nested mutants in it.
  */
 private[plugin] trait MutationVerifier extends GlobalExtractors { self: CompilerAccess =>
   import global._
 
   def treesWithNestedMutations(tree: Tree): Seq[Tree] = {
-    val isMutation: PartialFunction[Tree, Tree] = {
-      case t @ GuardedMutation(_, _, _) => t
+    val isGuardedMutant: PartialFunction[Tree, Tree] = {
+      case t @ GuardedMutant(_, _, _) => t
     }
-    val traverser = new CollectTreeTraverser(isMutation)
+    val traverser = new CollectTreeTraverser(isGuardedMutant)
     traverser.traverse(tree)
-    val allMutations = traverser.results
-    println(allMutations.size)
+    val allMutants = traverser.results
 
-    allMutations.filter {
-      case GuardedMutation(_, mutated, _) =>
+    allMutants.filter {
+      case GuardedMutant(_, mutated, _) =>
         traverser.results.clear()
         traverser.traverse(mutated)
         traverser.results.nonEmpty

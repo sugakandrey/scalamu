@@ -30,12 +30,12 @@ trait BinaryOperatorMutation extends Mutation with OperatorMutationRules { self:
             if supportedOperators.contains(op.decodedName.toString)
               && isAppropriateType(lhsTpe)
               && isAppropriateType(rhsTpe) =>
-          val mutatedOp      = encode(mutationRules(op.decodedName.toString))
-          val mutationResult = q"$lhs.$mutatedOp(..$rhs)"
-          reportMutation(tree, mutationResult)
+          val mutatedOp = encode(mutationRules(op.decodedName.toString))
+          val mutant    = q"$lhs.$mutatedOp(..$rhs)"
+          generateMutantReport(tree, mutant)
           val mutatedLhs = super.transform(lhs)
           val mutatedRhs = super.transform(rhs)
-          guard(mutationResult, q"$mutatedLhs.$op(..$mutatedRhs)")
+          guard(mutant, q"$mutatedLhs.$op(..$mutatedRhs)")
       }
     }
   }

@@ -25,7 +25,7 @@ class AlwaysExecuteConditionalsSpec extends SingleMutationSpec {
           |  class Bar(val x: Int = if (bool) 10 else 11)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 4
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 4
   }
 }

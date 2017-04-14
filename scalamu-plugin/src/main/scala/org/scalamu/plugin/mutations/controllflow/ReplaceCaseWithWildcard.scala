@@ -24,9 +24,9 @@ case object ReplaceCaseWithWildcard extends Mutation { self =>
             case c @ cq"$name @ ${Ident(nme.WILDCARD)} => $body" => c
           }
           wildcard.fold(tree) { wc =>
-            val mutationResult = q"$expr match { case ..${List(wc)} }"
-            reportMutation(tree, mutationResult)
-            guard(mutationResult, tree)
+            val mutant = q"$expr match { case ..${List(wc)} }"
+            generateMutantReport(tree, mutant)
+            guard(mutant, tree)
           }
       }
     }

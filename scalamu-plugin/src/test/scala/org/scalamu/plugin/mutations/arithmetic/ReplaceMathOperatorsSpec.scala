@@ -23,8 +23,8 @@ class ReplaceMathOperatorsSpec extends SingleMutationSpec {
           |  val poly = e % bar(a)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 5
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 5
   }
 
   it should "work in nested cases" in withScalamuCompiler { (global, config) =>
@@ -42,8 +42,8 @@ class ReplaceMathOperatorsSpec extends SingleMutationSpec {
         | val f = a - foo(b * c / z)
         |}
         """.stripMargin
-    val mutationsInfo = mutantsFor(code)(global, config.reporter)
-    mutationsInfo should have size 13
+    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    mutantsInfo should have size 13
   }
 
   it should "not mutate unsupported types" in withScalamuCompiler { (global, config) =>
@@ -60,7 +60,7 @@ class ReplaceMathOperatorsSpec extends SingleMutationSpec {
         |  val c = A(2) * A(2)
         |}
         """.stripMargin
-    val mutationsInfo = mutantsFor(code)(global, config.reporter)
-    mutationsInfo shouldBe empty
+    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    mutantsInfo shouldBe empty
   }
 }

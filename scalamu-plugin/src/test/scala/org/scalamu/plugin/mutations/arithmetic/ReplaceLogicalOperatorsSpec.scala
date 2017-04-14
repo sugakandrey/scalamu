@@ -19,8 +19,8 @@ class ReplaceLogicalOperatorsSpec extends SingleMutationSpec {
           |  class Bar(b: Boolean = c && b || a)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 6
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 6
   }
 
   it should "not support types other than boolean" in withScalamuCompiler { (global, config) =>
@@ -34,7 +34,7 @@ class ReplaceLogicalOperatorsSpec extends SingleMutationSpec {
         |  val a = Bar(false) && Bar(true)
         |}
         """.stripMargin
-    val mutationsInfo = mutantsFor(code)(global, config.reporter)
-    mutationsInfo shouldBe empty
+    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    mutantsInfo shouldBe empty
   }
 }

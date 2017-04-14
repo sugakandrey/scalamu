@@ -20,8 +20,8 @@ class ReplaceConditionalBoundariesSpec extends SingleMutationSpec {
           |  class Bar(val x: Int = if (a >= 0) 10 else 11)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 3
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 3
   }
 
   it should "not change conditional boundaries for unsupported types" in withScalamuCompiler {
@@ -38,7 +38,7 @@ class ReplaceConditionalBoundariesSpec extends SingleMutationSpec {
           |  }
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo shouldBe empty
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo shouldBe empty
   }
 }

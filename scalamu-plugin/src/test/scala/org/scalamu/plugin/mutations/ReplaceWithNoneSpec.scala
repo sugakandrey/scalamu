@@ -17,7 +17,7 @@ class ReplaceWithNoneSpec extends SingleMutationSpec {
           |  val two = Option[Int](1).fold(0)(_ + 1)
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 3
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 3
   }
 }

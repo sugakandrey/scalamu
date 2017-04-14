@@ -43,7 +43,7 @@ class MutationVerifierSpec extends TestRunner with IsolatedScalamuCompilerFixtur
           |  val b = a * -2
           |
           |  if (a * 2 >= 124) {
-          |    println("nested mutation")
+          |    println("nested mutant")
           |  }
           |
           |  a match {
@@ -78,7 +78,7 @@ class MutationVerifierSpec extends TestRunner with IsolatedScalamuCompilerFixtur
             |  val b = a * -2
             |
             |  if (a * 2 >= 124) {
-            |    println("nested mutation")
+            |    println("nested mutant")
             |  }
             |
             |  a match {

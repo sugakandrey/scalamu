@@ -7,15 +7,14 @@ package org.scalamu.plugin.util
  */
 trait TreeSanitizer { self: CompilerAccess with GlobalExtractors =>
 
-  private[this] case object RemovingTransformer extends global.Transformer {
+  protected case object SanitizingTransformer extends global.Transformer {
     import global._
 
     override def transform(tree: Tree): Tree = tree match {
-      case GuardedMutation(_, _, untouched) => untouched
-      case _                                => super.transform(tree)
+      case GuardedMutant(_, _, untouched) => untouched
+      case _                              => super.transform(tree)
     }
-  }
 
-  protected final def removeNestedMutants(tree: global.Tree): global.Tree =
-    RemovingTransformer.transform(tree)
+    def apply(tree: Tree): Tree = transform(tree)
+  }
 }

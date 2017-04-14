@@ -21,8 +21,8 @@ class ChangeRangeBoundarySpec extends SingleMutationSpec {
           |  } yield i * j
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 4
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 4
     }
 
   it should "not support non-numeric types" in withScalamuCompiler { (global, config) =>
@@ -37,7 +37,7 @@ class ChangeRangeBoundarySpec extends SingleMutationSpec {
         |  (bar to 10).foreach(println)
         |}
         """.stripMargin
-    val mutationsInfo = mutantsFor(code)(global, config.reporter)
-    mutationsInfo shouldBe empty
+    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    mutantsInfo shouldBe empty
   }
 }

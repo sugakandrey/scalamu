@@ -28,8 +28,8 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |  poly[String]("123")
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 6
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 6
   }
 
   it should "handle partially functions with multiple parameter lists and implicit parameters" ignore
@@ -48,7 +48,7 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |  
           |}
         """.stripMargin
-      val mutationsInfo = mutantsFor(code)(global, config.reporter)
-      mutationsInfo should have size 2
+      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      mutantsInfo should have size 2
     }
 }
