@@ -7,7 +7,7 @@ class ReplaceWithNilSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceWithNil
 
   "ReplaceWithNil" should "replace List.apply calls with Nil" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -19,7 +19,7 @@ class ReplaceWithNilSpec extends SingleMutationSpec {
           |  class Bar(xs: List[String] = List("hello", "world"))
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 3
   }
 }

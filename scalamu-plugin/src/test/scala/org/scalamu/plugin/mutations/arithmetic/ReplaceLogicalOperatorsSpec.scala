@@ -7,7 +7,7 @@ class ReplaceLogicalOperatorsSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceLogicalOperators
 
   "ReplaceLogicalOperators" should "swap \'&&\' and \'||\' operators" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |class Foo {
@@ -19,11 +19,11 @@ class ReplaceLogicalOperatorsSpec extends SingleMutationSpec {
           |  class Bar(b: Boolean = c && b || a)
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 6
   }
 
-  it should "not support types other than boolean" in withScalamuCompiler { implicit global =>
+  it should "not support types other than boolean" in withScalamuCompiler { (global, config) =>
     val code =
       """
         |object Foo {
@@ -34,7 +34,7 @@ class ReplaceLogicalOperatorsSpec extends SingleMutationSpec {
         |  val a = Bar(false) && Bar(true)
         |}
         """.stripMargin
-    val mutationsInfo = mutationsFor(code)
+    val mutationsInfo = mutantsFor(code)(global, config.reporter)
     mutationsInfo shouldBe empty
   }
 }

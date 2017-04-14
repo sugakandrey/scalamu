@@ -7,7 +7,7 @@ class AlwaysExecuteConditionalsSpec extends SingleMutationSpec {
   override def mutation: Mutation = AlwaysExecuteConditionals
 
   "AlwaysExecuteConditionals" should "replace conditional block with \'then\' branch" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -25,7 +25,7 @@ class AlwaysExecuteConditionalsSpec extends SingleMutationSpec {
           |  class Bar(val x: Int = if (bool) 10 else 11)
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 4
   }
 }

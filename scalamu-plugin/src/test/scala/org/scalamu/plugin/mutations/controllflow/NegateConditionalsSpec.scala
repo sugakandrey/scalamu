@@ -7,7 +7,7 @@ class NegateConditionalsSpec extends SingleMutationSpec {
   override def mutation: Mutation = NegateConditionals
 
   "NegateConditionals" should "negate conditional operators" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -20,12 +20,12 @@ class NegateConditionalsSpec extends SingleMutationSpec {
           |  class Bar(val x: Int = if (a >= 0) 10 else 11)
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 3
   }
 
   it should "not negate controllflow operators on unsupported types" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -40,7 +40,7 @@ class NegateConditionalsSpec extends SingleMutationSpec {
           |  val eq = A(1) == A(2)
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo.shouldBe(empty)
   }
 }

@@ -7,7 +7,7 @@ class InvertNegationsSpec extends SingleMutationSpec {
   override def mutation: Mutation = InvertNegations
 
   "InvertNegations" should "mutate integer and floating point literals" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -24,7 +24,7 @@ class InvertNegationsSpec extends SingleMutationSpec {
           |  def foo(): Byte = -2
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 6
       mutationsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain theSameElementsAs Seq(
         "-1123.0"      -> "1123.0",
@@ -36,36 +36,37 @@ class InvertNegationsSpec extends SingleMutationSpec {
       )
   }
 
-  it should "mutate other appropriately typed entities" in withScalamuCompiler { implicit global =>
-    val code =
-      """
-        |class Bar[T](val polyParam: T) {
-        |  val field: Long = Long.MaxValue
-        |}
-        |
-        |class Foo(val param: Float) {
-        |  val bar = new Bar[Byte](5)
-        |  
-        |  def foo(i: Float): Double = {
-        |    println(-i)
-        |    i
-        |  }
-        | 
-        |  val b = -foo(-param)
-        | 
-        |  val c = -bar.field
-        | 
-        |  def poly[A](a: A): A = a
-        |  
-        |  val g = -poly(2f) + (-bar.polyParam)
-        |}
+  it should "mutate other appropriately typed entities" in withScalamuCompiler {
+    (global, config) =>
+      val code =
+        """
+          |class Bar[T](val polyParam: T) {
+          |  val field: Long = Long.MaxValue
+          |}
+          |
+          |class Foo(val param: Float) {
+          |  val bar = new Bar[Byte](5)
+          |
+          |  def foo(i: Float): Double = {
+          |    println(-i)
+          |    i
+          |  }
+          |
+          |  val b = -foo(-param)
+          |
+          |  val c = -bar.field
+          |
+          |  def poly[A](a: A): A = a
+          |
+          |  val g = -poly(2f) + (-bar.polyParam)
+          |}
         """.stripMargin
-    val mutationsInfo = mutationsFor(code)
-    mutationsInfo should have size 6
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
+      mutationsInfo should have size 6
   }
 
   it should "behave correctly in the presence of type aliases" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -74,14 +75,14 @@ class InvertNegationsSpec extends SingleMutationSpec {
           | val long = -foo(10)
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 1
       mutationsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain(
         "Foo.this.foo(10).unary_-" -> "Foo.this.foo(10)"
       )
   }
 
-  it should "not mutate unsupported types" in withScalamuCompiler { implicit global =>
+  it should "not mutate unsupported types" in withScalamuCompiler { (global, config) =>
     val code =
       """
         |object Foo {
@@ -92,7 +93,7 @@ class InvertNegationsSpec extends SingleMutationSpec {
         |  val c = -A(2)
         |}
       """.stripMargin
-    val mutationsInfo = mutationsFor(code)
+    val mutationsInfo = mutantsFor(code)(global, config.reporter)
     mutationsInfo shouldBe empty
   }
 }

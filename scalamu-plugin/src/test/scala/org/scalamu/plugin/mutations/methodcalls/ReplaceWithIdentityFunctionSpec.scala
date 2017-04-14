@@ -8,7 +8,7 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceWithIdentityFunction
 
   "ReplaceWithIdentityFunction" should "replace appropriately typed method calls and function literals with id" in
-    withScalamuCompiler { implicit global =>
+    withScalamuCompiler { (global, config) =>
       val code =
         """
           |object Foo {
@@ -27,12 +27,12 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
           |  }
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 8
     }
 
   it should "handle functions with multiple parameter lists, chained function calls and implicit parameters" ignore
-    withScalamuCompiler { implicit global =>
+    withScalamuCompiler { (global, config) =>
       val code =
         """
           |object Foo {
@@ -46,7 +46,7 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
           |  bar.bar(1)("123")
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 2
     }
 }

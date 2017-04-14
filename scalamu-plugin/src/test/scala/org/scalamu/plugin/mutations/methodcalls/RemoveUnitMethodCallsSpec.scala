@@ -8,7 +8,7 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
   override def mutation: Mutation = RemoveUnitMethodCalls
 
   "RemoveUnitMethodCalls" should "remove calls to methods returning Unit" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -28,12 +28,12 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |  poly[String]("123")
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 6
   }
 
   it should "handle partially functions with multiple parameter lists and implicit parameters" ignore
-    withScalamuCompiler { implicit global =>
+    withScalamuCompiler { (global, config) =>
       val code =
         """
           |object Foo {
@@ -48,7 +48,7 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |  
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 2
     }
 }

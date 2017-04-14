@@ -7,7 +7,7 @@ class ReplaceWithNoneSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceWithNone
 
   "ReplaceWithNone" should "replace Option.apply and Some.apply with None" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -17,7 +17,7 @@ class ReplaceWithNoneSpec extends SingleMutationSpec {
           |  val two = Option[Int](1).fold(0)(_ + 1)
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 3
   }
 }

@@ -1,21 +1,21 @@
 package org.scalamu.plugin.util
 
-import org.scalamu.plugin.fixtures.SharedScalamuCompilerFixture
+import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.mutations.arithmetic.{InvertNegations, ReplaceMathOperators}
 import org.scalamu.plugin.mutations.controllflow.{
   ReplaceCaseWithWildcard,
   ReplaceConditionalBoundaries
 }
-import org.scalamu.plugin.testutil.{CompilationUtils, MutationPhaseOnlyRunner}
+import org.scalamu.plugin.testutil.TestRunner
 import org.scalamu.plugin.{FqnPrefixedGuard, Mutation, MutationGuard, ScalamuConfig}
 import org.scalatest.{FlatSpec, Matchers}
 
 class TreeSanitizerSpec
     extends FlatSpec
     with Matchers
-    with MutationPhaseOnlyRunner
-    with CompilationUtils
-    with SharedScalamuCompilerFixture {
+    with TestRunner
+    with IsolatedScalamuCompilerFixture {
+
   // Purposefully wrong mutation order
   override def mutations: Seq[Mutation] = Seq(
     InvertNegations,
@@ -23,19 +23,17 @@ class TreeSanitizerSpec
     ReplaceConditionalBoundaries,
     ReplaceCaseWithWildcard
   )
-  override lazy val guard: MutationGuard = FqnPrefixedGuard(
-    ScalamuConfig.mutationGuardPrefix
-  )
-  override lazy val verifyTrees   = true
-  override lazy val sanitizeTrees = true
+  override val guard: MutationGuard = FqnPrefixedGuard(ScalamuConfig.mutationGuardPrefix)
+  override val verifyTrees          = true
+  override val sanitizeTrees        = true
 
-  "TreeSanitizer" should "remove nested mutants" in withScalamuCompiler { implicit global =>
+  "TreeSanitizer" should "remove nested mutants" in withScalamuCompiler { (global, _) =>
     val guards =
-      """
-        |package org.scalamu.guards
-        |object FooGuard {
-        |  val enabledMutation = 1
-        |}
+      s"""
+         |package ${ScalamuConfig.mutationGuardPrefix}
+         |object FooGuard {
+         |  val enabledMutation = 1
+         |}
       """.stripMargin
     val code =
       """
@@ -56,6 +54,6 @@ class TreeSanitizerSpec
     compile(
       NamedSnippet("Guards.scala", guards),
       NamedSnippet("Foo.scala", code)
-    )
+    )(global)
   }
 }

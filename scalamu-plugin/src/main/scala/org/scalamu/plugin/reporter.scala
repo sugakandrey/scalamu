@@ -7,10 +7,11 @@ import scala.reflect.internal.util.Position
  */
 trait MutationReporter {
   def report(mutationInfo: MutantInfo): Unit
+  def mutantsForRunId(runId: Int): Set[MutantInfo]
 }
 
 /**
- * Holds information about single inserted mutant.
+ * Contains information about a single inserted mutant.
  *
  * @param mutation [[org.scalamu.plugin.Mutation]] that spawned this mutant
  * @param runId Current global run id

@@ -1,9 +1,9 @@
 package org.scalamu.plugin
 
-import org.scalamu.plugin.mutations.{ReplaceWithNil, ReplaceWithNone}
-import org.scalamu.plugin.mutations.controllflow._
 import org.scalamu.plugin.mutations.arithmetic._
+import org.scalamu.plugin.mutations.controllflow._
 import org.scalamu.plugin.mutations.methodcalls._
+import org.scalamu.plugin.mutations.{ReplaceWithNil, ReplaceWithNone}
 
 object ScalamuConfig {
 

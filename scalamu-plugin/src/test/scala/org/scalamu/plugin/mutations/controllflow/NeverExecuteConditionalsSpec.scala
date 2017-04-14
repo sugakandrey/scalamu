@@ -7,7 +7,7 @@ class NeverExecuteConditionalsSpec extends SingleMutationSpec {
   override def mutation: Mutation = NeverExecuteConditionals
 
   "NeverExecuteConditionals" should "replace all conditional block with \'else\' branch" in withScalamuCompiler {
-    implicit global =>
+    (global, config) =>
       val code =
         """
           |object Foo {
@@ -25,7 +25,7 @@ class NeverExecuteConditionalsSpec extends SingleMutationSpec {
           |  class Bar(val x: Int = if (bool) 10 else 11)
           |}
         """.stripMargin
-      val mutationsInfo = mutationsFor(code)
+      val mutationsInfo = mutantsFor(code)(global, config.reporter)
       mutationsInfo should have size 4
   }
 }
