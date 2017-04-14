@@ -1,5 +1,5 @@
 import sbt.Keys._
-import sbt.{IntegrationTest => It, _}
+import sbt._
 
 object ScalamuBuild {
   lazy val commonSettings = Seq(
@@ -41,13 +41,12 @@ object ScalamuBuild {
 
   lazy val plugin = Project(id = "scalamu-plugin", base = file("scalamu-plugin"))
     .settings(commonSettings)
-    .configs(It)
     .settings(testSettings, Defaults.itSettings)
     .settings(
       libraryDependencies ++= Seq(
         "org.scala-lang" % "scala-compiler" % scalaVersion.value % Provided,
         "org.slf4j"      % "slf4j-api"      % "1.7.25"
-      ) ++ testDependencies(Test, It)
+      ) ++ testDependencies(Test)
     )
 
   lazy val commandLine = Project(id = "scalamu-command-line", base = file("scalamu-command-line"))
