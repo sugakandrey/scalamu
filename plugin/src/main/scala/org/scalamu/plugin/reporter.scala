@@ -13,7 +13,7 @@ trait MutationReporter {
 /**
  * Contains information about a single inserted mutant.
  *
- * @param mutation [[org.scalamu.plugin.Mutation]] that spawned this mutant
+ * @param mutation [[org.scalamu.plugin.Mutation]], that spawned this mutant
  * @param runId Current global run id
  * @param pos Original tree position
  * @param oldTree Original tree

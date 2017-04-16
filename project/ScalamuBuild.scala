@@ -30,8 +30,8 @@ object ScalamuBuild {
   )
 
   def testDependencies(configs: Configuration*) = Seq(
-    "org.scalactic" %% "scalactic" % "3.0.1" % configs.mkString(",") intransitive(),
-    "org.scalatest" %% "scalatest" % "3.0.1" % configs.mkString(",") intransitive()
+    "org.scalactic"  %% "scalactic"  % "3.0.1"  % configs.mkString(","),
+    "org.scalatest"  %% "scalatest"  % "3.0.1"  % configs.mkString(",")
   )
 
   lazy val testSettings = inConfig(Test)(
@@ -39,7 +39,7 @@ object ScalamuBuild {
       .filter(_.data.getName.contains("org.scala-lang"))
   )
 
-  lazy val plugin = Project(id = "scalamu-plugin", base = file("scalamu-plugin"))
+  lazy val plugin = Project(id = "plugin", base = file("plugin"))
     .settings(commonSettings)
     .settings(testSettings, Defaults.itSettings)
     .settings(
@@ -49,11 +49,36 @@ object ScalamuBuild {
       ) ++ testDependencies(Test)
     )
 
-  lazy val commandLine = Project(id = "scalamu-command-line", base = file("scalamu-command-line"))
+  lazy val commandLine = Project(id = "cli", base = file("cli"))
     .settings(commonSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.ow2.asm" % "asm-commons" % "5.2",
+        "org.ow2.asm" % "asm-util"    % "5.2"
+      ) ++ testDependencies(Test)
+    )
     .dependsOn(plugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
     .settings(commonSettings)
     .aggregate(plugin, commandLine)
+}
+
+object ScalamuTestingBuild {
+  import ScalamuBuild._
+  lazy val allTestingFrameWorks = Seq(
+    libraryDependencies ++= Seq(
+      "org.specs2"    %% "specs2-core" % "3.8.9" % Test,
+      "org.scalatest" %% "scalatest"   % "3.0.1" % Test,
+      "com.lihaoyi"   %% "utest"       % "0.4.5" % Test,
+      "junit"         % "junit"        % "4.12"  % Test
+    )
+  )
+
+  private def testProject(name: String): Project =
+    Project(id = s"testing-$name", base = file(s"testing/$name"))
+
+  lazy val testingSimple = testProject("simple")
+    .settings(commonSettings)
+    .settings(allTestingFrameWorks)
 }
