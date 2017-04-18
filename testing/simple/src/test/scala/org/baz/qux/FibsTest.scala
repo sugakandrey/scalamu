@@ -9,7 +9,7 @@ class FibsTest {
     val fibs = Fibs.fibsRecursive(11)
     assertEquals(89, fibs)
   }
-  
+
   @Test
   def testIterative(): Unit = {
     val fibs = Fibs.fibsIterative(12)

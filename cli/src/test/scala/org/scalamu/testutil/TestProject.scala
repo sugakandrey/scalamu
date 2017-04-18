@@ -15,9 +15,9 @@ final case class TestProject(
 
 object TestProject {
   private val testing: Path = Paths.get("../testing")
-  
+
   val simpleTestProject: TestProject = inDir(testing / "simple")
-  
+
   def inDir(dir: Path): TestProject = TestProject(
     dir.getFileName.toString,
     dir,

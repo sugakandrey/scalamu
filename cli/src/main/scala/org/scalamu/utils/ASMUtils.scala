@@ -85,6 +85,7 @@ trait ASMUtils {
         allSuperClasses.map(ClassName.fromInternalName)(breakOut),
         Set.empty,
         name.endsWith("$"),
+        hasNoArgConstructor = false,
         None
       )
     }
@@ -107,9 +108,14 @@ trait ASMUtils {
       desc: String,
       signature: String,
       exceptions: Array[String]
-    ): MethodVisitor = new MethodVisitor(ASM5) {
-      override def visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor =
-        addAnnotation(desc)
+    ): MethodVisitor = {
+      if (name == "<init>" && desc == "()V") {
+        classInfo = classInfo.copy(hasNoArgConstructor = true)
+      }
+      new MethodVisitor(ASM5) {
+        override def visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor =
+          addAnnotation(desc)
+      }
     }
   }
 }

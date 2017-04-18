@@ -23,7 +23,8 @@ class FileSystemUtilsSpec extends ScalamuSpec {
     )
     forAll(isJarOrZip)(_ should be a 'jarOrZip)
 
-    val notJarOrZip = Seq( createTempFile("dir"),
+    val notJarOrZip = Seq(
+      createTempFile("dir"),
       createTempFile("notAJar", Some(".jarr")),
       createTempFile("archive", Some(".rar"))
     )

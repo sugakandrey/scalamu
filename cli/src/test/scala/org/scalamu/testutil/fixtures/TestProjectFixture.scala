@@ -8,4 +8,3 @@ trait TestProjectFixture {
     code: TestProject => Any
   ): Any = code(testProject)
 }
-

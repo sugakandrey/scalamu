@@ -32,22 +32,3 @@ class SuperclassBasedFilter(val testClass: Class[_], override val framework: Tes
   override protected def predicate: (ClassFileInfo) => Boolean =
     _.superClasses.contains(ClassName.forClass(testClass))
 }
-
-trait TestClassFilterMixin extends TestClassFilter {
-  protected def additionalReq: ClassFileInfo => Boolean
-
-  override abstract def predicate: (ClassFileInfo) => Boolean =
-    (additionalReq |@| super.predicate).map { _ && _ }
-}
-
-trait HasNoArgConstructor extends TestClassFilterMixin {
-  override protected def additionalReq: ClassFileInfo => Boolean = _.hasNoArgConstructor
-}
-
-trait NotAModule extends TestClassFilterMixin {
-  override protected def additionalReq: (ClassFileInfo) => Boolean = !_.isModule
-}
-
-trait IsAModule extends TestClassFilterMixin {
-  override protected def additionalReq: (ClassFileInfo) => Boolean = _.isModule
-}

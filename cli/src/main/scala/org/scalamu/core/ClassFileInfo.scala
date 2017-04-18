@@ -11,6 +11,7 @@ final case class ClassFileInfo(
   superClasses: Set[ClassName],
   annotations: Set[ClassName],
   isModule: Boolean,
+  hasNoArgConstructor: Boolean,
   source: Option[String]
 )
 

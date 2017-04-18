@@ -14,8 +14,3 @@ class ClassFileFinder
     classFiles.flatMap(ClassFileInfo.loadFromPath)(collection.breakOut)
   }
 }
-
-class TestClassFileFinder(testClassCues: TestClassFilter) extends ClassFileFinder {
-  override def findAll(paths: Path*): Set[ClassFileInfo] =
-    super.findAll(paths: _*).filter(testClassCues)
-}

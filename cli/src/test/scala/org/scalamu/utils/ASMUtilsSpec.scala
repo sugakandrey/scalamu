@@ -1,5 +1,7 @@
 package org.scalamu.utils
 
+import java.util
+
 import org.scalamu.core.{ClassFileInfo, ClassName}
 import org.scalamu.testutil.ScalamuSpec
 
@@ -17,6 +19,7 @@ class ASMUtilsSpec extends ScalamuSpec {
         ),
         Set.empty,
         isModule = false,
+        hasNoArgConstructor = false,
         Some("Set.java")
       )
     )

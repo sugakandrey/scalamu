@@ -10,8 +10,8 @@ class FizzBuzzSpec extends Matchers with FunSuiteLike {
   }
 
   test("Every 15th element should equal 'FizzBuzz'") {
-    val i  = 100
-    val fb = FizzBuzz(i).fizzBuzz()
+    val i    = 100
+    val fb   = FizzBuzz(i).fizzBuzz()
     val fbzs = (15 to i by 15).map(fb)
     assert(fbzs.forall(_ == "FizzBuzz"))
   }
