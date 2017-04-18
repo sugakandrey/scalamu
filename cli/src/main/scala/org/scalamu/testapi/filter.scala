@@ -23,12 +23,12 @@ class CompoundTestClassFilter(filters: TestClassFilter*) extends TestClassFilter
 
 class AnnotationBasedFilter(val annotation: Class[_], override val framework: TestingFramework)
     extends TestClassFilter {
-  override protected def predicate: (ClassFileInfo) => Boolean =
+  override protected val predicate: (ClassFileInfo) => Boolean =
     _.annotations.contains(ClassName.forClass(annotation))
 }
 
 class SuperclassBasedFilter(val testClass: Class[_], override val framework: TestingFramework)
     extends TestClassFilter {
-  override protected def predicate: (ClassFileInfo) => Boolean =
+  override protected val predicate: (ClassFileInfo) => Boolean =
     _.superClasses.contains(ClassName.forClass(testClass))
 }
