@@ -5,12 +5,18 @@ import java.io.InputStream
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
 import org.scalamu.core.{ClassFileInfo, ClassName}
+import com.typesafe.scalalogging.Logger
 
 import scala.collection.breakOut
+import scala.util.Try
 
 trait ASMUtils {
-  def loadClassFileInfo(is: InputStream): ClassFileInfo =
-    load(is, TestClassVisitor())
+  private val log = Logger[ASMUtils]
+
+  type ClassLoadingResult[T] = Either[ClassNotFoundException, T]
+
+  def loadClassFileInfo(is: InputStream): Try[ClassFileInfo] =
+    Try(load(is, TestClassVisitor()))
 
   private def load[T](is: InputStream, visitor: CollectingVisitor[T]): T = {
     val contents = try {
@@ -29,7 +35,6 @@ trait ASMUtils {
   }
 
   private case class TestClassVisitor() extends CollectingVisitor[ClassFileInfo] {
-
     private var classInfo: ClassFileInfo = _
 
     override def result: ClassFileInfo = classInfo
@@ -68,13 +73,10 @@ trait ASMUtils {
       superName: String,
       interfaces: Array[String]
     ): Unit = {
-      val superClass    = Option(superName)
-      val interfacesSet = Option(interfaces).fold(Set.empty[String])(_.toSet)
-      val directSuperClasses = superClass match {
-        case None    => interfacesSet
-        case Some(n) => interfacesSet + n
-      }
-      val allSuperClasses = directSuperClasses | traverseSuperHierarchy(directSuperClasses)
+      val superClass         = Option(superName)
+      val interfacesSet      = Option(interfaces).fold(Set.empty[String])(_.toSet)
+      val directSuperClasses = superClass.fold(interfacesSet)(interfacesSet + _)
+      val allSuperClasses    = directSuperClasses | traverseSuperHierarchy(directSuperClasses)
 
       val className = ClassName.fromInternalName(name)
 

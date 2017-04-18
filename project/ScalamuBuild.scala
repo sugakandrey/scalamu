@@ -26,12 +26,12 @@ object ScalamuBuild {
       import scala.tools.reflect.ToolBox
       val tb = currentMirror.mkToolBox() 
       """,
-    scalacOptions in (Compile, console) -= "-Ywarn-unused-import"
-  )
-
-  def testDependencies(configs: Configuration*) = Seq(
-    "org.scalactic"  %% "scalactic"  % "3.0.1"  % configs.mkString(","),
-    "org.scalatest"  %% "scalatest"  % "3.0.1"  % configs.mkString(",")
+    scalacOptions in (Compile, console) -= "-Ywarn-unused-import",
+    libraryDependencies ++= Seq(
+      "ch.qos.logback"             % "logback-classic" % "1.1.7",
+      "com.typesafe.scala-logging" %% "scala-logging"  % "3.5.0",
+      "org.scalatest"              %% "scalatest"      % "3.0.1" % Test
+    )
   )
 
   lazy val testSettings = inConfig(Test)(
@@ -41,21 +41,27 @@ object ScalamuBuild {
 
   lazy val plugin = Project(id = "plugin", base = file("plugin"))
     .settings(commonSettings)
-    .settings(testSettings, Defaults.itSettings)
+    .settings(testSettings)
     .settings(
-      libraryDependencies ++= Seq(
-        "org.scala-lang" % "scala-compiler" % scalaVersion.value % Provided,
-        "org.slf4j"      % "slf4j-api"      % "1.7.25"
-      ) ++ testDependencies(Test)
+      libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % Provided
     )
+
+  private lazy val testingFrameworks = Seq(
+    "org.specs2"    %% "specs2-core" % "3.8.9" % Optional,
+    "org.scalatest" %% "scalatest"   % "3.0.1" % Optional,
+    "com.lihaoyi"   %% "utest"       % "0.4.5" % Optional,
+    "junit"         % "junit"        % "4.12"  % Optional
+  )
 
   lazy val commandLine = Project(id = "cli", base = file("cli"))
     .settings(commonSettings)
     .settings(
       libraryDependencies ++= Seq(
-        "org.ow2.asm" % "asm-commons" % "5.2",
-        "org.ow2.asm" % "asm-util"    % "5.2"
-      ) ++ testDependencies(Test)
+        "org.ow2.asm"      % "asm-commons" % "5.2",
+        "org.ow2.asm"      % "asm-util"    % "5.2",
+        "org.typelevel"    %% "cats"       % "0.9.0",
+        "com.github.scopt" %% "scopt"      % "3.5.0"
+      ) ++ testingFrameworks
     )
     .dependsOn(plugin)
 
@@ -66,19 +72,10 @@ object ScalamuBuild {
 
 object ScalamuTestingBuild {
   import ScalamuBuild._
-  lazy val allTestingFrameWorks = Seq(
-    libraryDependencies ++= Seq(
-      "org.specs2"    %% "specs2-core" % "3.8.9" % Test,
-      "org.scalatest" %% "scalatest"   % "3.0.1" % Test,
-      "com.lihaoyi"   %% "utest"       % "0.4.5" % Test,
-      "junit"         % "junit"        % "4.12"  % Test
-    )
-  )
 
   private def testProject(name: String): Project =
     Project(id = s"testing-$name", base = file(s"testing/$name"))
 
   lazy val testingSimple = testProject("simple")
     .settings(commonSettings)
-    .settings(allTestingFrameWorks)
 }

@@ -5,7 +5,7 @@ import java.nio.file.{Files, Path, StandardOpenOption}
 
 import org.scalamu.testutil.ScalamuSpec
 
-class FileSystemUtilsSpec extends ScalamuSpec with FileSystemUtils {
+class FileSystemUtilsSpec extends ScalamuSpec {
   def createTempFile(prefix: String, suffix: Option[String] = None): RichPath = {
     // if no suffix - create directory
     val file = suffix.fold(Files.createTempDirectory(prefix))(

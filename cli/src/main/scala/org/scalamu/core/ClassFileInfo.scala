@@ -1,11 +1,10 @@
 package org.scalamu.core
 
-import java.nio.file.{Files, Path, StandardOpenOption}
+import java.nio.file.Path
 
-import org.scalamu.utils.ASMUtils
-import org.slf4j.LoggerFactory
-
-import scala.util.control.NonFatal
+import cats.syntax.option._
+import com.typesafe.scalalogging.Logger
+import org.scalamu.utils.{ASMUtils, FileSystemUtils}
 
 final case class ClassFileInfo(
   name: ClassName,
@@ -15,16 +14,22 @@ final case class ClassFileInfo(
   source: Option[String]
 )
 
-object ClassFileInfo extends ASMUtils {
-  private val log = LoggerFactory.getLogger(this.getClass)
+object ClassFileInfo {
+  import ASMUtils._
+  import FileSystemUtils._
+  private val log = Logger[ClassFileInfo]
 
   def loadFromPath(path: Path): Option[ClassFileInfo] =
-    try {
-      val is = Files.newInputStream(path, StandardOpenOption.READ)
-      Option(loadClassFileInfo(is))
-    } catch {
-      case NonFatal(e) =>
-        log.error(s"Failed to open InputStream from class file $path. Cause ${e.getMessage}")
-        None
-    }
+    path.toInputStream
+      .flatMap(loadClassFileInfo)
+      .fold(
+        exc => {
+          log.error(
+            s"Failed to parse class file $path. Cause: $exc. " +
+              s"Make sure the classpath is set correctly, prior to calling loadFromPath()"
+          )
+          None
+        },
+        _.some
+      )
 }

@@ -1,7 +1,8 @@
 package org.scalamu.testutil
 
+import com.typesafe.scalalogging.StrictLogging
+import org.scalamu.utils.{ASMUtils, ClassLoadingUtils, FileSystemUtils}
 import org.scalatest._
-import org.scalatest.concurrent.ScalaFutures
 
 trait ScalamuSpec
     extends FlatSpec
@@ -10,4 +11,8 @@ trait ScalamuSpec
     with Inside
     with OptionValues
     with EitherValues
-    with ScalaFutures
+    with TryValues
+    with FileSystemUtils
+    with ASMUtils
+    with ClassLoadingUtils
+    with StrictLogging

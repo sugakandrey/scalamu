@@ -1,16 +1,17 @@
 package org.scalamu.utils
 
-import java.io.IOException
+import java.io.{IOException, InputStream, OutputStream}
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 
-import org.slf4j.LoggerFactory
+import com.typesafe.scalalogging.Logger
 
+import scala.util.Try
 import scala.util.control.NonFatal
 
 trait FileSystemUtils {
 
-  private val log = LoggerFactory.getLogger(this.getClass)
+  private val log = Logger[FileSystemUtils]
 
   implicit class RichPath(val path: Path) {
     private[this] val fileSystem        = FileSystems.getDefault
@@ -22,6 +23,12 @@ trait FileSystemUtils {
     def isClassFile: Boolean  = path != null && classFileMatcher.matches(path)
     def isSourceFile: Boolean = path != null && sourceFileMatcher.matches(path)
     def isDirectory: Boolean  = path != null && Files.isDirectory(path)
+
+    def /(other: String): Path = path.resolve(other)
+    def /(other: Path): Path   = path.resolve(other)
+
+    def toInputStream: Try[InputStream]   = Try(Files.newInputStream(path))
+    def toOutputStream: Try[OutputStream] = Try(Files.newOutputStream(path))
 
     override def toString: String = path.toString
   }

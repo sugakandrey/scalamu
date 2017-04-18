@@ -1,9 +1,9 @@
 package org.scalamu.core
 
-final case class ClassName(className: String) {
-  require(className.nonEmpty)
+final case class ClassName(fullName: String) {
+  require(fullName.nonEmpty)
   
-  private lazy val segments = className.split(".")
+  private lazy val segments = fullName.split(".")
   
   def name: String = segments.last
   def packageName: Seq[String] = segments.init
