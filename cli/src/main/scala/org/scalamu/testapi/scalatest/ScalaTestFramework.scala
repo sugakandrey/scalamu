@@ -1,11 +1,13 @@
 package org.scalamu.testapi.scalatest
 
 import org.scalamu.testapi._
-import org.scalatest.{Suite, WrapWith}
+import org.scalatest.{Status, Suite, WrapWith}
 
 trait ScalaTestFramework extends TestingFramework {
-  override def name: String       = "ScalaTest"
-  override def runner: TestRunner = new ScalaTestRunner
+  type R = Status
+
+  override def name: String          = "ScalaTest"
+  override def runner: TestRunner[R] = new ScalaTestRunner
   override def filter: TestClassFilter = new CompoundTestClassFilter(
     new SuperclassBasedFilter(classOf[Suite], this) with NotAModule with HasNoArgConstructor,
     new SuperclassBasedFilter(classOf[WrapWith], this) with NotAModule

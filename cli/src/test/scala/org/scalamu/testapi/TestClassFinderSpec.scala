@@ -1,6 +1,6 @@
 package org.scalamu.testapi
 
-import org.scalamu.testapi.junit.JunitFrameWork
+import org.scalamu.testapi.junit.JUnitFramework
 import org.scalamu.testapi.scalatest.ScalaTestFramework
 import org.scalamu.testapi.specs2.Specs2Framework
 import org.scalamu.testapi.utest.UTestFramework
@@ -35,7 +35,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture with Frame
   }
 
   it should "detect class files, which contain JUnit tests" in withTestProject { project =>
-    val finder = new TestClassFileFinder(JunitFrameWork.filter)
+    val finder = new TestClassFileFinder(JUnitFramework.filter)
     val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
       finder.findAll(project.target)
     )

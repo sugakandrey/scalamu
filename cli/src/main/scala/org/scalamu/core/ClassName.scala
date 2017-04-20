@@ -1,5 +1,7 @@
 package org.scalamu.core
 
+import scala.util.Try
+
 final case class ClassName(fullName: String) {
   require(fullName.nonEmpty)
 
@@ -7,6 +9,9 @@ final case class ClassName(fullName: String) {
 
   def name: String             = segments.last
   def packageName: Seq[String] = segments.init
+
+  def loadFromContextClassLoader: Try[Class[_]] =
+    Try(Class.forName(fullName, true, Thread.currentThread().getContextClassLoader))
 }
 
 object ClassName {

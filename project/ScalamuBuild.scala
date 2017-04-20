@@ -78,4 +78,5 @@ object ScalamuTestingBuild {
 
   lazy val testingSimple = testProject("simple")
     .settings(commonSettings)
+    .settings(testFrameworks += new TestFramework("utest.runner.Framework"))
 }

@@ -8,7 +8,6 @@ object FibsMicroTest extends TestSuite {
     'testIterative {
       Fibs.fibsIterative(12) ==> 144
     }
-
     'testRecursive {
       Fibs.fibsRecursive(11) ==> 89
     }
