@@ -10,7 +10,7 @@ class ClassLoadingUtilsSpec extends ScalamuSpec with TestProjectFixture {
 
   "ClassLoadingUtils" should "create a valid classloader from a target directory" in withTestProject {
     project =>
-      val cl = loaderForPaths(Set(project.target))
+      val cl = loaderForPaths(project.target)
       val classes = Seq(
         "org.foo.bar.FizzBuzz",
         "org.foo.bar.FizzBuzz$",
