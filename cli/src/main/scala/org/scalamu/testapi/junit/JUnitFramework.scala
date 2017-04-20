@@ -10,7 +10,7 @@ trait JUnitFramework extends TestingFramework { self =>
 
   override def name: String          = "JUnit"
   override def runner: TestRunner[R] = new JUnitTestRunner
-  override def filter: TestClassFilter = new CompoundTestClassFilter(
+  override def filter: TestClassFilter = new CompositeTestClassFilter(
     new AnnotationBasedFilter(classOf[Test], this) with NotAModule,
     new AnnotationBasedFilter(classOf[RunWith], this) with NotAModule,
     new SuperclassBasedFilter(classOf[TestCase], this) with NotAModule

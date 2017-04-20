@@ -8,7 +8,7 @@ trait ScalaTestFramework extends TestingFramework {
 
   override def name: String          = "ScalaTest"
   override def runner: TestRunner[R] = new ScalaTestRunner
-  override def filter: TestClassFilter = new CompoundTestClassFilter(
+  override def filter: TestClassFilter = new CompositeTestClassFilter(
     new SuperclassBasedFilter(classOf[Suite], this) with NotAModule with HasNoArgConstructor,
     new SuperclassBasedFilter(classOf[WrapWith], this) with NotAModule
   )

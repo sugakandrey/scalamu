@@ -1,6 +1,6 @@
 package org.scalamu.testutil
 
-import org.scalamu.testapi.{CompoundTestClassFilter, TestClassFilter}
+import org.scalamu.testapi.{CompositeTestClassFilter, TestClassFilter}
 import org.scalamu.testapi.junit.JUnitFramework
 import org.scalamu.testapi.scalatest.ScalaTestFramework
 import org.scalamu.testapi.specs2.Specs2Framework
@@ -12,7 +12,7 @@ trait FrameworkSupport
     with Specs2Framework
     with UTestFramework {
 
-  override def filter: TestClassFilter = new CompoundTestClassFilter(
+  override def filter: TestClassFilter = new CompositeTestClassFilter(
     JUnitFramework.filter,
     ScalaTestFramework.filter,
     Specs2Framework.filter,

@@ -4,7 +4,7 @@ import java.io.InputStream
 
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
-import org.scalamu.core.{ClassFileInfo, ClassName}
+import org.scalamu.core.{ClassInfo, ClassName}
 import com.typesafe.scalalogging.Logger
 
 import scala.collection.breakOut
@@ -15,7 +15,7 @@ trait ASMUtils {
 
   type ClassLoadingResult[T] = Either[ClassNotFoundException, T]
 
-  def loadClassFileInfo(is: InputStream): Try[ClassFileInfo] =
+  def loadClassFileInfo(is: InputStream): Try[ClassInfo] =
     Try(load(is, TestClassVisitor()))
 
   private def load[T](is: InputStream, visitor: CollectingVisitor[T]): T = {
@@ -34,10 +34,10 @@ trait ASMUtils {
     def result: T
   }
 
-  private case class TestClassVisitor() extends CollectingVisitor[ClassFileInfo] {
-    private var classInfo: ClassFileInfo = _
+  private case class TestClassVisitor() extends CollectingVisitor[ClassInfo] {
+    private var classInfo: ClassInfo = _
 
-    override def result: ClassFileInfo = classInfo
+    override def result: ClassInfo = classInfo
 
     private def traverseSuperHierarchy(internalNames: Set[String]): Set[String] =
       internalNames
@@ -80,7 +80,7 @@ trait ASMUtils {
 
       val className = ClassName.fromInternalName(name)
 
-      classInfo = ClassFileInfo(
+      classInfo = ClassInfo(
         className,
         allSuperClasses.map(ClassName.fromInternalName)(breakOut),
         Set.empty,

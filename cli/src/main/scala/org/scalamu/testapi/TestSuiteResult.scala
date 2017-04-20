@@ -2,6 +2,9 @@ package org.scalamu.testapi
 
 import org.scalamu.core.ClassName
 
+/**
+ * Represents the result of s single test suite run.
+ */
 sealed trait TestSuiteResult
 
 object TestSuiteResult {

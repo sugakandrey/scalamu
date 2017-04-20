@@ -1,11 +1,11 @@
 package org.scalamu.testapi.utest
 
 import org.scalamu.core.ClassName
-import org.scalamu.testapi.{InternalAPIConverter, TestFailure, TestSuiteResult}
+import org.scalamu.testapi.{SuiteResultTypeConverter, TestFailure, TestSuiteResult}
 import utest.framework.{Result, Tree}
 
-object UTestConverters extends InternalAPIConverter[Tree[Result]] {
-  private def fromFailure(failure: Result): TestFailure = 
+object UTestConverters extends SuiteResultTypeConverter[Tree[Result]] {
+  private def fromFailure(failure: Result): TestFailure =
     TestFailure(s"Test ${failure.name} failed.", failure.value.failed.toOption)
 
   override def fromResult(suite: ClassName)(result: Tree[Result]): TestSuiteResult = {

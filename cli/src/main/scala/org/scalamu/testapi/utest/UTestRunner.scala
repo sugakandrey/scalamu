@@ -3,16 +3,16 @@ package utest
 
 import _root_.utest.TestSuite
 import _root_.utest.framework.{ExecutionContext, Result, Tree}
-import org.scalamu.core.ClassFileInfo
+import org.scalamu.core.ClassInfo
 
 import scala.reflect.runtime.universe
 import scala.util.Try
 
 class UTestRunner extends TestRunner[Tree[Result]] {
 
-  override protected def converter: InternalAPIConverter[Tree[Result]] = UTestConverters
+  override protected def converter: SuiteResultTypeConverter[Tree[Result]] = UTestConverters
 
-  override def run(info: ClassFileInfo): TestSuiteResult = {
+  override def run(info: ClassInfo): TestSuiteResult = {
     val name         = info.name
     val mirror       = universe.runtimeMirror(Thread.currentThread().getContextClassLoader)
     val moduleSymbol = Try(mirror.staticModule(name.fullName))

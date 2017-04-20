@@ -11,7 +11,13 @@ final case class ClassName(fullName: String) {
   def packageName: Seq[String] = segments.init
 
   def loadFromContextClassLoader: Try[Class[_]] =
-    Try(Class.forName(fullName, true, Thread.currentThread().getContextClassLoader))
+    Try(
+      Class.forName(
+        fullName,
+        true,
+        Thread.currentThread().getContextClassLoader
+      )
+    )
 }
 
 object ClassName {

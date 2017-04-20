@@ -2,15 +2,15 @@ package org.scalamu.utils
 
 import java.util
 
-import org.scalamu.core.{ClassFileInfo, ClassName}
+import org.scalamu.core.{ClassInfo, ClassName}
 import org.scalamu.testutil.ScalamuSpec
 
 class ASMUtilsSpec extends ScalamuSpec {
-  "ASMUtils" should "return valid ClassFileInfo for Java SE classes" in {
+  "ASMUtils" should "return valid ClassInfo for Java SE classes" in {
     val is            = getClass.getClassLoader.getResourceAsStream("java/util/Set.class")
     val classFileInfo = loadClassFileInfo(is)
     classFileInfo.success.value should ===(
-      ClassFileInfo(
+      ClassInfo(
         ClassName("java.util.Set"),
         Set(
           ClassName("java.util.Collection"),
@@ -25,7 +25,7 @@ class ASMUtilsSpec extends ScalamuSpec {
     )
   }
 
-  it should "return valid ClassFileInfo for Scala classes" in {
+  it should "return valid ClassInfo for Scala classes" in {
     val is            = getClass.getClassLoader.getResourceAsStream("org/scalatest/FlatSpecLike.class")
     val classFileInfo = loadClassFileInfo(is)
     classFileInfo.success.value.annotations should contain allElementsOf Seq(

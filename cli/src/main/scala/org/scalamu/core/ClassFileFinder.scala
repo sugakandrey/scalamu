@@ -4,13 +4,10 @@ import java.nio.file.Path
 
 import org.scalamu.utils.{ClassLoadingUtils, FileSystemUtils}
 
-class ClassFileFinder
-    extends FileFinder[ClassFileInfo]
-    with FileSystemUtils
-    with ClassLoadingUtils {
+class ClassFileFinder extends FileFinder[ClassInfo] with FileSystemUtils with ClassLoadingUtils {
 
-  def findAll(paths: Path*): Set[ClassFileInfo] = {
+  def findAll(paths: Path*): Set[ClassInfo] = {
     val classFiles = paths.flatMap(_.filter(_.isClassFile))
-    classFiles.flatMap(ClassFileInfo.loadFromPath)(collection.breakOut)
+    classFiles.flatMap(ClassInfo.loadFromPath)(collection.breakOut)
   }
 }

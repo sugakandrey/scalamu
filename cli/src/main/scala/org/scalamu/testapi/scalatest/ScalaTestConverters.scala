@@ -1,13 +1,13 @@
 package org.scalamu.testapi.scalatest
 
 import org.scalamu.core.ClassName
-import org.scalamu.testapi.{InternalAPIConverter, TestFailure, TestSuiteResult}
+import org.scalamu.testapi.{SuiteResultTypeConverter, TestFailure, TestSuiteResult}
 import org.scalatest.events.{RunCompleted, RunStarting, SuiteAborted, TestFailed}
 import org.scalatest.{Reporter, Status}
 
 import scala.collection.mutable
 
-class ScalaTestConverters extends InternalAPIConverter[Status] {
+class ScalaTestConverters extends SuiteResultTypeConverter[Status] {
   private val failures = mutable.Set.empty[TestFailure]
   private var startTimestamp: Long      = _
   private var completionTimestamp: Long = _

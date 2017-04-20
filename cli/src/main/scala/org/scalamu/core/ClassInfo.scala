@@ -6,7 +6,7 @@ import cats.syntax.option._
 import com.typesafe.scalalogging.Logger
 import org.scalamu.utils.{ASMUtils, FileSystemUtils}
 
-final case class ClassFileInfo(
+final case class ClassInfo(
   name: ClassName,
   superClasses: Set[ClassName],
   annotations: Set[ClassName],
@@ -15,12 +15,12 @@ final case class ClassFileInfo(
   source: Option[String]
 )
 
-object ClassFileInfo {
+object ClassInfo {
   import ASMUtils._
   import FileSystemUtils._
-  private val log = Logger[ClassFileInfo]
+  private val log = Logger[ClassInfo]
 
-  def loadFromPath(path: Path): Option[ClassFileInfo] =
+  def loadFromPath(path: Path): Option[ClassInfo] =
     path.toInputStream
       .flatMap(loadClassFileInfo)
       .fold(
