@@ -5,7 +5,7 @@ import _root_.junit.framework.TestCase
 import org.junit.Test
 import org.junit.runner.{Result, RunWith}
 
-trait JUnitFramework extends TestingFramework { self =>
+trait JUnitFramework extends TestingFramework {
   type R = Result
 
   override def name: String          = "JUnit"

@@ -30,7 +30,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture with Frame
     )
     classFiles should have size 1
     classFiles.map(_.info.name.fullName) should contain theSameElementsAs Seq(
-      "org.baz.qux.FibsMicroTest"
+      "org.baz.qux.FibsMicroTest$"
     )
   }
 
@@ -71,7 +71,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture with Frame
       "org.baz.qux.FibsSpec",
       "org.baz.qux.FibsTest",
       "org.baz.qux.FibsSpecs2",
-      "org.baz.qux.FibsMicroTest"
+      "org.baz.qux.FibsMicroTest$"
     )
     (classFiles.map(_.info.name.fullName) should contain).allElementsOf(fizzBuzzPart)
     (classFiles.map(_.info.name.fullName) should contain).allElementsOf(fibsPart)

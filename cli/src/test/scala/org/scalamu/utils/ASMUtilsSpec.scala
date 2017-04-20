@@ -1,7 +1,5 @@
 package org.scalamu.utils
 
-import java.util
-
 import org.scalamu.core.{ClassInfo, ClassName}
 import org.scalamu.testutil.ScalamuSpec
 

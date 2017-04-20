@@ -10,6 +10,7 @@ import com.typesafe.scalalogging.Logger
 import scala.collection.breakOut
 import scala.util.Try
 
+// @TODO: collect annotations from superclasses
 trait ASMUtils {
   private val log = Logger[ASMUtils]
 

@@ -8,7 +8,7 @@ import org.scalamu.core.ClassInfo
 trait TestClassFilterMixin extends TestClassFilter {
   protected def additionalReq: ClassInfo => Boolean
 
-  override abstract val predicate: (ClassInfo) => Boolean =
+  override abstract lazy val predicate: (ClassInfo) => Boolean =
     (additionalReq |@| super.predicate).map { _ && _ }
 }
 

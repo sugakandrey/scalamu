@@ -36,7 +36,7 @@ class CompositeTestClassFilter(filters: TestClassFilter*) extends TestClassFilte
  */
 class AnnotationBasedFilter(val annotation: Class[_], override val framework: TestingFramework)
     extends TestClassFilter {
-  override protected val predicate: (ClassInfo) => Boolean =
+  override protected lazy val predicate: (ClassInfo) => Boolean =
     _.annotations.contains(ClassName.forClass(annotation))
 }
 
@@ -48,6 +48,6 @@ class AnnotationBasedFilter(val annotation: Class[_], override val framework: Te
  */
 class SuperclassBasedFilter(val testClass: Class[_], override val framework: TestingFramework)
     extends TestClassFilter {
-  override protected val predicate: (ClassInfo) => Boolean =
+  override protected lazy val predicate: (ClassInfo) => Boolean =
     _.superClasses.contains(ClassName.forClass(testClass))
 }

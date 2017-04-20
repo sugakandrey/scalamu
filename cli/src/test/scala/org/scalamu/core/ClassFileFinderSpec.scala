@@ -13,7 +13,7 @@ class ClassFileFinderSpec extends ScalamuSpec with TestProjectFixture {
       val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
         finder.findAll(project.target)
       )
-      classFiles should have size 10
+      classFiles should have size 11
       val fizzBuzzPart = Seq(
         "org.foo.bar.FizzBuzz",
         "org.foo.bar.FizzBuzz$",
@@ -26,6 +26,7 @@ class ClassFileFinderSpec extends ScalamuSpec with TestProjectFixture {
         "org.baz.qux.FibsSpec",
         "org.baz.qux.FibsTest",
         "org.baz.qux.FibsSpecs2",
+        "org.baz.qux.FibsMicroTest$",
         "org.baz.qux.FibsMicroTest"
       )
       classFiles.map(_.name.fullName) should contain allElementsOf fizzBuzzPart

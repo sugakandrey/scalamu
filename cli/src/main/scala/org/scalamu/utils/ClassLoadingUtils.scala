@@ -10,9 +10,9 @@ trait ClassLoadingUtils {
     try { f } finally { Thread.currentThread.setContextClassLoader(oldClassLoader) }
   }
 
-  def loaderForPaths(paths: Set[Path]): ClassLoader = {
+  def loaderForPaths(paths: Set[Path], parent: ClassLoader = getClass.getClassLoader): ClassLoader = {
     val containerURLs: Array[URL] = paths.map(_.toUri.toURL)(collection.breakOut)
-    new URLClassLoader(containerURLs, getClass.getClassLoader)
+    new URLClassLoader(containerURLs, parent)
   }
 }
 
