@@ -75,8 +75,20 @@ object ScalamuTestingBuild {
 
   private def testProject(name: String): Project =
     Project(id = s"testing-$name", base = file(s"testing/$name"))
+      .settings(commonSettings)
 
   lazy val testingSimple = testProject("simple")
-    .settings(commonSettings)
     .settings(testFrameworks += new TestFramework("utest.runner.Framework"))
+
+  lazy val junit = testProject("junit")
+    .settings(libraryDependencies += "junit" % "junit" % "4.12" % Test)
+
+  lazy val scalatest = testProject("scalatest")
+    .settings(libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test)
+
+  lazy val specs2 = testProject("specs2")
+    .settings(libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.9" % Test)
+
+  lazy val utest = testProject("utest")
+    .settings(libraryDependencies += "com.lihaoyi" %% "utest" % "0.4.5" % Test)
 }

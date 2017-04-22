@@ -17,11 +17,12 @@ object TestProject {
   private val testing: Path = Paths.get("../testing")
 
   val simpleTestProject: TestProject = inDir(testing / "simple")
+  val JUnit: TestProject             = inDir(testing / "junit")
 
   def inDir(dir: Path): TestProject = TestProject(
     dir.getFileName.toString,
     dir,
-    (dir / "lib").filter(_.isJarOrZip).toSet, 
+    (dir / "lib").filter(_.isJarOrZip).toSet,
     Set(
       dir / "target" / "scala-2.12" / "classes",
       dir / "target" / "scala-2.12" / "test-classes"
