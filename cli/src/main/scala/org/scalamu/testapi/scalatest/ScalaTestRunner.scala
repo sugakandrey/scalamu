@@ -1,7 +1,7 @@
 package org.scalamu.testapi
 package scalatest
 
-import org.scalamu.core.ClassInfo
+import org.scalamu.core.ClassName
 import org.scalatest._
 
 import scala.util.{Failure, Try}
@@ -31,8 +31,7 @@ class ScalaTestRunner extends TestRunner[Status] {
         }
     }
 
-  override def run(info: ClassInfo): TestSuiteResult = {
-    val suite            = info.name
+  override def run(suite: ClassName): TestSuiteResult = {
     val tryLoadTestClass = suite.loadFromContextClassLoader
     val suiteClass       = tryLoadTestClass.flatMap(resolveRunnerClass)
     suiteClass.fold(

@@ -21,7 +21,7 @@ class ClassLoadingUtilsSpec extends ScalamuSpec with TestProjectFixture {
   }
 
   it should "create a valid classloader from dependency jars" in withTestProject { project =>
-    val cl = loaderForPaths(project.dependencies, null)
+    val cl = loaderForPaths(project.dependencies, None)
     val classes = Seq(
       "org.specs2.specification.core.SpecificationStructure",
       "org.specs2.control.eff.Eff",

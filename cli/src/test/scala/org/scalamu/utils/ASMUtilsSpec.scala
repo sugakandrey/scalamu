@@ -47,10 +47,11 @@ class ASMUtilsSpec extends ScalamuSpec {
     barInfo.annotations should contain(ClassName("org.junit.Test"))
 
     val bazInfo = classInfoForName("org/scalamu/utils/ASMUtilsSpec$Baz.class")
+    bazInfo.annotations should contain(ClassName("org.junit.Test"))
     bazInfo.annotations should not contain ClassName("org.junit.runner.RunWith")
     
     val quxInfo = classInfoForName("org/scalamu/utils/ASMUtilsSpec$Qux.class")
-    barInfo.annotations should contain(ClassName("org.junit.Test"))
+    quxInfo.annotations should contain(ClassName("org.junit.Test"))
   }
 
   @RunWith(classOf[Suite])
@@ -58,7 +59,7 @@ class ASMUtilsSpec extends ScalamuSpec {
   @Test
   private class Foo
   private class Bar extends Foo
-  private class Baz extends Trait
+  private class Baz extends Foo with Trait
   private class Qux extends Bar with Trait
   private object AnnotatedMethods {
     @Test

@@ -1,6 +1,6 @@
 package org.scalamu.testapi.specs2
 
-import org.scalamu.core.ClassInfo
+import org.scalamu.core.ClassName
 import org.scalamu.testapi.{SuiteResultTypeConverter, TestRunner, TestSuiteResult}
 import org.specs2.control
 import org.specs2.reporter.NotifierPrinter
@@ -18,8 +18,7 @@ class Specs2Runner extends TestRunner[Stats] {
     notifier
   )
 
-  override def run(testClass: ClassInfo): TestSuiteResult = {
-    val suite      = testClass.name
+  override def run(suite: ClassName): TestSuiteResult = {
     val suiteClass = suite.loadFromContextClassLoader
     val spec       = suiteClass.flatMap(cl => Try(cl.newInstance().asInstanceOf[SpecificationStructure]))
     val suiteResult = spec.map { s =>
