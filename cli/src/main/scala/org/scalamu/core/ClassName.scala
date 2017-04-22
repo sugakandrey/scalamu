@@ -22,8 +22,8 @@ final case class ClassName(fullName: String) {
 
 object ClassName {
   def fromDescriptor(descriptor: String): ClassName =
-    ClassName.fromInternalName(descriptor.substring(1, descriptor.length - 1))
+    ClassName.fromInternal(descriptor.substring(1, descriptor.length - 1))
 
-  def fromInternalName(name: String): ClassName = ClassName(name.replaceAll("/", "."))
+  def fromInternal(name: String): ClassName = ClassName(name.replaceAll("/", "."))
   def forClass(aClass: Class[_]): ClassName     = ClassName(aClass.getName)
 }

@@ -26,7 +26,7 @@ object ClassInfo {
       .fold(
         exc => {
           log.error(
-            s"Failed to parse class file $path. Cause: $exc. " +
+            s"Failed to load class file $path. Cause: $exc. " +
               s"Make sure the classpath is set correctly, prior to calling loadFromPath()"
           )
           None

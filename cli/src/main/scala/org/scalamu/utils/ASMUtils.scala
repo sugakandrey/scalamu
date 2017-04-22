@@ -5,19 +5,13 @@ import java.io.InputStream
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
 import org.scalamu.core.{ClassInfo, ClassName}
-import com.typesafe.scalalogging.Logger
 
-import scala.collection.breakOut
+import scala.collection.mutable
 import scala.util.Try
 
-// @TODO: collect annotations from superclasses
 trait ASMUtils {
-  private val log = Logger[ASMUtils]
-
-  type ClassLoadingResult[T] = Either[ClassNotFoundException, T]
-
   def loadClassFileInfo(is: InputStream): Try[ClassInfo] =
-    Try(load(is, TestClassVisitor()))
+    Try(load(is, ClassInfoVisitor()))
 
   private def load[T](is: InputStream, visitor: CollectingVisitor[T]): T = {
     val contents = try {
@@ -35,23 +29,46 @@ trait ASMUtils {
     def result: T
   }
 
-  private case class TestClassVisitor() extends CollectingVisitor[ClassInfo] {
+  private case class ClassInfoVisitor() extends CollectingVisitor[ClassInfo] {
+    private val visitedSuperClasses = mutable.HashSet.empty[String]
+
     private var classInfo: ClassInfo = _
 
     override def result: ClassInfo = classInfo
 
-    private def traverseSuperHierarchy(internalNames: Set[String]): Set[String] =
-      internalNames
-        .map(
-          name => Thread.currentThread().getContextClassLoader.getResourceAsStream(s"$name.class")
-        )
-        .flatMap(load(_, SuperClassVisitor()))
+    private def traverseSuperHierarchy[R](
+      internalNames: Traversable[String],
+      visitor: CollectingVisitor[_ <: Traversable[R]]
+    ): Set[R] =
+      internalNames.collect {
+        case name if visitedSuperClasses.add(name) =>
+          Thread.currentThread().getContextClassLoader.getResourceAsStream(s"$name.class")
+      }.flatMap(load(_, visitor))(collection.breakOut)
 
-    private case class SuperClassVisitor() extends CollectingVisitor[Set[String]] {
-      private var superNames: Set[String] = _
+    private case class SuperInterfaceVisitor() extends CollectingVisitor[mutable.Set[String]] {
+      private val superNames: mutable.Set[String] = mutable.Set.empty
 
-      override def result: Set[String] =
-        superNames | traverseSuperHierarchy(superNames)
+      override def result: mutable.Set[String] =
+        superNames | traverseSuperHierarchy(superNames, SuperInterfaceVisitor())
+
+      override def visit(
+        version: Int,
+        access: Int,
+        name: String,
+        signature: String,
+        superName: String,
+        interfaces: Array[String]
+      ): Unit = Option(interfaces).foreach(_.foreach(superNames += _))
+    }
+
+    private case class SuperClassInfo(internalName: String, annotations: mutable.Set[ClassName])
+
+    private case class SuperClassVisitor() extends CollectingVisitor[Set[SuperClassInfo]] {
+      private var selfInfo: SuperClassInfo       = _
+      private var superClassName: Option[String] = None
+
+      override def result: Set[SuperClassInfo] =
+        traverseSuperHierarchy(superClassName, SuperClassVisitor()) + selfInfo
 
       override def visit(
         version: Int,
@@ -61,8 +78,16 @@ trait ASMUtils {
         superName: String,
         interfaces: Array[String]
       ): Unit = {
-        superNames = Option(interfaces).fold(Set.empty[String])(_.toSet)
-        Option(superName).foreach(name => superNames = superNames + name)
+        superClassName = Option(superName)
+        selfInfo = SuperClassInfo(name, mutable.Set.empty)
+      }
+
+      override def visitAnnotation(
+        desc: String,
+        visible: Boolean
+      ): AnnotationVisitor = {
+        selfInfo.annotations += ClassName.fromDescriptor(desc)
+        null
       }
     }
 
@@ -74,17 +99,29 @@ trait ASMUtils {
       superName: String,
       interfaces: Array[String]
     ): Unit = {
-      val superClass         = Option(superName)
-      val interfacesSet      = Option(interfaces).fold(Set.empty[String])(_.toSet)
-      val directSuperClasses = superClass.fold(interfacesSet)(interfacesSet + _)
-      val allSuperClasses    = directSuperClasses | traverseSuperHierarchy(directSuperClasses)
+      val superClass    = Option(superName)
+      val interfacesSet = Option(interfaces).fold(Set.empty[String])(_.toSet)
 
-      val className = ClassName.fromInternalName(name)
+      val superInterfaces = (interfacesSet | traverseSuperHierarchy(
+        interfacesSet,
+        SuperInterfaceVisitor()
+      )).map(ClassName.fromInternal)
+
+      val superClasses = superClass.fold(Set.empty[SuperClassInfo])(
+        cl => traverseSuperHierarchy(Seq(cl), SuperClassVisitor())
+      )
+
+      val superAnnotations = superClasses.flatMap(_.annotations)
+
+      val wholeHierarchy =
+        superClasses.map(aClass => ClassName.fromInternal(aClass.internalName)) | superInterfaces
+
+      val className = ClassName.fromInternal(name)
 
       classInfo = ClassInfo(
         className,
-        allSuperClasses.map(ClassName.fromInternalName)(breakOut),
-        Set.empty,
+        wholeHierarchy,
+        superAnnotations,
         name.endsWith("$"),
         hasNoArgConstructor = false,
         None
