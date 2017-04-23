@@ -25,7 +25,7 @@ class ScalaTestRunner extends TestRunner[Status] {
             Failure(
               new IllegalArgumentException(
                 s"Class specified in the value of @WrapWith " +
-                  s"must declare a constructor taking Class[_]."
+                  s"must extend org.scalatest.Suite and declare a constructor taking Class[_]."
               )
             )
         }

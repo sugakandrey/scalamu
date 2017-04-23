@@ -19,6 +19,8 @@ object TestProject {
   val simpleTestProject: TestProject = inDir(testing / "simple")
   val JUnit: TestProject             = inDir(testing / "junit")
   val UTest: TestProject             = inDir(testing / "utest")
+  val ScalaTest: TestProject         = inDir(testing / "scalatest")
+  val Specs2: TestProject            = inDir(testing / "specs2")
 
   def inDir(dir: Path): TestProject = TestProject(
     dir.getFileName.toString,
