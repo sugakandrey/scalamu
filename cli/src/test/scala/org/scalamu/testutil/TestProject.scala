@@ -18,6 +18,7 @@ object TestProject {
 
   val simpleTestProject: TestProject = inDir(testing / "simple")
   val JUnit: TestProject             = inDir(testing / "junit")
+  val UTest: TestProject             = inDir(testing / "utest")
 
   def inDir(dir: Path): TestProject = TestProject(
     dir.getFileName.toString,

@@ -12,16 +12,16 @@ class UTestRunner extends TestRunner[Tree[Result]] {
 
   override protected def converter: SuiteResultTypeConverter[Tree[Result]] = UTestConverters
 
-  override def run(suite: ClassName): TestSuiteResult = {
+  override def run(suiteName: ClassName): TestSuiteResult = {
     val mirror       = universe.runtimeMirror(Thread.currentThread().getContextClassLoader)
-    val moduleSymbol = Try(mirror.staticModule(suite.fullName))
+    val moduleSymbol = Try(mirror.staticModule(suiteName.fullName))
     implicit val ec  = ExecutionContext.RunNow
     moduleSymbol.fold(
-      TestSuiteResult.Aborted(suite, _),
+      TestSuiteResult.Aborted(suiteName, _),
       mirror.reflectModule _
         andThen { _.instance.asInstanceOf[TestSuite] }
-        andThen { _.tests.run() }
-        andThen converter.fromResult(suite)
+        andThen { suite => suite.tests.run(wrap = suite.utestWrap(_)) }
+        andThen converter.fromResult(suiteName)
     )
   }
 }

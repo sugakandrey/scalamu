@@ -8,7 +8,7 @@ import org.scalatest.{Reporter, Status}
 import scala.collection.mutable
 
 class ScalaTestConverters extends SuiteResultTypeConverter[Status] {
-  private val failures = mutable.Set.empty[TestFailure]
+  private val failures                  = mutable.Set.empty[TestFailure]
   private var startTimestamp: Long      = _
   private var completionTimestamp: Long = _
 
