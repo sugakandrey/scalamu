@@ -24,12 +24,13 @@ class Specs2Runner extends TestRunner[Stats] {
     val suiteResult = spec.map { s =>
       val errorOrStats = control.runAction(
         Runner.runSpecStructure(
-          s.is,
+          s.structure(Env()),
           Env(),
           Thread.currentThread().getContextClassLoader,
           List(NotifierPrinter.printer(notifier))
         )
       )
+
       errorOrStats.fold(
         err =>
           err.fold(
@@ -39,6 +40,7 @@ class Specs2Runner extends TestRunner[Stats] {
         converter.fromResult(suite)
       )
     }
+
     suiteResult.fold(
       TestSuiteResult.Aborted(suite, _),
       identity

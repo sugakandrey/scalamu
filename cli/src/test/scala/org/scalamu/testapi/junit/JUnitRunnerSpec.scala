@@ -4,8 +4,8 @@ import org.scalamu.testapi.{TestRunnerSpec, TestingFramework}
 import org.scalamu.testutil.TestProject
 
 class JUnitRunnerSpec extends TestRunnerSpec {
-  override def testProject: TestProject              = TestProject.JUnit
   override protected def framework: TestingFramework = JUnitFramework
+  override def testProject: TestProject              = TestProject.JUnit
 
   "JUnitRunner" should "be able to run basic JUnit 4 test classes" in withTestProjectInClassPath {
     val successfulTest = classInfoForName("org/scalamu/testing/junit/Successful.class")

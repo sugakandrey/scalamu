@@ -7,8 +7,6 @@ import org.scalamu.core.{ClassInfo, ClassName}
 import org.scalamu.testutil.ScalamuSpec
 
 class ASMUtilsSpec extends ScalamuSpec {
-  implicit private val loader = getClass.getClassLoader
-
   "ASMUtils" should "return valid ClassInfo for Java SE classes" in {
     val classInfo = classInfoForName("java/util/Set.class")
     classInfo should ===(

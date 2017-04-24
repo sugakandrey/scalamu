@@ -4,8 +4,8 @@ import org.scalamu.testapi.{TestRunnerSpec, TestingFramework}
 import org.scalamu.testutil.TestProject
 
 class UTestRunnerSpec extends TestRunnerSpec {
-  override def testProject: TestProject              = TestProject.UTest
   override protected def framework: TestingFramework = UTestFramework
+  override def testProject: TestProject              = TestProject.UTest
 
   "UTestRunnerSpec" should "be able to run basic UTest classes" in withTestProjectInClassPath {
     val successfulTest = classInfoForName("org/scalamu/testing/utest/Successful.class")

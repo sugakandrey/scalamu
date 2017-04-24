@@ -53,8 +53,8 @@ trait ASMUtils {
     private case class SuperClassVisitor(collectAnnotations: Boolean)
         extends CollectingVisitor[mutable.Set[SuperClassInfo]] {
 
-      private var selfInfo: SuperClassInfo   = _
-      private var superClass: Option[String] = None
+      private var selfInfo: SuperClassInfo             = _
+      private var superClass: Option[String]           = None
       private val superInterfaces: mutable.Set[String] = mutable.Set.empty
 
       override def result: mutable.Set[SuperClassInfo] =
