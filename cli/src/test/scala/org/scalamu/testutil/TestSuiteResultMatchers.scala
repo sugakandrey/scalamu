@@ -10,7 +10,7 @@ trait TestSuiteResultMatchers extends Matchers {
   class SuccessBePropMatcher extends BePropertyMatcher[TestSuiteResult] {
     override def apply(result: TestSuiteResult): BePropertyMatchResult =
       BePropertyMatchResult(
-        result.isInstanceOf[Successful],
+        result.isInstanceOf[Success],
         "successful"
       )
   }
@@ -18,7 +18,7 @@ trait TestSuiteResultMatchers extends Matchers {
   class FailureBePropMatcher extends BePropertyMatcher[TestSuiteResult] {
     override def apply(result: TestSuiteResult): BePropertyMatchResult =
       BePropertyMatchResult(
-        result.isInstanceOf[Failed],
+        result.isInstanceOf[TestsFailed],
         "failed"
       )
   }

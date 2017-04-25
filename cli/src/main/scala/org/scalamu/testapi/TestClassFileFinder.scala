@@ -2,9 +2,11 @@ package org.scalamu.testapi
 
 import java.nio.file.Path
 
-import org.scalamu.core.{ClassFileFinder, FileFinder}
+import org.scalamu.core.ClassInfo
+import org.scalamu.core.detection.CollectingFileFinder
 
-class TestClassFileFinder(filter: TestClassFilter) extends FileFinder[TestClassInfo] {
-  override def findAll(paths: Set[Path]): Set[TestClassInfo] =
-    new ClassFileFinder().findAll(paths).flatMap(filter(_))
+class TestClassFileFinder(filter: TestClassFilter) extends CollectingFileFinder[TestClassInfo] {
+  override def predicate: (Path) => Boolean = _.isClassFile
+  override def fromPath: (Path) => Option[TestClassInfo] =
+    ClassInfo.loadFromPath _ andThen { _.flatMap(filter) }
 }

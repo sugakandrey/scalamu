@@ -10,7 +10,7 @@ class MutationFilterSpec extends TestRunner with IsolatedScalamuCompilerFixture 
     ".*foobar.*".r,
     ".*Foo.Bar".r
   )
-  override def mutations: Seq[Mutation] = ScalamuConfig.allMutations
+  override def mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
 
   "MutationFilter" should "ignore symbols according to their fullName using supplied regex" in
     withScalamuCompiler { (global, config) =>

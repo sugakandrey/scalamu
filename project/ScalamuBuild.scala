@@ -43,7 +43,7 @@ object ScalamuBuild {
     .settings(commonSettings)
     .settings(testSettings)
     .settings(
-      libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % Provided
+      libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )
 
   private lazy val testingFrameworks = Seq(
@@ -57,10 +57,11 @@ object ScalamuBuild {
     .settings(commonSettings)
     .settings(
       libraryDependencies ++= Seq(
-        "org.ow2.asm"      % "asm-commons" % "5.2",
-        "org.ow2.asm"      % "asm-util"    % "5.2",
-        "org.typelevel"    %% "cats"       % "0.9.0",
-        "com.github.scopt" %% "scopt"      % "3.5.0"
+        "org.ow2.asm"      % "asm-commons"              % "5.2",
+        "org.ow2.asm"      % "asm-util"                 % "5.2",
+        "org.typelevel"    %% "cats"                    % "0.9.0",
+        "com.github.scopt" %% "scopt"                   % "3.5.0",
+        "org.scoverage"    %% "scalac-scoverage-plugin" % "1.3.0"
       ) ++ testingFrameworks
     )
     .dependsOn(plugin)

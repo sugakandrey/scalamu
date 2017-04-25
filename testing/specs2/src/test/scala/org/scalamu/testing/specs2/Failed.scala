@@ -4,7 +4,7 @@ import org.specs2.mutable.Specification
 
 class Failed extends Specification {
   def foo(): Unit = throw new RuntimeException
-  
+
   "this is my specification" >> {
     "where example 1 must be true" >> {
       1.must_==(1)

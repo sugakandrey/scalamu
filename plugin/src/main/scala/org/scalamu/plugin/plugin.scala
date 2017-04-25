@@ -30,10 +30,6 @@ class ScalamuPlugin(
 
     import global._
 
-    override def newPhase(prev: scala.tools.nsc.Phase): Phase = new Phase(prev) {
-      override def run(): Unit = super.run()
-    }
-
     override protected def newTransformer(unit: CompilationUnit): Transformer =
       new Transformer(unit)
 

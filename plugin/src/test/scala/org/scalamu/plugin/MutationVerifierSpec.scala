@@ -24,11 +24,11 @@ class MutationVerifierSpec extends TestRunner with IsolatedScalamuCompilerFixtur
   override def createReporter(settings: Settings): Reporter = new ConsoleReporter(settings) {
     override def printMessage(msg: String): Unit = ()
   }
-  override val guard: MutationGuard = FqnPrefixedGuard(ScalamuConfig.mutationGuardPrefix)
+  override val guard: MutationGuard = FqnPrefixedGuard(ScalamuPluginConfig.mutationGuardPrefix)
   override val verifyTrees          = true
   private val guards =
     s"""
-       |package ${ScalamuConfig.mutationGuardPrefix}
+       |package ${ScalamuPluginConfig.mutationGuardPrefix}
        |object FooGuard {
        |  val enabledMutation = 1
        |}

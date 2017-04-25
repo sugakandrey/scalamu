@@ -1,5 +1,6 @@
 package org.scalamu.core
 
+import org.scalamu.core.detection.ClassFileFinder
 import org.scalamu.testutil.fixtures.TestProjectFixture
 import org.scalamu.testutil.{ScalamuSpec, TestProject}
 

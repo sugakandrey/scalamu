@@ -22,8 +22,8 @@ class ScalaTestConverters extends SuiteResultTypeConverter[Status] {
 
   override def fromResult(suite: ClassName)(result: Status): TestSuiteResult =
     if (result.succeeds())
-      TestSuiteResult.Successful(suite, completionTimestamp - startTimestamp)
+      TestSuiteResult.Success(suite, completionTimestamp - startTimestamp)
     else
-      TestSuiteResult.Failed(suite, failures.toSeq)
+      TestSuiteResult.TestsFailed(suite, failures.toSeq)
 
 }

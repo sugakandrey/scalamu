@@ -1,6 +1,6 @@
 package org.scalamu.plugin.util
 
-import org.scalamu.plugin.ScalamuConfig.mutationGuardPrefix
+import org.scalamu.plugin.ScalamuPluginConfig.mutationGuardPrefix
 
 trait GlobalExtractors extends TypeEnrichment { self: CompilerAccess =>
   import global._

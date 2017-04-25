@@ -11,9 +11,9 @@ object UTestConverters extends SuiteResultTypeConverter[Tree[Result]] {
   override def fromResult(suite: ClassName)(result: Tree[Result]): TestSuiteResult = {
     val results = result.toSeq
     if (results.forall(_.value.isSuccess))
-      TestSuiteResult.Successful(suite, results.map(_.milliDuration).sum)
+      TestSuiteResult.Success(suite, results.map(_.milliDuration).sum)
     else
-      TestSuiteResult.Failed(
+      TestSuiteResult.TestsFailed(
         suite,
         results.collect {
           case r if r.value.isFailure => fromFailure(r)

@@ -1,4 +1,5 @@
 package org.scalamu.core
+package detection
 
 import java.nio.file.Path
 

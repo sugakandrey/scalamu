@@ -4,15 +4,15 @@ import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.testutil.TestRunner
 
 class ScalamuPluginSpec extends TestRunner with IsolatedScalamuCompilerFixture {
-  override val mutations: Seq[Mutation] = ScalamuConfig.allMutations
-  override val guard: MutationGuard     = FqnPrefixedGuard(ScalamuConfig.mutationGuardPrefix)
+  override val mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
+  override val guard: MutationGuard     = FqnPrefixedGuard(ScalamuPluginConfig.mutationGuardPrefix)
   override val sanitizeTrees: Boolean   = true
   override val verifyTrees: Boolean     = true
   override val filter: RegexBasedFilter = RegexBasedFilter(".*ignored.*".r)
 
   private val guards =
     s"""
-       |package ${ScalamuConfig.mutationGuardPrefix}
+       |package ${ScalamuPluginConfig.mutationGuardPrefix}
        |
        |object FooGuard {
        |  val enabledMutation: Int = 1

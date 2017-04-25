@@ -5,10 +5,15 @@ import org.scalamu.core.ClassName
 /**
  * Represents the result of s single test suite run.
  */
-sealed trait TestSuiteResult
+sealed abstract class TestSuiteResult(succeeded: Boolean)
+
+/**
+ * Signals that a suite either was aborted or has failed tests.
+ */
+sealed abstract class SuiteFailure extends TestSuiteResult(false)
 
 object TestSuiteResult {
-  final case class Aborted(suite: ClassName, cause: Throwable)          extends TestSuiteResult
-  final case class Successful(suite: ClassName, durationMillis: Long)   extends TestSuiteResult
-  final case class Failed(suite: ClassName, failures: Seq[TestFailure]) extends TestSuiteResult
+  final case class Success(name: ClassName, durationMillis: Long)           extends TestSuiteResult(true)
+  final case class Aborted(name: ClassName, cause: Throwable)               extends SuiteFailure
+  final case class TestsFailed(name: ClassName, failures: Seq[TestFailure]) extends SuiteFailure
 }

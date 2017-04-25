@@ -7,7 +7,7 @@ import org.specs2.specification.process.Stats
 class Specs2Converters(notifier: Specs2Notifier) extends SuiteResultTypeConverter[Stats] {
   override def fromResult(suite: ClassName)(result: Stats): TestSuiteResult =
     if (!result.hasFailuresOrErrors)
-      TestSuiteResult.Successful(suite, notifier.duration)
+      TestSuiteResult.Success(suite, notifier.duration)
     else
-      TestSuiteResult.Failed(suite, notifier.getFailures)
+      TestSuiteResult.TestsFailed(suite, notifier.getFailures)
 }

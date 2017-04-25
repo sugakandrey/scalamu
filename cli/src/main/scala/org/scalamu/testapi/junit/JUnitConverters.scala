@@ -20,9 +20,9 @@ case object JUnitConverters extends SuiteResultTypeConverter[Result] {
 
   override def fromResult(suite: ClassName)(result: Result): TestSuiteResult =
     if (result.wasSuccessful())
-      TestSuiteResult.Successful(suite, result.getRunTime)
+      TestSuiteResult.Success(suite, result.getRunTime)
     else
-      TestSuiteResult.Failed(
+      TestSuiteResult.TestsFailed(
         suite,
         result.getFailures.asScala.map(juFailureToTestFailure)
       )
