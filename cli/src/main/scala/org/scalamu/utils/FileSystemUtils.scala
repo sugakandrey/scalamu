@@ -1,17 +1,18 @@
 package org.scalamu.utils
 
 import java.io.{IOException, InputStream, OutputStream}
+import java.nio.charset.Charset
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 
 import com.typesafe.scalalogging.Logger
 
+import scala.collection.JavaConverters._
 import scala.util.Try
 import scala.util.control.NonFatal
 
 trait FileSystemUtils {
-
-  private val log = Logger[FileSystemUtils]
+  import FileSystemUtils._
 
   implicit class RichPath(val path: Path) {
     private[this] val fileSystem        = FileSystems.getDefault
@@ -29,6 +30,13 @@ trait FileSystemUtils {
 
     def toInputStream: Try[InputStream]   = Try(Files.newInputStream(path))
     def toOutputStream: Try[OutputStream] = Try(Files.newOutputStream(path))
+
+    def writeLines(lines: Seq[String])(implicit cs: Charset): Unit =
+      Files.write(path, lines.mkString("", "\n", "\n").getBytes(cs))
+
+    def exists: Boolean = Files.exists(path)
+
+    def readLines(): List[String] = Files.readAllLines(path).asScala.toList
 
     override def toString: String = path.toString
   }
@@ -62,4 +70,6 @@ trait FileSystemUtils {
   }
 }
 
-object FileSystemUtils extends FileSystemUtils
+object FileSystemUtils extends FileSystemUtils {
+  private val log = Logger[FileSystemUtils]
+}

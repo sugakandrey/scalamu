@@ -42,7 +42,7 @@ trait ASMUtils {
     ): mutable.Set[SuperClassInfo] =
       internalNames.collect {
         case name if visitedSuperClasses.add(name) =>
-          Thread.currentThread().getContextClassLoader.getResourceAsStream(s"$name.class")
+          ClassLoadingUtils.contextClassLoader.getResourceAsStream(s"$name.class")
       }.flatMap(load(_, SuperClassVisitor(collectAnnotations)))(breakOut)
 
     private case class SuperClassInfo(

@@ -6,80 +6,71 @@ import java.nio.file.{Files, Path, StandardOpenOption}
 import org.scalamu.testutil.ScalamuSpec
 
 class FileSystemUtilsSpec extends ScalamuSpec {
-  def createTempFile(prefix: String, suffix: Option[String] = None): RichPath = {
-    // if no suffix - create directory
-    val file = suffix.fold(Files.createTempDirectory(prefix))(
-      Files.createTempFile(prefix, _)
-    )
-    file.toFile.deleteOnExit()
-    file
-  }
-
   "FileSystemUtils" should "correctly identify .jar and .zip files" in {
     val isJarOrZip = Seq(
-      createTempFile("aJar", Some(".jar")),
-      createTempFile("almostAJar", Some(".jar")),
-      createTempFile("namingIsHard", Some(".zip"))
+      createTempFile("aJar", ".jar"),
+      createTempFile("almostAJar", ".jar"),
+      createTempFile("namingIsHard", ".zip")
     )
     forAll(isJarOrZip)(_ should be a 'jarOrZip)
 
     val notJarOrZip = Seq(
-      createTempFile("dir"),
-      createTempFile("notAJar", Some(".jarr")),
-      createTempFile("archive", Some(".rar"))
+      createTempDirectory("dir"),
+      createTempFile("notAJar", ".jarr"),
+      createTempFile("archive", ".rar")
     )
     forAll(notJarOrZip)(_ should not be 'jarOrZip)
   }
 
   it should "correctly identify directories" in {
     val directories = Seq(
-      createTempFile("aDirectory"),
-      createTempFile("directory99"),
-      createTempFile("1233")
+     createTempDirectory("aDirectory"),
+     createTempDirectory("directory99"),
+     createTempDirectory("1233")
     )
     forAll(directories)(_ should be a 'directory)
 
     val notADirectory = Seq(
-      createTempFile("temp", Some(".tmp")),
-      createTempFile("someFile", Some(".ext"))
+      createTempFile("temp", ".tmp"),
+      createTempFile("someFile", ".ext")
     )
     forAll(notADirectory)(_ should not be 'directory)
   }
 
   it should "correctly identify .class files" in {
     val classFiles = Seq(
-      createTempFile("Foo", Some(".class")),
-      createTempFile("SomeObject4", Some(".class")),
-      createTempFile("org.spring.AbstractBeanPostProcessor", Some(".class"))
+      createTempFile("Foo", ".class"),
+      createTempFile("SomeObject4", ".class"),
+      createTempFile("org.spring.AbstractBeanPostProcessor", ".class")
     )
     forAll(classFiles)(_ should be a 'classFile)
 
     val notAClassFile = Seq(
-      createTempFile("dir"),
-      createTempFile("jarFile", Some(".jar")),
-      createTempFile("sourceFile", Some(".scala"))
+      createTempDirectory("dir"),
+      createTempFile("jarFile", ".jar"),
+      createTempFile("sourceFile", ".scala")
     )
     forAll(notAClassFile)(_ should not be 'classFile)
   }
 
   it should "correctly identify .scala files" in {
     val isJarOrZip = Seq(
-      createTempFile("foo.bar.Baz", Some(".scala")),
-      createTempFile("Unit", Some(".scala")),
-      createTempFile("AlNum123", Some(".scala"))
+      createTempFile("foo.bar.Baz", ".scala"),
+      createTempFile("Unit", ".scala"),
+      createTempFile("AlNum123", ".scala")
     )
     forAll(isJarOrZip)(_ should be a 'sourceFile)
 
     val notASourceFile = Seq(
-      createTempFile("dir"),
-      createTempFile("JavaSource", Some(".java")),
-      createTempFile("NotASource", Some(".scal"))
+      createTempDirectory("dir"),
+      createTempFile("JavaSource", ".java"),
+      createTempFile("NotASource", ".scal")
     )
     forAll(notASourceFile)(_ should not be 'sourceFile)
   }
 
   private def createZipFile(name: String): Path = {
-    val f = createTempFile(name, Some(".zip")).path
+    val f = createTempFile(name, ".zip").path
     import java.util.zip.{ZipEntry, ZipOutputStream}
 
     val out = new ZipOutputStream(Files.newOutputStream(f, StandardOpenOption.WRITE))
@@ -87,7 +78,7 @@ class FileSystemUtilsSpec extends ScalamuSpec {
 
     try {
       (1 to 100).foreach { i =>
-        val file = createTempFile(s"file$i", Some(".class")).path
+        val file = createTempFile(s"file$i", ".class").path
         try {
           val in = Files.newInputStream(file)
           out.putNextEntry(new ZipEntry(s"file$i.class"))
@@ -105,10 +96,10 @@ class FileSystemUtilsSpec extends ScalamuSpec {
   }
 
   it should "correctly transform path to traversable" in {
-    val f = createTempFile("Foo", Some(".class"))
+    val f = createTempFile("Foo", ".class")
     f.path.filter(_.isClassFile) should have size 1
 
-    val dir = createTempFile("directory").path
+    val dir = createTempDirectory("directory").path
     (1 to 10).foreach { i =>
       val file = Files.createTempFile(dir, s"file$i", ".scala")
       file.toFile.deleteOnExit()

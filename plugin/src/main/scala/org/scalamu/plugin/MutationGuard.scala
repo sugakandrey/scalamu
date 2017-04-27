@@ -13,7 +13,7 @@ private[plugin] case object NoOpGuard extends MutationGuard {
     mutated
 }
 
-private[plugin] final case class FqnPrefixedGuard(
+final case class FqnPrefixedGuard(
   guardPackagePrefix: String
 ) extends MutationGuard {
   private val currentMutantId = mutable.Map.empty[String, Int].withDefaultValue(1)

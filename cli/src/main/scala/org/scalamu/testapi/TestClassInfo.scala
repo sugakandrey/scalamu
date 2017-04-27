@@ -11,4 +11,6 @@ import org.scalamu.core.ClassInfo
 final case class TestClassInfo(
   info: ClassInfo,
   testingFramework: TestingFramework
-)
+) extends AbstractTestSuite {
+  override def execute(): TestSuiteResult = testingFramework.runner.run(info.name)
+}

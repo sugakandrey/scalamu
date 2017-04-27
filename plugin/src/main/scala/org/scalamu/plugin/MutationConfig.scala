@@ -12,10 +12,10 @@ package org.scalamu.plugin
  * @param verifyTrees   Should trees be checked for nested mutants
  * @param sanitizeTrees Should nested mutants be explicitly removed
  */
-case class MutationConfig(
+final case class MutationConfig(
   reporter: MutationReporter,
   guard: MutationGuard,
-  filter: MutationFilter,
-  verifyTrees: Boolean,
-  sanitizeTrees: Boolean
+  filter: MutationFilter = AcceptAllFilter,
+  verifyTrees: Boolean = false,
+  sanitizeTrees: Boolean = true
 )

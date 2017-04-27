@@ -1,5 +1,7 @@
 package org.scalamu.core
 
+import org.scalamu.utils.ClassLoadingUtils
+
 import scala.util.Try
 
 final case class ClassName(fullName: String) {
@@ -15,7 +17,7 @@ final case class ClassName(fullName: String) {
       Class.forName(
         fullName,
         true,
-        Thread.currentThread().getContextClassLoader
+        ClassLoadingUtils.contextClassLoader
       )
     )
 }
@@ -25,5 +27,5 @@ object ClassName {
     ClassName.fromInternal(descriptor.substring(1, descriptor.length - 1))
 
   def fromInternal(name: String): ClassName = ClassName(name.replaceAll("/", "."))
-  def forClass(aClass: Class[_]): ClassName     = ClassName(aClass.getName)
+  def forClass(aClass: Class[_]): ClassName = ClassName(aClass.getName)
 }

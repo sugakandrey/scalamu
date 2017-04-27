@@ -7,7 +7,6 @@ import scala.reflect.internal.util.Position
  */
 trait MutationReporter {
   def report(mutantInfo: MutantInfo): Unit
-  def mutantsForRunId(runId: Int): Set[MutantInfo]
 }
 
 /**

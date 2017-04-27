@@ -5,4 +5,4 @@ package org.scalamu.testapi
  * @param description In most cases - the name of the failed test.
  * @param throwable Exception thrown.
  */
-final case class TestFailure(description: String, throwable: Option[Throwable])
+final case class TestFailure(description: String, throwable: Option[Throwable] = None)

@@ -2,6 +2,7 @@ package org.scalamu.testapi.specs2
 
 import org.scalamu.core.ClassName
 import org.scalamu.testapi.{SuiteResultTypeConverter, TestRunner, TestSuiteResult}
+import org.scalamu.utils.ClassLoadingUtils
 import org.specs2.control
 import org.specs2.reporter.NotifierPrinter
 import org.specs2.runner.Runner
@@ -26,7 +27,7 @@ class Specs2Runner extends TestRunner[Stats] {
         Runner.runSpecStructure(
           s.structure(Env()),
           Env(),
-          Thread.currentThread().getContextClassLoader,
+          ClassLoadingUtils.contextClassLoader,
           List(NotifierPrinter.printer(notifier))
         )
       )

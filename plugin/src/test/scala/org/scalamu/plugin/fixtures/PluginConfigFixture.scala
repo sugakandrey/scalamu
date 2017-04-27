@@ -1,10 +1,11 @@
 package org.scalamu.plugin.fixtures
 
 import org.scalamu.plugin._
+import org.scalamu.plugin.testutil.TestingReporter
 import org.scalatest.{BeforeAndAfterAll, TestSuite}
 
 trait PluginConfigFixture extends TestSuite {
-  def mutationReporter: MutationReporter
+  def mutationReporter: TestingReporter
   def guard: MutationGuard
   def verifyTrees: Boolean
   def sanitizeTrees: Boolean

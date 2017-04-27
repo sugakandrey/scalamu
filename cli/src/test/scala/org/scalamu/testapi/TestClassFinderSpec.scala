@@ -4,10 +4,10 @@ import org.scalamu.testapi.junit.JUnitFramework
 import org.scalamu.testapi.scalatest.ScalaTestFramework
 import org.scalamu.testapi.specs2.Specs2Framework
 import org.scalamu.testapi.utest.UTestFramework
-import org.scalamu.testutil.{FrameworkSupport, ScalamuSpec, TestProject}
+import org.scalamu.testutil.{ScalamuSpec, TestProject}
 import org.scalamu.testutil.fixtures.TestProjectFixture
 
-class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture with FrameworkSupport {
+class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture {
   override def testProject: TestProject = TestProject.simpleTestProject
 
   "TestClassFinder" should "detect class files, which contain ScalaTest tests" in withTestProject {
@@ -58,7 +58,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture with Frame
   }
 
   it should "detect class files which contain tests" in withTestProject { project =>
-    val finder = new TestClassFileFinder(filter)
+    val finder = new TestClassFileFinder(CompositeFramework.filter)
     val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
       finder.findAll(project.target)
     )
