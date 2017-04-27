@@ -12,6 +12,7 @@ object ScalamuBuild {
       "-unchecked",
       "-language:postfixOps",
       "-language:implicitConversions",
+      "-language:higherKinds",
       "-Xlint",
       "-Yno-adapted-args",
       "-Ywarn-dead-code",
@@ -57,11 +58,13 @@ object ScalamuBuild {
     .settings(commonSettings)
     .settings(
       libraryDependencies ++= Seq(
-        "org.ow2.asm"      % "asm-commons"              % "5.2",
-        "org.ow2.asm"      % "asm-util"                 % "5.2",
-        "org.typelevel"    %% "cats"                    % "0.9.0",
-        "com.github.scopt" %% "scopt"                   % "3.5.0",
-        "org.scoverage"    %% "scalac-scoverage-plugin" % "1.3.0"
+        "org.ow2.asm"      % "asm-commons"                  % "5.2",
+        "org.ow2.asm"      % "asm-util"                     % "5.2",
+        "org.typelevel"    %% "cats"                        % "0.9.0",
+        "com.github.scopt" %% "scopt"                       % "3.5.0",
+        "org.scoverage"    %% "scalac-scoverage-plugin"     % "1.3.0",
+        "org.scalamock"    %% "scalamock-scalatest-support" % "3.5.0" % Test,
+        "com.ironcorelabs" %% "cats-scalatest"              % "2.2.0" % Test
       ) ++ testingFrameworks
     )
     .dependsOn(plugin)
@@ -92,4 +95,12 @@ object ScalamuTestingBuild {
 
   lazy val utest = testProject("utest")
     .settings(libraryDependencies += "com.lihaoyi" %% "utest" % "0.4.5" % Test)
+
+  lazy val withScoverage = testProject("scoverage")
+    .settings(
+      libraryDependencies ++= Seq(
+        "org.scalatest" %% "scalatest" % "3.0.1" % Test,
+        "junit"         % "junit"      % "4.12"  % Test
+      )
+    )
 }
