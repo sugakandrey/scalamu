@@ -6,14 +6,14 @@ import org.scalamu.plugin.mutations.controllflow.{
   ReplaceCaseWithWildcard,
   ReplaceConditionalBoundaries
 }
-import org.scalamu.plugin.testutil.TestRunner
+import org.scalamu.plugin.testutil.MutationTestRunner
 import org.scalamu.plugin.{FqnPrefixedGuard, Mutation, MutationGuard, ScalamuPluginConfig}
 import org.scalatest.{FlatSpec, Matchers}
 
 class TreeSanitizerSpec
     extends FlatSpec
     with Matchers
-    with TestRunner
+    with MutationTestRunner
     with IsolatedScalamuCompilerFixture {
 
   // Purposefully wrong mutation order

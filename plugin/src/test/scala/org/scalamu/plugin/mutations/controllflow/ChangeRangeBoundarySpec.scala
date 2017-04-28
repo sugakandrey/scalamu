@@ -7,7 +7,7 @@ class ChangeRangeBoundarySpec extends SingleMutationSpec {
   override def mutation: Mutation = ChangeRangeBoundary
 
   "ChangeRangeBoundarySpec" should "replace \'until\' with \'to\' (and vice verse) for numerical types" in
-    withScalamuCompiler { (global, config) =>
+    withScalamuCompiler { (global, reporter) =>
       val code =
         """
           |object Foo {
@@ -21,11 +21,11 @@ class ChangeRangeBoundarySpec extends SingleMutationSpec {
           |  } yield i * j
           |}
         """.stripMargin
-      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 4
     }
 
-  it should "not support non-numeric types" in withScalamuCompiler { (global, config) =>
+  it should "not support non-numeric types" in withScalamuCompiler { (global, reporter) =>
     val code =
       """
         |object Foo {
@@ -37,7 +37,7 @@ class ChangeRangeBoundarySpec extends SingleMutationSpec {
         |  (bar to 10).foreach(println)
         |}
         """.stripMargin
-    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    val mutantsInfo = mutantsFor(code)(global, reporter)
     mutantsInfo shouldBe empty
   }
 }

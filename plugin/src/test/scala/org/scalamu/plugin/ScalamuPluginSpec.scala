@@ -1,9 +1,9 @@
 package org.scalamu.plugin
 
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
-import org.scalamu.plugin.testutil.TestRunner
+import org.scalamu.plugin.testutil.MutationTestRunner
 
-class ScalamuPluginSpec extends TestRunner with IsolatedScalamuCompilerFixture {
+class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
   override val mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
   override val guard: MutationGuard     = FqnPrefixedGuard(ScalamuPluginConfig.mutationGuardPrefix)
   override val sanitizeTrees: Boolean   = true
@@ -19,7 +19,7 @@ class ScalamuPluginSpec extends TestRunner with IsolatedScalamuCompilerFixture {
        |}
     """.stripMargin
 
-  "ScalamuPlugin" should "insert all possible mutants" in withScalamuCompiler { (global, config) =>
+  "ScalamuPlugin" should "insert all possible mutants" in withScalamuCompiler { (global, reporter) =>
     val code =
       """
         |object Foo {
@@ -52,11 +52,11 @@ class ScalamuPluginSpec extends TestRunner with IsolatedScalamuCompilerFixture {
         |}
       """.stripMargin
     compile(NamedSnippet("Guards.scala", guards))(global)
-    val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, config.reporter)
+    val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, reporter)
     mutantsInfo should have size 26
   }
 
-  it should "ignore macro bodies" in withScalamuCompiler { (global, config) =>
+  it should "ignore macro bodies" in withScalamuCompiler { (global, reporter) =>
     val code =
       """
         |object Macro {
@@ -74,11 +74,11 @@ class ScalamuPluginSpec extends TestRunner with IsolatedScalamuCompilerFixture {
         |  }
         |}
       """.stripMargin
-    val mutantsInfo = mutantsFor(NamedSnippet("Macro.scala", code))(global, config.reporter)
+    val mutantsInfo = mutantsFor(NamedSnippet("Macro.scala", code))(global, reporter)
     mutantsInfo shouldBe empty
   }
 
-  it should "ignore macro expansions" in withScalamuCompiler { (global, config) =>
+  it should "ignore macro expansions" in withScalamuCompiler { (global, reporter) =>
     val macroDef =
       """
         |object Macro {
@@ -106,7 +106,7 @@ class ScalamuPluginSpec extends TestRunner with IsolatedScalamuCompilerFixture {
       NamedSnippet("Macro.scala", macroDef),
       NamedSnippet("Guards.scala", guards)
     )(global)
-    val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, config.reporter)
+    val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, reporter)
     mutantsInfo shouldBe empty
   }
 }

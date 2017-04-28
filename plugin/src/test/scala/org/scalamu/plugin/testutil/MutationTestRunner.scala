@@ -8,7 +8,7 @@ import scala.reflect.io._
 import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ConsoleReporter, Reporter}
 
-trait TestRunner
+trait MutationTestRunner
     extends FlatSpec
     with Matchers
     with GlobalConfigFixture
@@ -31,7 +31,7 @@ trait TestRunner
   override val verifyTrees: Boolean   = false
 }
 
-trait MutationPhaseRunner extends TestRunner {
+trait MutationPhaseRunner extends MutationTestRunner {
   override def createSettings(): Settings = new Settings {
     usejavacp.value = true
     outputDirs.setSingleOutput(outputDir)

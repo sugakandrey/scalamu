@@ -6,12 +6,12 @@ import org.scalamu.plugin.mutations.controllflow.{
   ReplaceCaseWithWildcard,
   ReplaceConditionalBoundaries
 }
-import org.scalamu.plugin.testutil.TestRunner
+import org.scalamu.plugin.testutil.MutationTestRunner
 
 import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ConsoleReporter, Reporter}
 
-class MutationVerifierSpec extends TestRunner with IsolatedScalamuCompilerFixture {
+class MutationVerifierSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
 
   // Purposefully wrong mutation order
   override val mutations: Seq[Mutation] = Seq(

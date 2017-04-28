@@ -7,7 +7,7 @@ class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceCaseWithWildcard
 
   "ReplaceCaseWithWildcard" should "replace case expressions with wildcard (if one is present)" in withScalamuCompiler {
-    (global, config) =>
+    (global, reporter) =>
       val code =
         """
           |object Foo {
@@ -23,12 +23,12 @@ class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
           |  }
           |}
         """.stripMargin
-      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 2
   }
 
   it should "do nothing if wildcard patter is restricted with guard or type ascription" in withScalamuCompiler {
-    (global, config) =>
+    (global, reporter) =>
       val code =
         """
           |object Foo {
@@ -44,7 +44,7 @@ class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
           |  }
           |}
         """.stripMargin
-      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo shouldBe empty
   }
 }

@@ -7,7 +7,7 @@ class InvertNegationsSpec extends SingleMutationSpec {
   override def mutation: Mutation = InvertNegations
 
   "InvertNegations" should "mutate integer and floating point literals" in withScalamuCompiler {
-    (global, config) =>
+    (global, reporter) =>
       val code =
         """
           |object Foo {
@@ -24,7 +24,7 @@ class InvertNegationsSpec extends SingleMutationSpec {
           |  def foo(): Byte = -2
           |}
         """.stripMargin
-      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 6
       mutantsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain theSameElementsAs Seq(
         "-1123.0"      -> "1123.0",
@@ -37,7 +37,7 @@ class InvertNegationsSpec extends SingleMutationSpec {
   }
 
   it should "mutate other appropriately typed entities" in withScalamuCompiler {
-    (global, config) =>
+    (global, reporter) =>
       val code =
         """
           |class Bar[T](val polyParam: T) {
@@ -61,12 +61,12 @@ class InvertNegationsSpec extends SingleMutationSpec {
           |  val g = -poly(2f) + (-bar.polyParam)
           |}
         """.stripMargin
-      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 6
   }
 
   it should "behave correctly in the presence of type aliases" in withScalamuCompiler {
-    (global, config) =>
+    (global, reporter) =>
       val code =
         """
           |object Foo {
@@ -75,14 +75,14 @@ class InvertNegationsSpec extends SingleMutationSpec {
           | val long = -foo(10)
           |}
         """.stripMargin
-      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 1
       mutantsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain(
         "Foo.this.foo(10).unary_-" -> "Foo.this.foo(10)"
       )
   }
 
-  it should "not mutate unsupported types" in withScalamuCompiler { (global, config) =>
+  it should "not mutate unsupported types" in withScalamuCompiler { (global, reporter) =>
     val code =
       """
         |object Foo {
@@ -93,7 +93,7 @@ class InvertNegationsSpec extends SingleMutationSpec {
         |  val c = -A(2)
         |}
       """.stripMargin
-    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    val mutantsInfo = mutantsFor(code)(global, reporter)
     mutantsInfo shouldBe empty
   }
 }

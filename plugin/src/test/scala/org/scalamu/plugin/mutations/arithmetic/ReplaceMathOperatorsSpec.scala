@@ -8,7 +8,7 @@ class ReplaceMathOperatorsSpec extends SingleMutationSpec {
   override def mutation: Mutation = ReplaceMathOperators
 
   "MathOperatorReplacer" should "replace integer and floating point math operators" in withScalamuCompiler {
-    (global, config) =>
+    (global, reporter) =>
       val code =
         """
           |object Foo {
@@ -23,11 +23,11 @@ class ReplaceMathOperatorsSpec extends SingleMutationSpec {
           |  val poly = e % bar(a)
           |}
         """.stripMargin
-      val mutantsInfo = mutantsFor(code)(global, config.reporter)
+      val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 5
   }
 
-  it should "work in nested cases" in withScalamuCompiler { (global, config) =>
+  it should "work in nested cases" in withScalamuCompiler { (global, reporter) =>
     val code =
       """
         |object Foo {
@@ -42,11 +42,11 @@ class ReplaceMathOperatorsSpec extends SingleMutationSpec {
         | val f = a - foo(b * c / z)
         |}
         """.stripMargin
-    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    val mutantsInfo = mutantsFor(code)(global, reporter)
     mutantsInfo should have size 13
   }
 
-  it should "not mutate unsupported types" in withScalamuCompiler { (global, config) =>
+  it should "not mutate unsupported types" in withScalamuCompiler { (global, reporter) =>
     val code =
       """
         |object Foo {
@@ -60,7 +60,7 @@ class ReplaceMathOperatorsSpec extends SingleMutationSpec {
         |  val c = A(2) * A(2)
         |}
         """.stripMargin
-    val mutantsInfo = mutantsFor(code)(global, config.reporter)
+    val mutantsInfo = mutantsFor(code)(global, reporter)
     mutantsInfo shouldBe empty
   }
 }

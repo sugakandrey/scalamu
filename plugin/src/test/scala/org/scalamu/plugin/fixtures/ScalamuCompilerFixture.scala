@@ -1,5 +1,6 @@
 package org.scalamu.plugin.fixtures
 
+import org.scalamu.plugin.testutil.TestingReporter
 import org.scalamu.plugin.{Mutation, MutationConfig, ScalamuPlugin}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.Matchers._
@@ -46,8 +47,8 @@ trait SharedScalamuCompilerFixture
     )
   }
 
-  def withScalamuCompiler(testCode: (Global, MutationConfig) => Any): Any = {
-    testCode(global, config)
+  def withScalamuCompiler(testCode: (Global, TestingReporter) => Any): Any = {
+    testCode(global, mutationReporter)
     global.reporter.hasErrors should ===(false)
     global.reporter.reset()
     global.settings.outputDirs.getSingleOutput match {
@@ -67,7 +68,7 @@ trait IsolatedScalamuCompilerFixture
     mutations: Seq[Mutation],
     config: MutationConfig
   )(
-    testCode: (Global, MutationConfig) => Any
+    testCode: (Global, TestingReporter) => Any
   ): Any = withGlobalConfig { (settings, reporter) =>
     val global = createGlobal(
       settings,
@@ -77,7 +78,7 @@ trait IsolatedScalamuCompilerFixture
       config
     )
 
-    testCode(global, config)
+    testCode(global, mutationReporter)
     reporter.hasErrors should ===(false)
     global.settings.outputDirs.getSingleOutput match {
       case Some(vd: VirtualDirectory) => vd.clear()
@@ -86,7 +87,7 @@ trait IsolatedScalamuCompilerFixture
   }
 
   def withScalamuCompiler(
-    testCode: (Global, MutationConfig) => Any
+    testCode: (Global, TestingReporter) => Any
   ): Any = withMutations { mutations =>
     withPluginConfig { config =>
       withScalamuCompiler(mutations, config)(testCode)
