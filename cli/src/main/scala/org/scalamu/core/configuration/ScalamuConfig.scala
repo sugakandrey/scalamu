@@ -25,7 +25,7 @@ import scala.util.matching.Regex
 final case class ScalamuConfig(
   reportDir: Path = Paths.get("."),
   sourceDirs: Seq[Path] = Seq.empty,
-  testClassDirs: Seq[Path] = Seq.empty,
+  testClassDirs: Set[Path] = Set.empty,
   classPath: Seq[Path] = Seq.empty,
   scalaPath: Path = Paths.get("."),
   jvmArgs: Seq[String] = Seq.empty,
@@ -52,7 +52,7 @@ object ScalamuConfig {
 
     arg[Seq[Path]]("<testClassDirs>")
       .text("list of test class directories")
-      .action((testClassPath, config) => config.copy(testClassDirs = testClassPath))
+      .action((testClassPath, config) => config.copy(testClassDirs = testClassPath.toSet))
 
     arg[Seq[Path]]("<classPath>")
       .text("list of classpath elements")

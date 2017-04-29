@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.Logger
 import org.scalamu.core.SourceInfo
 import org.scalamu.core.configuration.{GlobalDerivableInstances, ScalamuConfig}
 import org.scalamu.core.coverage.{CoveragePlugin, InstrumentationReporter}
-import org.scalamu.plugin.{Mutation, MutationConfig, MutationReporter, ScalamuPlugin}
+import org.scalamu.plugin.{MutationConfig, MutationReporter, ScalamuPlugin}
 
 import scala.collection.Set
 import scala.reflect.internal.util.{BatchSourceFile, SourceFile}
@@ -17,21 +17,20 @@ import scala.tools.nsc.{Global, Settings}
  * [[scala.tools.nsc.Global]] wrapper, with Scoverage and Scalamu plugins
  * enabled and a couple of utility methods.
  */
-class ScalamuGlobal private (
+class ScalamuGlobal private[compilation] (
   settings: Settings,
   reporter: Reporter,
   mutationConfig: MutationConfig,
-  mutations: Seq[Mutation],
   instrumentationReporter: InstrumentationReporter
 ) extends Global(settings, reporter) {
 
   private val coveragePlugin = new CoveragePlugin(this, instrumentationReporter)
-  private val scalamuPlugin  = new ScalamuPlugin(this, mutations, mutationConfig)
+  private val scalamuPlugin  = new ScalamuPlugin(this, mutationConfig)
 
   override protected def loadRoughPluginsList(): List[Plugin] =
     coveragePlugin :: scalamuPlugin :: super.loadRoughPluginsList()
 
-  def withPhasesSkipped(phases: List[SkippablePhase]): ScalamuGlobal = {
+  def withPhasesSkipped(phases: List[PluginPhase]): ScalamuGlobal = {
     settings.skip.value = phases.map(_.name)
     this
   }
@@ -53,7 +52,7 @@ class ScalamuGlobal private (
 }
 
 object ScalamuGlobal extends GlobalDerivableInstances {
-  override val log = Logger[ScalamuGlobal]
+  override val log: Logger = Logger[ScalamuGlobal]
 
   def apply(
     config: ScalamuConfig,
@@ -65,7 +64,6 @@ object ScalamuGlobal extends GlobalDerivableInstances {
       config.derive[Settings],
       config.derive[Reporter],
       config.derive[MutationConfig],
-      config.mutations,
       instrumentationReporter
     )
   }

@@ -3,6 +3,8 @@ package org.scalamu.core.coverage
 import org.scalamu.plugin.MutantInfo
 import org.scalamu.testapi.AbstractTestSuite
 
+import scala.collection.breakOut
+
 object InverseMutantCoverage {
   def fromStatementCoverage(
     statementCoverage: Map[AbstractTestSuite, Set[Statement]],
@@ -12,14 +14,14 @@ object InverseMutantCoverage {
       (info, statements) <- statementCoverage
     } yield info -> statements.groupBy(_.source)
 
-    (for {
-      mutant <- mutants
-      source = mutant.pos.source.path
-      tests = statementsCoverageByFile.collect {
+    mutants.map { mutant =>
+      val source = mutant.pos.source.path
+      val tests: Set[AbstractTestSuite] = statementsCoverageByFile.collect {
         case (test, bySourceCov)
             if bySourceCov.get(source).exists(_.exists(_.pos.includes(mutant))) =>
           test
-      }.toSet
-    } yield mutant -> tests)(collection.breakOut)
+      }(breakOut)
+      mutant -> tests
+    }(breakOut)
   }
 }

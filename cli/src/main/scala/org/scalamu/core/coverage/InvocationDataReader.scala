@@ -1,7 +1,7 @@
 package org.scalamu.core.coverage
 
 import java.io.File
-import java.nio.file.{Files, Path, StandardOpenOption}
+import java.nio.file.{Files, Path}
 
 import com.typesafe.scalalogging.Logger
 import scoverage.IOUtils

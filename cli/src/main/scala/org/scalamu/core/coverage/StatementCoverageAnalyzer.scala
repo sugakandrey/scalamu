@@ -3,7 +3,7 @@ package org.scalamu.core.coverage
 import cats.data.Validated._
 import cats.data.ValidatedNel
 import cats.syntax.traverse._
-import org.scalamu.testapi.{SuiteFailure, AbstractTestSuite}
+import org.scalamu.testapi.{AbstractTestSuite, SuiteFailure, TestClassInfo}
 import org.scalamu.utils.SetInstances._
 
 import scala.collection.Set
@@ -20,7 +20,7 @@ class StatementCoverageAnalyzer(
   type SuiteCoverage = (AbstractTestSuite, Set[Statement])
 
   def forSuites(
-    suites: Set[AbstractTestSuite]
+    suites: Set[TestClassInfo]
   ): ValidatedNel[SuiteFailure, Map[AbstractTestSuite, Set[Statement]]] =
     suites.traverseU(suiteCoverage).map(_.toMap)
 

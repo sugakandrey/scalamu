@@ -5,7 +5,7 @@ import java.{util => ju}
 import scoverage.Coverage
 
 class MemoryReporter extends InstrumentationReporter {
-  private val instrumentedStatements: ju.Map[Int, Statement] = new ju.HashMap[Int, Statement]()
+  protected val instrumentedStatements: ju.Map[Int, Statement] = new ju.HashMap[Int, Statement]()
 
   def onInstrumentationFinished(coverage: Coverage): Unit =
     coverage.statements.foreach(

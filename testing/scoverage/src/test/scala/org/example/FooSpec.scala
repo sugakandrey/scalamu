@@ -15,6 +15,6 @@ class FooSpec extends FlatSpec with Matchers {
   
   it should "do qux()" in {
     val foo = Foo(42, s = None)
-    foo.qux() should have size ===(0)
+    foo.qux() should have size 0
   }
 }

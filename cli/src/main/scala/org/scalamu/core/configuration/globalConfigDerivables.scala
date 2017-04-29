@@ -48,6 +48,7 @@ trait MutationConfigDerivable {
       MutationConfig(
         reporter,
         guard,
-        IgnoreCoverageStatementsFilter(config.excludeSources)
+        IgnoreCoverageStatementsFilter(config.excludeSources),
+        config.mutations
     )
 }

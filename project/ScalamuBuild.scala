@@ -63,11 +63,12 @@ object ScalamuBuild {
         "org.typelevel"    %% "cats"                        % "0.9.0",
         "com.github.scopt" %% "scopt"                       % "3.5.0",
         "org.scoverage"    %% "scalac-scoverage-plugin"     % "1.3.0",
+        "org.scoverage"    %% "scalac-scoverage-runtime"    % "1.3.0",
         "org.scalamock"    %% "scalamock-scalatest-support" % "3.5.0" % Test,
         "com.ironcorelabs" %% "cats-scalatest"              % "2.2.0" % Test
       ) ++ testingFrameworks
     )
-    .dependsOn(plugin)
+    .dependsOn(plugin % "compile->compile;test->test")
 
   lazy val root = Project(id = "scalamu", base = file("."))
     .settings(commonSettings)

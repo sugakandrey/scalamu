@@ -1,11 +1,11 @@
 package org.scalamu.core.compilation
 
 /**
- * A scalac phase, introduced by plugin, which can be skipped
+ * A scalac phase, introduced by a plugin.
  *
  * @param name internal name of the scalac phase
  */
-sealed abstract class SkippablePhase(val name: String)
+sealed abstract class PluginPhase(val name: String)
 
-case object ScoverageInstrumentationPhase extends SkippablePhase("scoverage-instrumentation")
-case object ScalamuMutationPhase          extends SkippablePhase("mutating-transform")
+case object ScoverageInstrumentationPhase extends PluginPhase("scoverage-instrumentation")
+case object ScalamuMutationPhase          extends PluginPhase("mutating-transform")

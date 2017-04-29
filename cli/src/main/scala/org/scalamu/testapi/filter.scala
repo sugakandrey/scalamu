@@ -13,7 +13,7 @@ trait TestClassFilter extends (ClassInfo => Option[TestClassInfo]) {
   protected def predicate: ClassInfo => Boolean
 
   override def apply(info: ClassInfo): Option[TestClassInfo] =
-    if (predicate(info)) new TestClassInfo(info, framework).some
+    if (predicate(info)) TestClassInfo(info, framework).some
     else none
 }
 
