@@ -7,6 +7,7 @@ import org.scalatest.{BeforeAndAfterAll, TestSuite}
 trait PluginConfigFixture extends TestSuite {
   def mutationReporter: TestingReporter
   def guard: MutationGuard
+  def mutations: Seq[Mutation]
   def verifyTrees: Boolean
   def sanitizeTrees: Boolean
   def filter: MutationFilter
@@ -24,14 +25,17 @@ trait IsolatedPluginConfigFixture extends PluginConfigFixture {
       mutationReporter,
       guard,
       filter,
+      mutations,
       sanitizeTrees = sanitizeTrees,
       verifyTrees = verifyTrees
     )
   )
 }
 
-trait SharedPluginConfigFixture extends PluginConfigFixture with BeforeAndAfterAll {
-  private[fixtures] var config: MutationConfig = _
+trait SharedPluginConfigFixture
+    extends PluginConfigFixture
+    with BeforeAndAfterAll {
+  private[scalamu] var config: MutationConfig = _
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -39,6 +43,7 @@ trait SharedPluginConfigFixture extends PluginConfigFixture with BeforeAndAfterA
       mutationReporter,
       guard,
       filter,
+      mutations,
       sanitizeTrees = sanitizeTrees,
       verifyTrees = verifyTrees
     )

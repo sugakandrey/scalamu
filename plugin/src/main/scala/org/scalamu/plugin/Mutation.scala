@@ -54,8 +54,8 @@ abstract class MutatingTransformer(
         mutation,
         currentRunId,
         tree.pos,
-        show(tree),
-        show(mutated)
+        showCode(tree),
+        showCode(mutated)
       )
       config.reporter.report(info)
     }

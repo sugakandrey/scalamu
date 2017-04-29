@@ -27,8 +27,8 @@ trait IsolatedGlobalConfigFixture extends GlobalConfigFixture {
 }
 
 trait SharedGlobalConfigFixture extends GlobalConfigFixture with BeforeAndAfterAll {
-  private[fixtures] var settings: Settings = _
-  private[fixtures] var reporter: Reporter = _
+  private[scalamu] var settings: Settings = _
+  private[scalamu] var reporter: Reporter = _
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()

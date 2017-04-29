@@ -19,11 +19,10 @@ trait ScalamuCompilerFixture {
     settings: Settings,
     reporter: Reporter,
     outputDir: AbstractFile,
-    mutations: Seq[Mutation],
     config: MutationConfig
   ): Global = new Global(settings, reporter) with ReplGlobal {
     override protected def loadRoughPluginsList(): List[Plugin] =
-      new ScalamuPlugin(this, mutations, config) :: super.loadRoughPluginsList()
+      new ScalamuPlugin(this, config) :: super.loadRoughPluginsList()
   }
 }
 
@@ -31,7 +30,6 @@ trait SharedScalamuCompilerFixture
     extends ScalamuCompilerFixture
     with SharedGlobalConfigFixture
     with SharedPluginConfigFixture
-    with SharedMutationsFixture
     with BeforeAndAfterAll {
 
   private[fixtures] var global: Global = _
@@ -42,13 +40,12 @@ trait SharedScalamuCompilerFixture
       settings,
       reporter,
       outputDir,
-      availableMutations,
       config
     )
   }
 
   def withScalamuCompiler(testCode: (Global, TestingReporter) => Any): Any = {
-    testCode(global, mutationReporter)
+    testCode(global, config.reporter.asInstanceOf[TestingReporter])
     global.reporter.hasErrors should ===(false)
     global.reporter.reset()
     global.settings.outputDirs.getSingleOutput match {
@@ -61,7 +58,6 @@ trait SharedScalamuCompilerFixture
 trait IsolatedScalamuCompilerFixture
     extends ScalamuCompilerFixture
     with IsolatedGlobalConfigFixture
-    with IsolatedMutationsFixture
     with IsolatedPluginConfigFixture {
 
   def withScalamuCompiler(
@@ -74,11 +70,10 @@ trait IsolatedScalamuCompilerFixture
       settings,
       reporter,
       outputDir,
-      mutations,
-      config
+      config.copy(mutations = mutations)
     )
 
-    testCode(global, mutationReporter)
+    testCode(global, config.reporter.asInstanceOf[TestingReporter])
     reporter.hasErrors should ===(false)
     global.settings.outputDirs.getSingleOutput match {
       case Some(vd: VirtualDirectory) => vd.clear()
@@ -88,9 +83,7 @@ trait IsolatedScalamuCompilerFixture
 
   def withScalamuCompiler(
     testCode: (Global, TestingReporter) => Any
-  ): Any = withMutations { mutations =>
-    withPluginConfig { config =>
-      withScalamuCompiler(mutations, config)(testCode)
-    }
+  ): Any = withPluginConfig { config =>
+    withScalamuCompiler(mutations, config)(testCode)
   }
 }

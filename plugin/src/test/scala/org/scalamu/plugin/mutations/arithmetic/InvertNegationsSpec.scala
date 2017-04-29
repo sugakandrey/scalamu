@@ -26,14 +26,6 @@ class InvertNegationsSpec extends SingleMutationSpec {
         """.stripMargin
       val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 6
-      mutantsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain theSameElementsAs Seq(
-        "-1123.0"      -> "1123.0",
-        "-125"         -> "125",
-        "-1.0E-10"     -> "1.0E-10",
-        "-2147483648"  -> "2147483647",
-        "-9147483648L" -> "9147483648L",
-        "-2"           -> "2"
-      )
   }
 
   it should "mutate other appropriately typed entities" in withScalamuCompiler {
@@ -77,9 +69,6 @@ class InvertNegationsSpec extends SingleMutationSpec {
         """.stripMargin
       val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 1
-      mutantsInfo.map(mi => (mi.oldTree, mi.mutated)) should contain(
-        "Foo.this.foo(10).unary_-" -> "Foo.this.foo(10)"
-      )
   }
 
   it should "not mutate unsupported types" in withScalamuCompiler { (global, reporter) =>

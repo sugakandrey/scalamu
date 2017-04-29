@@ -13,7 +13,6 @@ trait MutationTestRunner
     with Matchers
     with GlobalConfigFixture
     with PluginConfigFixture
-    with MutationsFixture
     with CompilationUtils {
 
   override def outputDir: VirtualDirectory = new VirtualDirectory("[memory]", None)
@@ -25,10 +24,10 @@ trait MutationTestRunner
   override def createReporter(settings: Settings): Reporter = new ConsoleReporter(settings)
 
   override def mutationReporter: TestingReporter = new TestingReporter
-  override val guard: MutationGuard   = NoOpGuard
-  override val filter: MutationFilter = AcceptAllFilter
-  override val sanitizeTrees: Boolean = false
-  override val verifyTrees: Boolean   = false
+  override val guard: MutationGuard              = NoOpGuard
+  override val filter: MutationFilter            = AcceptAllFilter
+  override val sanitizeTrees: Boolean            = false
+  override val verifyTrees: Boolean              = false
 }
 
 trait MutationPhaseRunner extends MutationTestRunner {

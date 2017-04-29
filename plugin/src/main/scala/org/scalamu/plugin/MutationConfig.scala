@@ -16,6 +16,7 @@ final case class MutationConfig(
   reporter: MutationReporter,
   guard: MutationGuard,
   filter: MutationFilter = AcceptAllFilter,
+  mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
   verifyTrees: Boolean = false,
   sanitizeTrees: Boolean = true
 )

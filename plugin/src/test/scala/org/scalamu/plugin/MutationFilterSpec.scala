@@ -19,11 +19,11 @@ class MutationFilterSpec extends MutationTestRunner with IsolatedScalamuCompiler
           |object Foo {
           |  println(123)
           |  print("Hello World!")
-          |  
+          |
           |  def foobar(a: Int): Int = a - 10
-          |  
+          |
           |  foobar(-100)
-          |  
+          |
           |  class Bar(i: Int, s: String) {
           |    println(123)
           |    val a = -100
@@ -34,28 +34,26 @@ class MutationFilterSpec extends MutationTestRunner with IsolatedScalamuCompiler
       mutantsInfo shouldBe empty
     }
 
-  it should "not ignore any symbols if AcceptAllFilter is used" in withMutations { mutations =>
-    withPluginConfig { cfg =>
-      withScalamuCompiler(mutations, cfg.copy(filter = AcceptAllFilter)) { (global, reporter) =>
-        val code =
-          """
-            |object Foo {
-            |  println(123)
-            |  print("Hello World!")
-            |  
-            |  def foobar(a: Int): Int = a - 10
-            |  
-            |  foobar(-100)
-            |  
-            |  class Bar(i: Int, s: String) {
-            |    println(1)
-            |    val a = -100
-            |  }
-            |}
+  it should "not ignore any symbols if AcceptAllFilter is used" in withPluginConfig { cfg =>
+    withScalamuCompiler(mutations, cfg.copy(filter = AcceptAllFilter)) { (global, reporter) =>
+      val code =
+        """
+          |object Foo {
+          |  println(123)
+          |  print("Hello World!")
+          |
+          |  def foobar(a: Int): Int = a - 10
+          |
+          |  foobar(-100)
+          |
+          |  class Bar(i: Int, s: String) {
+          |    println(1)
+          |    val a = -100
+          |  }
+          |}
         """.stripMargin
-        val mutantsInfo = mutantsFor(code)(global, reporter)
-        mutantsInfo should have size 7
-      }
+      val mutantsInfo = mutantsFor(code)(global, reporter)
+      mutantsInfo should have size 7
     }
   }
 }
