@@ -11,8 +11,8 @@ import scala.util.matching.Regex
 trait ScalamuConfigFixture extends TestSuite {
   def reportDir: Path                 = Paths.get(".")
   def sourceDirs: Seq[Path]           = Seq.empty
-  def testClassDirs: Seq[Path]        = Seq.empty
-  def classPath: Seq[Path]            = Seq.empty
+  def testClassDirs: Set[Path]        = Set.empty
+  def classPath: Set[Path]            = Set.empty
   def scalaPath: Path                 = Paths.get(".")
   def jvmArgs: Seq[String]            = Seq.empty
   def mutations: Seq[Mutation]        = ScalamuPluginConfig.allMutations

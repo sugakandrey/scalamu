@@ -26,7 +26,7 @@ final case class ScalamuConfig(
   reportDir: Path = Paths.get("."),
   sourceDirs: Seq[Path] = Seq.empty,
   testClassDirs: Set[Path] = Set.empty,
-  classPath: Seq[Path] = Seq.empty,
+  classPath: Set[Path] = Set.empty,
   scalaPath: Path = Paths.get("."),
   jvmArgs: Seq[String] = Seq.empty,
   mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
@@ -56,7 +56,7 @@ object ScalamuConfig {
 
     arg[Seq[Path]]("<classPath>")
       .text("list of classpath elements")
-      .action((cp, config) => config.copy(classPath = cp))
+      .action((cp, config) => config.copy(classPath = cp.toSet))
 
     arg[Path]("<scalaPath>")
       .text("path to scala executable")

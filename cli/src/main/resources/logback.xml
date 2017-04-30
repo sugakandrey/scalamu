@@ -4,7 +4,7 @@
 <pattern>%d{HH:mm:ss.SSS} [%thread{5}] %-5level %logger{10} - %msg%n</pattern>
     </encoder>
 </appender>
-  <root level="INFO">
+  <root level="DEBUG">
     <appender-ref ref="STDOUT" />
 </root>
 </configuration>

@@ -10,7 +10,7 @@ trait PluginConfigFixture extends TestSuite {
   def mutations: Seq[Mutation]
   def verifyTrees: Boolean
   def sanitizeTrees: Boolean
-  def filter: MutationFilter
+  def filter: NameFilter
 
   def withPluginConfig(
     code: MutationConfig => Any

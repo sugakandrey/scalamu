@@ -4,5 +4,5 @@ package detection
 import java.nio.file.Path
 
 trait FileFinder[T] {
-  def findAll(paths: Set[Path]): Set[T]
+  def findAll(paths: Set[Path]): List[T]
 }

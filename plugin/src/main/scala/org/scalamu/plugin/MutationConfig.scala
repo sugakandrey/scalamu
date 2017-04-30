@@ -7,7 +7,7 @@ package org.scalamu.plugin
  *                      used to save information about inserted mutants
  * @param guard         the [[org.scalamu.plugin.MutationGuard]], which is used
  *                      to "guard" inserted mutants (i.e. to allow to enable/disable them programmatically).
- * @param filter        the [[MutationFilter]], used to
+ * @param filter        the [[NameFilter]], used to
  *                      exclude some symbols/files/classes from being mutated
  * @param verifyTrees   Should trees be checked for nested mutants
  * @param sanitizeTrees Should nested mutants be explicitly removed
@@ -15,7 +15,7 @@ package org.scalamu.plugin
 final case class MutationConfig(
   reporter: MutationReporter,
   guard: MutationGuard,
-  filter: MutationFilter = AcceptAllFilter,
+  filter: NameFilter = AcceptAllFilter,
   mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
   verifyTrees: Boolean = false,
   sanitizeTrees: Boolean = true

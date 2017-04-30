@@ -3,7 +3,7 @@ package org.scalamu.core.coverage
 import org.scalamock.scalatest.MockFactory
 import org.scalamu.core.ClassName
 import org.scalamu.testapi.TestSuiteResult._
-import org.scalamu.testapi.{TestFailure, AbstractTestSuite, TestSuiteResult}
+import org.scalamu.testapi.{AbstractTestSuite, TestFailure, TestSuiteResult}
 import org.scalamu.testutil.ScalamuSpec
 import org.scalatest.OneInstancePerTest
 
@@ -22,23 +22,17 @@ class StatementCoverageAnalyzerSpec extends ScalamuSpec with OneInstancePerTest 
     val suiteName = ClassName("Foo")
     val suite     = mockSuite(Success(suiteName, 1000))
     val position  = Position(0, 10)
+    val stm       = Statement(1, "Foo.scala", 1, position)
 
     (reader.invokedStatements _).expects().returning(Set(1, 2, 100, 1000)).once()
     (reporter.getStatementById _)
       .expects(*)
-      .returning(Statement("Foo.scala", 1, position))
+      .returning(stm)
       .repeated(4)
 
-    val expected = Map(
-      suite -> Set(
-        Statement("Foo.scala", 1, position),
-        Statement("Foo.scala", 1, position),
-        Statement("Foo.scala", 1, position),
-        Statement("Foo.scala", 1, position)
-      )
-    )
+    val expected = Map(suite -> Set(stm, stm, stm, stm))
 
-    analyzer.forSuites(Set(suite)).value should ===(expected)
+    analyzer.forSuites(List(suite)).value should ===(expected)
   }
 
   it should "calculate coverage for multiple successful suites" in {
@@ -51,17 +45,17 @@ class StatementCoverageAnalyzerSpec extends ScalamuSpec with OneInstancePerTest 
     (reader.invokedStatements _).expects().returning(Set(1)).repeated(3)
     (reporter.getStatementById _)
       .expects(*)
-      .onCall((_: Int) => Statement(namesIterator.next + ".scala", 1, position))
+      .onCall((_: Int) => Statement(1, namesIterator.next + ".scala", 1, position))
       .repeated(3)
 
     val expected: Map[AbstractTestSuite, Set[Statement]] = suites
       .zip(suiteNames)
       .map {
         case (suite, name) =>
-          suite -> Set(Statement(s"${name.fullName}.scala", 1, position))
+          suite -> Set(Statement(1, s"${name.fullName}.scala", 1, position))
       }(collection.breakOut)
 
-    analyzer.forSuites(suites.toSet).value should ===(expected)
+    analyzer.forSuites(suites).value should ===(expected)
   }
 
   it should "aggregate failures in case some of the suites failed" in {
@@ -69,17 +63,17 @@ class StatementCoverageAnalyzerSpec extends ScalamuSpec with OneInstancePerTest 
     val failures        = Seq(ClassName("bar"), ClassName("baz"), ClassName("qux"))
     val successfulSuite = mockSuite(Success(success, 10))
     val testFailure     = TestFailure("test 123 failed", None)
-    val failedSuites =
-      failures.map(name => mockSuite(TestsFailed(name, Seq(testFailure))))
+    val failedSuites: List[AbstractTestSuite] =
+      failures.map(name => mockSuite(TestsFailed(name, Seq(testFailure))))(collection.breakOut)
 
     (reader.invokedStatements _).expects().returning(Set(1)).once()
     (reader.clearData _).expects().repeated(3)
     (reporter.getStatementById _)
       .expects(*)
-      .returns(Statement("foo.scala", 1, Position(0, 10)))
+      .returns(Statement(1, "foo.scala", 1, Position(0, 10)))
       .once()
 
-    analyzer.forSuites(Set(successfulSuite) | failedSuites.toSet).invalidValue.toList should ===(
+    analyzer.forSuites(List(successfulSuite) ::: failedSuites).invalidValue.toList should ===(
       List(
         TestsFailed(ClassName("bar"), Seq(testFailure)),
         TestsFailed(ClassName("baz"), Seq(testFailure)),

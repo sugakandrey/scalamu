@@ -19,7 +19,7 @@ trait GlobalDerivableInstances
     with MutationConfigDerivable
 
 trait SettingsDerivable {
-  private def pathsToString: Seq[Path] => String =
+  private def pathsToString: Traversable[Path] => String =
     _.foldLeft("")(_ + File.pathSeparator + _)
 
   implicit val settingsDerivable: Derivable[Settings] = config =>

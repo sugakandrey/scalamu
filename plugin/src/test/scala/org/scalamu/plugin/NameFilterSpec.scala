@@ -3,16 +3,16 @@ package org.scalamu.plugin
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.testutil.MutationTestRunner
 
-class MutationFilterSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
+class NameFilterSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
 
-  override val filter: MutationFilter = RegexBasedFilter(
+  override val filter: NameFilter = RegexBasedFilter(
     ".*scala.Predef.print.*".r,
     ".*foobar.*".r,
     ".*Foo.Bar".r
   )
   override def mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
 
-  "MutationFilter" should "ignore symbols according to their fullName using supplied regex" in
+  "NameFilter" should "ignore symbols according to their fullName using supplied regex" in
     withScalamuCompiler { (global, reporter) =>
       val code =
         """

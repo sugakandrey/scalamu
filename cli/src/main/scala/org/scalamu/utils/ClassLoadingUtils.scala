@@ -10,6 +10,9 @@ trait ClassLoadingUtils {
     try { f } finally { Thread.currentThread.setContextClassLoader(oldClassLoader) }
   }
 
+  def withContextClassLoader[T](paths: Set[Path])(f: => T): T =
+    withContextClassLoader(loaderForPaths(paths))(f)
+
   def loaderForPaths(
     paths: Set[Path],
     parent: Option[ClassLoader] = Some(getClass.getClassLoader)

@@ -6,8 +6,7 @@ import org.scalamu.core.configuration.{GlobalDerivableInstances, ScalamuConfig}
 import org.scalamu.core.coverage.{CoveragePlugin, InstrumentationReporter}
 import org.scalamu.plugin.{MutationConfig, MutationReporter, ScalamuPlugin}
 
-import scala.collection.Set
-import scala.reflect.internal.util.{BatchSourceFile, SourceFile}
+import scala.reflect.internal.util.BatchSourceFile
 import scala.reflect.io.{PlainFile, Path => ReflectPath}
 import scala.tools.nsc.plugins.Plugin
 import scala.tools.nsc.reporters.Reporter
@@ -30,20 +29,21 @@ class ScalamuGlobal private[compilation] (
   override protected def loadRoughPluginsList(): List[Plugin] =
     coveragePlugin :: scalamuPlugin :: super.loadRoughPluginsList()
 
-  def withPhasesSkipped(phases: List[PluginPhase]): ScalamuGlobal = {
-    settings.skip.value = phases.map(_.name)
+  def withPhasesSkipped(phases: PluginPhase*): ScalamuGlobal = {
+    settings.skip.value = phases.map(_.name)(collection.breakOut)
     this
   }
 
-  def compile(suites: Set[SourceInfo]): Int = {
-    val sourceFiles: List[SourceFile] = suites.map(
+  def compile(suites: List[SourceInfo]): Int = {
+    val sourceFiles = suites.map(
       suite =>
         new BatchSourceFile(
           new PlainFile(
             ReflectPath(suite.fullPath.toFile)
           )
       )
-    )(collection.breakOut)
+    )
+    ScalamuGlobal.log.debug(s"Compiling source files: $sourceFiles")
     val run = new Run
     val id  = currentRunId
     run.compileSources(sourceFiles)

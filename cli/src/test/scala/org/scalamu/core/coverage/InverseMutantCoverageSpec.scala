@@ -25,21 +25,21 @@ class InverseMutantCoverageSpec extends ScalamuSpec with MockFactory {
 
     val statementCoverage = Map(
       suite1 -> Set(
-        Statement("Foo.scala", 1, Position(10, 20)),
-        Statement("Foo.scala", 1, Position(100, 200)),
-        Statement("Bar.scala", 1, Position(0, 5)),
-        Statement("Baz.scala", 1, Position(998, 999))
+        Statement(1,"Foo.scala", 1, Position(10, 20)),
+        Statement(2,"Foo.scala", 1, Position(100, 200)),
+        Statement(3,"Bar.scala", 1, Position(0, 5)),
+        Statement(4,"Baz.scala", 1, Position(998, 999))
       ),
       suite2 -> Set(
-        Statement("Baz.scala", 1, Position(998, 1009)),
-        Statement("Bar.scala", 1, Position(1, 5)),
-        Statement("Qux.scala", 1, Position(2, 5)),
-        Statement("Foo.scala", 1, Position(0, 100))
+        Statement(5, "Baz.scala", 1, Position(998, 1009)),
+        Statement(6, "Bar.scala", 1, Position(1, 5)),
+        Statement(7, "Qux.scala", 1, Position(2, 5)),
+        Statement(8, "Foo.scala", 1, Position(0, 100))
       ),
       suite3 -> Set(
-        Statement("Baz.scala", 1, Position(1000, 1010)),
-        Statement("Foo.scala", 1, Position(10, 210)),
-        Statement("Qux.scala", 1, Position(10, 210))
+        Statement(9, "Baz.scala", 1, Position(1000, 1010)),
+        Statement(10, "Foo.scala", 1, Position(10, 210)),
+        Statement(11, "Qux.scala", 1, Position(10, 210))
       )
     )
 

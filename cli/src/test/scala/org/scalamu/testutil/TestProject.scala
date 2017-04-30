@@ -8,8 +8,10 @@ final case class TestProject(
   name: String,
   rootDir: Path,
   dependencies: Set[Path],
-  target: Set[Path]
+  classes: Path,
+  testClasses: Path
 ) {
+  def target: Set[Path]    = Set(classes, testClasses)
   def classPath: Set[Path] = dependencies | target
 }
 
@@ -27,9 +29,7 @@ object TestProject {
     dir.getFileName.toString,
     dir,
     (dir / "lib").filter(_.isJarOrZip).toSet,
-    Set(
-      dir / "target" / "scala-2.12" / "classes",
-      dir / "target" / "scala-2.12" / "test-classes"
-    )
+    dir / "target" / "scala-2.12" / "classes",
+    dir / "target" / "scala-2.12" / "test-classes"
   )
 }

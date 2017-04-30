@@ -13,6 +13,7 @@ class MemoryReporter extends InstrumentationReporter {
         instrumentedStatements.put(
           stm.id,
           Statement(
+            stm.id,
             stm.source,
             stm.line,
             Position(stm.start, stm.end)
