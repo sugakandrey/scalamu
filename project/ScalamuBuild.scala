@@ -39,6 +39,9 @@ object ScalamuBuild {
     fullClasspath ++= (fullClasspath in Compile).value
       .filter(_.data.getName.contains("org.scala-lang"))
   )
+  
+  lazy val common = Project(id = "common", base = file("common"))
+    .settings(commonSettings)
 
   lazy val plugin = Project(id = "plugin", base = file("plugin"))
     .settings(commonSettings)
@@ -46,7 +49,8 @@ object ScalamuBuild {
     .settings(
       libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )
-
+  .dependsOn(common)  
+  
   private lazy val testingFrameworks = Seq(
     "org.specs2"    %% "specs2-core" % "3.8.9" % Optional,
     "org.scalatest" %% "scalatest"   % "3.0.1" % Optional,
@@ -64,11 +68,20 @@ object ScalamuBuild {
         "com.github.scopt" %% "scopt"                       % "3.5.0",
         "org.scoverage"    %% "scalac-scoverage-plugin"     % "1.3.0",
         "org.scoverage"    %% "scalac-scoverage-runtime"    % "1.3.0",
+        
         "org.scalamock"    %% "scalamock-scalatest-support" % "3.5.0" % Test,
         "com.ironcorelabs" %% "cats-scalatest"              % "2.2.0" % Test
       ) ++ testingFrameworks
     )
+    .settings(
+      libraryDependencies ++= Seq(
+        "io.circe" %% "circe-core",
+        "io.circe" %% "circe-generic",
+        "io.circe" %% "circe-parser"
+      ).map(_ % "0.7.0")
+    )    
     .dependsOn(plugin % "compile->compile;test->test")
+    .dependsOn(common)  
 
   lazy val root = Project(id = "scalamu", base = file("."))
     .settings(commonSettings)
