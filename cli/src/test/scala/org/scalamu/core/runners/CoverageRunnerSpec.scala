@@ -3,6 +3,7 @@ package org.scalamu.core.runners
 import java.io.File
 import java.nio.file.Path
 
+import cats.implicits._
 import org.scalamu.core.compilation.{IsolatedScalamuGlobalFixture, ScalamuMutationPhase}
 import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.plugin.testutil.MutationTestRunner
@@ -48,13 +49,17 @@ class CoverageRunnerSpec
         val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
 
         withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
-          val coverage = CoverageRunner.run(
-            config.copy(excludeTestsClasses = Seq(".*Bad.*".r)),
-            instrumentation
-          )
+          val coverage = CoverageRunner
+            .run(
+              config.copy(excludeTestsClasses = Seq(".*Bad.*".r)),
+              instrumentation
+            )
+            .toList
+            .sequenceU
+            .toEither
           val suiteCoverage = coverage.right.value
           suiteCoverage should have size 1
-          forAll(suiteCoverage.values)(_.size should ===(11))
+          forAll(suiteCoverage.map(_.coverage))(_.size should ===(11))
         }
       }
   }
@@ -67,11 +72,15 @@ class CoverageRunnerSpec
         val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
 
         withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
-          val coverage = CoverageRunner.run(
-            config,
-            instrumentation
-          )
-          coverage.left.value.tests.toList should have size 1
+          val coverage = CoverageRunner
+            .run(
+              config,
+              instrumentation
+            )
+            .toList
+            .sequenceU
+            .toEither
+          coverage.left.value.toList should have size 1
         }
       }
   }

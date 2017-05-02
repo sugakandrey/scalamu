@@ -1,7 +1,7 @@
-package org.scalamu.testapi.specs2
+package org.scalamu.testapi
+package specs2
 
 import org.scalamu.core.ClassName
-import org.scalamu.testapi.{SuiteResultTypeConverter, TestRunner, TestSuiteResult}
 import org.scalamu.utils.ClassLoadingUtils
 import org.specs2.control
 import org.specs2.reporter.NotifierPrinter
@@ -35,15 +35,15 @@ class Specs2Runner extends TestRunner[Stats] {
       errorOrStats.fold(
         err =>
           err.fold(
-            TestSuiteResult.Aborted(suite, _),
-            desciption => TestSuiteResult.Aborted(suite, InternalSpecs2Error(desciption))
+            SuiteExecutionAborted(suite, _),
+            desciption => SuiteExecutionAborted(suite, InternalSpecs2Error(desciption))
         ),
         converter.fromResult(suite)
       )
     }
 
     suiteResult.fold(
-      TestSuiteResult.Aborted(suite, _),
+      SuiteExecutionAborted(suite, _),
       identity
     )
   }

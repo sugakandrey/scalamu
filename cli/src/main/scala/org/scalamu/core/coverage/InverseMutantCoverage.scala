@@ -12,13 +12,13 @@ object InverseMutantCoverage {
   ): Map[MutantInfo, Set[AbstractTestSuite]] = {
     val statementsCoverageByFile = for {
       (info, statements) <- statementCoverage
-    } yield info -> statements.groupBy(_.source)
+    } yield info -> statements.groupBy(_.pos.source)
 
     mutants.map { mutant =>
-      val source = mutant.pos.source.path
+      val source = mutant.pos.source
       val tests: Set[AbstractTestSuite] = statementsCoverageByFile.collect {
         case (test, bySourceCov)
-            if bySourceCov.get(source).exists(_.exists(_.pos.includes(mutant))) =>
+            if bySourceCov.get(source).exists(_.exists(_.pos.includes(mutant.pos))) =>
           test
       }(breakOut)
       mutant -> tests

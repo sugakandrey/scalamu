@@ -2,6 +2,7 @@ package org.scalamu.core.coverage
 
 import java.{util => ju}
 
+import org.scalamu.common.position.Position
 import scoverage.Coverage
 
 class MemoryReporter extends InstrumentationReporter {
@@ -14,9 +15,8 @@ class MemoryReporter extends InstrumentationReporter {
           stm.id,
           Statement(
             stm.id,
-            stm.source,
             stm.line,
-            Position(stm.start, stm.end)
+            Position(stm.source, stm.start, stm.end)
           )
       )
     )

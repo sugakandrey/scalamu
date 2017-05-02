@@ -1,5 +1,7 @@
 package org.scalamu.plugin
 
+import org.scalamu.common.filtering.{AcceptAllFilter, NameFilter}
+
 /**
  * Stores plugin configuration info.
  *

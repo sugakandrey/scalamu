@@ -1,6 +1,7 @@
 package org.scalamu.core.coverage
 
 import org.scalamock.scalatest.MockFactory
+import org.scalamu.common.position.Position
 import org.scalamu.plugin.MutantInfo
 import org.scalamu.plugin.mutations.arithmetic.ReplaceMathOperators
 import org.scalamu.testapi.AbstractTestSuite
@@ -25,21 +26,21 @@ class InverseMutantCoverageSpec extends ScalamuSpec with MockFactory {
 
     val statementCoverage = Map(
       suite1 -> Set(
-        Statement(1,"Foo.scala", 1, Position(10, 20)),
-        Statement(2,"Foo.scala", 1, Position(100, 200)),
-        Statement(3,"Bar.scala", 1, Position(0, 5)),
-        Statement(4,"Baz.scala", 1, Position(998, 999))
+        Statement(1, 1, Position("Foo.scala", 10, 20)),
+        Statement(2, 1, Position("Foo.scala", 100, 200)),
+        Statement(3, 1, Position("Bar.scala", 0, 5)),
+        Statement(4, 1, Position("Baz.scala", 998, 999))
       ),
       suite2 -> Set(
-        Statement(5, "Baz.scala", 1, Position(998, 1009)),
-        Statement(6, "Bar.scala", 1, Position(1, 5)),
-        Statement(7, "Qux.scala", 1, Position(2, 5)),
-        Statement(8, "Foo.scala", 1, Position(0, 100))
+        Statement(5, 1, Position("Baz.scala", 998, 1009)),
+        Statement(6, 1, Position("Bar.scala", 1, 5)),
+        Statement(7, 1, Position("Qux.scala", 2, 5)),
+        Statement(8, 1, Position("Foo.scala", 0, 100))
       ),
       suite3 -> Set(
-        Statement(9, "Baz.scala", 1, Position(1000, 1010)),
-        Statement(10, "Foo.scala", 1, Position(10, 210)),
-        Statement(11, "Qux.scala", 1, Position(10, 210))
+        Statement(9, 1, Position("Baz.scala", 1000, 1010)),
+        Statement(10, 1, Position("Foo.scala", 10, 210)),
+        Statement(11, 1, Position("Qux.scala", 10, 210))
       )
     )
 

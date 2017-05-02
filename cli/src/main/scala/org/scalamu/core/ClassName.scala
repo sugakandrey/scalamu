@@ -1,5 +1,6 @@
 package org.scalamu.core
 
+import io.circe.{Decoder, Encoder}
 import org.scalamu.utils.ClassLoadingUtils
 
 import scala.util.Try
@@ -28,4 +29,7 @@ object ClassName {
 
   def fromInternal(name: String): ClassName = ClassName(name.replaceAll("/", "."))
   def forClass(aClass: Class[_]): ClassName = ClassName(aClass.getName)
+
+  implicit val encodeClassName: Encoder[ClassName] = Encoder.encodeString.contramap(_.fullName)
+  implicit val decodeClassName: Decoder[ClassName] = Decoder.decodeString.map(ClassName(_))
 }

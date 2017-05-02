@@ -1,7 +1,7 @@
-package org.scalamu.testapi.scalatest
+package org.scalamu.testapi
+package scalatest
 
 import org.scalamu.core.ClassName
-import org.scalamu.testapi.{SuiteResultTypeConverter, TestFailure, TestSuiteResult}
 import org.scalatest.events.{RunCompleted, RunStarting, SuiteAborted, TestFailed}
 import org.scalatest.{Reporter, Status}
 
@@ -13,8 +13,8 @@ class ScalaTestConverters extends SuiteResultTypeConverter[Status] {
   private var completionTimestamp: Long = _
 
   private[scalatest] val reporter: Reporter = {
-    case e: TestFailed   => failures += TestFailure(e.message, e.throwable)
-    case e: SuiteAborted => failures += TestFailure(e.message, e.throwable)
+    case e: TestFailed   => failures += TestFailure(e.message, e.throwable.map(_.getMessage))
+    case e: SuiteAborted => failures += TestFailure(e.message, e.throwable.map(_.getMessage))
     case e: RunStarting  => startTimestamp = e.timeStamp
     case e: RunCompleted => completionTimestamp = e.timeStamp
     case _               =>
@@ -22,8 +22,8 @@ class ScalaTestConverters extends SuiteResultTypeConverter[Status] {
 
   override def fromResult(suite: ClassName)(result: Status): TestSuiteResult =
     if (result.succeeds())
-      TestSuiteResult.Success(suite, completionTimestamp - startTimestamp)
+      SuiteSuccess(suite, completionTimestamp - startTimestamp)
     else
-      TestSuiteResult.TestsFailed(suite, failures.toSeq)
+      TestsFailed(suite, failures.toSeq)
 
 }

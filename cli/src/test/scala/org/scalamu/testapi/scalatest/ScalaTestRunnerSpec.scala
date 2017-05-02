@@ -30,7 +30,7 @@ class ScalaTestRunnerSpec extends TestRunnerSpec {
     forAll(failedSuites)(suite => execute(suite.name) should be a failure)
   }
 
-  it should "correctly report failures to instantiate a suite with TestSuiteResult.Aborted" in withTestProjectInClassPath {
+  it should "correctly report failures to instantiate a suite with TestSuiteResult.SuiteExecutionAborted" in withTestProjectInClassPath {
     val abortedSuite = classInfoForName("org/scalamu/testing/scalatest/WrapWithInvalid.class")
     execute(abortedSuite.name) shouldBe aborted
   }

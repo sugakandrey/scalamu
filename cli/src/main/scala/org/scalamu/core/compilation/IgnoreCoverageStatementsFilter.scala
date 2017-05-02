@@ -1,6 +1,7 @@
 package org.scalamu.core.compilation
 
-import org.scalamu.plugin.RegexBasedFilter
+
+import org.scalamu.common.filtering.RegexBasedFilter
 
 import scala.util.matching.Regex
 

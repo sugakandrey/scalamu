@@ -21,7 +21,7 @@ class Specs2RunnerSpec extends TestRunnerSpec {
     execute(failedSuite.name) should be a failure
   }
 
-  it should "correctly report failures to instantiate a suite with TestSuiteResult.Aborted" in withTestProjectInClassPath {
+  it should "correctly report failures to instantiate a suite with TestSuiteResult.SuiteExecutionAborted" in withTestProjectInClassPath {
     val abortedSuite = classInfoForName("org/scalamu/testing/specs2/Acceptance.class")
     Thread
       .currentThread()

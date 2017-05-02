@@ -18,7 +18,7 @@ class UTestRunner extends TestRunner[Tree[Result]] {
     val moduleSymbol = Try(mirror.staticModule(suiteName.fullName))
     implicit val ec  = ExecutionContext.RunNow
     moduleSymbol.fold(
-      TestSuiteResult.Aborted(suiteName, _),
+      SuiteExecutionAborted(suiteName, _),
       mirror.reflectModule _
         andThen { _.instance.asInstanceOf[TestSuite] }
         andThen { suite => suite.tests.run(wrap = suite.utestWrap(_)) }

@@ -1,8 +1,8 @@
-package org.scalamu.testapi.specs2
+package org.scalamu.testapi
+package specs2
 
 import java.util.Date
 
-import org.scalamu.testapi.TestFailure
 import org.specs2.execute.Details
 import org.specs2.reporter.SilentNotifier
 
@@ -17,7 +17,7 @@ class Specs2Notifier extends SilentNotifier {
   private val failures = mutable.Set.empty[TestFailure]
 
   private def addFailure(message: String, throwable: Throwable): Unit =
-    failures += TestFailure(message, Some(throwable))
+    failures += TestFailure(message, Some(throwable.getMessage))
 
   def getFailures: Seq[TestFailure] = failures.toSeq
 

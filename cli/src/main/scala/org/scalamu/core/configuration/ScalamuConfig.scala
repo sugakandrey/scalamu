@@ -27,12 +27,12 @@ final case class ScalamuConfig(
   sourceDirs: Seq[Path] = Seq.empty,
   testClassDirs: Set[Path] = Set.empty,
   classPath: Set[Path] = Set.empty,
-  scalaPath: Path = Paths.get("."),
+  scalaPath: String = "",
   jvmArgs: Seq[String] = Seq.empty,
   mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
   excludeSources: Seq[Regex] = Seq.empty,
   excludeTestsClasses: Seq[Regex] = Seq.empty,
-  threads: Int = Runtime.getRuntime.availableProcessors(),
+  threads: Int = 1,
   verbose: Boolean = false
 ) {
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
@@ -58,7 +58,7 @@ object ScalamuConfig {
       .text("list of classpath elements")
       .action((cp, config) => config.copy(classPath = cp.toSet))
 
-    arg[Path]("<scalaPath>")
+    arg[String]("<scalaPath>")
       .text("path to scala executable")
       .action((scalaPath, config) => config.copy(scalaPath = scalaPath))
 

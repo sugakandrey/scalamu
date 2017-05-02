@@ -2,8 +2,8 @@ package org.scalamu.testapi
 
 import cats.instances.function._
 import cats.syntax.cartesian._
+import org.scalamu.common.filtering.NameFilter
 import org.scalamu.core.ClassInfo
-import org.scalamu.plugin.NameFilter
 
 trait TestClassFilterMixin extends TestClassFilter {
   protected def additionalReq: ClassInfo => Boolean

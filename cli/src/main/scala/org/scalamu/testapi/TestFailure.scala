@@ -3,6 +3,6 @@ package org.scalamu.testapi
 /**
  * Represents a single failed test in a suite.
  * @param description In most cases - the name of the failed test.
- * @param throwable Exception thrown.
+ * @param errorMessage Exception thrown.
  */
-final case class TestFailure(description: String, throwable: Option[Throwable] = None)
+final case class TestFailure(description: String, errorMessage: Option[String] = None)

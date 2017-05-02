@@ -4,34 +4,24 @@ import cats.data.Validated._
 import cats.data.ValidatedNel
 import cats.instances.list._
 import cats.syntax.traverse._
-import org.scalamu.testapi.{AbstractTestSuite, SuiteFailure}
+import org.scalamu.testapi.{AbstractTestSuite, SuiteFailure, SuiteSuccess}
 
-import scala.collection.Set
-
-/**
- *
- * @param reader
- * @param reporter
- */
 class StatementCoverageAnalyzer(
   reader: InvocationDataReader,
   reporter: InstrumentationReporter
 ) {
-  type SuiteCoverage = (AbstractTestSuite, Set[Statement])
-
   def forSuites(
     suites: List[AbstractTestSuite]
-  ): ValidatedNel[SuiteFailure, Map[AbstractTestSuite, Set[Statement]]] =
-    suites.traverseU(suiteCoverage).map(_.toMap)
+  ): ValidatedNel[SuiteFailure, List[SuiteCoverage]] =
+    suites.traverseU(forSuite)
 
-  private def suiteCoverage(suite: AbstractTestSuite): ValidatedNel[SuiteFailure, SuiteCoverage] = {
-    import org.scalamu.testapi.TestSuiteResult._
-
+  def forSuite(suite: AbstractTestSuite): ValidatedNel[SuiteFailure, SuiteCoverage] =
     suite.execute() match {
-      case _: Success =>
+      case _: SuiteSuccess =>
         val statements = reader.invokedStatements().map(reporter.getStatementById)
-        valid(suite -> statements).toValidatedNel
-      case sf: SuiteFailure => reader.clearData(); invalidNel(sf)
+        valid(SuiteCoverage(suite, statements)).toValidatedNel
+      case sf: SuiteFailure =>
+        reader.clearData()
+        invalidNel(sf)
     }
-  }
 }

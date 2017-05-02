@@ -35,7 +35,7 @@ class ScalaTestRunner extends TestRunner[Status] {
     val tryLoadTestClass = suite.loadFromContextClassLoader
     val suiteClass       = tryLoadTestClass.flatMap(resolveRunnerClass)
     suiteClass.fold(
-      TestSuiteResult.Aborted(suite, _),
+      SuiteExecutionAborted(suite, _),
       converter.fromResult(suite) _ compose { _.run(None, Args(converter.reporter)) }
     )
   }

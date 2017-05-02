@@ -1,6 +1,6 @@
 package org.scalamu.testapi
 
-import org.scalamu.plugin.{NameFilter, RegexBasedFilter}
+import org.scalamu.common.filtering.{NameFilter, RegexBasedFilter}
 import org.scalamu.testapi.junit.JUnitFramework
 import org.scalamu.testapi.scalatest.ScalaTestFramework
 import org.scalamu.testapi.specs2.Specs2Framework

@@ -1,5 +1,6 @@
 package org.scalamu.plugin
 
+import org.scalamu.common.filtering.{AcceptAllFilter, NameFilter, RegexBasedFilter}
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.testutil.MutationTestRunner
 

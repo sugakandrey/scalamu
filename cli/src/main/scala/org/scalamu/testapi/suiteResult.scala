@@ -7,17 +7,17 @@ import org.scalamu.core.ClassName
  */
 sealed abstract class TestSuiteResult(succeeded: Boolean)
 
+final case class SuiteSuccess(name: ClassName, durationMillis: Long) extends TestSuiteResult(true)
+
 /**
  * Signals that a suite either was aborted or has failed tests.
  */
 sealed abstract class SuiteFailure extends TestSuiteResult(false)
 
-object TestSuiteResult {
-  final case class Success(name: ClassName, durationMillis: Long)           extends TestSuiteResult(true)
-  final case class TestsFailed(name: ClassName, failures: Seq[TestFailure]) extends SuiteFailure
-  final case class Aborted(name: ClassName, errorMessage: String)           extends SuiteFailure
+final case class TestsFailed(name: ClassName, failures: Seq[TestFailure])     extends SuiteFailure
+final case class SuiteExecutionAborted(name: ClassName, errorMessage: String) extends SuiteFailure
 
-  object Aborted {
-    def apply(name: ClassName, error: Throwable): Aborted = Aborted(name, error.getMessage)
-  }
+object SuiteExecutionAborted {
+  def apply(name: ClassName, error: Throwable): SuiteExecutionAborted =
+    SuiteExecutionAborted(name, error.getMessage)
 }

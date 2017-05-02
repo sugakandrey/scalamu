@@ -22,5 +22,8 @@ object ScalamuPluginConfig {
     ReplaceWithNil
   )
 
+  val mutationByName: Map[String, Mutation] =
+    allMutations.map(m => m -> m.toString).toMap.map(_.swap)
+
   val mutationGuardPrefix: String = "org.scalamu.guards"
 }

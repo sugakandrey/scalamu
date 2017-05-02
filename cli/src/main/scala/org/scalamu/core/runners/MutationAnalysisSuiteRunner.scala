@@ -4,8 +4,7 @@ package runners
 import org.scalamu.core.DetectionStatus.{Killed, NotCovered}
 import org.scalamu.core.RunnerFailure.RuntimeFailure
 import org.scalamu.plugin.MutantInfo
-import org.scalamu.testapi.AbstractTestSuite
-import org.scalamu.testapi.TestSuiteResult._
+import org.scalamu.testapi.{SuiteExecutionAborted, AbstractTestSuite, SuiteSuccess, TestsFailed}
 
 import scala.annotation.tailrec
 
@@ -25,8 +24,8 @@ object MutationAnalysisSuiteRunner {
     def loop(suites: Iterator[AbstractTestSuite]): DetectionStatus =
       if (suites.hasNext) {
         suites.next().execute() match {
-          case _: Success     => loop(suites)
-          case _: Aborted     => RuntimeFailure
+          case _: SuiteSuccess     => loop(suites)
+          case _: SuiteExecutionAborted     => RuntimeFailure
           case _: TestsFailed => Killed
         }
       } else DetectionStatus.Alive

@@ -1,5 +1,6 @@
 package org.scalamu.plugin.testutil
 
+import org.scalamu.common.filtering.{AcceptAllFilter, NameFilter}
 import org.scalamu.plugin._
 import org.scalamu.plugin.fixtures._
 import org.scalatest.{FlatSpec, Matchers}

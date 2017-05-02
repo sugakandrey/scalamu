@@ -5,6 +5,7 @@ import com.typesafe.scalalogging.StrictLogging
 import org.scalamu.core.ClassInfo
 import org.scalamu.utils.{ASMUtils, ClassLoadingUtils, FileSystemUtils}
 import org.scalatest._
+import org.scalatest.concurrent.ScalaFutures
 
 trait ScalamuSpec
     extends FlatSpec
@@ -14,6 +15,7 @@ trait ScalamuSpec
     with OptionValues
     with EitherValues
     with TryValues
+    with ScalaFutures
     with FileSystemUtils
     with FileSystemSpec
     with ASMUtils
