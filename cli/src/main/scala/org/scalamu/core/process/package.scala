@@ -12,7 +12,9 @@ package object process {
   def tryWith[R <: AutoCloseable, T](resource: => R)(f: R => T): Either[Throwable, T] =
     Either.catchNonFatal(resource).flatMap { resource =>
       Either.catchNonFatal(f(resource)).flatMap { result =>
-        Either.catchNonFatal(resource.close()).map(_ => result)
+        Either.catchNonFatal {
+          if (resource != null) resource.close()
+        }.map(_ => result)
       }
     }
 

@@ -1,18 +1,31 @@
 package org.scalamu.core
 package runners
 
-import org.scalamu.plugin.MutantInfo
+import java.io.DataInputStream
+
+import com.typesafe.scalalogging.Logger
+import io.circe.generic.auto._
+import io.circe.parser.decode
 import org.scalamu.testapi.AbstractTestSuite
 
-object MutationRunner {
-  def main(args: Array[String]): Unit = run(???)
+object MutationRunner extends Runner[MutationRunnerResponse] {
+  private val log = Logger[MutationRunner.type]
 
-  type ProcessData = (String, Set[MutationResult])
+  override type Configuration = Map[MutantId, Set[AbstractTestSuite]]
 
-  def run(
-    inverseCoverage: Map[MutantInfo, Set[AbstractTestSuite]]
-  ): Map[String, Set[MutationResult]] = {
-    val results = MutationAnalysisSuiteRunner.runMutantsInverseCoverage(inverseCoverage)
-    results.groupBy(_.info.pos.source)
+  override def readConfigurationFromParent(
+    dis: DataInputStream
+  ): Either[Throwable, Map[MutantId, Set[AbstractTestSuite]]] =
+    decode[Configuration](dis.readUTF())
+
+  override def run(
+    inverseCoverage: Configuration
+  ): Iterator[MutationRunnerResponse] =
+    inverseCoverage.iterator.map(
+      Function.tupled(MutationAnalysisSuiteRunner.runMutantInverseCoverage)
+    )
+
+  def main(args: Array[String]): Unit = {
+    execute(args)
   }
 }

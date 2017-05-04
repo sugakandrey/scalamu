@@ -8,26 +8,29 @@ import io.circe.syntax._
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.coverage.Statement
 import org.scalamu.core.process.CoverageRunnerConfig._
-import org.scalamu.core.runners.CoverageRunner
+import org.scalamu.core.runners.{CoverageRunner, Runner}
 
 class CoverageProcess(
-  override val port: Int,
   override val socket: ServerSocket,
   override val config: ScalamuConfig,
+  compiledSources: Map[String, Array[Byte]],
   statementsById: Map[Int, Statement]
-) extends ScalaProcess[CoverageRunner.ProcessData] {
-  import CoverageRunner.ProcessData
+) extends ScalaProcess[CoverageRunner.Result] {
+  override val runner: Runner[CoverageRunner.Result] = CoverageRunner
 
-  override val target: Class[_] = CoverageRunner.getClass
-
-  override val connectionHandler: SocketConnectionHandler[ProcessData] =
-    new RunnerCommunicationHandler[ProcessData](socket, sendDataToRunner)
+  override val connectionHandler: SocketConnectionHandler[CoverageRunner.Result] =
+    new RunnerCommunicationHandler[CoverageRunner.Result](socket, sendDataToRunner)
 
   private def sendDataToRunner(os: DataOutputStream): Unit = {
     val configData         = config.derive[CoverageRunnerConfig].asJson.noSpaces
     val statementsByIdData = statementsById.asJson.noSpaces
     os.writeUTF(configData)
     os.writeUTF(statementsByIdData)
+    compiledSources.foreach {
+      case (name, bytes) =>
+        os.writeUTF(name)
+        os.write(bytes)
+    }
     os.flush()
   }
 }

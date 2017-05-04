@@ -1,22 +1,19 @@
 package org.scalamu.core
 package runners
 
-import org.scalamu.core.DetectionStatus.{Killed, NotCovered}
-import org.scalamu.core.RunnerFailure.RuntimeFailure
-import org.scalamu.plugin.MutantInfo
-import org.scalamu.testapi.{SuiteExecutionAborted, AbstractTestSuite, SuiteSuccess, TestsFailed}
+import org.scalamu.testapi.{AbstractTestSuite, SuiteExecutionAborted, SuiteSuccess, TestsFailed}
 
 import scala.annotation.tailrec
 
 object MutationAnalysisSuiteRunner {
   def runMutantInverseCoverage(
-    info: MutantInfo,
+    id: MutantId,
     suites: Set[AbstractTestSuite]
-  ): MutationResult = MutationResult(info, runSuites(suites))
+  ): MutationRunnerResponse = MutationRunnerResponse(id, runSuites(suites))
 
   def runMutantsInverseCoverage(
-    inverseCov: Map[MutantInfo, Set[AbstractTestSuite]]
-  ): Set[MutationResult] =
+    inverseCov: Map[MutantId, Set[AbstractTestSuite]]
+  ): Set[MutationRunnerResponse] =
     inverseCov.map(Function.tupled(runMutantInverseCoverage))(collection.breakOut)
 
   private def runSuites(suites: Set[AbstractTestSuite]): DetectionStatus = {
@@ -24,13 +21,13 @@ object MutationAnalysisSuiteRunner {
     def loop(suites: Iterator[AbstractTestSuite]): DetectionStatus =
       if (suites.hasNext) {
         suites.next().execute() match {
-          case _: SuiteSuccess     => loop(suites)
-          case _: SuiteExecutionAborted     => RuntimeFailure
-          case _: TestsFailed => Killed
+          case _: SuiteSuccess          => loop(suites)
+          case _: SuiteExecutionAborted => RuntimeFailure
+          case _: TestsFailed           => Killed
         }
-      } else DetectionStatus.Alive
+      } else Alive
 
-    if (suites.isEmpty) NotCovered
+    if (suites.isEmpty) NoTestCoverage
     else loop(suites.iterator)
   }
 }

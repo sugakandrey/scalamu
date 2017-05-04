@@ -2,6 +2,7 @@ package org.scalamu.core.configuration
 
 import java.nio.file.{Path, Paths}
 
+import org.scalamu.core.MalformedConfig
 import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
 import scopt.OptionParser
 
@@ -96,4 +97,10 @@ object ScalamuConfig {
       .text("be verbose about every step")
       .action((_, config) => config.copy(verbose = true))
   }
+
+  def parseConfig[T](args: Seq[String]): Either[MalformedConfig.type, ScalamuConfig] =
+    parser.parse(args, ScalamuConfig()) match {
+      case Some(config) => Right(config)
+      case None         => Left(MalformedConfig)
+    }
 }

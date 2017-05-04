@@ -12,14 +12,11 @@ sealed abstract class DetectionStatus(val killed: Boolean)
  */
 sealed abstract class RunnerFailure extends DetectionStatus(false)
 
-object RunnerFailure {
-  case object TimedOut       extends RunnerFailure
-  case object OutOfMemory    extends RunnerFailure
-  case object RuntimeFailure extends RunnerFailure
-}
+case object TimedOut       extends RunnerFailure
+case object OutOfMemory    extends RunnerFailure
+case object RuntimeFailure extends RunnerFailure
 
-object DetectionStatus {
-  case object Killed     extends DetectionStatus(true)
-  case object Alive      extends DetectionStatus(false)
-  case object NotCovered extends DetectionStatus(false)
-}
+case object Killed         extends DetectionStatus(true)
+case object Alive          extends DetectionStatus(false)
+case object NoTestCoverage extends DetectionStatus(false)
+case object Untested       extends DetectionStatus(false)

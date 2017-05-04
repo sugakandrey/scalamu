@@ -25,6 +25,8 @@ trait ScalamuSpec
     with ValidatedValues
     with ValidatedMatchers {
 
+  override def spanScaleFactor: Double = 20.0
+
   def classInfoForName(
     name: String
   )(implicit loader: ClassLoader = contextClassLoader,

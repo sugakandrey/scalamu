@@ -8,8 +8,7 @@ import cats.instances.list._
 import cats.syntax.either._
 import cats.syntax.traverse._
 import io.circe.Decoder
-import io.circe.parser.decode
-import io.circe.syntax._
+import io.circe.parser._
 
 class RunnerCommunicationHandler[R: Decoder](
   override val socket: ServerSocket,
@@ -20,7 +19,7 @@ class RunnerCommunicationHandler[R: Decoder](
     Iterator
       .continually(Either.catchNonFatal(is.readUTF()))
       .takeWhile(_.isRight)
-      .map(_.flatMap(s => decode[R](s.asJson.noSpaces)))
+      .map(_.flatMap(decode[R]))
       .toList
       .sequenceU
 }
