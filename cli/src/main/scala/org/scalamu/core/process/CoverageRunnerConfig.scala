@@ -18,5 +18,5 @@ object CoverageRunnerConfig {
       config.testClassDirs,
       config.excludeTestsClasses,
       config.verbose
-  )
+    )
 }

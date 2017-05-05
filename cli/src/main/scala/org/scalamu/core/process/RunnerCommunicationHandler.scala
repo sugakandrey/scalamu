@@ -15,7 +15,7 @@ class RunnerCommunicationHandler[R: Decoder](
   override val initialize: DataOutputStream => Unit
 ) extends SocketConnectionHandler[R] {
 
-  override def receive(is: DataInputStream): Either[Throwable, Seq[R]] =
+  override def receive(is: DataInputStream): Either[Throwable, List[R]] =
     Iterator
       .continually(Either.catchNonFatal(is.readUTF()))
       .takeWhile(_.isRight)

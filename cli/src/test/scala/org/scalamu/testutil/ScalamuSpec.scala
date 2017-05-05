@@ -3,7 +3,8 @@ package org.scalamu.testutil
 import cats.scalatest.{ValidatedMatchers, ValidatedValues}
 import com.typesafe.scalalogging.StrictLogging
 import org.scalamu.core.ClassInfo
-import org.scalamu.utils.{ASMUtils, ClassLoadingUtils, FileSystemUtils}
+import org.scalamu.utils.bytecode.ASMUtils
+import org.scalamu.utils.{ClassLoadingUtils, FileSystemUtils}
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 

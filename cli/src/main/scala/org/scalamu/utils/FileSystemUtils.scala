@@ -8,11 +8,22 @@ import java.nio.file.attribute.BasicFileAttributes
 import com.typesafe.scalalogging.Logger
 
 import scala.collection.JavaConverters._
+import scala.reflect.io.AbstractFile
 import scala.util.Try
 import scala.util.control.NonFatal
 
 trait FileSystemUtils {
   import FileSystemUtils._
+
+  implicit class RichAbstractFile(val f: AbstractFile) {
+    def isClassFile: Boolean = f.name.endsWith(".class")
+
+    def allClassFiles: Set[AbstractFile] =
+      f.flatMap {
+        case file if !file.isDirectory => Set(file)
+        case dir                       => dir.allClassFiles
+      }(collection.breakOut)
+  }
 
   implicit class RichPath(val path: Path) {
     private[this] val fileSystem        = FileSystems.getDefault

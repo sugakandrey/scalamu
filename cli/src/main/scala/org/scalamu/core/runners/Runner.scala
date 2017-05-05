@@ -17,19 +17,26 @@ trait Runner[R] {
 
   protected def execute(
     args: Array[String]
-  )(implicit 
-    encoder: Encoder[R]
-  ): Unit =
+  )(implicit encoder: Encoder[R]): Unit =
     tryWith(new Socket("localhost", args.head.toInt)) { socket =>
       val dis = new DataInputStream(new BufferedInputStream(socket.getInputStream))
       val dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream))
-      
+
       readConfigurationFromParent(dis).bimap(
         _ => System.exit(1),
         run _ andThen { _.foreach(data => dos.writeUTF(data.asJson.noSpaces)) }
       )
       dos.flush()
     }
+
+  protected def readCompiledSources(dis: DataInputStream): Map[String, Array[Byte]] =
+    Iterator.continually {
+      val name   = dis.readUTF()
+      val length = dis.readInt()
+      val bytes  = Array.ofDim[Byte](length)
+      dis.readFully(bytes)
+      name -> bytes
+    }.toMap
 
   protected def readConfigurationFromParent(dis: DataInputStream): Either[Throwable, Configuration]
 

@@ -33,7 +33,7 @@ class ScalamuGlobal private[compilation] (
   override protected def loadRoughPluginsList(): List[Plugin] =
     coveragePlugin :: scalamuPlugin :: super.loadRoughPluginsList()
 
-  def outputDir(): AbstractFile = settings.outputDirs.getSingleOutput.get
+  def outputDir: AbstractFile = settings.outputDirs.getSingleOutput.get
 
   def withPhasesSkipped(phases: PluginPhase*): ScalamuGlobal = {
     settings.skip.value = phases.map(_.name)(collection.breakOut)

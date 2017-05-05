@@ -27,6 +27,7 @@ class MutationAnalysisProcess(
     compiledSources.foreach {
       case (name, bytes) =>
         os.writeUTF(name)
+        os.write(bytes.length)
         os.write(bytes)
     }
     os.flush()

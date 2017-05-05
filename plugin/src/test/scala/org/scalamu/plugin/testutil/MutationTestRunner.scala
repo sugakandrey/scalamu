@@ -21,6 +21,7 @@ trait MutationTestRunner
   override def createSettings(): Settings = new Settings {
     usejavacp.value = true
     outputDirs.setSingleOutput(outputDir)
+    Yrangepos.value = true
   }
   override def createReporter(settings: Settings): Reporter = new ConsoleReporter(settings)
 

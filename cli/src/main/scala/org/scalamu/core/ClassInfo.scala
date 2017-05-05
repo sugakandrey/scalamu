@@ -4,7 +4,7 @@ import java.nio.file.Path
 
 import cats.syntax.option._
 import com.typesafe.scalalogging.Logger
-import org.scalamu.utils.{ASMUtils, FileSystemUtils}
+import org.scalamu.utils.FileSystemUtils
 
 final case class ClassInfo(
   name: ClassName,
@@ -16,7 +16,7 @@ final case class ClassInfo(
 )
 
 object ClassInfo {
-  import ASMUtils._
+  import org.scalamu.utils.bytecode.ASMUtils._
   import FileSystemUtils._
   private val log = Logger[ClassInfo]
 

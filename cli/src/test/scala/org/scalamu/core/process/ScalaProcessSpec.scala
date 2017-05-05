@@ -13,8 +13,7 @@ import org.scalamu.testutil.fixtures.ScalamuConfigFixture
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ScalaProcessSpec extends ScalamuSpec with ScalamuConfigFixture {
-  override def scalaPath: String    = System.getenv("SCALA_HOME")
-  override def jvmArgs: Seq[String] = Seq("-J-Xmx100m")
+  override def scalaPath: String = System.getenv("SCALA_HOME")
   override def classPath: Set[Path] =
     System
       .getProperty("java.class.path")
@@ -23,10 +22,10 @@ class ScalaProcessSpec extends ScalamuSpec with ScalamuConfigFixture {
 
   "ScalaProcess" should "launch main class and wait for a process to die" in withConfig { cfg =>
     val handler = new SocketConnectionHandler[Int] {
-      override def socket: ServerSocket                                      = ???
-      override def initialize: (DataOutputStream) => Unit                    = ???
-      override def receive(is: DataInputStream): Either[Throwable, Seq[Int]] = ???
-      override def handle(): Either[CommunicationException, Seq[Int]]        = Right(Seq(42))
+      override def socket: ServerSocket                                       = ???
+      override def initialize: (DataOutputStream) => Unit                     = ???
+      override def receive(is: DataInputStream): Either[Throwable, List[Int]] = ???
+      override def handle(): Either[CommunicationException, List[Int]]         = Right(List(42))
     }
 
     val proc = new ScalaProcess[Int] {

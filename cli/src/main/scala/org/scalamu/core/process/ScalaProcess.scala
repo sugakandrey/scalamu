@@ -19,7 +19,7 @@ trait ScalaProcess[R] {
 
   def execute()(
     implicit ec: ExecutionContext
-  ): Future[Either[CommunicationException, Seq[R]]] = {
+  ): Future[Either[CommunicationException, List[R]]] = {
     val args    = List(socket.getLocalPort.toString)
     val builder = new ProcessBuilder(generateProcessArgs(runner, args): _*)
     configureProcessEnv(builder)
