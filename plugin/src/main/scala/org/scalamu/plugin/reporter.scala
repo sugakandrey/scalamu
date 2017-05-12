@@ -2,7 +2,11 @@ package org.scalamu.plugin
 
 import org.scalamu.common.position.Position
 
-import scala.reflect.internal.util.{Position => ReflectPosition}
+import scala.reflect.internal.util.{
+  DefinedPosition,
+  UndefinedPosition,
+  Position => ReflectPosition
+}
 
 /**
  * Used to save information about inserted mutants.
@@ -36,7 +40,10 @@ object MutantInfo {
     oldTree: String,
     mutated: String
   ): MutantInfo = {
-    val position = Position(pos.source.path, pos.start, pos.end)
+    val position = pos match {
+      case _: UndefinedPosition => Position(pos.source.path, 0, 0, 0)
+      case _: DefinedPosition   => Position(pos.source.path, pos.line, pos.start, pos.end)
+    }
     MutantInfo(mutation, runId, position, oldTree, mutated)
   }
 }

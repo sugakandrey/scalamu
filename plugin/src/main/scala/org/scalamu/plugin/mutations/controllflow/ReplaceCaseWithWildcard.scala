@@ -19,12 +19,12 @@ case object ReplaceCaseWithWildcard extends Mutation { self =>
     override protected def transformer: Transformer = new Transformer {
       override protected def mutate: PartialFunction[Tree, Tree] = {
         case tree @ q"$expr match { case ..${cases: List[Tree]} }" if cases.size > 1 =>
-          val wildcard = cases.collectFirst {
+          val wildcardCase = cases.collectFirst {
             case c @ cq"${Ident(nme.WILDCARD)} => $body"         => c
             case c @ cq"$name @ ${Ident(nme.WILDCARD)} => $body" => c
           }
-          wildcard.fold(tree) { wc =>
-            val mutant = q"$expr match { case ..${List(wc)} }"
+          wildcardCase.fold(tree) { wcc =>
+            val mutant = q"$expr match { case ..${List(wcc)} }".setPos(tree.pos)
             generateMutantReport(tree, mutant)
             guard(mutant, tree)
           }

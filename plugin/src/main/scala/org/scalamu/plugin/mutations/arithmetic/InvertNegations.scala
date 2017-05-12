@@ -44,13 +44,13 @@ case object InvertNegations extends Mutation with NumericTypesSupport { self =>
             case _: Float  => -lit.doubleValue
             case _: Double => -lit.floatValue
           }
-          val mutant = Literal(Constant(value))
+          val mutant = Literal(Constant(value)).setPos(tree.pos)
           mutant.setType(tree.tpe.deconst)
           generateMutantReport(tree, mutant)
           guard(mutant, tree)
         case tree @ q"-${TreeWithType(term, tpe)}" if supportedTypes.exists(_ =:= tpe) =>
           val mutatedTerm = super.transform(term)
-          val mutant      = q"$mutatedTerm"
+          val mutant      = q"$mutatedTerm".setPos(tree.pos)
           generateMutantReport(tree, mutant)
           guard(mutant, tree)
       }

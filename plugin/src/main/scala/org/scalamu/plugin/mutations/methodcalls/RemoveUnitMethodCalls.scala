@@ -35,7 +35,7 @@ case object RemoveUnitMethodCalls extends Mutation { self =>
           val mutatedArgs = args.map(super.transform)
           val mutant      = q"()"
           generateMutantReport(tree, mutant)
-          guard(mutant, q"$qualifier(..$mutatedArgs)")
+          guard(mutant, q"$qualifier(..$mutatedArgs)".setPos(tree.pos))
       }
     }
   }

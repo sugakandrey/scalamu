@@ -27,7 +27,7 @@ trait MutationTestRunner
 
   override def mutationReporter: TestingReporter = new TestingReporter
   override val guard: MutationGuard              = NoOpGuard
-  override val filter: NameFilter            = AcceptAllFilter
+  override val filter: NameFilter                = AcceptAllFilter
   override val sanitizeTrees: Boolean            = false
   override val verifyTrees: Boolean              = false
 }

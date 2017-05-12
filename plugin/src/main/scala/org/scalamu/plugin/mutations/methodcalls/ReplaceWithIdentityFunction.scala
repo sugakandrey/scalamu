@@ -36,11 +36,11 @@ case object ReplaceWithIdentityFunction extends Mutation { self =>
             tree @ MaybeTypedApply(qualifier, name, args),
             tpe
             ) if qualifier.tpe <~< tpe && !name.containsName(nme.CONSTRUCTOR) =>
-          val mutant      = q"$qualifier"
+          val mutant      = q"$qualifier".setPos(tree.pos)
           val mutatedBody = super.transform(qualifier)
           val mutatedArgs = args.map(super.transform)
           generateMutantReport(tree, mutant)
-          guard(mutant, q"$mutatedBody.$name(..$mutatedArgs)")
+          guard(mutant, q"$mutatedBody.$name(..$mutatedArgs)".setPos(tree.pos))
       }
     }
   }

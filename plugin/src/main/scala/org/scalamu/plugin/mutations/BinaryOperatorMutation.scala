@@ -31,11 +31,14 @@ trait BinaryOperatorMutation extends Mutation with OperatorMutationRules { self:
               && isAppropriateType(lhsTpe)
               && isAppropriateType(rhsTpe) =>
           val mutatedOp = encode(mutationRules(op.decodedName.toString))
-          val mutant    = q"$lhs.$mutatedOp(..$rhs)"
+          val mutant    = q"$lhs.$mutatedOp(..$rhs)".setPos(tree.pos)
+
           generateMutantReport(tree, mutant)
+
           val mutatedLhs = super.transform(lhs)
           val mutatedRhs = super.transform(rhs)
-          guard(mutant, q"$mutatedLhs.$op(..$mutatedRhs)")
+
+          guard(mutant, q"$mutatedLhs.$op(..$mutatedRhs)".setPos(tree.pos))
       }
     }
   }

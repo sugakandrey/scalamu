@@ -20,11 +20,14 @@ trait GenericApplyMutation extends Mutation { self: SupportedTypes =>
 
     override protected def transformer: Transformer = new Transformer {
       override protected def mutate: PartialFunction[Tree, Tree] = {
-        case expr @ q"${TreeWithType(tree, tpe)}.apply[$targs](..$_)"
+        case expr @ q"${TreeWithType(tree, tpe)}.apply[$targs](..$args)"
             if supportedTypes.exists(_ <:< tpe) =>
-          val mutant = q"${replaceWith(global)}[$targs]"
+          val mutant = q"${replaceWith(global)}[$targs]".setPos(expr.pos)
+          
+          val mutatedArgs = args.map(super.transform)
+          val alternative = q"$tree.apply[$targs](..$mutatedArgs)".setPos(expr.pos)
           generateMutantReport(expr, mutant)
-          guard(mutant, expr)
+          guard(mutant, alternative)
       }
     }
   }
