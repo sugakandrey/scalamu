@@ -15,9 +15,6 @@ trait ConditionalsMutation extends BinaryOperatorMutation with NumericTypesSuppo
     "!="
   )
 
-  override protected def supportedOperators: Set[String] =
-    comparisonOperators | equalityCheckOperators
-
   override protected def mutationRules: Map[String, String] = Map(
     ">"  -> "<=",
     "<"  -> ">=",

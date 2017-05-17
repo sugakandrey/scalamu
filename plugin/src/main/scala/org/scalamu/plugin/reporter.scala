@@ -13,6 +13,7 @@ import scala.reflect.internal.util.{
  */
 trait MutationReporter {
   def report(mutantInfo: MutantInfo): Unit
+  def mutants: Set[MutantInfo]
 }
 
 /**

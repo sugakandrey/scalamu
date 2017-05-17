@@ -1,10 +1,8 @@
 package org.scalamu.plugin
 
-import scala.collection.mutable
-import scala.reflect.io.Path
 import scala.tools.nsc.Global
 
-sealed trait MutationGuard {
+trait MutationGuard {
   def apply(global: Global)(mutated: global.Tree, untouched: global.Tree): global.Tree
 }
 
@@ -13,22 +11,24 @@ private[plugin] case object NoOpGuard extends MutationGuard {
     mutated
 }
 
-final case class FqnPrefixedGuard(
-  guardPackagePrefix: String
+final case class FqnGuard(
+  fqn: String
 ) extends MutationGuard {
-  private val currentMutantId = mutable.Map.empty[String, Int].withDefaultValue(1)
+  private var currentSourceName: String = _
+  private var currentMutationId: Int    = 1
 
   override def apply(global: Global)(mutated: global.Tree, untouched: global.Tree): global.Tree = {
     import global._
-    val fileName   = global.currentSource.file.name
-    val extension  = Path.extension(fileName)
-    val sourceName = fileName.substring(0, fileName.length - extension.length - 1)
-    val mutantId   = currentMutantId(sourceName)
-    val guardTerm = findMemberFromRoot(
-      TermName(s"$guardPackagePrefix.${sourceName}Guard.enabledMutation")
-    ).asTerm
-    val guard = q"$guardTerm == ${Literal(Constant(mutantId))}"
-    currentMutantId(sourceName) += 1
+    val sourceName = global.currentSource.path
+    if (sourceName == currentSourceName) {
+      currentMutationId += 1
+    } else {
+      currentSourceName = sourceName
+      currentMutationId = 1
+    }
+    val guardTerm = findMemberFromRoot(TermName(fqn)).asTerm
+    val guard =
+      q"$guardTerm(${Literal(Constant(currentSourceName))}) == ${Literal(Constant(currentMutationId))}"
     q"(if ($guard) $mutated else $untouched)"
   }
 }

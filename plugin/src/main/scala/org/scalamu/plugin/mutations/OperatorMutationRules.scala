@@ -7,6 +7,5 @@ import org.scalamu.plugin.Mutation
  * which are then used to mutate them.
  */
 private[mutations] trait OperatorMutationRules { self: Mutation =>
-  protected def supportedOperators: Set[String]
   protected def mutationRules: Map[String, String]
 }

@@ -7,7 +7,7 @@ import org.scalamu.plugin.mutations.controllflow.{
   ReplaceConditionalBoundaries
 }
 import org.scalamu.plugin.testutil.MutationTestRunner
-import org.scalamu.plugin.{FqnPrefixedGuard, Mutation, MutationGuard, ScalamuPluginConfig}
+import org.scalamu.plugin.{FqnGuard, Mutation, MutationGuard, ScalamuPluginConfig}
 import org.scalatest.{FlatSpec, Matchers}
 
 class TreeSanitizerSpec
@@ -23,16 +23,18 @@ class TreeSanitizerSpec
     ReplaceConditionalBoundaries,
     ReplaceCaseWithWildcard
   )
-  override val guard: MutationGuard = FqnPrefixedGuard(ScalamuPluginConfig.mutationGuardPrefix)
-  override val verifyTrees          = true
-  override val sanitizeTrees        = true
+  override val guard: MutationGuard = FqnGuard(
+    s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"
+  )
+  override val verifyTrees   = true
+  override val sanitizeTrees = true
 
   "TreeSanitizer" should "remove nested mutants" in withScalamuCompiler { (global, _) =>
     val guards =
       s"""
          |package ${ScalamuPluginConfig.mutationGuardPrefix}
          |object FooGuard {
-         |  val enabledMutation = 1
+         |  def enabledMutation(sourceName: String) = 1
          |}
       """.stripMargin
     val code =

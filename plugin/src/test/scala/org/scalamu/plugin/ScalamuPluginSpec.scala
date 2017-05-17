@@ -6,7 +6,9 @@ import org.scalamu.plugin.testutil.MutationTestRunner
 
 class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
   override val mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
-  override val guard: MutationGuard     = FqnPrefixedGuard(ScalamuPluginConfig.mutationGuardPrefix)
+  override val guard: MutationGuard     = FqnGuard(
+    s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"
+  )
   override val sanitizeTrees: Boolean   = true
   override val verifyTrees: Boolean     = true
   override val filter: RegexBasedFilter = RegexBasedFilter(".*ignored.*".r)
@@ -16,7 +18,7 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
        |package ${ScalamuPluginConfig.mutationGuardPrefix}
        |
        |object FooGuard {
-       |  val enabledMutation: Int = 1
+       |  def enabledMutation(sourceName: String): Int = 1
        |}
     """.stripMargin
 

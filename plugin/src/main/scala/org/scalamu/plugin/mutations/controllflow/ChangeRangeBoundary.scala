@@ -30,11 +30,6 @@ case object ChangeRangeBoundary extends BinaryOperatorMutation with NumericTypes
     )
   }
 
-  override protected def supportedOperators: Set[String] = Set(
-    "until",
-    "to"
-  )
-
   override protected def mutationRules: Map[String, String] = Map(
     "until" -> "to",
     "to"    -> "until"

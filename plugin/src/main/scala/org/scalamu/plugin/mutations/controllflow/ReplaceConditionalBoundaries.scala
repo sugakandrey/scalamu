@@ -24,6 +24,4 @@ case object ReplaceConditionalBoundaries extends ConditionalsMutation {
     "<=" -> "<",
     ">=" -> ">"
   )
-
-  override protected def supportedOperators: Set[String] = comparisonOperators
 }

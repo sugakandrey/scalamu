@@ -4,7 +4,8 @@ lazy val root = ScalamuBuild.root
 lazy val plugin      = ScalamuBuild.plugin
 lazy val commandLine = ScalamuBuild.commandLine
 lazy val common      = ScalamuBuild.common
-
+lazy val report      = ScalamuBuild.report
+lazy val entryPoint  = ScalamuBuild.entryPoint
 
 /* Testing subprojects */
 lazy val testingSimple = ScalamuTestingBuild.testingSimple

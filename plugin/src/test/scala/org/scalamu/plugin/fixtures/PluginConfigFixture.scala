@@ -2,11 +2,10 @@ package org.scalamu.plugin.fixtures
 
 import org.scalamu.common.filtering.NameFilter
 import org.scalamu.plugin._
-import org.scalamu.plugin.testutil.TestingReporter
 import org.scalatest.{BeforeAndAfterAll, TestSuite}
 
 trait PluginConfigFixture extends TestSuite {
-  def mutationReporter: TestingReporter
+  def mutationReporter: MemoryReporter
   def guard: MutationGuard
   def mutations: Seq[Mutation]
   def verifyTrees: Boolean

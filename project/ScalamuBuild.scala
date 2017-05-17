@@ -1,3 +1,4 @@
+import play.twirl.sbt.SbtTwirl
 import sbt.Keys._
 import sbt._
 
@@ -39,7 +40,7 @@ object ScalamuBuild {
     fullClasspath ++= (fullClasspath in Compile).value
       .filter(_.data.getName.contains("org.scala-lang"))
   )
-  
+
   lazy val common = Project(id = "common", base = file("common"))
     .settings(commonSettings)
 
@@ -49,8 +50,8 @@ object ScalamuBuild {
     .settings(
       libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )
-  .dependsOn(common)  
-  
+    .dependsOn(common)
+
   private lazy val testingFrameworks = Seq(
     "org.specs2"    %% "specs2-core" % "3.8.9" % Optional,
     "org.scalatest" %% "scalatest"   % "3.0.1" % Optional,
@@ -68,7 +69,6 @@ object ScalamuBuild {
         "com.github.scopt" %% "scopt"                       % "3.5.0",
         "org.scoverage"    %% "scalac-scoverage-plugin"     % "1.3.0",
         "org.scoverage"    %% "scalac-scoverage-runtime"    % "1.3.0",
-        
         "org.scalamock"    %% "scalamock-scalatest-support" % "3.5.0" % Test,
         "com.ironcorelabs" %% "cats-scalatest"              % "2.2.0" % Test
       ) ++ testingFrameworks
@@ -79,13 +79,23 @@ object ScalamuBuild {
         "io.circe" %% "circe-generic",
         "io.circe" %% "circe-parser"
       ).map(_ % "0.7.0")
-    )    
+    )
     .dependsOn(plugin % "compile->compile;test->test")
-    .dependsOn(common)  
+    .dependsOn(common)
+
+  lazy val report = Project(id = "report", base = file("report"))
+    .settings(commonSettings)
+    .settings(libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.6.5")  
+    .enablePlugins(SbtTwirl)  
+    .dependsOn(commandLine, common, plugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
     .settings(commonSettings)
-    .aggregate(plugin, commandLine)
+    .aggregate(plugin, commandLine, report, common)
+  
+  lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
+    .settings(commonSettings)  
+    .dependsOn(commandLine, common, plugin, report)  
 }
 
 object ScalamuTestingBuild {

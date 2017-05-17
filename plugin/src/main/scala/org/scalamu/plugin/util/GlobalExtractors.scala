@@ -13,7 +13,7 @@ trait GlobalExtractors extends TypeEnrichment { self: CompilerAccess =>
 
   object GuardedMutant {
     def unapply(tree: Tree): Option[(Tree, Tree, Tree)] = tree match {
-      case If(cond @ q"${guard: Ident} == $lit", thenp, elsep)
+      case If(cond @ q"$guard(..$_) == $lit", thenp, elsep)
           if guard.symbol.fullName.startsWith(mutationGuardPrefix) =>
         Some((cond, thenp, elsep))
       case _ => None

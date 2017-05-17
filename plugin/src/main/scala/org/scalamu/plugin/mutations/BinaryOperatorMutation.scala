@@ -7,10 +7,9 @@ import scala.tools.nsc.Global
 /**
  * Base trait for mutations, which are only applicable to syntactic trees matching
  * the following patter `Apply(Select(lhs, op @ TermName(_)) List(arg) `, where `op`
- * must be in [[org.scalamu.plugin.mutations.OperatorMutationRules.supportedOperators]],
- * and is replaced according to [[org.scalamu.plugin.mutations.OperatorMutationRules.mutationRules]]
+ * is replaced according to [[org.scalamu.plugin.mutations.OperatorMutationRules.mutationRules]]
  */
-trait BinaryOperatorMutation extends Mutation with OperatorMutationRules { self: SupportedTypes =>
+trait BinaryOperatorMutation extends Mutation with OperatorMutationRules with SupportedTypes { self =>
   override def mutatingTransformer(
     global: Global,
     config: MutationConfig
@@ -27,7 +26,7 @@ trait BinaryOperatorMutation extends Mutation with OperatorMutationRules { self:
               Select(TreeWithType(lhs, lhsTpe), op @ TermName(_)),
               List(TreeWithType(rhs, rhsTpe))
             )
-            if supportedOperators.contains(op.decodedName.toString)
+            if mutationRules.contains(op.decodedName.toString)
               && isAppropriateType(lhsTpe)
               && isAppropriateType(rhsTpe) =>
           val mutatedOp = encode(mutationRules(op.decodedName.toString))

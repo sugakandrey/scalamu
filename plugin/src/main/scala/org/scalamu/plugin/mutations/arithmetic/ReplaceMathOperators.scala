@@ -1,5 +1,7 @@
 package org.scalamu.plugin.mutations.arithmetic
 
+import org.scalamu.plugin.mutations.NumericTypesSupport
+
 /**
  * Mutation, that replaces integer and floating point arithmetic operators with
  * their counterparts using a set of predefined rules.
@@ -16,4 +18,4 @@ package org.scalamu.plugin.mutations.arithmetic
  * val c = foo(a) / b
  * }}}
  */
-case object ReplaceMathOperators extends ArithmeticOperatorMutation
+case object ReplaceMathOperators extends ArithmeticOperatorMutation with NumericTypesSupport

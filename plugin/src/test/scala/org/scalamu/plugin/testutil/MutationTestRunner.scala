@@ -25,7 +25,7 @@ trait MutationTestRunner
   }
   override def createReporter(settings: Settings): Reporter = new ConsoleReporter(settings)
 
-  override def mutationReporter: TestingReporter = new TestingReporter
+  override def mutationReporter: MemoryReporter = new MemoryReporter
   override val guard: MutationGuard              = NoOpGuard
   override val filter: NameFilter                = AcceptAllFilter
   override val sanitizeTrees: Boolean            = false
