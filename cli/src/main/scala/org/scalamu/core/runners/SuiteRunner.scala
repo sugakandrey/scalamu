@@ -2,6 +2,7 @@ package org.scalamu.core
 package runners
 
 import org.scalamu.testapi.{AbstractTestSuite, SuiteExecutionAborted, SuiteSuccess, TestsFailed}
+import scala.collection.{Map, Set}
 
 import scala.annotation.tailrec
 
@@ -23,7 +24,7 @@ object MutationAnalysisSuiteRunner {
         suites.next().execute() match {
           case _: SuiteSuccess          => loop(suites)
           case _: SuiteExecutionAborted => RuntimeFailure
-          case _: TestsFailed           => Killed
+          case f: TestsFailed           => Killed(f.name)
         }
       } else Alive
 

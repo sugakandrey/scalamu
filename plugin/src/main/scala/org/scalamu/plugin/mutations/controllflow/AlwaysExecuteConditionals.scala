@@ -30,13 +30,14 @@ case object AlwaysExecuteConditionals extends ConditionalsMutation { self =>
 
     override protected def transformer: Transformer = new Transformer {
       override protected val mutate: PartialFunction[Tree, Tree] = {
-        case q"if ($cond) $thenp else $elsep" =>
-          val mutant      = q"true"
-          val guarded     = guard(mutant, cond).setPos(cond.pos)
+        case tree @ q"if ($cond) $thenp else $elsep" =>
+          val mutant      = thenp.duplicate
           val mutatedThen = super.transform(thenp)
           val mutatedElse = super.transform(elsep)
-          generateMutantReport(cond, mutant)
-          q"if ($guarded) $mutatedThen else $mutatedElse"
+          val alternative = treeCopy.If(tree, cond, mutatedThen, mutatedElse)
+          
+          generateMutantReport(tree, mutant)
+          guard(mutant, alternative)
       }
     }
   }

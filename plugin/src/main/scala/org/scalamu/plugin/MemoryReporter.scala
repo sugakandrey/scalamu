@@ -12,5 +12,5 @@ class MemoryReporter extends MutationReporter {
   override def report(mutantInfo: MutantInfo): Unit =
     container.addBinding(mutantInfo.runId, mutantInfo)
 
-  override def mutants: Set[MutantInfo] = container(0).toSet
+  override def mutants: Set[MutantInfo] = container(1).toSet
 }

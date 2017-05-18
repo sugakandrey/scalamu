@@ -1,9 +1,9 @@
 package org.scalamu.plugin.util
 
-import org.scalamu.plugin.ScalamuPluginConfig.mutationGuardPrefix
-
 trait GlobalExtractors extends TypeEnrichment { self: CompilerAccess =>
   import global._
+  
+  def isMutationGuard(symbolName: String): Boolean
 
   object TreeWithType {
     def unapply(tree: Tree): Option[(Tree, Type)] =
@@ -14,7 +14,7 @@ trait GlobalExtractors extends TypeEnrichment { self: CompilerAccess =>
   object GuardedMutant {
     def unapply(tree: Tree): Option[(Tree, Tree, Tree)] = tree match {
       case If(cond @ q"$guard(..$_) == $lit", thenp, elsep)
-          if guard.symbol.fullName.startsWith(mutationGuardPrefix) =>
+        if isMutationGuard(guard.symbol.fullName) =>
         Some((cond, thenp, elsep))
       case _ => None
     }

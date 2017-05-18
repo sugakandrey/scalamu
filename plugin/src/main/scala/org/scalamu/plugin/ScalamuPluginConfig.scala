@@ -12,7 +12,7 @@ object ScalamuPluginConfig {
     ReplaceWithIdentityFunction,
     InvertNegations,
     AlwaysExecuteConditionals,
-    NeverExecuteConditionals,
+//    NeverExecuteConditionals,
     ReplaceConditionalBoundaries,
     NegateConditionals,
     RemoveUnitMethodCalls,

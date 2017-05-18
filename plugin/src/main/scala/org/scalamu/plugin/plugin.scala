@@ -29,6 +29,9 @@ class ScalamuPlugin(
 
     import global._
 
+    override def isMutationGuard(symbolName: String): Boolean =
+      config.guard.isGuardSymbol(symbolName)
+
     override protected def newTransformer(unit: CompilationUnit): Transformer =
       new Transformer(unit)
 

@@ -50,7 +50,7 @@ case object InvertNegations extends Mutation with NumericTypesSupport { self =>
           guard(mutant, tree)
         case tree @ q"-${TreeWithType(term, tpe)}" if supportedTypes.exists(_ =:= tpe) =>
           val mutatedTerm = super.transform(term)
-          val mutant      = q"$mutatedTerm".setPos(tree.pos)
+          val mutant      = q"${mutatedTerm.duplicate}"
           generateMutantReport(tree, mutant)
           guard(mutant, tree)
       }

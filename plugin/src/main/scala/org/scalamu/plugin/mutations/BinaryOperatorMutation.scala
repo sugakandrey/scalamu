@@ -9,7 +9,8 @@ import scala.tools.nsc.Global
  * the following patter `Apply(Select(lhs, op @ TermName(_)) List(arg) `, where `op`
  * is replaced according to [[org.scalamu.plugin.mutations.OperatorMutationRules.mutationRules]]
  */
-trait BinaryOperatorMutation extends Mutation with OperatorMutationRules with SupportedTypes { self =>
+trait BinaryOperatorMutation extends Mutation with OperatorMutationRules with SupportedTypes {
+  self =>
   override def mutatingTransformer(
     global: Global,
     config: MutationConfig
@@ -23,21 +24,21 @@ trait BinaryOperatorMutation extends Mutation with OperatorMutationRules with Su
     override protected def transformer: Transformer = new Transformer {
       override val mutate: PartialFunction[Tree, Tree] = {
         case tree @ Apply(
-              Select(TreeWithType(lhs, lhsTpe), op @ TermName(_)),
+              sel @ Select(TreeWithType(lhs, lhsTpe), op @ TermName(_)),
               List(TreeWithType(rhs, rhsTpe))
             )
             if mutationRules.contains(op.decodedName.toString)
               && isAppropriateType(lhsTpe)
               && isAppropriateType(rhsTpe) =>
           val mutatedOp = encode(mutationRules(op.decodedName.toString))
-          val mutant    = q"$lhs.$mutatedOp(..$rhs)".setPos(tree.pos)
-
+          val mutant = treeCopy
+            .Apply(tree, treeCopy.Select(sel, lhs.duplicate, mutatedOp), List(rhs.duplicate))
           generateMutantReport(tree, mutant)
 
           val mutatedLhs = super.transform(lhs)
           val mutatedRhs = super.transform(rhs)
 
-          guard(mutant, q"$mutatedLhs.$op(..$mutatedRhs)".setPos(tree.pos))
+          guard(mutant, q"$mutatedLhs.$op(..${List(mutatedRhs)})".setPos(tree.pos.makeTransparent))
       }
     }
   }
