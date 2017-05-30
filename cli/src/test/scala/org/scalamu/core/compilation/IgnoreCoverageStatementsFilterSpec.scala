@@ -13,11 +13,15 @@ class IgnoreCoverageStatementsFilterSpec
     new TestingInstrumentationReporter
   override def mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
 
+  override val guard = FqnGuard(
+    s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"
+  )
+
   private val guards =
     s"""
        |package ${ScalamuPluginConfig.mutationGuardPrefix}
        |object FooGuard {
-       |  val enabledMutation = 1
+       |  def enabledMutation: Int = 1
        |}
        """.stripMargin
 
@@ -28,12 +32,14 @@ class IgnoreCoverageStatementsFilterSpec
           |object Foo {
           |  println(123)
           |  val a = "Hello World!"
+          |  val b = 10
+          |  val c = b * b
           |}
           """.stripMargin
       compile(NamedSnippet("Guards.scala", guards))(global)
       val mutantsInfo = mutantsFor(code)(global, reporter)
-      mutantsInfo should have size 3
-      instrumentation.statements() should have size 3
+      mutantsInfo should have size 8
+      instrumentation.statements() should have size 6
     }
 
   it should "ignore scoverage instrumentation if enabled" in withPluginConfig { cfg =>
@@ -44,12 +50,15 @@ class IgnoreCoverageStatementsFilterSpec
             |object Foo {
             |  println(123)
             |  val a = "Hello World!"
+            |  
+            |  val b = 10
+            |  val c = b * b
             |}
             """.stripMargin
         compile(NamedSnippet("Guards.scala", guards))(global)
         val mutantsInfo = mutantsFor(code)(global, reporter)
-        mutantsInfo should have size 1
-        instrumentation.statements() should have size 3
+        mutantsInfo should have size 3
+        instrumentation.statements() should have size 6
     }
   }
 }

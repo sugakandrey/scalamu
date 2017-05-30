@@ -6,9 +6,11 @@ import java.nio.file.{Path, Paths}
 
 import cats.instances.list._
 import cats.syntax.traverse._
+import org.scalamu.core.ClassName
 import org.scalamu.core.compilation.{IsolatedScalamuGlobalFixture, ScalamuMutationPhase}
 import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.plugin.testutil.MutationTestRunner
+import org.scalamu.testapi.{TestFailure, TestsFailed}
 import org.scalamu.testutil.fixtures.{ScalamuConfigFixture, TestProjectFixture}
 import org.scalamu.testutil.{ScalamuSpec, TestProject, TestingInstrumentationReporter}
 
@@ -60,15 +62,43 @@ class CoverageProcessSpec
         val coverageProc = new CoverageProcess(
           socket,
           config
-            .copy(excludeTestsClasses = Seq(".*Bad.*".r))
-            .copy(classPath = classPath + global.outputDir.file.toPath),
-          Map(),
-          instrumentation
+            .copy(excludeTestsClasses = Seq(".*Bad.*".r)),
+          global.outputDir.file.toPath
         )
         val coverage = coverageProc.execute().futureValue.right.value.sequenceU.toEither
         val suiteCov = coverage.right.value
         suiteCov should have size 1
         forAll(suiteCov.map(_.coverage))(_.size should ===(11))
       }
+  }
+
+  it should "return info about failed test suites" in withConfig { config =>
+    withScalamuGlobal { (global, _, instrumentation) =>
+      val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
+      global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
+      val socket = new ServerSocket(4242)
+
+      val coverageProc = new CoverageProcess(
+        socket,
+        config,
+        global.outputDir.file.toPath
+      )
+      val response = coverageProc.execute().futureValue.right.value.sequenceU.toEither
+      val failures = response.left.value.toList
+      failures should have size 1
+      failures should ===(
+        List(
+          TestsFailed(
+            ClassName("org.example.failure.FooSpecBad"),
+            Vector(
+              TestFailure(
+                "Test Foo should do bar() in suite FooSpecBad failed.",
+                Some("-1 was not greater than 0")
+              )
+            )
+          )
+        )
+      )
+    }
   }
 }

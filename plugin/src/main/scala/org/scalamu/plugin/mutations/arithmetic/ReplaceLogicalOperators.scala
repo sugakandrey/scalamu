@@ -8,6 +8,8 @@ import scala.tools.nsc.Global
  * Mutation, that swaps logical operators `&&` and `||`.
  */
 case object ReplaceLogicalOperators extends BinaryOperatorMutation {
+  override def description: String = "Replaced logical operator && <=> ||"
+
   override protected def supportedTypes(implicit global: Global): Seq[global.Type] =
     Seq(global.definitions.BooleanTpe)
 

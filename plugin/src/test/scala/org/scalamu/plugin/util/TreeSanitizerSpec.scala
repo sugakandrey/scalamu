@@ -34,7 +34,7 @@ class TreeSanitizerSpec
       s"""
          |package ${ScalamuPluginConfig.mutationGuardPrefix}
          |object FooGuard {
-         |  def enabledMutation(sourceName: String) = 1
+         |  def enabledMutation = 1
          |}
       """.stripMargin
     val code =

@@ -20,6 +20,8 @@ import scala.tools.nsc.Global
  * }}}
  */
 case object AlwaysExecuteConditionals extends ConditionalsMutation { self =>
+  override val description: String = "Replaced conditional with \"then\" branch"
+
   override def mutatingTransformer(
     global: Global,
     config: MutationConfig
@@ -35,9 +37,9 @@ case object AlwaysExecuteConditionals extends ConditionalsMutation { self =>
           val mutatedThen = super.transform(thenp)
           val mutatedElse = super.transform(elsep)
           val alternative = treeCopy.If(tree, cond, mutatedThen, mutatedElse)
-          
-          generateMutantReport(tree, mutant)
-          guard(mutant, alternative)
+
+          val id = generateMutantReport(tree, mutant)
+          guard(mutant, alternative, id)
       }
     }
   }

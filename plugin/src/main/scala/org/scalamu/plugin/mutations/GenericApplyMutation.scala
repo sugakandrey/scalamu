@@ -27,8 +27,9 @@ trait GenericApplyMutation extends Mutation { self: SupportedTypes =>
           
           val mutatedArgs = args.map(super.transform)
           val alternative = q"$tree.apply[$targs](..$mutatedArgs)".setPos(expr.pos)
-          generateMutantReport(expr, mutant)
-          guard(mutant, alternative)
+
+          val id = generateMutantReport(expr, mutant)
+          guard(mutant, alternative, id)
       }
     }
   }

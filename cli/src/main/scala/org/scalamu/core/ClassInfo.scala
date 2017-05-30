@@ -12,11 +12,12 @@ final case class ClassInfo(
   annotations: Set[ClassName],
   isModule: Boolean,
   hasNoArgConstructor: Boolean,
+  isAbstract: Boolean,
   source: Option[String]
 )
 
 object ClassInfo {
-  import org.scalamu.utils.bytecode.ASMUtils._
+  import org.scalamu.utils.ASMUtils._
   import FileSystemUtils._
   private val log = Logger[ClassInfo]
 

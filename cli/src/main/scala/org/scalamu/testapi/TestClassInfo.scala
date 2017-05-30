@@ -13,4 +13,6 @@ final case class TestClassInfo(
   testingFramework: TestingFramework
 ) extends AbstractTestSuite {
   override def execute(): TestSuiteResult = testingFramework.runner.run(info.name)
+
+  override def toString: String = s"${testingFramework.name} suite: ${info.name.fullName}"
 }

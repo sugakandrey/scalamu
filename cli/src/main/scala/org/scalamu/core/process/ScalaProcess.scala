@@ -2,6 +2,7 @@ package org.scalamu.core.process
 
 import java.io.{File, InputStream}
 import java.net.ServerSocket
+import java.nio.file.Path
 
 import org.scalamu.core.CommunicationException
 import org.scalamu.core.configuration.ScalamuConfig
@@ -15,6 +16,7 @@ trait ScalaProcess[R] {
   def config: ScalamuConfig
   def runner: Runner[R]
   def connectionHandler: SocketConnectionHandler[R]
+  def compiledSourcesDir: Path
   protected var proc: Process = _
 
   def execute()(
@@ -23,6 +25,7 @@ trait ScalaProcess[R] {
     val args    = List(socket.getLocalPort.toString)
     val builder = new ProcessBuilder(generateProcessArgs(runner, args): _*)
     configureProcessEnv(builder)
+    builder.inheritIO()
     proc = builder.start()
     Future { blocking { connectionHandler.handle() } }
   }
@@ -35,8 +38,10 @@ trait ScalaProcess[R] {
   private def configureProcessEnv(
     pb: ProcessBuilder
   ): Unit = {
-    val cp = config.classPath.foldLeft("")(_ + File.pathSeparator + _)
-    pb.environment().put("CLASSPATH", cp)
+    val classPathSegments = compiledSourcesDir :: (config.classPath | config.testClassDirs).toList
+    val classPath  = classPathSegments.foldLeft("")(_ + _ + File.pathSeparator)
+    val currentClassPath = System.getProperty("java.class.path")
+    pb.environment().put("CLASSPATH", classPath + currentClassPath)
   }
 
   // @TODO Launch with -Djava.io.tmpdir, since scoverage is
@@ -46,7 +51,7 @@ trait ScalaProcess[R] {
     runnerArgs: List[String]
   ): Seq[String] = {
     val args = mutable.ArrayBuffer.empty[String]
-    args += config.scalaPath.toString
+    args += config.scalaPath
     args ++= config.jvmArgs
     args += runner.name
     args ++= runnerArgs

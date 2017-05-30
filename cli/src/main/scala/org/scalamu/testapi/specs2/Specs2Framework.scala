@@ -10,7 +10,7 @@ trait Specs2Framework extends TestingFramework {
   override def name: String          = "Specs2"
   override def runner: TestRunner[R] = new Specs2Runner
   override def filter: TestClassFilter =
-    new SuperclassBasedFilter(classOf[SpecificationStructure], this)
+    new SuperclassBasedFilter(classOf[SpecificationStructure], this) with NotAbstract
 }
 
 object Specs2Framework extends Specs2Framework

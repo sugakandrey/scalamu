@@ -17,6 +17,8 @@ import scala.tools.nsc.Global
  * }}}
  */
 case object ChangeRangeBoundary extends BinaryOperatorMutation with NumericTypesSupport { self =>
+  override val description: String = "Changed range boundary inclusive <=> exclusive"
+
   override protected def supportedTypes(implicit global: Global): Seq[global.Type] = {
     import global._
     super.supportedTypes ++ Seq(

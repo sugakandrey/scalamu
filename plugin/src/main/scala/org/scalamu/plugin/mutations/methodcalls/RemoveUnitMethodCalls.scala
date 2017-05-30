@@ -18,6 +18,8 @@ import scala.tools.nsc.Global
  * }}}
  */
 case object RemoveUnitMethodCalls extends Mutation { self =>
+  override def description: String = "Removed method call with Unit return type"
+
   override def mutatingTransformer(
     global: Global,
     config: MutationConfig
@@ -34,8 +36,8 @@ case object RemoveUnitMethodCalls extends Mutation { self =>
             ) =>
           val mutatedArgs = args.map(super.transform)
           val mutant      = q"()".setPos(tree.pos.makeTransparent)
-          generateMutantReport(tree, mutant)
-          guard(mutant, q"$qualifier(..$mutatedArgs)".setPos(tree.pos))
+          val id          = generateMutantReport(tree, mutant)
+          guard(mutant, q"$qualifier(..$mutatedArgs)".setPos(tree.pos), id)
       }
     }
   }

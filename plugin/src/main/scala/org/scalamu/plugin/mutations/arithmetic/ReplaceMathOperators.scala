@@ -18,4 +18,6 @@ import org.scalamu.plugin.mutations.NumericTypesSupport
  * val c = foo(a) / b
  * }}}
  */
-case object ReplaceMathOperators extends ArithmeticOperatorMutation with NumericTypesSupport
+case object ReplaceMathOperators extends ArithmeticOperatorMutation with NumericTypesSupport {
+  override def description: String = "Replaced math operator"
+}

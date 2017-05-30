@@ -1,11 +1,10 @@
-package org.scalamu.utils.bytecode
+package org.scalamu.utils
 
 import java.io.InputStream
 
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
 import org.scalamu.core.{ClassInfo, ClassName}
-import org.scalamu.utils.ClassLoadingUtils
 
 import scala.collection.{breakOut, mutable}
 import scala.util.Try
@@ -107,6 +106,7 @@ trait ASMUtils {
       val superAnnotations: Set[ClassName] = wholeHierarchy.flatMap(_.annotations)(breakOut)
 
       val className = ClassName.fromInternal(name)
+      val isAbstract = ((access & ACC_ABSTRACT) | (access & ACC_INTERFACE)) != 0
 
       classInfo = ClassInfo(
         className,
@@ -114,6 +114,7 @@ trait ASMUtils {
         superAnnotations,
         name.endsWith("$"),
         hasNoArgConstructor = false,
+        isAbstract = isAbstract,
         None
       )
     }

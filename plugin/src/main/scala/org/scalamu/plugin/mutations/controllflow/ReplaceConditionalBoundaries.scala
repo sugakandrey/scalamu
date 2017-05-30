@@ -18,6 +18,8 @@ package org.scalamu.plugin.mutations.controllflow
  *
  */
 case object ReplaceConditionalBoundaries extends ConditionalsMutation {
+  override val description: String = "Modified conditional boundary"
+
   override protected def mutationRules = Map(
     "<"  -> "<=",
     ">"  -> ">=",

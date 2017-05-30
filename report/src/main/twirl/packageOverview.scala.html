@@ -1,0 +1,205 @@
+@(
+  summary: org.scalamu.report.PackageSummary
+)
+
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        {xml.Unparsed("""$(document).ready(function() {$(".tablesorter").tablesorter();});""")}
+      </script>
+
+    <style type="text/css">
+        .meter {
+                height: 14px;
+                position: relative;
+                background: #BB2020;
+        }
+        
+        .meter span {
+        	display: block;
+        	height: 100%;
+        	background-color: rgb(43,194,83);
+        	background-image: -webkit-gradient(
+        	  linear,
+        	  left bottom,
+        	  left top,
+        	  color-stop(0, rgb(43,194,83)),
+        	  color-stop(1, rgb(84,240,84))
+        	 );
+        	background-image: -webkit-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -moz-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -ms-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -o-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	-webkit-box-shadow:
+        	  inset 0 2px 9px  rgba(255,255,255,0.3),
+        	  inset 0 -2px 6px rgba(0,0,0,0.4);
+        	-moz-box-shadow:
+        	  inset 0 2px 9px  rgba(255,255,255,0.3),
+        	  inset 0 -2px 6px rgba(0,0,0,0.4);
+        	position: relative;
+        	overflow: hidden;
+        }
+    </style>
+</head>
+<body style="font-family: monospace;">
+<div class="alert alert-info">
+    <b>
+        Scalamu Mutation Analysis Report
+    </b>
+    generated at
+    @(new java.util.Date().toString)
+</div>
+
+<h1 class="display-4">Package Overview</h1>
+<h3 style="font-family: monospace">@summary.name</h3>
+<table class="table">
+    <tr>
+        <td>
+            Total Statements
+        </td>
+        <td>
+            @summary.statements.size
+        </td>
+        <td>
+            Invoked Statements
+        </td>
+        <td>
+            @summary.invokedStatements.size
+        </td>
+        <td>
+            Total Mutants
+        </td>
+        <td>
+            @summary.mutants.size
+        </td>
+        <td>
+            Mutants Killed
+        </td>
+        <td>
+            @summary.mutants.filter(_.status.killed).size
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Statement Coverage:
+        </td>
+        <td>
+            @summary.coverage
+            %
+        </td>
+        <td colspan="2">
+            <div class="meter">
+                <span style="width: @(summary.coverage)%"></span>
+            </div>
+        </td>
+        <td>
+            Mutation Coverage:
+        </td>
+        <td>
+            @summary.mutationCoverage
+            %
+        </td>
+        <td colspan="2">
+            <div class="meter">
+                <span style="width: @(summary.mutationCoverage)%"></span>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<h1 class="display-4">Breakdown by File</h1>
+<table class="tablesorter table table-striped" style="font-size:13px">
+    <thead>
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Total Statements
+        </th>
+        <th>
+            Invoked
+        </th>
+        <th>
+            Statement Coverage
+        </th>
+        <th>
+        </th>
+        <th>
+            Total Mutants
+        </th>
+        <th>
+            Killed
+        </th>
+        <th>
+            Mutation Coverage
+        </th>
+        <th>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+
+    @for(sf <- summary.sourceFiles){
+    <tr>
+        <td>
+            <a href="@(sf.name).html">@sf.name</a>
+        </td>
+        <td>
+            @sf.statements.size
+        </td>
+        <td>
+            @sf.invokedStatements.size
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: @(sf.coverage)%"></span>
+            </div>
+        </td>
+        <td>
+            @sf.coverage
+        </td>
+        <td>
+            @sf.mutants.size
+        </td>
+        <td>
+            @sf.mutants.filter(_.status.killed).size
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: @(sf.mutationCoverage)%"></span>
+            </div>
+        </td>
+        <td>
+            @sf.mutationCoverage
+            %
+        </td>
+    </tr>
+    }
+
+    </tbody>
+</table>
+
+</body>
+</html>

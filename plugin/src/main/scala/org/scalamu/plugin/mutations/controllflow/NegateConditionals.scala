@@ -19,4 +19,6 @@ package org.scalamu.plugin.mutations.controllflow
  * }
  * }}}
  */
-case object NegateConditionals extends ConditionalsMutation
+case object NegateConditionals extends ConditionalsMutation {
+  override val description: String = "Negated conditional operator"
+}

@@ -21,6 +21,8 @@ import scala.tools.nsc.Global
  *
  */
 case object ReplaceWithIdentityFunction extends Mutation { self =>
+  override def description: String = "Replaced expression, typed A => A, with its lhs"
+
   override def mutatingTransformer(
     global: Global,
     config: MutationConfig
@@ -39,8 +41,8 @@ case object ReplaceWithIdentityFunction extends Mutation { self =>
           val mutant      = qualifier.duplicate
           val mutatedBody = super.transform(qualifier)
           val mutatedArgs = args.map(super.transform)
-          generateMutantReport(tree, mutant)
-          guard(mutant, q"$mutatedBody.$name(..$mutatedArgs)".setPos(tree.pos))
+          val id = generateMutantReport(tree, mutant)
+          guard(mutant, q"$mutatedBody.$name(..$mutatedArgs)".setPos(tree.pos), id)
       }
     }
   }

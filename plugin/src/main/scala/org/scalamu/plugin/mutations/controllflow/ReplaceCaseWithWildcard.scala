@@ -8,6 +8,8 @@ import scala.tools.nsc.Global
  * Mutation, that removes all but wildcard case expressions in pattern match.
  */
 case object ReplaceCaseWithWildcard extends Mutation { self =>
+  override def description: String = "Replaced pattern match with wildcard case"
+
   override def mutatingTransformer(
     global: Global,
     config: MutationConfig
@@ -26,8 +28,8 @@ case object ReplaceCaseWithWildcard extends Mutation { self =>
           wildcardCase.fold(tree) { wcc =>
             val mutant =
               q"${expr.duplicate} match { case ..${List(wcc.duplicate)} }".setPos(tree.pos)
-            generateMutantReport(tree, mutant)
-            guard(mutant, tree)
+            val id = generateMutantReport(tree, mutant)
+            guard(mutant, tree, id)
           }
       }
     }

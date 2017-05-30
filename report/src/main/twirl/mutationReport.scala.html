@@ -1,0 +1,78 @@
+@(
+  source: org.scalamu.report.SourceFileSummary, 
+  config: org.scalamu.core.configuration.ScalamuConfig, 
+  css: String
+)
+@import _root_.org.scalamu.report.HtmlUtils._
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        @css
+    </style>
+</head>
+<body>
+<div class="alert alert-info">
+    @source.name
+</div>
+
+<table class="src" style="font-size:13px; padding: 0px;">
+
+    @for(line <- source.lines) {
+    <tr id="line@(line.number)">
+        <td class=@lineStatus(line).styleName>
+            @line.number
+        </td>
+        <td class="@lineStatus(line).styleName">
+            <a href="#group@(line.number)"><b>@mutantsNumber(line)</b></a>
+        </td>
+        <td width="99%" class="@lineStatus(line).styleName">
+            <pre><code class="scala @lineStatus(line).styleName">@line.contents </code></pre>
+        </td>
+    </tr>
+    }
+</table>
+
+<h2>Mutants</h2>
+<table class="src" cellpadding="3px">
+    @for((line, mutants) <- source.mutantsByLine.toSeq.sortBy(_._1)) {
+    <tr>
+        <td>
+            <a href="#line@line" id="group@line">@line</a>
+        </td>
+        <td width="99%">
+            @for(mutant <- mutants) {
+                <pre class=@mutantStatus(mutant)>@mutant.reportMessage</pre>
+            }
+        </td>
+    </tr>
+    <tr></tr>
+    }
+</table>
+
+<h2>Active mutators</h2>
+<ul class="list-group">
+    @for(mutation <- config.mutations) {
+    <li class="list-group-item">@mutation.toString</li>
+    }
+</ul>
+
+<h2>Examined tests</h2>
+<ul class="list-group">
+    @for(test <- source.exercisedTests) {
+      <li class="list-group-item"><b>@test.toString</b></li>
+    }
+</ul>
+
+<br/>
+</body>
+</html>

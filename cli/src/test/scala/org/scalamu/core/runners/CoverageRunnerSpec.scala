@@ -6,7 +6,6 @@ import java.nio.file.Path
 import cats.implicits._
 import org.scalamu.core.compilation.{IsolatedScalamuGlobalFixture, ScalamuMutationPhase}
 import org.scalamu.core.detection.SourceFileFinder
-import org.scalamu.core.process.CoverageRunnerConfig
 import org.scalamu.plugin.testutil.MutationTestRunner
 import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
 import org.scalamu.testutil.fixtures.{ScalamuConfigFixture, TestProjectFixture}
@@ -52,8 +51,10 @@ class CoverageRunnerSpec
         withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
           val coverage = CoverageRunner
             .run(
-              (config.derive[CoverageRunnerConfig].copy(excludeTestsClasses = Seq(".*Bad.*".r)),
-              instrumentation)
+              (
+                config.derive[CoverageRunnerConfig].copy(excludeTestsClasses = Seq(".*Bad.*".r)),
+                compiledSourcesPath
+              )
             )
             .toList
             .sequenceU
@@ -75,8 +76,7 @@ class CoverageRunnerSpec
         withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
           val coverage = CoverageRunner
             .run(
-              (config.derive[CoverageRunnerConfig],
-              instrumentation)
+              (config.derive[CoverageRunnerConfig], compiledSourcesPath)
             )
             .toList
             .sequenceU

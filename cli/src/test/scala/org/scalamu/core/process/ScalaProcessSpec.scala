@@ -25,7 +25,7 @@ class ScalaProcessSpec extends ScalamuSpec with ScalamuConfigFixture {
       override def socket: ServerSocket                                       = ???
       override def initialize: (DataOutputStream) => Unit                     = ???
       override def receive(is: DataInputStream): Either[Throwable, List[Int]] = ???
-      override def handle(): Either[CommunicationException, List[Int]]         = Right(List(42))
+      override def handle(): Either[CommunicationException, List[Int]]        = Right(List(42))
     }
 
     val proc = new ScalaProcess[Int] {
@@ -33,6 +33,7 @@ class ScalaProcessSpec extends ScalamuSpec with ScalamuConfigFixture {
       override def config: ScalamuConfig                           = cfg
       override def runner: Runner[Int]                             = TestMainSimple
       override def connectionHandler: SocketConnectionHandler[Int] = handler
+      override def compiledSourcesDir: Path                        = Paths.get(".")
     }
 
     proc.execute().futureValue.right.value should ===(Seq(42))
@@ -48,6 +49,7 @@ class ScalaProcessSpec extends ScalamuSpec with ScalamuConfigFixture {
       override def config: ScalamuConfig                           = cfg
       override def runner: Runner[Int]                             = TestMainSending
       override def connectionHandler: SocketConnectionHandler[Int] = handler
+      override def compiledSourcesDir: Path                        = Paths.get(".")
     }
 
     proc.execute().futureValue.right.value should ===(1 to 10)

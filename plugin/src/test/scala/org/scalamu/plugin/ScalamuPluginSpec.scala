@@ -3,7 +3,6 @@ package org.scalamu.plugin
 import org.scalamu.common.filtering.RegexBasedFilter
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.mutations.controllflow.NegateConditionals
-import org.scalamu.plugin.mutations.methodcalls.ReplaceWithIdentityFunction
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
@@ -20,7 +19,7 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
        |package ${ScalamuPluginConfig.mutationGuardPrefix}
        |
        |object FooGuard {
-       |  def enabledMutation(sourceName: String): Int = 1
+       |  def enabledMutation: Int = 1
        |}
     """.stripMargin
 

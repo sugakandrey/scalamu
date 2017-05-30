@@ -23,10 +23,9 @@ trait Runner[R] {
       val dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream))
 
       readConfigurationFromParent(dis).bimap(
-        _ => System.exit(1),
-        run _ andThen { _.foreach(data => dos.writeUTF(data.asJson.noSpaces)) }
+        err => { println(err); System.exit(1) },
+        run _ andThen { it => it.foreach(data => dos.writeUTF(data.asJson.noSpaces)); dos.flush() }
       )
-      dos.flush()
     }
 
   protected def readCompiledSources(dis: DataInputStream): Map[String, Array[Byte]] =

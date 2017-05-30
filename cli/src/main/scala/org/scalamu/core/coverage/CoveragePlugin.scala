@@ -17,10 +17,24 @@ class CoveragePlugin(override val global: Global, listener: InstrumentationRepor
   class InMemoryScoverageComponent(override val global: Global)
       extends ScoverageInstrumentationComponent(global, None, Some(ScalamuMutationPhase.name)) {
 
+    import global._
+
     override def newPhase(prev: scala.tools.nsc.Phase): Phase = new Phase(prev) {
       override def run(): Unit = {
         super.run()
         listener.onInstrumentationFinished(coverage)
+      }
+    }
+
+    override def newTransformer(unit: CompilationUnit): Transformer =
+      new ScalamuCoverageTransformer(unit)
+
+    class ScalamuCoverageTransformer(unit: global.CompilationUnit) extends Transformer(unit) {
+      override def invokeCall(id: Int): Tree = {
+        val target = findMemberFromRoot(TermName("org.scalamu.core.coverage.ForgetfulInvoker.invoked")).asTerm
+        val idLit = Literal(Constant(id))
+        val outDir = Literal(Constant(global.settings.outputDirs.getSingleOutput.get.path))
+        q"$target($idLit, $outDir)"
       }
     }
   }

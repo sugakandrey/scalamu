@@ -1,5 +1,6 @@
 package org.scalamu.plugin
 
+import org.scalamu.common.MutantId
 import org.scalamu.common.position.Position
 
 import scala.reflect.internal.util.{
@@ -26,17 +27,24 @@ trait MutationReporter {
  * @param mutated Mutated tree
  */
 final case class MutantInfo(
+  id: MutantId,
   mutation: Mutation,
   runId: Int,
+  packageName: String,
   pos: Position,
   oldTree: String,
   mutated: String
-)
+) {
+  def description: String = mutation.description
+}
 
 object MutantInfo {
+  private var currentId = 0
+
   def apply(
     mutation: Mutation,
     runId: Int,
+    packageName: String,
     pos: ReflectPosition,
     oldTree: String,
     mutated: String
@@ -45,6 +53,7 @@ object MutantInfo {
       case _: UndefinedPosition => Position(pos.source.path, 0, 0, 0)
       case _: DefinedPosition   => Position(pos.source.path, pos.line, pos.start, pos.end)
     }
-    MutantInfo(mutation, runId, position, oldTree, mutated)
+    currentId += 1
+    MutantInfo(MutantId(currentId), mutation, runId, packageName, position, oldTree, mutated)
   }
 }

@@ -10,7 +10,7 @@ import scala.util.matching.Regex
 
 trait ScalamuConfigFixture extends TestSuite {
   def reportDir: Path                 = Paths.get(".")
-  def sourceDirs: Seq[Path]           = Seq.empty
+  def sourceDirs: Set[Path]           = Set.empty
   def testClassDirs: Set[Path]        = Set.empty
   def classPath: Set[Path]            = Set.empty
   def scalaPath: String               = ""

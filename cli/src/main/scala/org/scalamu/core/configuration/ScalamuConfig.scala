@@ -2,7 +2,6 @@ package org.scalamu.core.configuration
 
 import java.nio.file.{Path, Paths}
 
-import org.scalamu.core.MalformedConfig
 import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
 import scopt.OptionParser
 
@@ -25,7 +24,7 @@ import scala.util.matching.Regex
  */
 final case class ScalamuConfig(
   reportDir: Path = Paths.get("."),
-  sourceDirs: Seq[Path] = Seq.empty,
+  sourceDirs: Set[Path] = Set.empty,
   testClassDirs: Set[Path] = Set.empty,
   classPath: Set[Path] = Set.empty,
   scalaPath: String = "",
@@ -49,7 +48,7 @@ object ScalamuConfig {
 
     arg[Seq[Path]]("<sourceDirs>")
       .text("list of source directories")
-      .action((sourceDirs, config) => config.copy(sourceDirs = sourceDirs))
+      .action((sourceDirs, config) => config.copy(sourceDirs = sourceDirs.toSet))
 
     arg[Seq[Path]]("<testClassDirs>")
       .text("list of test class directories")
@@ -63,7 +62,7 @@ object ScalamuConfig {
       .text("path to scala executable")
       .action((scalaPath, config) => config.copy(scalaPath = scalaPath))
 
-    arg[Seq[String]]("<jvmArgs>")
+    opt[Seq[String]]("jvmArgs")
       .text("list of jvm args used by tests")
       .action((jvmArgs, config) => config.copy(jvmArgs = jvmArgs))
 
@@ -98,9 +97,9 @@ object ScalamuConfig {
       .action((_, config) => config.copy(verbose = true))
   }
 
-  def parseConfig[T](args: Seq[String]): Either[MalformedConfig.type, ScalamuConfig] =
+  def parseConfig[T](args: Seq[String]): ScalamuConfig =
     parser.parse(args, ScalamuConfig()) match {
-      case Some(config) => Right(config)
-      case None         => Left(MalformedConfig)
+      case Some(config) => config
+      case None         => System.exit(1); ???
     }
 }

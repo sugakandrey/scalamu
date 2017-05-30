@@ -85,17 +85,23 @@ object ScalamuBuild {
 
   lazy val report = Project(id = "report", base = file("report"))
     .settings(commonSettings)
-    .settings(libraryDependencies += "com.lihaoyi" %% "scalatags" % "0.6.5")  
-    .enablePlugins(SbtTwirl)  
+    .enablePlugins(SbtTwirl)
     .dependsOn(commandLine, common, plugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
     .settings(commonSettings)
     .aggregate(plugin, commandLine, report, common)
-  
+
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
-    .settings(commonSettings)  
-    .dependsOn(commandLine, common, plugin, report)  
+    .settings(commonSettings)
+    .dependsOn(commandLine, common, plugin, report)
+    .settings(
+      libraryDependencies ++= Seq(
+        "io.circe" %% "circe-core",
+        "io.circe" %% "circe-generic",
+        "io.circe" %% "circe-parser"
+      ).map(_ % "0.7.0") ++ testingFrameworks
+    )
 }
 
 object ScalamuTestingBuild {

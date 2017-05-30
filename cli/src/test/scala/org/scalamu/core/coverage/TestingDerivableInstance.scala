@@ -12,7 +12,7 @@ trait TestingDerivableInstance {
   def mutationReporter: MutationReporter
   def settings: Settings
   def log: Logger
-  def guard: MutationGuard = FqnPrefixedGuard(ScalamuPluginConfig.mutationGuardPrefix)
+  def guard: MutationGuard = FqnGuard(ScalamuPluginConfig.mutationGuardPrefix)
 
   implicit val settingsDerivable: Derivable[Settings] = Function.const(settings)
 

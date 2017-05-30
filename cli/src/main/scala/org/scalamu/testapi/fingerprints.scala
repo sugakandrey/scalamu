@@ -30,3 +30,7 @@ trait HasAppropriateName extends TestClassFilter {
   override def apply(info: ClassInfo): Option[TestClassInfo] =
     super.apply(info).filter(test => !nameFilter(test.info.name.fullName))
 }
+
+trait NotAbstract extends TestClassFilterMixin {
+  override protected val additionalReq: (ClassInfo) => Boolean = !_.isAbstract
+}

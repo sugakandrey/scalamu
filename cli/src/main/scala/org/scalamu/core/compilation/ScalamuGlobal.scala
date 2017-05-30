@@ -49,7 +49,7 @@ class ScalamuGlobal private[compilation] (
           )
       )
     )
-    ScalamuGlobal.log.debug(s"Compiling source files: $sourceFiles")
+    ScalamuGlobal.log.debug(s"Compiling source files: ${sourceFiles.mkString("[\n\t", "\n\t", "\n]")}")
     val run = new Run
     val id  = currentRunId
     run.compileSources(sourceFiles)

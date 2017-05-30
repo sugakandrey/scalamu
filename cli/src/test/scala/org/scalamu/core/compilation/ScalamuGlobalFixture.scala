@@ -1,14 +1,10 @@
 package org.scalamu.core.compilation
 
 import org.scalamu.core.coverage.InstrumentationReporter
-import org.scalamu.plugin.MutationConfig
+import org.scalamu.plugin.{MemoryReporter, MutationConfig}
 import org.scalamu.plugin.fixtures._
-import org.scalamu.plugin.testutil.TestingReporter
 import org.scalamu.testutil.TestingInstrumentationReporter
-import org.scalamu.testutil.fixtures.{
-  IsolatedInstrumentationReporterFixture,
-  SharedInstrumentationReporterFixture
-}
+import org.scalamu.testutil.fixtures.{IsolatedInstrumentationReporterFixture, SharedInstrumentationReporterFixture}
 import org.scalatest.{BeforeAndAfterAll, Matchers, TestSuite}
 
 import scala.reflect.io.{AbstractFile, VirtualDirectory}
@@ -48,9 +44,9 @@ trait SharedScalamuGlobalFixture
   }
 
   def withScalamuCompiler(
-    testCode: (ScalamuGlobal, TestingReporter, TestingInstrumentationReporter) => Any
+    testCode: (ScalamuGlobal, MemoryReporter, TestingInstrumentationReporter) => Any
   ): Any = {
-    testCode(global, config.reporter.asInstanceOf[TestingReporter], instrumentation)
+    testCode(global, config.reporter.asInstanceOf[MemoryReporter], instrumentation)
     global.reporter.hasErrors should ===(false)
     global.reporter.reset()
     global.settings.outputDirs.getSingleOutput match {
@@ -69,7 +65,7 @@ trait IsolatedScalamuGlobalFixture
   def withScalamuGlobal(
     config: MutationConfig
   )(
-    testCode: (ScalamuGlobal, TestingReporter, TestingInstrumentationReporter) => Any
+    testCode: (ScalamuGlobal, MemoryReporter, TestingInstrumentationReporter) => Any
   ): Any = withGlobalConfig { (settings, reporter) =>
     withInstrumentationReporter { instrumentationReporter =>
       val global = createGlobal(
@@ -80,7 +76,7 @@ trait IsolatedScalamuGlobalFixture
         instrumentationReporter
       )
       
-      testCode(global, config.reporter.asInstanceOf[TestingReporter], instrumentationReporter)
+      testCode(global, config.reporter.asInstanceOf[MemoryReporter], instrumentationReporter)
       reporter.hasErrors should ===(false)
       global.settings.outputDirs.getSingleOutput match {
         case Some(vd: VirtualDirectory) => vd.clear()
@@ -90,7 +86,7 @@ trait IsolatedScalamuGlobalFixture
   }
 
   def withScalamuGlobal(
-    testCode: (ScalamuGlobal, TestingReporter, TestingInstrumentationReporter) => Any
+    testCode: (ScalamuGlobal, MemoryReporter, TestingInstrumentationReporter) => Any
   ): Any = withPluginConfig { config =>
     withScalamuGlobal(config)(testCode)
   }

@@ -1,5 +1,6 @@
 package org.scalamu.core.coverage
 
+import org.scalamu.common.MutantId
 import org.scalamu.plugin.MutantInfo
 import org.scalamu.testapi.AbstractTestSuite
 
@@ -9,7 +10,7 @@ object InverseMutantCoverage {
   def fromStatementCoverage(
     statementCoverage: Map[AbstractTestSuite, Set[Statement]],
     mutants: Set[MutantInfo]
-  ): Map[MutantInfo, Set[AbstractTestSuite]] = {
+  ): Map[MutantId, Set[AbstractTestSuite]] = {
     val statementsCoverageByFile = for {
       (info, statements) <- statementCoverage
     } yield info -> statements.groupBy(_.pos.source)
@@ -18,10 +19,10 @@ object InverseMutantCoverage {
       val source = mutant.pos.source
       val tests: Set[AbstractTestSuite] = statementsCoverageByFile.collect {
         case (test, bySourceCov)
-            if bySourceCov.get(source).exists(_.exists(_.pos.includes(mutant.pos))) =>
+            if bySourceCov.get(source).exists(_.exists(_.pos.overlaps(mutant.pos))) =>
           test
       }(breakOut)
-      mutant -> tests
+      mutant.id -> tests
     }(breakOut)
   }
 }

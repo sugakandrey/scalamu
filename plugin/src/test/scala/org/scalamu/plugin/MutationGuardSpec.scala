@@ -7,8 +7,8 @@ class MutationGuardSpec extends MutationTestRunner with IsolatedScalamuCompilerF
   override val mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
   override val sanitizeTrees: Boolean   = true
   override val verifyTrees: Boolean     = true
-  
-  override val guard: MutationGuard     = FqnGuard(
+
+  override val guard: MutationGuard = FqnGuard(
     s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"
   )
 
@@ -18,7 +18,7 @@ class MutationGuardSpec extends MutationTestRunner with IsolatedScalamuCompilerF
          |package ${ScalamuPluginConfig.mutationGuardPrefix}
          |
          |object FooGuard {
-         |  def enabledMutation(sourceName: String) = 1
+         |  def enabledMutation = 1
          |}
     """.stripMargin
     val code =

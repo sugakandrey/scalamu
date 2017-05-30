@@ -16,7 +16,10 @@ case object TimedOut       extends RunnerFailure
 case object OutOfMemory    extends RunnerFailure
 case object RuntimeFailure extends RunnerFailure
 
-case object Killed         extends DetectionStatus(true)
+final case class Killed(killingTest: ClassName) extends DetectionStatus(true) {
+  override def toString: String = s"Killed by ${killingTest.fullName}"
+}
+
 case object Alive          extends DetectionStatus(false)
 case object NoTestCoverage extends DetectionStatus(false)
 case object Untested       extends DetectionStatus(false)

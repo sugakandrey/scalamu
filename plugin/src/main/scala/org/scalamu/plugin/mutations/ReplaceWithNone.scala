@@ -3,6 +3,8 @@ package org.scalamu.plugin.mutations
 import scala.tools.nsc.Global
 
 case object ReplaceWithNone extends GenericApplyMutation with SupportedTypes {
+  override def description: String = "Replaced Option.apply[T] with None"
+
   override protected def replaceWith(global: Global): global.Tree = {
     import global._
     reify(Option.empty).tree

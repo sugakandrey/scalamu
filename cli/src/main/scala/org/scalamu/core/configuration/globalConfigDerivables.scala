@@ -42,7 +42,9 @@ trait ReporterDerivable extends SettingsDerivable {
 }
 
 trait MutationConfigDerivable {
-  def guard: MutationGuard = FqnPrefixedGuard(ScalamuPluginConfig.mutationGuardPrefix)
+  def guard: MutationGuard = FqnGuard(
+    "org.scalamu.core.compilation.MutationGuard.enabledMutation"
+  )
 
   implicit def mutationConfigDerivable(
     implicit reporter: MutationReporter

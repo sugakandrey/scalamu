@@ -33,12 +33,17 @@ trait BinaryOperatorMutation extends Mutation with OperatorMutationRules with Su
           val mutatedOp = encode(mutationRules(op.decodedName.toString))
           val mutant = treeCopy
             .Apply(tree, treeCopy.Select(sel, lhs.duplicate, mutatedOp), List(rhs.duplicate))
-          generateMutantReport(tree, mutant)
 
           val mutatedLhs = super.transform(lhs)
           val mutatedRhs = super.transform(rhs)
 
-          guard(mutant, q"$mutatedLhs.$op(..${List(mutatedRhs)})".setPos(tree.pos.makeTransparent))
+          val id = generateMutantReport(tree, mutant)
+
+          guard(
+            mutant,
+            q"$mutatedLhs.$op(..${List(mutatedRhs)})".setPos(tree.pos.makeTransparent),
+            id
+          )
       }
     }
   }
