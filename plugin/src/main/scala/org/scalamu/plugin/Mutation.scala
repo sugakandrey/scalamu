@@ -96,7 +96,7 @@ abstract class MutatingTransformer(
       if (config.sanitizeTrees) SanitizingTransformer(tree) else tree
 
     protected final def guard(mutated: Tree, alternative: Tree, id: MutantId): Tree =
-      config.guard(global)(sanitizeTree(mutated), sanitizeTree(alternative), id)
+      config.guard(global)(sanitizeTree(mutated), alternative, id)
   }
 
   object Transformer {

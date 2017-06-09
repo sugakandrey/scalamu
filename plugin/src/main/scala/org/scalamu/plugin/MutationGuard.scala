@@ -31,7 +31,7 @@ final case class FqnGuard(
     import global._
     val guardTerm = findMemberFromRoot(TermName(fqn)).asTerm
     val guard     = q"$guardTerm == ${Literal(Constant(id.id))}"
-    q"(if ($guard) $mutated else $untouched)"
+    q"if ($guard) $mutated else $untouched"
   }
 
   override def isGuardSymbol(symbolName: String): Boolean = symbolName == fqn

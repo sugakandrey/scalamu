@@ -8,13 +8,13 @@ import org.scalamu.plugin.mutations.{ReplaceWithNil, ReplaceWithNone}
 object ScalamuPluginConfig {
   val allMutations: Seq[Mutation] = Seq(
     ReplaceCaseWithWildcard,
-//    ReplaceMathOperators,
-//    ReplaceWithIdentityFunction,
+    ReplaceMathOperators,
+    ReplaceWithIdentityFunction,
     InvertNegations,
     AlwaysExecuteConditionals,
-//    NeverExecuteConditionals,
+    NeverExecuteConditionals,
     ReplaceConditionalBoundaries,
-//    NegateConditionals,
+    NegateConditionals,
     RemoveUnitMethodCalls,
     ChangeRangeBoundary,
     ReplaceLogicalOperators,

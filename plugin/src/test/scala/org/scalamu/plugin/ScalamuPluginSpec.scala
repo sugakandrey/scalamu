@@ -65,7 +65,7 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
     val code =
       """
         |object Macro {
-        |      
+        |
         |  import scala.language.experimental.macros
         |  import scala.reflect.macros.blackbox
         |
@@ -116,12 +116,12 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
   }
 
   it should "work when arrays are involved" in withPluginConfig { cfg =>
-    withScalamuCompiler(Seq(NegateConditionals), cfg) { (global, reporter) =>
+    withScalamuCompiler(Seq(NegateConditionals), cfg) { (global, _) =>
       val code =
         """
           |object Foo {
           |  val a = 10
-          | 
+          |
           |  def foo(): Unit = {
           |    val lengths = Array(10)
           |    if (lengths.apply(10) == 10) {
@@ -132,7 +132,7 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
         """.stripMargin
       compile(
         NamedSnippet("Guards.scala", guards),
-          NamedSnippet("Foo.scala", code)
+        NamedSnippet("Foo.scala", code)
       )(global)
     }
   }

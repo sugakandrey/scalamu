@@ -12,7 +12,7 @@ trait TreeSanitizer { self: CompilerAccess with GlobalExtractors =>
 
     //@TODO: is this actually working as intended
     override def transform(tree: Tree): Tree = tree match {
-      case GuardedMutant(_, _, untouched) => untouched
+      case GuardedMutant(_, _, untouched) => transform(untouched)
       case _                              => super.transform(tree)
     }
 
