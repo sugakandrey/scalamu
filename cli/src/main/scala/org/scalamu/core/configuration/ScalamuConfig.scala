@@ -1,6 +1,6 @@
 package org.scalamu.core.configuration
 
-import java.nio.file.{Path, Paths}
+import java.nio.file.{Files, Path, Paths}
 
 import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
 import scopt.OptionParser
@@ -35,6 +35,26 @@ final case class ScalamuConfig(
   threads: Int = 1,
   verbose: Boolean = false
 ) {
+  require(
+    testClassDirs.forall(Files.exists(_)),
+    s"Test class directories must exist, but ${testClassDirs.filterNot(Files.exists(_))} were non-existent."
+  )
+
+  require(
+    classPath.forall(Files.exists(_)),
+    s"All classpath entries must point to existing files, but ${classPath.filterNot(Files.exists(_))} don't."
+  )
+
+  require(
+    sourceDirs.forall(Files.exists(_)),
+    s"Source file directories must exist, but ${sourceDirs.filterNot(Files.exists(_))} were non-existent."
+  )
+
+  require({
+    val executablePath = Paths.get(scalaPath)
+    Files.exists(executablePath) && Files.isExecutable(executablePath)
+  }, "File at scalaPath must exist and be executable.")
+
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
 }
 
