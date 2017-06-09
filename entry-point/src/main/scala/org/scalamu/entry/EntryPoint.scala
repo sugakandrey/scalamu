@@ -15,8 +15,8 @@ import org.scalamu.core.compilation.ScalamuGlobal
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.coverage.{InverseMutantCoverage, Statement, StatementId, SuiteCoverage}
 import org.scalamu.core.detection.SourceFileFinder
-import org.scalamu.core.process._
-import org.scalamu.core.runners.MutationRunnerResponse
+import org.scalamu.core.runners._
+import org.scalamu.core.workers.MutationWorkerResponse
 import org.scalamu.core.{FailingSuites, SourceInfo, TestedMutant, coverage => cov}
 import org.scalamu.plugin
 import org.scalamu.utils.FileSystemUtils._
@@ -80,7 +80,7 @@ object EntryPoint {
     }
 
     val socket          = new ServerSocket(0)
-    val coverageProcess = new CoverageProcess(socket, config, outputPath)
+    val coverageProcess = new CoverageRunner(socket, config, outputPath)
     val coverageFuture  = coverageProcess.execute()
     val coverageStart   = System.currentTimeMillis()
     val coverageResults = Either.catchNonFatal(Await.result(coverageFuture, 1 minutes))
@@ -136,11 +136,11 @@ object EntryPoint {
       }
     }
 
-    val analysisProcess = new MutationAnalysisProcess(socket, config, outputPath, inverseCoverage)
+    val analysisProcess = new MutationAnalysisRunner(socket, config, outputPath, inverseCoverage)
     val analysisFuture  = analysisProcess.execute()
     val analysisResults = Either.catchNonFatal(Await.result(analysisFuture, 2 minutes))
 
-    val analysisData: Seq[MutationRunnerResponse] = analysisResults match {
+    val analysisData: Seq[MutationWorkerResponse] = analysisResults match {
       case Left(timeout) =>
         exit(
           s"Timed out while waiting for mutation analysis report: $timeout. " +

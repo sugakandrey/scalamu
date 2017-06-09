@@ -1,4 +1,4 @@
-package org.scalamu.core.runners
+package org.scalamu.core.workers
 
 import java.io._
 import java.net.Socket
@@ -6,9 +6,9 @@ import java.net.Socket
 import cats.syntax.either._
 import io.circe.Encoder
 import io.circe.syntax._
-import org.scalamu.core.process._
+import org.scalamu.core.runners._
 
-trait Runner[R] {
+trait Worker[R] {
   type Result = R
 
   type Configuration

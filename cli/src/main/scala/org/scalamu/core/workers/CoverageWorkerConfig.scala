@@ -1,4 +1,4 @@
-package org.scalamu.core.runners
+package org.scalamu.core.workers
 
 import java.nio.file.Path
 
@@ -6,15 +6,15 @@ import org.scalamu.core.configuration.Derivable
 
 import scala.util.matching.Regex
 
-final case class CoverageRunnerConfig(
+final case class CoverageWorkerConfig(
   testClassDirs: Set[Path],
   excludeTestsClasses: Seq[Regex],
   verbose: Boolean = false
 )
 
-object CoverageRunnerConfig {
-  implicit val runnerConfigDerivable: Derivable[CoverageRunnerConfig] = config =>
-    CoverageRunnerConfig(
+object CoverageWorkerConfig {
+  implicit val runnerConfigDerivable: Derivable[CoverageWorkerConfig] = config =>
+    CoverageWorkerConfig(
       config.testClassDirs,
       config.excludeTestsClasses,
       config.verbose

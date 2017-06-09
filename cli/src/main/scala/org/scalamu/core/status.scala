@@ -10,11 +10,11 @@ sealed abstract class DetectionStatus(val killed: Boolean)
 /**
  * Base class for statuses related to runtime failures.
  */
-sealed abstract class RunnerFailure extends DetectionStatus(false)
+sealed abstract class WorkerFailure extends DetectionStatus(false)
 
-case object TimedOut       extends RunnerFailure
-case object OutOfMemory    extends RunnerFailure
-case object RuntimeFailure extends RunnerFailure
+case object TimedOut       extends WorkerFailure
+case object OutOfMemory    extends WorkerFailure
+case object RuntimeFailure extends WorkerFailure
 
 final case class Killed(killingTest: ClassName) extends DetectionStatus(true) {
   override def toString: String = s"Killed by ${killingTest.fullName}"

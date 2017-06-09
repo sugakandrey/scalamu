@@ -1,13 +1,16 @@
 package org.scalamu.core.runners
 
 import java.io.File
-import java.nio.file.Path
+import java.net.ServerSocket
+import java.nio.file.{Path, Paths}
 
-import cats.implicits._
+import cats.instances.list._
+import cats.syntax.traverse._
+import org.scalamu.core.ClassName
 import org.scalamu.core.compilation.{IsolatedScalamuGlobalFixture, ScalamuMutationPhase}
 import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.plugin.testutil.MutationTestRunner
-import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
+import org.scalamu.testapi.{TestFailure, TestsFailed}
 import org.scalamu.testutil.fixtures.{ScalamuConfigFixture, TestProjectFixture}
 import org.scalamu.testutil.{ScalamuSpec, TestProject, TestingInstrumentationReporter}
 
@@ -16,17 +19,15 @@ import scala.tools.nsc.Settings
 
 class CoverageRunnerSpec
     extends ScalamuSpec
-    with ScalamuConfigFixture
     with MutationTestRunner
+    with ScalamuConfigFixture
     with IsolatedScalamuGlobalFixture
     with TestProjectFixture {
 
   override def instrumentationReporter: TestingInstrumentationReporter =
     new TestingInstrumentationReporter
 
-  override def mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
   override def testProject: TestProject = TestProject.Scoverage
-  override def testClassDirs: Set[Path] = Set(testProject.testClasses)
 
   override def outputDir: AbstractFile = new PlainDirectory(
     new Directory(
@@ -34,56 +35,70 @@ class CoverageRunnerSpec
     )
   )
 
+  override def testClassDirs: Set[Path] = Set(testProject.testClasses)
+  override def scalaPath: String        = System.getenv("SCALA_HOME")
+  override def classPath: Set[Path] =
+    System
+      .getProperty("java.class.path")
+      .split(File.pathSeparator)
+      .map(Paths.get(_))
+      .toSet | testClassDirs
+  override def spanScaleFactor: Double = 200.0
+
   override def createSettings(): Settings = new Settings {
     usejavacp.value = true
-    classpath.value += classPath.fold("")(_ + File.pathSeparator + _)
     outputDirs.setSingleOutput(outputDir)
     Yrangepos.value = true
   }
 
-  "CoverageRunner" should "calculate coverage of a single successful test suite" in withConfig {
+  import scala.concurrent.ExecutionContext.Implicits.{global => ec}
+  "CoverageProcessSpec" should "calculate coverage in a separate JVM and send results to parent" in withConfig {
     config =>
       withScalamuGlobal { (global, _, instrumentation) =>
         val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
         global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
-        val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
+        val socket = new ServerSocket(4242)
 
-        withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
-          val coverage = CoverageRunner
-            .run(
-              (
-                config.derive[CoverageRunnerConfig].copy(excludeTestsClasses = Seq(".*Bad.*".r)),
-                compiledSourcesPath
+        val coverageProc = new CoverageRunner(
+          socket,
+          config
+            .copy(excludeTestsClasses = Seq(".*Bad.*".r)),
+          global.outputDir.file.toPath
+        )
+        val coverage = coverageProc.execute().futureValue.right.value.sequenceU.toEither
+        val suiteCov = coverage.right.value
+        suiteCov should have size 1
+        forAll(suiteCov.map(_.coverage))(_.size should ===(11))
+      }
+  }
+
+  it should "return info about failed test suites" in withConfig { config =>
+    withScalamuGlobal { (global, _, instrumentation) =>
+      val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
+      global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
+      val socket = new ServerSocket(4242)
+
+      val coverageProc = new CoverageRunner(
+        socket,
+        config,
+        global.outputDir.file.toPath
+      )
+      val response = coverageProc.execute().futureValue.right.value.sequenceU.toEither
+      val failures = response.left.value.toList
+      failures should have size 1
+      failures should ===(
+        List(
+          TestsFailed(
+            ClassName("org.example.failure.FooSpecBad"),
+            Vector(
+              TestFailure(
+                "Test Foo should do bar() in suite FooSpecBad failed.",
+                Some("-1 was not greater than 0")
               )
             )
-            .toList
-            .sequenceU
-            .toEither
-          val suiteCoverage = coverage.right.value
-          suiteCoverage should have size 1
-          forAll(suiteCoverage.map(_.coverage))(_.size should ===(11))
-        }
-      }
+          )
+        )
+      )
+    }
   }
-
-  it should "return ScalamuFailure if aborted or failed tests were present" in withConfig {
-    config =>
-      withScalamuGlobal { (global, _, instrumentation) =>
-        val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
-        global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
-        val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
-
-        withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
-          val coverage = CoverageRunner
-            .run(
-              (config.derive[CoverageRunnerConfig], compiledSourcesPath)
-            )
-            .toList
-            .sequenceU
-            .toEither
-          coverage.left.value.toList should have size 1
-        }
-      }
-  }
-
 }

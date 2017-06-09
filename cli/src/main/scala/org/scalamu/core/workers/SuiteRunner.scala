@@ -1,5 +1,5 @@
 package org.scalamu.core
-package runners
+package workers
 
 import com.typesafe.scalalogging.Logger
 import org.scalamu.common.MutantId
@@ -15,11 +15,11 @@ object SuiteRunner {
   def runMutantInverseCoverage(
     id: MutantId,
     suites: Set[AbstractTestSuite]
-  ): MutationRunnerResponse = MutationRunnerResponse(id, runSuites(suites, id))
+  ): MutationWorkerResponse = MutationWorkerResponse(id, runSuites(suites, id))
 
   def runMutantsInverseCoverage(
     inverseCov: Map[MutantId, Set[AbstractTestSuite]]
-  ): Set[MutationRunnerResponse] =
+  ): Set[MutationWorkerResponse] =
     inverseCov.map(Function.tupled(runMutantInverseCoverage))(collection.breakOut)
 
   private def runSuites(suites: Set[AbstractTestSuite], id: MutantId): DetectionStatus = {

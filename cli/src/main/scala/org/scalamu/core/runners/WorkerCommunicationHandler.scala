@@ -1,4 +1,4 @@
-package org.scalamu.core.process
+package org.scalamu.core.runners
 
 import java.io.{DataInputStream, DataOutputStream}
 import java.net.ServerSocket
@@ -10,7 +10,7 @@ import cats.syntax.traverse._
 import io.circe.Decoder
 import io.circe.parser._
 
-class RunnerCommunicationHandler[R: Decoder](
+class WorkerCommunicationHandler[R: Decoder](
   override val socket: ServerSocket,
   override val initialize: DataOutputStream => Unit
 ) extends SocketConnectionHandler[R] {

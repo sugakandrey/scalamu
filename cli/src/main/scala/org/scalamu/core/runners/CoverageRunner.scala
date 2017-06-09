@@ -1,45 +1,30 @@
-package org.scalamu.core
-package runners
+package org.scalamu.core.runners
 
-import java.io.DataInputStream
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Path, Paths}
+import java.io.DataOutputStream
+import java.net.ServerSocket
+import java.nio.file.Path
 
-import cats.data.ValidatedNel
-import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
-import io.circe.parser.decode
-import org.scalamu.core.coverage._
-import org.scalamu.core.process._
-import org.scalamu.testapi.{CompositeFramework, SuiteFailure, TestClassFileFinder}
+import io.circe.syntax._
+import org.scalamu.core.configuration.ScalamuConfig
+import org.scalamu.core.workers.CoverageWorkerConfig._
+import org.scalamu.core.workers.{CoverageWorker, CoverageWorkerConfig, Worker}
 
-object CoverageRunner extends Runner[ValidatedNel[SuiteFailure, SuiteCoverage]] {
-  private val log = Logger[CoverageRunner.type]
+class CoverageRunner(
+  override val socket: ServerSocket,
+  override val config: ScalamuConfig,
+  override val compiledSourcesDir: Path
+) extends ScalaProcessRunner[CoverageWorker.Result] {
+  override val worker: Worker[CoverageWorker.Result] = CoverageWorker
 
-  override type Configuration = (CoverageRunnerConfig, Path)
+  override val connectionHandler: SocketConnectionHandler[CoverageWorker.Result] =
+    new WorkerCommunicationHandler[CoverageWorker.Result](socket, sendDataToRunner)
 
-  override def readConfigurationFromParent(
-    dis: DataInputStream
-  ): Either[Throwable, Configuration] =
-    for {
-      config    <- decode[CoverageRunnerConfig](dis.readUTF())
-      outputDir <- decode[Path](dis.readUTF())
-    } yield (config, outputDir)
-
-  override def run(
-    configuration: Configuration
-  ): Iterator[Result] = {
-    val (config, invocationDataDir) = configuration
-    val reader                      = new InvocationDataReader(invocationDataDir)
-    reader.clearData()
-    log.debug(s"Initialized InvocationDataReader in $invocationDataDir.")
-    val analyzer = new StatementCoverageAnalyzer(reader)
-    val suites = new TestClassFileFinder(
-      new CompositeFramework(config.excludeTestsClasses: _*).filter
-    ).findAll(config.testClassDirs)
-    log.info(s"Discovered ${suites.size} test suites. Analyzing coverage now...")
-    suites.iterator.map(analyzer.forSuite)
+  private def sendDataToRunner(os: DataOutputStream): Unit = {
+    val configData        = config.derive[CoverageWorkerConfig].asJson.noSpaces
+    val invocationDataDir = compiledSourcesDir.asJson.noSpaces
+    os.writeUTF(configData)
+    os.writeUTF(invocationDataDir)
+    os.flush()
   }
-
-  def main(args: Array[String]): Unit = execute(args)
 }

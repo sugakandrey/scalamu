@@ -1,4 +1,4 @@
-package org.scalamu.core.process
+package org.scalamu.core.runners
 
 import java.io._
 import java.net.ServerSocket

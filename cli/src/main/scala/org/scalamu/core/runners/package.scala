@@ -9,7 +9,7 @@ import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
 
 import scala.util.matching.Regex
 
-package object process {
+package object runners {
   def tryWith[R <: AutoCloseable, T](resource: => R)(f: R => T): Either[Throwable, T] =
     Either.catchNonFatal(resource).flatMap { resource =>
       Either.catchNonFatal(f(resource)).flatMap { result =>

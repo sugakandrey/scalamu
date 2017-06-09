@@ -10,7 +10,7 @@ sealed abstract class TestSuiteResult(succeeded: Boolean)
 final case class SuiteSuccess(name: ClassName, durationMillis: Long) extends TestSuiteResult(true)
 
 /**
- * Signals that a suite either was aborted or has failed tests.
+ * Signals that a suite either was aborted or had failing tests.
  */
 sealed abstract class SuiteFailure extends TestSuiteResult(false)
 

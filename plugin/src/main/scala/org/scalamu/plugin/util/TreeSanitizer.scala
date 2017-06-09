@@ -10,6 +10,7 @@ trait TreeSanitizer { self: CompilerAccess with GlobalExtractors =>
   protected case object SanitizingTransformer extends global.Transformer {
     import global._
 
+    //@TODO: is this actually working as intended
     override def transform(tree: Tree): Tree = tree match {
       case GuardedMutant(_, _, untouched) => untouched
       case _                              => super.transform(tree)

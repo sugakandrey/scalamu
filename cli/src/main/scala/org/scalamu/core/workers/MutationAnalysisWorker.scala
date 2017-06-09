@@ -1,5 +1,5 @@
 package org.scalamu.core
-package runners
+package workers
 
 import java.io.DataInputStream
 import java.nio.charset.StandardCharsets
@@ -8,11 +8,11 @@ import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.scalamu.common.MutantId
-import org.scalamu.core.process._
+import org.scalamu.core.runners._
 import org.scalamu.testapi.AbstractTestSuite
 
-object MutationRunner extends Runner[MutationRunnerResponse] {
-  private val log = Logger[MutationRunner.type]
+object MutationAnalysisWorker extends Worker[MutationWorkerResponse] {
+  private val log = Logger[MutationAnalysisWorker.type]
 
   override type Configuration = Map[MutantId, Set[AbstractTestSuite]]
 
@@ -27,7 +27,7 @@ object MutationRunner extends Runner[MutationRunnerResponse] {
 
   override def run(
     inverseCoverage: Configuration
-  ): Iterator[MutationRunnerResponse] =
+  ): Iterator[MutationWorkerResponse] =
     inverseCoverage.iterator.map(
       Function.tupled(SuiteRunner.runMutantInverseCoverage)
     )

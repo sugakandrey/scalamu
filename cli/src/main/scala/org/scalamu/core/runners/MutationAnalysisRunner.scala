@@ -1,4 +1,4 @@
-package org.scalamu.core.process
+package org.scalamu.core.runners
 
 import java.io.DataOutputStream
 import java.net.ServerSocket
@@ -9,20 +9,20 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import org.scalamu.common.MutantId
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.core.runners.{MutationRunner, Runner}
+import org.scalamu.core.workers.{MutationAnalysisWorker, Worker}
 import org.scalamu.testapi.AbstractTestSuite
 
-class MutationAnalysisProcess(
+class MutationAnalysisRunner(
   override val socket: ServerSocket,
   override val config: ScalamuConfig,
   override val compiledSourcesDir: Path,
   inverseCoverage: Map[MutantId, Set[AbstractTestSuite]]
-) extends ScalaProcess[MutationRunner.Result] {
+) extends ScalaProcessRunner[MutationAnalysisWorker.Result] {
 
-  override def runner: Runner[MutationRunner.Result] = MutationRunner
+  override def worker: Worker[MutationAnalysisWorker.Result] = MutationAnalysisWorker
 
-  override def connectionHandler: SocketConnectionHandler[MutationRunner.Result] =
-    new RunnerCommunicationHandler[MutationRunner.Result](socket, sendDataToRunner)
+  override def connectionHandler: SocketConnectionHandler[MutationAnalysisWorker.Result] =
+    new WorkerCommunicationHandler[MutationAnalysisWorker.Result](socket, sendDataToRunner)
 
   private def sendDataToRunner(os: DataOutputStream): Unit = {
     val inverseCoverageBytes = inverseCoverage.asJson.noSpaces.getBytes(StandardCharsets.UTF_8)
