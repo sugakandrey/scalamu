@@ -13,7 +13,7 @@ final case class PackageSummary(
   override val mutants: Set[TestedMutant],
   sourceFiles: Set[SourceFileSummary]
 ) extends CoverageStats {
-  def path: String = name.replaceAll("\\.", File.separator)
+  def path: String = name.replaceAll("\\.", "\\" + File.separator)
 }
 
 object PackageSummary {
