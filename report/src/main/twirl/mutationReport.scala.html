@@ -1,6 +1,6 @@
 @(
-  source: org.scalamu.report.SourceFileSummary, 
-  config: org.scalamu.core.configuration.ScalamuConfig, 
+  source: org.scalamu.report.SourceFileSummary,
+  config: org.scalamu.core.configuration.ScalamuConfig,
   css: String
 )
 @import _root_.org.scalamu.report.HtmlUtils._
@@ -50,7 +50,7 @@
             <a href="#line@line" id="group@line">@line</a>
         </td>
         <td width="99%">
-            @for(mutant <- mutants) {
+            @for(mutant <- mutants.toSeq) {
                 <pre class=@mutantStatus(mutant)>@mutant.reportMessage</pre>
             }
         </td>
