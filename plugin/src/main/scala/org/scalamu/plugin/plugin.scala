@@ -38,7 +38,7 @@ class ScalamuPlugin(
     class Transformer(unit: CompilationUnit) extends TypingTransformer(unit) {
       override def transform(tree: Tree): Tree = {
 
-        def applyTransformations(tree: Tree, mutations: Seq[MutatingTransformer]): Tree =
+        def applyTransformations(tree: Tree, mutations: List[MutatingTransformer]): Tree =
           mutations match {
             case Nil => tree
             case tr :: rest =>
@@ -47,7 +47,7 @@ class ScalamuPlugin(
           }
         val mutatedUnit = applyTransformations(
           tree,
-          config.mutations.map(_.mutatingTransformer(global, config))
+          config.mutations.map(_.mutatingTransformer(global, config))(collection.breakOut)
         )
         if (config.verifyTrees) {
           val nestedMutations = treesWithNestedMutations(mutatedUnit)
