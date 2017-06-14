@@ -19,9 +19,14 @@ object MutationAnalysisWorker extends Worker[MutationWorkerResponse] {
   override def readConfigurationFromParent(
     dis: DataInputStream
   ): Either[Throwable, Map[MutantId, Set[AbstractTestSuite]]] = {
+    var totalRead = 0
     val length = dis.readInt()
+    println(length)
     val data   = Array.ofDim[Byte](length)
-    dis.read(data)
+    while (totalRead < length) {
+      val bytesRead = dis.read(data, totalRead, length - totalRead)
+      totalRead += bytesRead
+    }
     decode[Configuration](new String(data, StandardCharsets.UTF_8))
   }
 

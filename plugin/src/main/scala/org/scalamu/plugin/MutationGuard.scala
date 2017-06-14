@@ -29,7 +29,7 @@ final case class FqnGuard(
     global: Global
   )(mutated: global.Tree, untouched: global.Tree, id: MutantId): global.Tree = {
     import global._
-    val guardTerm = findMemberFromRoot(TermName(fqn)).asTerm
+    val guardTerm = findMemberFromRoot(TermName(fqn))
     val guard     = q"$guardTerm == ${Literal(Constant(id.id))}"
     q"if ($guard) $mutated else $untouched"
   }
