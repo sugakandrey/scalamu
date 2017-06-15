@@ -7,7 +7,6 @@ import java.nio.file.Path
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.core.workers.CoverageWorkerConfig._
 import org.scalamu.core.workers.{CoverageWorker, CoverageWorkerConfig, Worker}
 
 class CoverageRunner(

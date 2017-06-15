@@ -1,7 +1,7 @@
 package org.scalamu.core.coverage
 
-import org.scalamu.testapi.AbstractTestSuite
+import org.scalamu.core.workers.MeasuredSuite
 
 final case class StatementId(id: Int) extends AnyVal
 
-final case class SuiteCoverage(suite: AbstractTestSuite, coverage: Set[StatementId])
+final case class SuiteCoverage(suite: MeasuredSuite, coverage: Set[StatementId])

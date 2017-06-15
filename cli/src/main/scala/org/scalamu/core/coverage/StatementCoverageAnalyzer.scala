@@ -4,6 +4,7 @@ import cats.data.Validated._
 import cats.data.ValidatedNel
 import cats.instances.list._
 import cats.syntax.traverse._
+import org.scalamu.core.workers.MeasuredSuite
 import org.scalamu.testapi.{AbstractTestSuite, SuiteFailure, SuiteSuccess}
 
 class StatementCoverageAnalyzer(
@@ -16,9 +17,9 @@ class StatementCoverageAnalyzer(
 
   def forSuite(suite: AbstractTestSuite): ValidatedNel[SuiteFailure, SuiteCoverage] =
     suite.execute() match {
-      case _: SuiteSuccess =>
+      case SuiteSuccess(_, completionTime) =>
         val statements = reader.invokedStatements().map(StatementId(_))
-        valid(SuiteCoverage(suite, statements))
+        valid(SuiteCoverage(MeasuredSuite(suite, completionTime), statements))
       case sf: SuiteFailure =>
         reader.clearData()
         invalidNel(sf)

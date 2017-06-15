@@ -9,33 +9,44 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.scalamu.common.MutantId
 import org.scalamu.core.runners._
-import org.scalamu.testapi.AbstractTestSuite
 
 object MutationAnalysisWorker extends Worker[MutationWorkerResponse] {
   private val log = Logger[MutationAnalysisWorker.type]
 
-  override type Configuration = Map[MutantId, Set[AbstractTestSuite]]
+  override type Configuration = (MutationAnalysisWorkerConfig, Map[MutantId, Set[MeasuredSuite]])
 
   override def readConfigurationFromParent(
     dis: DataInputStream
-  ): Either[Throwable, Map[MutantId, Set[AbstractTestSuite]]] = {
+  ): Either[Throwable, Configuration] = {
     var totalRead = 0
-    val length = dis.readInt()
-    println(length)
-    val data   = Array.ofDim[Byte](length)
+    val length    = dis.readInt()
+    val data      = Array.ofDim[Byte](length)
     while (totalRead < length) {
       val bytesRead = dis.read(data, totalRead, length - totalRead)
       totalRead += bytesRead
     }
-    decode[Configuration](new String(data, StandardCharsets.UTF_8))
+
+    val parseCoverage =
+      decode[Map[MutantId, Set[MeasuredSuite]]](new String(data, StandardCharsets.UTF_8))
+
+    val parseConfig = decode[MutationAnalysisWorkerConfig](dis.readUTF())
+
+    for {
+      coverage <- parseCoverage
+      config   <- parseConfig
+    } yield (config, coverage)
   }
 
   override def run(
-    inverseCoverage: Configuration
-  ): Iterator[MutationWorkerResponse] =
+    configuration: Configuration
+  ): Iterator[MutationWorkerResponse] = {
+    MemoryWatcher.startMemoryWatcher(90)
+    val (config, inverseCoverage) = configuration
+    val runner                    = new SuiteRunner(config)
     inverseCoverage.iterator.map(
-      Function.tupled(SuiteRunner.runMutantInverseCoverage)
+      Function.tupled(runner.runMutantInverseCoverage)
     )
+  }
 
   def main(args: Array[String]): Unit = execute(args)
 }

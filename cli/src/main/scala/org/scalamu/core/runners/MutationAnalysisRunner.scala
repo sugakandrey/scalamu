@@ -9,14 +9,13 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import org.scalamu.common.MutantId
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.core.workers.{MutationAnalysisWorker, Worker}
-import org.scalamu.testapi.AbstractTestSuite
+import org.scalamu.core.workers.{MeasuredSuite, MutationAnalysisWorker, Worker}
 
 class MutationAnalysisRunner(
   override val socket: ServerSocket,
   override val config: ScalamuConfig,
   override val compiledSourcesDir: Path,
-  inverseCoverage: Map[MutantId, Set[AbstractTestSuite]]
+  inverseCoverage: Map[MutantId, Set[MeasuredSuite]]
 ) extends ScalaProcessRunner[MutationAnalysisWorker.Result] {
 
   override def worker: Worker[MutationAnalysisWorker.Result] = MutationAnalysisWorker
