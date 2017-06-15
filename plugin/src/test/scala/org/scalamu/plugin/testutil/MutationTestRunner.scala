@@ -20,10 +20,6 @@ trait MutationTestRunner
 
   override def createSettings(): Settings = new Settings {
     usejavacp.value = true
-//    debug.value = true
-//    verbose.value = true
-//    XshowtreesStringified.value = true
-//    Xprint.value = List("mutating-transform", "explicitouter")
     outputDirs.setSingleOutput(outputDir)
     Yrangepos.value = true
   }
