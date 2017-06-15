@@ -19,6 +19,8 @@ import scala.util.matching.Regex
  * @param mutations set of active mutation operators
  * @param excludeSources filters, used to exclude certain source files from being mutated
  * @param excludeTestsClasses filters, used to exclude certain test classes from being run
+ * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
+ * @param timeoutConst additional flat amount of allowed time for tests to run (applied after timeoutFactor)
  * @param threads number of threads to be used for mutation analysis
  * @param verbose if true, be verbose about every step
  */
@@ -32,6 +34,8 @@ final case class ScalamuConfig(
   mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
   excludeSources: Seq[Regex] = Seq.empty,
   excludeTestsClasses: Seq[Regex] = Seq.empty,
+  timeoutFactor: Double = 1.5,
+  timeoutConst: Long = 2000,
   threads: Int = 1,
   verbose: Boolean = false
 ) {
@@ -74,22 +78,24 @@ object ScalamuConfig {
       .text("list of test class directories")
       .action((testClassPath, config) => config.copy(testClassDirs = testClassPath.toSet))
 
-    arg[Seq[Path]]("<classPath>")
-      .text("list of classpath elements")
-      .action((cp, config) => config.copy(classPath = cp.toSet))
-
     arg[String]("<scalaPath>")
       .text("path to scala executable")
       .action((scalaPath, config) => config.copy(scalaPath = scalaPath))
+
+    opt[Seq[Path]]("cp")
+      .text("list of classpath elements")
+      .action((cp, config) => config.copy(classPath = cp.toSet))
 
     opt[Seq[String]]("jvmArgs")
       .text("list of jvm args used by tests")
       .action((jvmArgs, config) => config.copy(jvmArgs = jvmArgs))
 
-    //@TODO: add a way to configure a set of mutation operators used
-    opt[String]('m', "mutations")
+    opt[Seq[String]]('m', "mutations")
       .text("set of mutation operators")
-      .action((mutations, config) => config.copy())
+      .action(
+        (mutations, config) =>
+          config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
+      )
 
     opt[Seq[Regex]]("excludeSource")
       .abbr("es")
@@ -102,6 +108,14 @@ object ScalamuConfig {
       .valueName("<regex1>,<regex2>..")
       .text("list of filters for ignored test classes")
       .action((filters, config) => config.copy(excludeTestsClasses = filters))
+
+    opt[Double]("timeoutFactor")
+      .text("factor to apply to normal test duration before considering being stuck in a loop")
+      .action((tf, config) => config.copy(timeoutFactor = tf))
+
+    opt[Long]("timeoutConst")
+      .text("flat amount of additional time for mutation analysis test runs")
+    .action((tc, config) => config.copy(timeoutConst = tc))
 
     opt[Int]("threads")
       .text("number of threads used to run tests")
