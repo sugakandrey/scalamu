@@ -3,6 +3,7 @@ package org.scalamu.core.configuration
 import java.nio.file.{Files, Path, Paths}
 
 import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
+import org.scalamu.testapi.TestingFramework
 import scopt.OptionParser
 
 import scala.util.matching.Regex
@@ -19,6 +20,7 @@ import scala.util.matching.Regex
  * @param mutations set of active mutation operators
  * @param excludeSources filters, used to exclude certain source files from being mutated
  * @param excludeTestsClasses filters, used to exclude certain test classes from being run
+ * @param testingOptions options to pass to framework's test runner
  * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
  * @param timeoutConst additional flat amount of allowed time for tests to run (applied after timeoutFactor)
  * @param threads number of threads to be used for mutation analysis
@@ -34,31 +36,12 @@ final case class ScalamuConfig(
   mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
   excludeSources: Seq[Regex] = Seq.empty,
   excludeTestsClasses: Seq[Regex] = Seq.empty,
+  testingOptions: Map[TestingFramework, String] = Map.empty,
   timeoutFactor: Double = 1.5,
   timeoutConst: Long = 2000,
   threads: Int = 1,
   verbose: Boolean = false
 ) {
-  require(
-    testClassDirs.forall(Files.exists(_)),
-    s"Test class directories must exist, but ${testClassDirs.filterNot(Files.exists(_))} were non-existent."
-  )
-
-  require(
-    classPath.forall(Files.exists(_)),
-    s"All classpath entries must point to existing files, but ${classPath.filterNot(Files.exists(_))} don't."
-  )
-
-  require(
-    sourceDirs.forall(Files.exists(_)),
-    s"Source file directories must exist, but ${sourceDirs.filterNot(Files.exists(_))} were non-existent."
-  )
-
-  require({
-    val executablePath = Paths.get(scalaPath)
-    Files.exists(executablePath) && Files.isExecutable(executablePath)
-  }, "File at scalaPath must exist and be executable.")
-
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
 }
 
@@ -72,18 +55,44 @@ object ScalamuConfig {
 
     arg[Seq[Path]]("<sourceDirs>")
       .text("list of source directories")
+      .validate { sdirs =>
+        if (sdirs.exists(!Files.exists(_)))
+          failure(
+            s"Source file directories must exist, but ${sdirs.filterNot(Files.exists(_))} were non-existent."
+          )
+        else success
+      }
       .action((sourceDirs, config) => config.copy(sourceDirs = sourceDirs.toSet))
 
     arg[Seq[Path]]("<testClassDirs>")
       .text("list of test class directories")
+      .validate { tdirs =>
+        if (tdirs.exists(!Files.exists(_)))
+          failure(
+            s"Test class directories must exist, but ${tdirs.filterNot(Files.exists(_))} were non-existent."
+          )
+        else success
+      }
       .action((testClassPath, config) => config.copy(testClassDirs = testClassPath.toSet))
 
     arg[String]("<scalaPath>")
       .text("path to scala executable")
+      .validate { scalaPath =>
+        val executablePath = Paths.get(scalaPath)
+        val satisfies      = Files.exists(executablePath) && Files.isExecutable(executablePath)
+        if (!satisfies) failure("File at scalaPath must exist and be executable.") else success
+      }
       .action((scalaPath, config) => config.copy(scalaPath = scalaPath))
 
     opt[Seq[Path]]("cp")
       .text("list of classpath elements")
+      .validate { classpath =>
+        if (classpath.exists(!Files.exists(_)))
+          failure(
+            s"All classpath entries must point to existing files, but ${classpath.filterNot(Files.exists(_))} don't."
+          )
+        else success
+      }
       .action((cp, config) => config.copy(classPath = cp.toSet))
 
     opt[Seq[String]]("jvmArgs")
@@ -109,13 +118,21 @@ object ScalamuConfig {
       .text("list of filters for ignored test classes")
       .action((filters, config) => config.copy(excludeTestsClasses = filters))
 
+    opt[Map[TestingFramework, String]]("testOptions")
+      .abbr("to")
+      .valueName("framework1=optionString1, framework2=optionString2...")
+      .text("Per framework test runner options")
+      .action((options, config) => config.copy(testingOptions = options))
+
     opt[Double]("timeoutFactor")
       .text("factor to apply to normal test duration before considering being stuck in a loop")
+      .validate(tf => if (tf < 1) failure(s"Timeout factor must be >= 1.") else success)
       .action((tf, config) => config.copy(timeoutFactor = tf))
 
     opt[Long]("timeoutConst")
       .text("flat amount of additional time for mutation analysis test runs")
-    .action((tc, config) => config.copy(timeoutConst = tc))
+      .validate(tc => if (tc < 0) failure(s"Timeout const value must be >= 0.") else success)
+      .action((tc, config) => config.copy(timeoutConst = tc))
 
     opt[Int]("threads")
       .text("number of threads used to run tests")
