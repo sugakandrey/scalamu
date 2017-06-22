@@ -17,9 +17,11 @@ object MemoryWatcher {
         case MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED =>
           val data            = notification.getUserData.asInstanceOf[CompositeData]
           val memoryUsageInfo = MemoryNotificationInfo.from(data)
-          log.warn(s"Memory pool ${memoryUsageInfo.getPoolName} has exceeded configured threshold " +
-            s"of $thresholdPercentage%. Memory usage: ${memoryUsageInfo.getUsage}.")
-          sys.exit(ExitCode.OutOfMemory.code)
+          log.warn(
+            s"Memory pool ${memoryUsageInfo.getPoolName} has exceeded configured threshold " +
+              s"of $thresholdPercentage%. Memory usage: ${memoryUsageInfo.getUsage}."
+          )
+          die(ExitCode.OutOfMemory)
         case _ => log.warn(s"Unknown notification type in $notification")
     }
     emitter.addNotificationListener(listener, null, null)

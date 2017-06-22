@@ -54,18 +54,18 @@ class CoverageRunnerSpec
   import scala.concurrent.ExecutionContext.Implicits.{global => ec}
   "CoverageProcessSpec" should "calculate coverage in a separate JVM and send results to parent" in withConfig {
     config =>
-      withScalamuGlobal { (global, _, instrumentation) =>
+      withScalamuGlobal { (global, _, _) =>
         val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
         global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
         val socket = new ServerSocket(4242)
 
-        val coverageProc = new CoverageRunner(
+        val runner = new CoverageRunner(
           socket,
           config
             .copy(excludeTestsClasses = Seq(".*Bad.*".r)),
           global.outputDir.file.toPath
         )
-        val coverage = coverageProc.execute().futureValue.right.value.sequenceU.toEither
+        val coverage = runner.execute().futureValue.right.value.sequenceU.toEither
         val suiteCov = coverage.right.value
         suiteCov should have size 1
         forAll(suiteCov.map(_.coverage))(_.size should ===(11))
@@ -73,17 +73,17 @@ class CoverageRunnerSpec
   }
 
   it should "return info about failed test suites" in withConfig { config =>
-    withScalamuGlobal { (global, _, instrumentation) =>
+    withScalamuGlobal { (global, _, _) =>
       val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
       global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
       val socket = new ServerSocket(4242)
 
-      val coverageProc = new CoverageRunner(
+      val runner = new CoverageRunner(
         socket,
         config,
         global.outputDir.file.toPath
       )
-      val response = coverageProc.execute().futureValue.right.value.sequenceU.toEither
+      val response = runner.execute().futureValue.right.value.sequenceU.toEither
       val failures = response.left.value.toList
       failures should have size 1
       failures should ===(

@@ -8,7 +8,7 @@ object ExitCode {
   case object TimedOut       extends ExitCode(48)
   case object RuntimeFailure extends ExitCode(1)
 
-  def fromExitCode(code: Int): ExitCode = code match {
+  def fromExitValue(code: Int): ExitCode = code match {
     case 0  => Ok
     case 1  => RuntimeFailure
     case 48 => TimedOut

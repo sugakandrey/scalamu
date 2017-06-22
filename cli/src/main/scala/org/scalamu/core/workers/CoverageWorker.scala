@@ -26,7 +26,8 @@ object CoverageWorker extends Worker[ValidatedNel[SuiteFailure, SuiteCoverage]] 
     } yield (config, outputDir)
 
   override def run(
-    configuration: Configuration
+    configuration: Configuration,
+    dis: DataInputStream
   ): Iterator[Result] = {
     val (config, invocationDataDir) = configuration
     val reader                      = new InvocationDataReader(invocationDataDir)

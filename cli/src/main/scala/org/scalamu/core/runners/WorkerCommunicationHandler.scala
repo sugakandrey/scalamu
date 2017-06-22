@@ -15,9 +15,12 @@ class WorkerCommunicationHandler[R: Decoder](
   override val initialize: DataOutputStream => Unit
 ) extends SocketConnectionHandler[R] {
 
-  override def receive(is: DataInputStream): Either[Throwable, List[R]] =
+  protected def exchangeData(is: DataInputStream, os: DataOutputStream): Either[Throwable, String] =
+    Either.catchNonFatal(is.readUTF())
+
+  override def communicate(is: DataInputStream, os: DataOutputStream): Either[Throwable, List[R]] =
     Iterator
-      .continually(Either.catchNonFatal(is.readUTF()))
+      .continually(exchangeData(is, os))
       .takeWhile(_.isRight)
       .map(_.flatMap(decode[R]))
       .toList

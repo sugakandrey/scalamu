@@ -54,7 +54,7 @@ class CoverageWorkerSpec
               (
                 config.derive[CoverageWorkerConfig].copy(excludeTestsClasses = Seq(".*Bad.*".r)),
                 compiledSourcesPath
-              )
+              ), null
             )
             .toList
             .sequenceU
@@ -76,7 +76,7 @@ class CoverageWorkerSpec
         withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
           val coverage = CoverageWorker
             .run(
-              (config.derive[CoverageWorkerConfig], compiledSourcesPath)
+              (config.derive[CoverageWorkerConfig], compiledSourcesPath), null
             )
             .toList
             .sequenceU

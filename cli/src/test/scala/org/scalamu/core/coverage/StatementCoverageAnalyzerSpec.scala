@@ -3,6 +3,7 @@ package org.scalamu.core.coverage
 import org.scalamock.scalatest.MockFactory
 import org.scalamu.common.position.Position
 import org.scalamu.core.ClassName
+import org.scalamu.core.workers.MeasuredSuite
 import org.scalamu.testapi._
 import org.scalamu.testutil.ScalamuSpec
 import org.scalatest.OneInstancePerTest
@@ -33,7 +34,7 @@ class StatementCoverageAnalyzerSpec extends ScalamuSpec with OneInstancePerTest 
       .returning(stm)
       .repeated(4)
 
-    val expected = List(SuiteCoverage(suite, Set(id, id, id, id)))
+    val expected = List(SuiteCoverage(MeasuredSuite(suite, 0), Set(id, id, id, id)))
 
     analyzer.forSuites(List(suite)).value should ===(expected)
   }
@@ -57,13 +58,13 @@ class StatementCoverageAnalyzerSpec extends ScalamuSpec with OneInstancePerTest 
       .zip(suiteNames)
       .map {
         case (suite, name) =>
-          SuiteCoverage(suite, Set(StatementId(1)))
+          SuiteCoverage(MeasuredSuite(suite, 0), Set(StatementId(1)))
       }
 
     analyzer.forSuites(suites).value should ===(expected)
   }
 
-  it should "aggregate failures in case some of the suites failed" in {
+  it should "aggregate failures in cse some of the suites failed" in {
     val success         = ClassName("foo")
     val failures        = Seq(ClassName("bar"), ClassName("baz"), ClassName("qux"))
     val successfulSuite = mockSuite(SuiteSuccess(success, 10))

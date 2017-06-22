@@ -4,13 +4,13 @@ import org.scalamu.core._
 
 object HtmlUtils {
   def mutantStatus(mutant: TestedMutant): String = mutant.status match {
-    case _: Killed      => "killed"
-    case NoTestCoverage => "no_coverage"
-    case Alive          => "alive"
-    case Untested       => "untested"
-    case TimedOut       => "timed_out"
-    case OutOfMemory    => "oom"
-    case RuntimeFailure => "failure"
+    case _: Killed       => "killed"
+    case NoTestCoverage  => "no_coverage"
+    case Alive           => "alive"
+    case Untested        => "untested"
+    case TimedOut        => "timed_out"
+    case OutOfMemory     => "oom"
+    case InternalFailure => "failure"
   }
 
   def lineStatus(line: Line): LineStatus =

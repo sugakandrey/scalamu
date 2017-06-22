@@ -16,7 +16,7 @@ import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.coverage.{InverseMutantCoverage, Statement, StatementId, SuiteCoverage}
 import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.core.runners._
-import org.scalamu.core.workers.MutationWorkerResponse
+import org.scalamu.core.workers.{MeasuredSuite, MutationWorkerResponse}
 import org.scalamu.core.{FailingSuites, SourceInfo, TestedMutant, coverage => cov}
 import org.scalamu.plugin
 import org.scalamu.utils.FileSystemUtils._
@@ -104,7 +104,7 @@ object EntryPoint {
       s"Coverage process finished in $coverageDuration seconds with exit code ${coverageProcess.exitCode()}."
     )
 
-    val coverage: Map[AbstractTestSuite, Set[StatementId]] = coverageData match {
+    val coverage: Map[MeasuredSuite, Set[StatementId]] = coverageData match {
       case Left(failingSuites) =>
         exit(
           s"Mutation analysis requires green suite but the following suites failed: $failingSuites."
@@ -136,36 +136,17 @@ object EntryPoint {
       }
     }
 
-    val analysisProcess = new MutationAnalysisRunner(socket, config, outputPath, inverseCoverage)
-    val analysisFuture  = analysisProcess.execute()
-    val analysisResults = Either.catchNonFatal(Await.result(analysisFuture, 2 minutes))
+    val mutantsById: Map[MutantId, MutantInfo] = reporter.mutants.map(m => m.id -> m)(breakOut)
 
-    val analysisData: Seq[MutationWorkerResponse] = analysisResults match {
-      case Left(timeout) =>
-        exit(
-          s"Timed out while waiting for mutation analysis report: $timeout. " +
-            s"Make sure the environment is correctly set up."
-        )
-      case Right(result) =>
-        result match {
-          case Right(runnerResults) => runnerResults
-          case Left(err) =>
-            exit(s"An error occurred while communicating with MutationAnalysisRunner. $err")
-        }
-    }
+    val analyser = new MutationAnalyser(socket, config, outputPath)
+    val testedMutants = analyser.analyse(inverseCoverage, mutantsById)
 
     if (config.verbose) {
       tryWith(Files.newBufferedWriter(reportDir / "results.log")) { writer =>
-        analysisData.foreach(mutant => writer.write(mutant.asJson.spaces2 + "\n"))
+        testedMutants.foreach(mutant => writer.write(mutant.asJson.spaces2 + "\n"))
       }
     }
 
-    val mutantsById: Map[MutantId, MutantInfo] = reporter.mutants.map(m => m.id -> m)(breakOut)
-
-    val testedMutants: Set[TestedMutant] =
-      analysisData.map(response => TestedMutant(mutantsById(response.id), response.status))(
-        breakOut
-      )
 
     val invoked: Set[Statement] =
       coverage.values.flatMap(ids => ids.map(instrumentation.getStatementById))(breakOut)

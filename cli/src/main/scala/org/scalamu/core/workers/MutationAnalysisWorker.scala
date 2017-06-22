@@ -2,8 +2,8 @@ package org.scalamu.core
 package workers
 
 import java.io.DataInputStream
-import java.nio.charset.StandardCharsets
 
+import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
 import io.circe.parser.decode
@@ -13,40 +13,38 @@ import org.scalamu.core.runners._
 object MutationAnalysisWorker extends Worker[MutationWorkerResponse] {
   private val log = Logger[MutationAnalysisWorker.type]
 
-  override type Configuration = (MutationAnalysisWorkerConfig, Map[MutantId, Set[MeasuredSuite]])
+  override type Configuration = MutationAnalysisWorkerConfig
 
   override def readConfigurationFromParent(
     dis: DataInputStream
-  ): Either[Throwable, Configuration] = {
-    var totalRead = 0
-    val length    = dis.readInt()
-    val data      = Array.ofDim[Byte](length)
-    while (totalRead < length) {
-      val bytesRead = dis.read(data, totalRead, length - totalRead)
-      totalRead += bytesRead
+  ): Either[Throwable, Configuration] =
+    decode[MutationAnalysisWorkerConfig](dis.readUTF())
+
+  private def communicate(
+    configuration: Configuration,
+    dis: DataInputStream
+  ): Either[Throwable, MutationWorkerResponse] = Either.catchNonFatal {
+    MemoryWatcher.startMemoryWatcher(90)
+    val runner = new SuiteRunner(configuration)
+    val data   = dis.readUTF()
+
+    val mutationData = decode[(MutantId, Set[MeasuredSuite])](data)
+    mutationData match {
+      case Left(parsingError) =>
+        Console.err.println(s"Error parsing data from runner. $parsingError")
+        die(ExitCode.RuntimeFailure)
+      case Right((id, suites)) => runner.runMutantInverseCoverage(id, suites)
     }
-
-    val parseCoverage =
-      decode[Map[MutantId, Set[MeasuredSuite]]](new String(data, StandardCharsets.UTF_8))
-
-    val parseConfig = decode[MutationAnalysisWorkerConfig](dis.readUTF())
-
-    for {
-      coverage <- parseCoverage
-      config   <- parseConfig
-    } yield (config, coverage)
   }
 
   override def run(
-    configuration: Configuration
-  ): Iterator[MutationWorkerResponse] = {
-    MemoryWatcher.startMemoryWatcher(90)
-    val (config, inverseCoverage) = configuration
-    val runner                    = new SuiteRunner(config)
-    inverseCoverage.iterator.map(
-      Function.tupled(runner.runMutantInverseCoverage)
-    )
-  }
+    configuration: Configuration,
+    dis: DataInputStream
+  ): Iterator[MutationWorkerResponse] =
+    Iterator
+      .continually(communicate(configuration, dis))
+      .takeWhile(_.isRight)
+      .map(_.right.get)
 
   def main(args: Array[String]): Unit = execute(args)
 }

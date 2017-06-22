@@ -46,7 +46,9 @@ class SuiteRunner(config: MutationAnalysisWorkerConfig) {
             }
           case Left(err) =>
             err match {
-              case _: TimeoutException => die(ExitCode.TimedOut)
+              case _: TimeoutException =>
+                log.debug(s"Mutation #${id.id} timed out. Runner will now exit.")
+                die(ExitCode.TimedOut)
               case _                   => die(ExitCode.RuntimeFailure)
             }
         }
