@@ -23,7 +23,7 @@ import scala.util.matching.Regex
  * @param testingOptions options to pass to framework's test runner
  * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
  * @param timeoutConst additional flat amount of allowed time for tests to run (applied after timeoutFactor)
- * @param threads number of threads to be used for mutation analysis
+ * @param parallelism number of threads to be used for mutation analysis
  * @param verbose if true, be verbose about every step
  */
 final case class ScalamuConfig(
@@ -39,7 +39,7 @@ final case class ScalamuConfig(
   testingOptions: Map[TestingFramework, String] = Map.empty,
   timeoutFactor: Double = 1.5,
   timeoutConst: Long = 2000,
-  threads: Int = 1,
+  parallelism: Int = 1,
   verbose: Boolean = false
 ) {
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
@@ -141,7 +141,7 @@ object ScalamuConfig {
           if (threads < 1) failure("Option --threads must have value >= 1.")
           else success
       )
-      .action((threads, config) => config.copy(threads = threads))
+      .action((threads, config) => config.copy(parallelism = threads))
 
     opt[Unit]("verbose")
       .text("be verbose about every step")
