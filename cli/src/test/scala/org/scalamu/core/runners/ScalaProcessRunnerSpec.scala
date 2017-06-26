@@ -32,32 +32,34 @@ class ScalaProcessRunnerSpec extends ScalamuSpec with ScalamuConfigFixture {
       ): Either[Throwable, List[Int]] = ???
     }
 
-    val proc = new ScalaProcessRunner[Int] {
+    val proc = new Runner[Int] {
       override def socket: ServerSocket                            = new ServerSocket(1234)
       override def config: ScalamuConfig                           = cfg
       override def worker: Worker[Int]                             = TestMainSimple
       override def connectionHandler: SocketConnectionHandler[Int] = handler
       override def compiledSourcesDir: Path                        = Paths.get(".")
+      override def sendDataToWorker(dos: DataOutputStream): Unit   = ???
     }
 
     proc.execute().futureValue.right.value should ===(Seq(42))
-    proc.exitCode() should ===(123)
+    proc.exitValue() should ===(123)
   }
 
   it should "send data to app JVM" in withConfig { cfg =>
     val serverSocket = new ServerSocket(4242)
     val handler      = new WorkerCommunicationHandler[Int](serverSocket, _ => ())
 
-    val proc = new ScalaProcessRunner[Int] {
+    val proc = new Runner[Int] {
       override def socket: ServerSocket                            = serverSocket
       override def config: ScalamuConfig                           = cfg
       override def worker: Worker[Int]                             = TestMainSending
       override def connectionHandler: SocketConnectionHandler[Int] = handler
       override def compiledSourcesDir: Path                        = Paths.get(".")
+      override def sendDataToWorker(dos: DataOutputStream): Unit   = ???
     }
 
     proc.execute().futureValue.right.value should ===(1 to 10)
-    proc.exitCode() should ===(0)
+    proc.exitValue() should ===(0)
   }
 }
 

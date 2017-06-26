@@ -41,5 +41,8 @@ object CoverageWorker extends Worker[ValidatedNel[SuiteFailure, SuiteCoverage]] 
     suites.iterator.map(analyzer.forSuite)
   }
 
-  def main(args: Array[String]): Unit = execute(args)
+  def main(args: Array[String]): Unit = {
+    LoggerConfiguration.configurePatternForName("COVERAGE-WORKER")
+    execute(args)
+  }
 }

@@ -1,43 +1,32 @@
 package org.scalamu.entry
 
 import java.io.{BufferedWriter, FileWriter}
-import java.net.ServerSocket
 import java.nio.file.{Files, Path, Paths}
 
-import cats.instances.list._
-import cats.syntax.either._
-import cats.syntax.traverse._
 import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.scalamu.common.MutantId
 import org.scalamu.core.compilation.ScalamuGlobal
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.core.coverage.{InverseMutantCoverage, Statement, StatementId, SuiteCoverage}
+import org.scalamu.core.coverage.{InverseMutantCoverage, Statement}
 import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.core.runners._
-import org.scalamu.core.workers.{MeasuredSuite, MutationWorkerResponse}
-import org.scalamu.core.{FailingSuites, SourceInfo, TestedMutant, coverage => cov}
-import org.scalamu.plugin
-import org.scalamu.utils.FileSystemUtils._
+import org.scalamu.core.workers.ExitCode
+import org.scalamu.core.{LoggerConfiguration, SourceInfo, TestedMutant, coverage => cov}
 import org.scalamu.plugin.MutantInfo
 import org.scalamu.report.{HtmlReportWriter, ProjectSummaryFactory}
 import org.scalamu.testapi.AbstractTestSuite
+import org.scalamu.utils.FileSystemUtils._
+import org.scalamu.{core, plugin}
 
 import scala.collection.JavaConverters._
 import scala.collection.breakOut
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.{global => ec}
-import scala.concurrent.duration._
 import scala.reflect.io.{Directory, PlainDirectory}
 
 object EntryPoint {
-  private val log = Logger[EntryPoint.type]
-
-  private def exit(errorMsg: String): Nothing = {
-    log.error(errorMsg)
-    sys.exit(1)
-  }
+  private val log  = Logger[EntryPoint.type]
+  private val exit = core.exit(log.error(_))(_: String, ExitCode.RuntimeFailure)
 
   private def ensureDirExits(dir: Path): Unit =
     if (!Files.exists(dir)) {
@@ -45,7 +34,12 @@ object EntryPoint {
     }
 
   def main(args: Array[String]): Unit = {
-    val config    = ScalamuConfig.parseConfig(args)
+    LoggerConfiguration.configurePatternForName("MAIN-APP")
+    val config = ScalamuConfig.parseConfig(args)
+    if (config.verbose) {
+      log.info(s"Running Scalamu with config:\n ${config.asJson.spaces2}")
+    }
+
     val reportDir = Paths.get("mutation-analysis-report")
     ensureDirExits(reportDir)
 
@@ -79,38 +73,8 @@ object EntryPoint {
       }
     }
 
-    val socket          = new ServerSocket(0)
-    val coverageProcess = new CoverageRunner(socket, config, outputPath)
-    val coverageFuture  = coverageProcess.execute()
-    val coverageStart   = System.currentTimeMillis()
-    val coverageResults = Either.catchNonFatal(Await.result(coverageFuture, 1 minutes))
-
-    val coverageData: Either[FailingSuites, List[SuiteCoverage]] = coverageResults match {
-      case Left(timeout) =>
-        exit(
-          s"Timed out while waiting for coverage report: $timeout. " +
-            s"Make sure the environment is correctly set up."
-        )
-      case Right(result) =>
-        result match {
-          case Right(runnerResults) => runnerResults.sequenceU.toEither.leftMap(FailingSuites)
-          case Left(err) =>
-            exit(s"An error occurred while communicating with CoverageRunner. $err")
-        }
-    }
-
-    val coverageDuration = (System.currentTimeMillis() - coverageStart) / 1000
-    log.info(
-      s"Coverage process finished in $coverageDuration seconds with exit code ${coverageProcess.exitCode()}."
-    )
-
-    val coverage: Map[MeasuredSuite, Set[StatementId]] = coverageData match {
-      case Left(failingSuites) =>
-        exit(
-          s"Mutation analysis requires green suite but the following suites failed: $failingSuites."
-        )
-      case Right(suiteCoverages) => suiteCoverages.map(cov => cov.suite -> cov.coverage)(breakOut)
-    }
+    val coverageAnalyser = new CoverageAnalyser(config, outputPath)
+    val coverage         = coverageAnalyser.analyse(instrumentation)
 
     log.debug(s"Test suites examined: ${coverage.keySet.mkString("[\n\t", "\n\t", "\n]")}.")
 
@@ -126,7 +90,7 @@ object EntryPoint {
     }
 
     val inverseCoverage = InverseMutantCoverage.fromStatementCoverage(
-      coverage.mapValues(_.map(instrumentation.getStatementById)),
+      coverage,
       reporter.mutants
     )
 
@@ -138,7 +102,7 @@ object EntryPoint {
 
     val mutantsById: Map[MutantId, MutantInfo] = reporter.mutants.map(m => m.id -> m)(breakOut)
 
-    val analyser = new MutationAnalyser(socket, config, outputPath)
+    val analyser      = new MutationAnalyser(config, outputPath)
     val testedMutants = analyser.analyse(inverseCoverage, mutantsById)
 
     if (config.verbose) {
@@ -147,9 +111,7 @@ object EntryPoint {
       }
     }
 
-
-    val invoked: Set[Statement] =
-      coverage.values.flatMap(ids => ids.map(instrumentation.getStatementById))(breakOut)
+    val invoked: Set[Statement] = coverage.valuesIterator.flatten.toSet
 
     generateReport(
       reportDir,

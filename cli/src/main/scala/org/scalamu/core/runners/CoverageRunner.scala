@@ -13,17 +13,14 @@ class CoverageRunner(
   override val socket: ServerSocket,
   override val config: ScalamuConfig,
   override val compiledSourcesDir: Path
-) extends ScalaProcessRunner[CoverageWorker.Result] {
-  override val worker: Worker[CoverageWorker.Result] = CoverageWorker
-
-  override val connectionHandler: SocketConnectionHandler[CoverageWorker.Result] =
-    new WorkerCommunicationHandler[CoverageWorker.Result](socket, sendDataToRunner)
-
-  private def sendDataToRunner(os: DataOutputStream): Unit = {
+) extends Runner[CoverageWorker.Result] {
+  override protected def worker: Worker[CoverageWorker.Result] = CoverageWorker
+  
+  override protected def sendDataToWorker(dos: DataOutputStream): Unit = {
     val configData        = config.derive[CoverageWorkerConfig].asJson.noSpaces
     val invocationDataDir = compiledSourcesDir.asJson.noSpaces
-    os.writeUTF(configData)
-    os.writeUTF(invocationDataDir)
-    os.flush()
+    dos.writeUTF(configData)
+    dos.writeUTF(invocationDataDir)
+    dos.flush()
   }
 }

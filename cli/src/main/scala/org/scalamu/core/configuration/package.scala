@@ -2,7 +2,7 @@ package org.scalamu.core
 
 import java.nio.file.{Path, Paths}
 
-import org.scalamu.testapi.{SupportedFrameworks, TestingFramework}
+import org.scalamu.testapi.TestingFramework
 import scopt.Read
 
 import scala.util.matching.Regex
@@ -12,5 +12,5 @@ package object configuration {
   implicit val regexRead: Read[Regex] = Read.reads(_.r)
 
   implicit val frameworkRead: Read[TestingFramework] =
-    Read.reads(SupportedFrameworks.frameworkByName)
+    Read.reads(TestingFramework.frameworkByName)
 }

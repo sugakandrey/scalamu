@@ -2,6 +2,7 @@ package org.scalamu.core.configuration
 
 import java.nio.file.{Files, Path, Paths}
 
+import com.typesafe.scalalogging.Logger
 import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
 import org.scalamu.testapi.TestingFramework
 import scopt.OptionParser
@@ -23,7 +24,7 @@ import scala.util.matching.Regex
  * @param testingOptions options to pass to framework's test runner
  * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
  * @param timeoutConst additional flat amount of allowed time for tests to run (applied after timeoutFactor)
- * @param parallelism number of threads to be used for mutation analysis
+ * @param parallelism number of runners to be used for mutation analysis
  * @param verbose if true, be verbose about every step
  */
 final case class ScalamuConfig(
@@ -46,6 +47,8 @@ final case class ScalamuConfig(
 }
 
 object ScalamuConfig {
+  private val log = Logger[ScalamuConfig]
+
   val parser: OptionParser[ScalamuConfig] = new scopt.OptionParser[ScalamuConfig]("scalamu-cli") {
     head("scalamu")
 
@@ -134,14 +137,14 @@ object ScalamuConfig {
       .validate(tc => if (tc < 0) failure(s"Timeout const value must be >= 0.") else success)
       .action((tc, config) => config.copy(timeoutConst = tc))
 
-    opt[Int]("threads")
-      .text("number of threads used to run tests")
+    opt[Int]('p', "parallelism")
+      .text("Number of runners used to perform mutation analysis")
       .validate(
         threads =>
-          if (threads < 1) failure("Option --threads must have value >= 1.")
+          if (threads < 1) failure("Option --parallelism must have value >= 1.")
           else success
       )
-      .action((threads, config) => config.copy(parallelism = threads))
+      .action((parallelism, config) => config.copy(parallelism = parallelism))
 
     opt[Unit]("verbose")
       .text("be verbose about every step")

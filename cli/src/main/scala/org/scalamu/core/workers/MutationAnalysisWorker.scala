@@ -21,11 +21,11 @@ object MutationAnalysisWorker extends Worker[MutationWorkerResponse] {
     decode[MutationAnalysisWorkerConfig](dis.readUTF())
 
   private def communicate(
-    configuration: Configuration,
+    config: MutationAnalysisWorkerConfig,
     dis: DataInputStream
   ): Either[Throwable, MutationWorkerResponse] = Either.catchNonFatal {
     MemoryWatcher.startMemoryWatcher(90)
-    val runner = new SuiteRunner(configuration)
+    val runner = new SuiteRunner(config)
     val data   = dis.readUTF()
 
     val mutationData = decode[(MutantId, Set[MeasuredSuite])](data)
@@ -40,11 +40,15 @@ object MutationAnalysisWorker extends Worker[MutationWorkerResponse] {
   override def run(
     configuration: Configuration,
     dis: DataInputStream
-  ): Iterator[MutationWorkerResponse] =
+  ): Iterator[MutationWorkerResponse] = {
+    val id = System.getProperty("worker.name")
+    LoggerConfiguration.configurePatternForName(s"MUTATION-WORKER-$id")
+
     Iterator
       .continually(communicate(configuration, dis))
       .takeWhile(_.isRight)
       .map(_.right.get)
+  }
 
   def main(args: Array[String]): Unit = execute(args)
 }

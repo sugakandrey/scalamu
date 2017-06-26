@@ -1,7 +1,7 @@
 package org.scalamu.testapi
 
 import org.scalamu.testapi.junit.JUnitFramework
-import io.circe.{Decoder, Encoder}
+import io.circe.{Decoder, Encoder, KeyEncoder}
 import org.scalamu.testapi.scalatest.ScalaTestFramework
 import org.scalamu.testapi.specs2.Specs2Framework
 import org.scalamu.testapi.utest.UTestFramework
@@ -15,14 +15,17 @@ trait TestingFramework {
 }
 
 object TestingFramework {
-  val frameworkByName: Map[String, TestingFramework] = Map(
-    "JUnit"     -> JUnitFramework,
-    "ScalaTest" -> ScalaTestFramework,
-    "Specs2"    -> Specs2Framework,
-    "utest"     -> UTestFramework
+  val allFrameworks: Seq[TestingFramework] = Seq(
+    JUnitFramework,
+    Specs2Framework,
+    ScalaTestFramework,
+    UTestFramework
   )
 
-  implicit val encodeFramework: Encoder[TestingFramework] = Encoder.encodeString.contramap(_.name)
+  val frameworkByName: Map[String, TestingFramework] =
+    allFrameworks.map(framework => framework.name.toLowerCase -> framework)(collection.breakOut)
+
+  implicit val encodeFramework: Encoder[TestingFramework] = Encoder.encodeString.contramap(_.name.toLowerCase)
   implicit val decodeFramework: Decoder[TestingFramework] = Decoder.decodeString.emap(
     name =>
       frameworkByName.get(name) match {
@@ -30,4 +33,7 @@ object TestingFramework {
         case _               => Left(s"$name is not a supported framework.")
     }
   )
+  
+  implicit val keyEncoder: KeyEncoder[TestingFramework] = framework =>
+    KeyEncoder.encodeKeyString(framework.name)
 }

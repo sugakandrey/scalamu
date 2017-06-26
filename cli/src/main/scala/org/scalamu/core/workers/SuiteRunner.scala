@@ -33,8 +33,8 @@ class SuiteRunner(config: MutationAnalysisWorkerConfig) {
       if (suites.hasNext) {
         val MeasuredSuite(suite, completionTime) = suites.next()
         log.debug(s"Executing suite ${suite.info.name.fullName} with mutant #${id.id}.")
-        val testResult = Future { blocking { suite.execute() } }
-        val timeLimit  = testTimeLimit(completionTime, config.timeoutFactor, config.timeoutConst)
+        val testResult      = Future { blocking { suite.execute() } }
+        val timeLimit       = testTimeLimit(completionTime, config.timeoutFactor, config.timeoutConst)
         val executionResult = Either.catchNonFatal(Await.result(testResult, timeLimit millis))
 
         executionResult match {
@@ -47,9 +47,11 @@ class SuiteRunner(config: MutationAnalysisWorkerConfig) {
           case Left(err) =>
             err match {
               case _: TimeoutException =>
-                log.debug(s"Mutation #${id.id} timed out. Runner will now exit.")
+                log.debug(
+                  s"Mutation #${id.id} timed out. Worker will now shutdown."
+                )
                 die(ExitCode.TimedOut)
-              case _                   => die(ExitCode.RuntimeFailure)
+              case _ => die(ExitCode.RuntimeFailure)
             }
         }
       } else Alive
