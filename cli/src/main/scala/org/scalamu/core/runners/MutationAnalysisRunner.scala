@@ -1,76 +1,54 @@
 package org.scalamu.core.runners
 
 import java.io.{DataInputStream, DataOutputStream}
-import java.net.ServerSocket
+import java.net.{ServerSocket, Socket}
 import java.nio.file.Path
 
-import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.scalamu.common.MutantId
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.workers.{MutationAnalysisWorker, _}
-import org.scalamu.core.{Untested, WorkerFailure}
-
-import scala.collection.{breakOut, mutable}
+import org.scalamu.core.{CommunicationException, WorkerFailure}
 
 class MutationAnalysisRunner(
   override val socket: ServerSocket,
   override val config: ScalamuConfig,
   override val compiledSourcesDir: Path,
-  mutationCoverage: Map[MutantId, Set[MeasuredSuite]],
   val workerId: Long
-) extends Runner[MutationAnalysisWorker.Result] {
+) extends Runner[(MutantId, Set[MeasuredSuite]), MutationAnalysisWorker.Result] {
   import MutationAnalysisRunner._
 
-  override protected def worker: Worker[MutationAnalysisWorker.Result] = MutationAnalysisWorker
+  override protected def worker: Worker[Result] = MutationAnalysisWorker
 
-  private val runnerQueue =
-    mutable.Queue[(MutantId, Set[MeasuredSuite])](mutationCoverage.toSeq: _*)
-
-  override def connectionHandler: SocketConnectionHandler[MutationAnalysisWorker.Result] =
-    new WorkerCommunicationHandler[MutationAnalysisWorker.Result](socket, sendDataToWorker) {
-      override protected def exchangeData(
-        is: DataInputStream,
-        os: DataOutputStream
-      ): Either[Throwable, String] = Either.catchNonFatal {
-        val currentMutation = runnerQueue.head
-        os.writeUTF(currentMutation.asJson.noSpaces)
-        os.flush()
-        val status = is.readUTF()
-        runnerQueue.dequeue()
-        status
-      }
-
-      override def communicate(
-        is: DataInputStream,
-        os: DataOutputStream
-      ): Either[Throwable, List[MutationAnalysisWorker.Result]] = {
-        val testedMutations = super.communicate(is, os)
-
-        testedMutations.map { tested =>
-          if (tested.size == mutationCoverage.size) {
-            tested
-          } else {
-            log.debug(
-              s"Expected ${mutationCoverage.size} entries from worker $workerId, but got ${tested.size}"
-            )
-            val current        = runnerQueue.dequeue()
-            val exitCode       = ExitCode.fromExitValue(exitValue())
-            val status         = WorkerFailure.fromExitCode(exitCode)
-            val failedMutation = MutationWorkerResponse(current._1, status)
-
-            val untested: List[MutationWorkerResponse] =
-              runnerQueue.map { case (id, _) => MutationWorkerResponse(id, Untested) }(breakOut)
-
-            failedMutation :: untested ::: tested
-          }
-        }
+  private class MutationAnalysisCommunicationPipe(
+    override val client: Socket,
+    override val is: DataInputStream,
+    override val os: DataOutputStream
+  ) extends CommunicationPipe[Input, Result](client, is, os) {
+    override def exchangeData(data: Input): Either[CommunicationException, Result] = {
+      val tryExchange = super.exchangeData(data)
+      tryExchange match {
+        case Right(result) => Right(result)
+        case Left(failure) => Left(failure)
+        case Left(failure) if !proc.isAlive =>
+          log.debug(
+            s"Worker#$workerId was shut down due to $failure. Getting mutation#${data._1} status from exit code."
+          )
+          val exitCode = ExitCode.fromExitValue(exitValue())
+          val status   = WorkerFailure.fromExitCode(exitCode)
+          Right(MutationWorkerResponse(data._1, status))
       }
     }
+  }
 
-  override protected def sendDataToWorker(os: DataOutputStream): Unit = {
+  override protected def connectionHandler: WorkerCommunicationHandler[Input, Result] =
+    new WorkerCommunicationHandler[Input, Result](socket, sendConfigurationToWorker) {
+      override def pipeFactory(client: Socket, is: DataInputStream, os: DataOutputStream) = super.pipeFactory(client, is, os)
+    }
+
+  override protected def sendConfigurationToWorker(os: DataOutputStream): Unit = {
     val configData = config.derive[MutationAnalysisWorkerConfig].asJson.noSpaces
     os.writeUTF(configData)
     os.flush()

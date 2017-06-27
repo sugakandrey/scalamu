@@ -1,30 +1,29 @@
 package org.scalamu.core.runners
 
 import java.io._
-import java.net.ServerSocket
+import java.net.{ServerSocket, Socket}
 
-import cats.syntax.either._
+import io.circe.{Decoder, Encoder}
 import org.scalamu.core.CommunicationException
 
 import scala.util.control.NonFatal
 
-trait SocketConnectionHandler[R] {
+abstract class SocketConnectionHandler[I: Encoder, O: Decoder] {
   def socket: ServerSocket
-  def initialize: DataOutputStream => Unit
-  def communicate(is: DataInputStream, os: DataOutputStream): Either[Throwable, List[R]]
+  
+  def pipeFactory(
+    client: Socket,
+    is: DataInputStream,
+    os: DataOutputStream
+  ): CommunicationPipe[I, O] = new CommunicationPipe[I, O](client, is, os)
 
-  def handle(): Either[CommunicationException, List[R]] = {
-    val client = socket.accept()
+  def handle(): Either[CommunicationException, CommunicationPipe[I, O]] =
     try {
-      val is = new DataInputStream(new BufferedInputStream(client.getInputStream))
-      val os = new DataOutputStream(new BufferedOutputStream(client.getOutputStream))
-      initialize(os)
-      val data = communicate(is, os)
-      data.leftMap(CommunicationException)
+      val client = socket.accept()
+      val is     = new DataInputStream(new BufferedInputStream(client.getInputStream))
+      val os     = new DataOutputStream(new BufferedOutputStream(client.getOutputStream))
+      Right(pipeFactory(client, is, os))
     } catch {
       case NonFatal(e) => Left(CommunicationException(e))
-    } finally {
-      client.close()
     }
-  }
 }

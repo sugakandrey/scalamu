@@ -1,28 +1,22 @@
 package org.scalamu.core.runners
 
-import java.io.{DataInputStream, DataOutputStream}
+import java.io.DataOutputStream
 import java.net.ServerSocket
 
-import cats.instances.either._
-import cats.instances.list._
 import cats.syntax.either._
-import cats.syntax.traverse._
-import io.circe.Decoder
-import io.circe.parser._
+import io.circe.{Decoder, Encoder}
+import org.scalamu.core.CommunicationException
 
-class WorkerCommunicationHandler[R: Decoder](
+class WorkerCommunicationHandler[I: Encoder, O: Decoder](
   override val socket: ServerSocket,
-  override val initialize: DataOutputStream => Unit
-) extends SocketConnectionHandler[R] {
+  initialize: DataOutputStream => Unit
+) extends SocketConnectionHandler[I, O] {
 
-  protected def exchangeData(is: DataInputStream, os: DataOutputStream): Either[Throwable, String] =
-    Either.catchNonFatal(is.readUTF())
-
-  override def communicate(is: DataInputStream, os: DataOutputStream): Either[Throwable, List[R]] =
-    Iterator
-      .continually(exchangeData(is, os))
-      .takeWhile(_.isRight)
-      .map(_.flatMap(decode[R]))
-      .toList
-      .sequenceU
+  override def handle(): Either[CommunicationException, CommunicationPipe[I, O]] = {
+    val clientPipe = super.handle()
+    for {
+      pipe <- clientPipe
+      _    <- Either.catchNonFatal(initialize(pipe.os)).leftMap(CommunicationException)
+    } yield pipe
+  }
 }

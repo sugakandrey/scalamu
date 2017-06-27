@@ -3,7 +3,6 @@ package org.scalamu.core.workers
 import java.io.{Console => _, _}
 import java.net.Socket
 
-import com.typesafe.scalalogging.Logger
 import io.circe.Encoder
 import io.circe.syntax._
 import org.scalamu.core.runners._

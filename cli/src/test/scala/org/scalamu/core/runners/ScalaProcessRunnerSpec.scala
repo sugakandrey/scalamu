@@ -38,7 +38,7 @@ class ScalaProcessRunnerSpec extends ScalamuSpec with ScalamuConfigFixture {
       override def worker: Worker[Int]                             = TestMainSimple
       override def connectionHandler: SocketConnectionHandler[Int] = handler
       override def compiledSourcesDir: Path                        = Paths.get(".")
-      override def sendDataToWorker(dos: DataOutputStream): Unit   = ???
+      override def sendConfigurationToWorker(dos: DataOutputStream): Unit   = ???
     }
 
     proc.execute().futureValue.right.value should ===(Seq(42))
@@ -55,7 +55,7 @@ class ScalaProcessRunnerSpec extends ScalamuSpec with ScalamuConfigFixture {
       override def worker: Worker[Int]                             = TestMainSending
       override def connectionHandler: SocketConnectionHandler[Int] = handler
       override def compiledSourcesDir: Path                        = Paths.get(".")
-      override def sendDataToWorker(dos: DataOutputStream): Unit   = ???
+      override def sendConfigurationToWorker(dos: DataOutputStream): Unit   = ???
     }
 
     proc.execute().futureValue.right.value should ===(1 to 10)
