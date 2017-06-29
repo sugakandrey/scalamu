@@ -2,7 +2,7 @@ package org.scalamu.plugin
 
 import org.scalamu.common.filtering.RegexBasedFilter
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
-import org.scalamu.plugin.mutations.controllflow.{AlwaysExecuteConditionals, NegateConditionals, NeverExecuteConditionals, ReplaceConditionalBoundaries}
+import org.scalamu.plugin.mutations.controllflow.{NegateConditionals, NeverExecuteConditionals}
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {

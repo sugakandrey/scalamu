@@ -1,10 +1,12 @@
-package org.scalamu.core.workers
+package org.scalamu.core.process
 
 import java.lang.management.{ManagementFactory, MemoryNotificationInfo, MemoryPoolMXBean}
 import javax.management.openmbean.CompositeData
 import javax.management.{Notification, NotificationEmitter, NotificationListener}
 
 import com.typesafe.scalalogging.Logger
+import org.scalamu.core.die
+import org.scalamu.core.OutOfMemory
 
 object MemoryWatcher {
   private val log = Logger[MemoryWatcher.type]
@@ -21,7 +23,7 @@ object MemoryWatcher {
             s"Memory pool ${memoryUsageInfo.getPoolName} has exceeded configured threshold " +
               s"of $thresholdPercentage%. Memory usage: ${memoryUsageInfo.getUsage}."
           )
-          die(ExitCode.OutOfMemory)
+          die(OutOfMemory)
         case _ => log.warn(s"Unknown notification type in $notification")
     }
     emitter.addNotificationListener(listener, null, null)

@@ -1,7 +1,7 @@
 package org.scalamu.core
-package workers
+package process
 
-import java.io.DataInputStream
+import java.io.{DataInputStream, DataOutputStream}
 import java.nio.file.Path
 
 import cats.data.ValidatedNel
@@ -12,22 +12,23 @@ import org.scalamu.core.coverage._
 import org.scalamu.core.runners._
 import org.scalamu.testapi.{CompositeFramework, SuiteFailure, TestClassFileFinder}
 
-object CoverageWorker extends Worker[ValidatedNel[SuiteFailure, SuiteCoverage]] {
-  private val log = Logger[CoverageWorker.type]
+object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]] {
+  private val log = Logger[CoverageProcess.type]
 
-  override type Configuration = (CoverageWorkerConfig, Path)
+  override type Configuration = (CoverageProcessConfig, Path)
 
   override def readConfigurationFromParent(
     dis: DataInputStream
   ): Either[Throwable, Configuration] =
     for {
-      config    <- decode[CoverageWorkerConfig](dis.readUTF())
+      config    <- decode[CoverageProcessConfig](dis.readUTF())
       outputDir <- decode[Path](dis.readUTF())
     } yield (config, outputDir)
 
   override def run(
     configuration: Configuration,
-    dis: DataInputStream
+    dis: DataInputStream,
+    dos: DataOutputStream
   ): Iterator[Result] = {
     val (config, invocationDataDir) = configuration
     val reader                      = new InvocationDataReader(invocationDataDir)

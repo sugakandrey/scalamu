@@ -1,7 +1,7 @@
 package org.scalamu.core.coverage
 
 import org.scalamu.common.MutantId
-import org.scalamu.core.workers.MeasuredSuite
+import org.scalamu.core.process.MeasuredSuite
 import org.scalamu.plugin.MutantInfo
 
 import scala.collection.breakOut

@@ -1,11 +1,8 @@
 package org.scalamu.core.runners
 
 import java.io.File
-import java.net.ServerSocket
 import java.nio.file.{Path, Paths}
 
-import cats.instances.list._
-import cats.syntax.traverse._
 import org.scalamu.core.ClassName
 import org.scalamu.core.compilation.{IsolatedScalamuGlobalFixture, ScalamuMutationPhase}
 import org.scalamu.core.detection.SourceFileFinder
@@ -51,40 +48,35 @@ class CoverageRunnerSpec
     Yrangepos.value = true
   }
 
-  import scala.concurrent.ExecutionContext.Implicits.{global => ec}
   "CoverageProcessSpec" should "calculate coverage in a separate JVM and send results to parent" in withConfig {
     config =>
-      withScalamuGlobal { (global, _, _) =>
+      withScalamuGlobal { (global, _, instrumentation) =>
         val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
         global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
-        val socket = new ServerSocket(4242)
 
-        val runner = new CoverageRunner(
-          socket,
+        val analyser = new CoverageAnalyser(
           config
             .copy(excludeTestsClasses = Seq(".*Bad.*".r)),
           global.outputDir.file.toPath
         )
-        val coverage = runner.execute().futureValue.right.value.sequenceU.toEither
-        val suiteCov = coverage.right.value
-        suiteCov should have size 1
-        forAll(suiteCov.map(_.coverage))(_.size should ===(11))
+        
+        val coverage = analyser.analyse(instrumentation)
+        coverage should have size 1
+        forAll(coverage.values)(_.size should ===(11))
       }
   }
 
   it should "return info about failed test suites" in withConfig { config =>
-    withScalamuGlobal { (global, _, _) =>
+    withScalamuGlobal { (global, _, instrumentation) =>
       val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
       global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
-      val socket = new ServerSocket(4242)
 
-      val runner = new CoverageRunner(
-        socket,
+      val analyser = new CoverageAnalyser(
         config,
         global.outputDir.file.toPath
       )
-      val response = runner.execute().futureValue.right.value.sequenceU.toEither
-      val failures = response.left.value.toList
+      
+      val failures = analyser.analyse(instrumentation)
       failures should have size 1
       failures should ===(
         List(

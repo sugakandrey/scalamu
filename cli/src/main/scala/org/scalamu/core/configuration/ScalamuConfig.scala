@@ -2,7 +2,6 @@ package org.scalamu.core.configuration
 
 import java.nio.file.{Files, Path, Paths}
 
-import com.typesafe.scalalogging.Logger
 import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
 import org.scalamu.testapi.TestingFramework
 import scopt.OptionParser
@@ -47,8 +46,6 @@ final case class ScalamuConfig(
 }
 
 object ScalamuConfig {
-  private val log = Logger[ScalamuConfig]
-
   val parser: OptionParser[ScalamuConfig] = new scopt.OptionParser[ScalamuConfig]("scalamu-cli") {
     head("scalamu")
 

@@ -4,7 +4,7 @@ import cats.data.Validated._
 import cats.data.ValidatedNel
 import cats.instances.list._
 import cats.syntax.traverse._
-import org.scalamu.core.workers.MeasuredSuite
+import org.scalamu.core.process.MeasuredSuite
 import org.scalamu.testapi.{AbstractTestSuite, SuiteFailure, SuiteSuccess}
 
 class StatementCoverageAnalyzer(

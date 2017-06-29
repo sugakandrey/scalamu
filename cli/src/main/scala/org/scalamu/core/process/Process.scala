@@ -1,13 +1,15 @@
-package org.scalamu.core.workers
+package org.scalamu.core.process
 
 import java.io.{Console => _, _}
 import java.net.Socket
 
 import io.circe.Encoder
 import io.circe.syntax._
+import org.scalamu.core.die
+import org.scalamu.core.InternalFailure
 import org.scalamu.core.runners._
 
-trait Worker[R] {
+trait Process[R] {
   type Result = R
 
   type Configuration
@@ -26,9 +28,9 @@ trait Worker[R] {
       parseConfig match {
         case Left(parseError) =>
           Console.err.println(s"Error parsing worker configuration. $parseError")
-          die(ExitCode.RuntimeFailure)
+          die(InternalFailure)
         case Right(config) =>
-          run(config, dis).foreach(result => { dos.writeUTF(result.asJson.noSpaces); dos.flush() })
+          run(config, dis, dos).foreach(result => { dos.writeUTF(result.asJson.noSpaces); dos.flush() })
       }
     }
 
@@ -44,5 +46,9 @@ trait Worker[R] {
 
   protected def readConfigurationFromParent(dis: DataInputStream): Either[Throwable, Configuration]
 
-  protected def run(config: Configuration, dis: DataInputStream): Iterator[R]
+  protected def run(
+    config: Configuration,
+    dis: DataInputStream,
+    dos: DataOutputStream
+  ): Iterator[R]
 }

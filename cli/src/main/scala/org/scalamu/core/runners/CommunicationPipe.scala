@@ -15,15 +15,16 @@ class CommunicationPipe[I: Encoder, O: Decoder](
   val os: DataOutputStream
 ) {
 
-  protected def send(data: I): Unit = os.writeUTF(data.asJson.noSpaces)
-
-  protected def receive(): Either[CommunicationException, O] =
-    decode[O](is.readUTF()).leftMap(CommunicationException)
-
-  def exchangeData(data: I): Either[CommunicationException, O] = {
-    send(data)
-    receive()
+  def send(data: I): Unit = {
+    os.writeUTF(data.asJson.noSpaces)
+    os.flush()
   }
-  
+
+  def receive(): Either[CommunicationException, O] =
+    (for {
+      message <- Either.catchNonFatal(is.readUTF())
+      data    <- decode[O](message)
+    } yield data).leftMap(CommunicationException)
+
   def close(): Unit = client.close()
 }

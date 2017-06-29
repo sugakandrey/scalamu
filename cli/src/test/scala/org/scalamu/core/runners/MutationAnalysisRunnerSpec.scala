@@ -1,16 +1,13 @@
 package org.scalamu.core.runners
 
 import java.io.File
-import java.net.ServerSocket
 import java.nio.file.{Path, Paths}
 
 import org.scalamu.core.compilation.IsolatedScalamuGlobalFixture
-import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.plugin.testutil.MutationTestRunner
-import org.scalamu.testutil.{ScalamuSpec, TestProject, TestingInstrumentationReporter}
 import org.scalamu.testutil.fixtures.{ScalamuConfigFixture, TestProjectFixture}
+import org.scalamu.testutil.{ScalamuSpec, TestProject, TestingInstrumentationReporter}
 
-import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.reflect.io.{AbstractFile, Directory, PlainDirectory}
 import scala.tools.nsc.Settings
 

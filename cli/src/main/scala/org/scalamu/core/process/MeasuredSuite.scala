@@ -1,4 +1,4 @@
-package org.scalamu.core.workers
+package org.scalamu.core.process
 
 import org.scalamu.testapi.AbstractTestSuite
 

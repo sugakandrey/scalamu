@@ -3,7 +3,7 @@ package org.scalamu.core.coverage
 import org.scalamock.scalatest.MockFactory
 import org.scalamu.common.position.Position
 import org.scalamu.core.ClassName
-import org.scalamu.core.workers.MeasuredSuite
+import org.scalamu.core.process.MeasuredSuite
 import org.scalamu.testapi._
 import org.scalamu.testutil.ScalamuSpec
 import org.scalatest.OneInstancePerTest

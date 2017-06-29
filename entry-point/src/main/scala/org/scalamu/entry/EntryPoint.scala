@@ -12,21 +12,26 @@ import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.coverage.{InverseMutantCoverage, Statement}
 import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.core.runners._
-import org.scalamu.core.workers.ExitCode
-import org.scalamu.core.{LoggerConfiguration, SourceInfo, TestedMutant, coverage => cov}
+import org.scalamu.core.{
+  InternalFailure,
+  LoggerConfiguration,
+  SourceInfo,
+  TestedMutant,
+  die,
+  coverage => cov
+}
+import org.scalamu.plugin
 import org.scalamu.plugin.MutantInfo
 import org.scalamu.report.{HtmlReportWriter, ProjectSummaryFactory}
 import org.scalamu.testapi.AbstractTestSuite
 import org.scalamu.utils.FileSystemUtils._
-import org.scalamu.{core, plugin}
 
 import scala.collection.JavaConverters._
 import scala.collection.breakOut
 import scala.reflect.io.{Directory, PlainDirectory}
 
 object EntryPoint {
-  private val log  = Logger[EntryPoint.type]
-  private val exit = core.exit(log.error(_))(_: String, ExitCode.RuntimeFailure)
+  private val log = Logger[EntryPoint.type]
 
   private def ensureDirExits(dir: Path): Unit =
     if (!Files.exists(dir)) {
@@ -64,7 +69,10 @@ object EntryPoint {
     log.info(s"Total mutations generated: ${reporter.mutants.size}")
 
     if (reporter.mutants.isEmpty) {
-      exit("No mutants were generated. Make sure you have correctly applied exclusion filters.")
+      log.error(
+        "No mutants were generated. Make sure you have correctly applied exclusion filters."
+      )
+      die(InternalFailure)
     }
 
     if (config.verbose) {

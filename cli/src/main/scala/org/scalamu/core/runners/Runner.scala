@@ -1,32 +1,32 @@
 package org.scalamu.core.runners
 
-import java.io.{DataInputStream, DataOutputStream, File, InputStream}
+import java.io.{DataOutputStream, File}
 import java.net.ServerSocket
 import java.nio.file.Path
 
+import cats.syntax.either._
 import io.circe.{Decoder, Encoder}
 import org.scalamu.core.CommunicationException
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.core.workers.Worker
+import org.scalamu.core.process.Process
 
 import scala.collection.mutable
 
-abstract class Runner[I: Encoder, R: Decoder] {
+abstract class Runner[I: Encoder, O: Decoder] {
   def config: ScalamuConfig
   def compiledSourcesDir: Path
 
   protected def socket: ServerSocket
-  protected def worker: Worker[R]
+  protected def worker: Process[O]
   protected def sendConfigurationToWorker(dos: DataOutputStream): Unit
 
-  type Result = R
+  type Result = O
   type Input  = I
 
-  protected var proc: Process = _
+  protected def connectionHandler: SocketConnectionHandler[I, O] =
+    new ProcessCommunicationHandler[I, O](socket, sendConfigurationToWorker)
 
-  protected def connectionHandler: SocketConnectionHandler[I, R]
-
-  def start(): Either[CommunicationException, CommunicationPipe[I, R]] = {
+  def start(): Either[CommunicationException, ProcessSupervisor[I, O]] = {
     val args = List(socket.getLocalPort.toString)
 
     val builder = new ProcessBuilder(
@@ -35,14 +35,11 @@ abstract class Runner[I: Encoder, R: Decoder] {
 
     configureProcessEnv(builder)
     builder.inheritIO()
-    proc = builder.start()
-    connectionHandler.handle()
+    for {
+      proc <- Either.catchNonFatal(builder.start()).leftMap(CommunicationException)
+      pipe <- connectionHandler.handle()
+    } yield new ProcessSupervisor[I, O](proc, pipe)
   }
-
-  def kill(): Unit             = proc.destroyForcibly()
-  def exitValue(): Int         = proc.waitFor()
-  def errStream(): InputStream = proc.getErrorStream
-  def outStream(): InputStream = proc.getInputStream
 
   protected def configureProcessEnv(
     pb: ProcessBuilder
@@ -54,7 +51,7 @@ abstract class Runner[I: Encoder, R: Decoder] {
   }
 
   protected def generateProcessArgs(
-    worker: Worker[_],
+    worker: Process[_],
     executablePath: String,
     jvmArgs: Seq[String],
     runnerArgs: Seq[String]

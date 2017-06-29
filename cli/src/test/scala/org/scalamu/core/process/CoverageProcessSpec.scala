@@ -1,4 +1,4 @@
-package org.scalamu.core.workers
+package org.scalamu.core.process
 
 import java.io.File
 import java.nio.file.Path
@@ -14,7 +14,7 @@ import org.scalamu.testutil.{ScalamuSpec, TestProject, TestingInstrumentationRep
 import scala.reflect.io.{AbstractFile, Directory, PlainDirectory}
 import scala.tools.nsc.Settings
 
-class CoverageWorkerSpec
+class CoverageProcessSpec
     extends ScalamuSpec
     with ScalamuConfigFixture
     with MutationTestRunner
@@ -49,12 +49,14 @@ class CoverageWorkerSpec
         val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
 
         withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
-          val coverage = CoverageWorker
+          val coverage = CoverageProcess
             .run(
               (
-                config.derive[CoverageWorkerConfig].copy(excludeTestsClasses = Seq(".*Bad.*".r)),
+                config.derive[CoverageProcessConfig].copy(excludeTestsClasses = Seq(".*Bad.*".r)),
                 compiledSourcesPath
-              ), null
+              ),
+              null,
+              null
             )
             .toList
             .sequenceU
@@ -74,9 +76,11 @@ class CoverageWorkerSpec
         val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
 
         withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
-          val coverage = CoverageWorker
+          val coverage = CoverageProcess
             .run(
-              (config.derive[CoverageWorkerConfig], compiledSourcesPath), null
+              (config.derive[CoverageProcessConfig], compiledSourcesPath),
+              null,
+              null
             )
             .toList
             .sequenceU

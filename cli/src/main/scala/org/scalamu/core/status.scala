@@ -1,7 +1,5 @@
 package org.scalamu.core
 
-import org.scalamu.core.workers.ExitCode
-
 /**
  * Represents the status of a single mutant, after mutation analysis is completed.
  *
@@ -12,20 +10,23 @@ sealed abstract class DetectionStatus(val killed: Boolean)
 /**
  * Base class for statuses related to runtime failures.
  */
-sealed abstract class WorkerFailure extends DetectionStatus(false)
+sealed abstract class RemoteProcessFailure(val exitCode: Int) extends DetectionStatus(false)
 
-object WorkerFailure {
-  def fromExitCode(code: ExitCode): DetectionStatus = code match {
-    case ExitCode.TimedOut       => TimedOut
-    case ExitCode.OutOfMemory    => OutOfMemory
-    case ExitCode.RuntimeFailure => InternalFailure
-    case ExitCode.Ok             => throw new IllegalArgumentException(s"Can't construct WorkerFailure from Ok exit code.")
+object RemoteProcessFailure {
+  def fromExitValue(exitValue: Int): RemoteProcessFailure = exitValue match {
+    case 1  => InternalFailure
+    case 48 => TimedOut
+    case 49 => OutOfMemory
+    case _  =>
+      throw new IllegalArgumentException(
+        s"Can't construct RemoteProcessFailure from exit value: $exitValue."
+      )
   }
 }
 
-case object TimedOut        extends WorkerFailure
-case object OutOfMemory     extends WorkerFailure
-case object InternalFailure extends WorkerFailure
+case object TimedOut        extends RemoteProcessFailure(48)
+case object OutOfMemory     extends RemoteProcessFailure(49)
+case object InternalFailure extends RemoteProcessFailure(1)
 
 final case class Killed(killingTest: ClassName) extends DetectionStatus(true) {
   override def toString: String = s"Killed by ${killingTest.fullName}"

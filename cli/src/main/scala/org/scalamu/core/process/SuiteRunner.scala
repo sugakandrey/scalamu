@@ -1,5 +1,5 @@
 package org.scalamu.core
-package workers
+package process
 
 import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
@@ -13,17 +13,17 @@ import scala.concurrent.{blocking, Await, Future, TimeoutException}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SuiteRunner(config: MutationAnalysisWorkerConfig) {
+class SuiteRunner(config: MutationAnalysisProcessConfig) {
   private val log = Logger[SuiteRunner]
 
   def runMutantInverseCoverage(
     id: MutantId,
     suites: Set[MeasuredSuite]
-  ): MutationWorkerResponse = MutationWorkerResponse(id, runSuites(suites, id))
+  ): MutationProcessResponse = MutationProcessResponse(id, runSuites(suites, id))
 
   def runMutantsInverseCoverage(
     inverseCov: Map[MutantId, Set[MeasuredSuite]]
-  ): Set[MutationWorkerResponse] =
+  ): Set[MutationProcessResponse] =
     inverseCov.map(Function.tupled(runMutantInverseCoverage))(collection.breakOut)
 
   private def runSuites(suites: Set[MeasuredSuite], id: MutantId): DetectionStatus = {
@@ -41,17 +41,15 @@ class SuiteRunner(config: MutationAnalysisWorkerConfig) {
           case Right(result) =>
             result match {
               case _: SuiteSuccess          => loop(suites)
-              case _: SuiteExecutionAborted => die(ExitCode.RuntimeFailure)
+              case _: SuiteExecutionAborted => InternalFailure
               case f: TestsFailed           => Killed(f.name)
             }
           case Left(err) =>
             err match {
               case _: TimeoutException =>
-                log.debug(
-                  s"Mutation #${id.id} timed out. Worker will now shutdown."
-                )
-                die(ExitCode.TimedOut)
-              case _ => die(ExitCode.RuntimeFailure)
+                log.debug(s"Mutation #${id.id} timed out. Worker will now shutdown.")
+                TimedOut
+              case _ => InternalFailure
             }
         }
       } else Alive
