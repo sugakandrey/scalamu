@@ -21,26 +21,28 @@ import scala.util.matching.Regex
  * @param excludeSources filters, used to exclude certain source files from being mutated
  * @param excludeTestsClasses filters, used to exclude certain test classes from being run
  * @param testingOptions options to pass to framework's test runner
+ * @param scalacOptions options to be passed to scalac
  * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
  * @param timeoutConst additional flat amount of allowed time for tests to run (applied after timeoutFactor)
  * @param parallelism number of runners to be used for mutation analysis
  * @param verbose if true, be verbose about every step
  */
 final case class ScalamuConfig(
-  reportDir: Path = Paths.get("."),
-  sourceDirs: Set[Path] = Set.empty,
-  testClassDirs: Set[Path] = Set.empty,
-  classPath: Set[Path] = Set.empty,
-  scalaPath: String = "",
-  jvmArgs: Seq[String] = Seq.empty,
-  mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
-  excludeSources: Seq[Regex] = Seq.empty,
-  excludeTestsClasses: Seq[Regex] = Seq.empty,
-  testingOptions: Map[TestingFramework, String] = Map.empty,
-  timeoutFactor: Double = 1.5,
-  timeoutConst: Long = 2000,
-  parallelism: Int = 1,
-  verbose: Boolean = false
+                                reportDir: Path = Paths.get("."),
+                                sourceDirs: Set[Path] = Set.empty,
+                                testClassDirs: Set[Path] = Set.empty,
+                                classPath: Set[Path] = Set.empty,
+                                scalaPath: String = "",
+                                jvmArgs: Seq[String] = Seq.empty,
+                                mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
+                                excludeSources: Seq[Regex] = Seq.empty,
+                                excludeTestsClasses: Seq[Regex] = Seq.empty,
+                                testingOptions: Map[TestingFramework, String] = Map.empty,
+                                scalacOptions: String = "",
+                                timeoutFactor: Double = 1.5,
+                                timeoutConst: Long = 2000,
+                                parallelism: Int = 1,
+                                verbose: Boolean = false
 ) {
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
 }
