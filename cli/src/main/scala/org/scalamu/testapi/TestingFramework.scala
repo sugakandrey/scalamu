@@ -9,9 +9,10 @@ import org.scalamu.testapi.utest.UTestFramework
 trait TestingFramework {
   type R
 
+  def arguments: String
   def name: String
   def runner: TestRunner[R]
-  def filter: TestClassFilter
+  def classFilter: TestClassFilter
 }
 
 object TestingFramework {

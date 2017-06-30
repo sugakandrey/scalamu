@@ -3,7 +3,7 @@ package scalatest
 
 import org.scalamu.core.ClassName
 import org.scalatest.events._
-import org.scalatest.{Reporter, Status}
+import org.scalatest.{Reporter, Status, Stopper}
 
 import scala.collection.mutable
 
@@ -21,6 +21,11 @@ class ScalaTestConverters extends SuiteResultTypeConverter[Status] {
     case e: RunStarting  => startTimestamp = e.timeStamp
     case e: RunCompleted => completionTimestamp = e.timeStamp
     case _               =>
+  }
+  
+  private[scalatest] val stopper: Stopper = new Stopper {
+    override def stopRequested: Boolean = failures.nonEmpty
+    override def requestStop(): Unit = ()
   }
 
   override def fromResult(suite: ClassName)(result: Status): TestSuiteResult =

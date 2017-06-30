@@ -28,21 +28,21 @@ import scala.util.matching.Regex
  * @param verbose if true, be verbose about every step
  */
 final case class ScalamuConfig(
-                                reportDir: Path = Paths.get("."),
-                                sourceDirs: Set[Path] = Set.empty,
-                                testClassDirs: Set[Path] = Set.empty,
-                                classPath: Set[Path] = Set.empty,
-                                scalaPath: String = "",
-                                jvmArgs: Seq[String] = Seq.empty,
-                                mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
-                                excludeSources: Seq[Regex] = Seq.empty,
-                                excludeTestsClasses: Seq[Regex] = Seq.empty,
-                                testingOptions: Map[TestingFramework, String] = Map.empty,
-                                scalacOptions: String = "",
-                                timeoutFactor: Double = 1.5,
-                                timeoutConst: Long = 2000,
-                                parallelism: Int = 1,
-                                verbose: Boolean = false
+  reportDir: Path = Paths.get("."),
+  sourceDirs: Set[Path] = Set.empty,
+  testClassDirs: Set[Path] = Set.empty,
+  classPath: Set[Path] = Set.empty,
+  scalaPath: String = "",
+  jvmArgs: Seq[String] = Seq.empty,
+  mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
+  excludeSources: Seq[Regex] = Seq.empty,
+  excludeTestsClasses: Seq[Regex] = Seq.empty,
+  testingOptions: Map[String, String] = Map.empty,
+  scalacOptions: String = "",
+  timeoutFactor: Double = 1.5,
+  timeoutConst: Long = 2000,
+  parallelism: Int = 1,
+  verbose: Boolean = false
 ) {
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
 }
@@ -120,10 +120,16 @@ object ScalamuConfig {
       .text("list of filters for ignored test classes")
       .action((filters, config) => config.copy(excludeTestsClasses = filters))
 
-    opt[Map[TestingFramework, String]]("testOptions")
+    opt[Map[String, String]]("testOptions")
       .abbr("to")
       .valueName("framework1=optionString1, framework2=optionString2...")
       .text("Per framework test runner options")
+      .validate(options =>
+          if (!options.values.forall(TestingFramework.allFrameworks.contains))
+            failure("Unsupported framework name.")
+          else
+            success
+      )
       .action((options, config) => config.copy(testingOptions = options))
 
     opt[Double]("timeoutFactor")

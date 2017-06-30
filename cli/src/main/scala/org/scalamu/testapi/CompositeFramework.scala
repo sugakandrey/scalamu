@@ -8,12 +8,18 @@ import org.scalamu.testapi.utest.UTestFramework
 
 import scala.util.matching.Regex
 
-class CompositeFramework(filters: Regex*) {
+class CompositeFramework(
+  frameworkArguments: Map[String, String],
+  filters: Seq[Regex]
+) {
+  private def getArgs(framework: TestingFramework): String =
+    frameworkArguments.getOrElse(framework.name, "")
+
   val filter = new CompositeTestClassFilter(
-    JUnitFramework.filter,
-    ScalaTestFramework.filter,
-    Specs2Framework.filter,
-    UTestFramework.filter
+    new JUnitFramework(getArgs(JUnitFramework)).classFilter,
+    new ScalaTestFramework(getArgs(ScalaTestFramework)).classFilter,
+    new Specs2Framework(getArgs(Specs2Framework)).classFilter,
+    new UTestFramework(getArgs(UTestFramework)).classFilter
   ) with HasAppropriateName {
     override val nameFilter: NameFilter = RegexBasedFilter(filters: _*)
   }

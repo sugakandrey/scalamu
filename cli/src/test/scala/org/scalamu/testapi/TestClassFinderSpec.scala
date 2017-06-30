@@ -12,7 +12,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture {
 
   "TestClassFinder" should "detect class files, which contain ScalaTest tests" in withTestProject {
     project =>
-      val finder = new TestClassFileFinder(ScalaTestFramework.filter)
+      val finder = new TestClassFileFinder(ScalaTestFramework.classFilter)
       val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
         finder.findAll(project.target)
       )
@@ -24,7 +24,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture {
   }
 
   it should "detect class files, which contain UTest tests" in withTestProject { project =>
-    val finder = new TestClassFileFinder(UTestFramework.filter)
+    val finder = new TestClassFileFinder(UTestFramework.classFilter)
     val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
       finder.findAll(project.target)
     )
@@ -35,7 +35,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture {
   }
 
   it should "detect class files, which contain JUnit tests" in withTestProject { project =>
-    val finder = new TestClassFileFinder(JUnitFramework.filter)
+    val finder = new TestClassFileFinder(JUnitFramework.classFilter)
     val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
       finder.findAll(project.target)
     )
@@ -47,7 +47,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture {
   }
 
   it should "detect class files, which contain Specs2 tests" in withTestProject { project =>
-    val finder = new TestClassFileFinder(Specs2Framework.filter)
+    val finder = new TestClassFileFinder(Specs2Framework.classFilter)
     val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
       finder.findAll(project.target)
     )

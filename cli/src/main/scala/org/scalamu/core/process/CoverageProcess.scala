@@ -36,7 +36,7 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
     log.debug(s"Initialized InvocationDataReader in $invocationDataDir.")
     val analyzer = new StatementCoverageAnalyzer(reader)
     val suites = new TestClassFileFinder(
-      new CompositeFramework(config.excludeTestsClasses: _*).filter
+      new CompositeFramework(config.testingOptions, config.excludeTestsClasses).filter
     ).findAll(config.testClassDirs)
     log.info(s"Discovered ${suites.size} test suites. Analyzing coverage now...")
     suites.iterator.map(analyzer.forSuite)
