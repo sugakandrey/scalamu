@@ -40,16 +40,26 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
         executionResult match {
           case Right(result) =>
             result match {
-              case _: SuiteSuccess          => loop(suites)
-              case _: SuiteExecutionAborted => InternalFailure
-              case f: TestsFailed           => Killed(f.name)
+              case _: SuiteSuccess => loop(suites)
+              case f: TestsFailed  => Killed(f.name)
+              case e: SuiteExecutionAborted =>
+                log.debug(
+                  s"Something went wrong when trying to run a test suite named " +
+                    s"${suite.info.name.fullName}. Cause: $e."
+                )
+                die(InternalFailure)
             }
           case Left(err) =>
             err match {
               case _: TimeoutException =>
                 log.debug(s"Mutation #${id.id} timed out. Worker will now shutdown.")
-                TimedOut
-              case _ => InternalFailure
+                die(TimedOut)
+              case e =>
+                log.debug(
+                  s"An exception occurred, while waiting for test " +
+                    s"${suite.info.name.fullName} to finish. Cause: $e."
+                )
+                die(InternalFailure)
             }
         }
       } else Alive

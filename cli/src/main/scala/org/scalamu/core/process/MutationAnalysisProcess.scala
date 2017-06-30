@@ -29,21 +29,7 @@ object MutationAnalysisProcess extends Process[MutationProcessResponse] {
       case Left(parsingError) =>
         Console.err.println(s"Error parsing data from runner. $parsingError")
         die(InternalFailure)
-      case Right((id, suites)) =>
-        val shutdownHook = (status: RemoteProcessFailure) => {
-          val failureResponse = MutationProcessResponse(id, status).asJson.noSpaces
-          dos.writeUTF(failureResponse)
-          dos.flush()
-        }
-        
-        val result = runner.runMutantInverseCoverage(id, suites)
-        
-        result.status match {
-          case f: RemoteProcessFailure => 
-            shutdownHook(f)
-            die(f)
-          case _ => result
-        }
+      case Right((id, suites)) => runner.runMutantInverseCoverage(id, suites)
     }
   }
 
