@@ -1,9 +1,11 @@
+import play.twirl.sbt.Import.TwirlKeys
 import play.twirl.sbt.SbtTwirl
 import sbt.Keys._
 import sbt._
 
 object ScalamuBuild {
   lazy val commonSettings = Seq(
+    organization := "org.scalamu",
     scalaVersion := "2.12.1",
     scalacOptions := Seq(
       "-encoding",
@@ -33,7 +35,15 @@ object ScalamuBuild {
       "ch.qos.logback"             % "logback-classic" % "1.1.7",
       "com.typesafe.scala-logging" %% "scala-logging"  % "3.5.0",
       "org.scalatest"              %% "scalatest"      % "3.0.1" % Test
-    )
+    ),
+    publishMavenStyle := true,
+    publishArtifact in Test := false,
+    publishTo := {
+      if (isSnapshot.value)
+        Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
+      else
+        Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+    }
   )
 
   lazy val testSettings = inConfig(Test)(
@@ -85,12 +95,13 @@ object ScalamuBuild {
 
   lazy val report = Project(id = "report", base = file("report"))
     .settings(commonSettings)
+    .settings(TwirlKeys.templateImports := Seq())
     .enablePlugins(SbtTwirl)
     .dependsOn(commandLine, common, plugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
     .settings(commonSettings)
-    .aggregate(plugin, commandLine, report, common)
+    .aggregate(plugin, commandLine, report, common, entryPoint)
 
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
     .settings(commonSettings)
