@@ -54,16 +54,16 @@ class MutationAnalyser(
         val (result, shouldRestart) = response match {
           case Right(res) => res -> false
           case Left(failure) =>
-          log.debug(s"Task $task failed with $failure.")
+            log.debug(s"Task $task failed with $failure.")
 
-          val (status, restart) = failure.cause match {
-            case _: IOException if supervisor.waitFor(3, TimeUnit.SECONDS) =>
-              val exitValue = supervisor.exitValue()
-              RemoteProcessFailure.fromExitValue(exitValue) -> true
-            case _ => InternalFailure -> false
-          }
+            val (status, restart) = failure.cause match {
+              case _: IOException if supervisor.waitFor(3, TimeUnit.SECONDS) =>
+                val exitValue = supervisor.exitValue()
+                RemoteProcessFailure.fromExitValue(exitValue) -> true
+              case _ => InternalFailure -> false
+            }
 
-          MutationProcessResponse(task._1, status) -> restart
+            MutationProcessResponse(task._1, status) -> restart
         }
 
         resultQueue.add(result)

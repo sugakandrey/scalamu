@@ -8,7 +8,7 @@ class Specs2Framework(override val arguments: String) extends TestingFramework {
   type R = Stats
 
   override def name: String          = "Specs2"
-  override def runner: TestRunner[R] = new Specs2Runner
+  override def runner: TestRunner[R] = new Specs2Runner(arguments)
 
   override def classFilter: TestClassFilter =
     new SuperclassBasedFilter(classOf[SpecificationStructure], this) with NotAbstract

@@ -9,11 +9,11 @@ import org.scalamu.testapi.utest.UTestFramework
 import scala.util.matching.Regex
 
 class CompositeFramework(
-  frameworkArguments: Map[String, String],
-  filters: Seq[Regex]
+  frameworksArguments: Map[String, String] = Map.empty,
+  filters: Seq[Regex] = Seq.empty
 ) {
   private def getArgs(framework: TestingFramework): String =
-    frameworkArguments.getOrElse(framework.name, "")
+    frameworksArguments.getOrElse(framework.name.toLowerCase, "")
 
   val filter = new CompositeTestClassFilter(
     new JUnitFramework(getArgs(JUnitFramework)).classFilter,

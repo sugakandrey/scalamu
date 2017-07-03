@@ -9,7 +9,7 @@ import org.scalamu.utils.ClassLoadingUtils
 import scala.reflect.runtime.universe
 import scala.util.Try
 
-class UTestRunner extends TestRunner[Tree[Result]] {
+class UTestRunner(override val arguments: String) extends TestRunner[Tree[Result]] {
 
   override protected def converter: SuiteResultTypeConverter[Tree[Result]] = UTestConverters
 

@@ -43,7 +43,10 @@ trait SettingsDerivable {
         die(InternalFailure)
       }
 
-      log.debug(s"Unprocessed scalac options: ${unprocessed.mkString("[", " , ", "]")}")
+      if (unprocessed.nonEmpty) {
+        log.debug(s"Unprocessed scalac options: ${unprocessed.mkString("[", " , ", "]")}")
+      }
+
       settings
     }
 }

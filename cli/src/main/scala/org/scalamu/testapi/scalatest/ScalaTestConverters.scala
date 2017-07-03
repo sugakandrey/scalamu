@@ -22,10 +22,10 @@ class ScalaTestConverters extends SuiteResultTypeConverter[Status] {
     case e: RunCompleted => completionTimestamp = e.timeStamp
     case _               =>
   }
-  
+
   private[scalatest] val stopper: Stopper = new Stopper {
     override def stopRequested: Boolean = failures.nonEmpty
-    override def requestStop(): Unit = ()
+    override def requestStop(): Unit    = ()
   }
 
   override def fromResult(suite: ClassName)(result: Status): TestSuiteResult =

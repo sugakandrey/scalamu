@@ -8,6 +8,7 @@ import org.scalamu.core.ClassName
  * @tparam R framework internal suite result representation type
  */
 trait TestRunner[R] {
+  def arguments: String
   def run(suite: ClassName): TestSuiteResult
   protected def converter: SuiteResultTypeConverter[R]
 }

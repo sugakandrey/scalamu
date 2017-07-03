@@ -125,12 +125,16 @@ object ScalamuConfig {
       .valueName("framework1=optionString1, framework2=optionString2...")
       .text("Per framework test runner options")
       .validate(options =>
-          if (!options.values.forall(TestingFramework.allFrameworks.contains))
+          if (!options.keys.forall(TestingFramework.frameworkByName.contains))
             failure("Unsupported framework name.")
           else
             success
       )
       .action((options, config) => config.copy(testingOptions = options))
+      
+    opt[String]("scalacOptions")
+      .text("Options to be passed to scalac")
+      .action((scalacOptions, config) => config.copy(scalacOptions = scalacOptions))
 
     opt[Double]("timeoutFactor")
       .text("factor to apply to normal test duration before considering being stuck in a loop")

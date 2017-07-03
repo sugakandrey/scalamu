@@ -3,10 +3,11 @@ package scalatest
 
 import org.scalamu.core.ClassName
 import org.scalatest._
+import org.scalatest.tools.{Runner, ScalaTestInteractionLayer}
 
 import scala.util.{Failure, Try}
 
-class ScalaTestRunner extends TestRunner[Status] {
+class ScalaTestRunner(override val arguments: String) extends TestRunner[Status] {
   override protected val converter: ScalaTestConverters = new ScalaTestConverters
 
   private def resolveRunnerClass(testClass: Class[_]): Try[Suite] =
@@ -34,7 +35,22 @@ class ScalaTestRunner extends TestRunner[Status] {
   override def run(suite: ClassName): TestSuiteResult = {
     val tryLoadTestClass = suite.loadFromContextClassLoader
     val suiteClass       = tryLoadTestClass.flatMap(resolveRunnerClass)
-    val args             = Args(converter.reporter, converter.stopper)
+
+    val parseArgs   = ScalaTestInteractionLayer.parseArgumentsString(arguments)
+    val defaultArgs = Args(converter.reporter, converter.stopper)
+
+    val args = parseArgs.map {
+      case ScalaTestArgs(configMap, include, exclude, scale) =>
+        val filter = Filter(if (include.isEmpty) None else Some(include), exclude)
+        ScalaTestInteractionLayer.setSpanScaleFactor(scale)
+
+        Args(
+          converter.reporter,
+          converter.stopper,
+          filter,
+          configMap
+        )
+    }.getOrElse(defaultArgs)
 
     suiteClass.fold(
       SuiteExecutionAborted(suite, _),

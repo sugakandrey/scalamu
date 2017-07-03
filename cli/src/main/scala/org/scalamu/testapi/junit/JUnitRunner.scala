@@ -4,7 +4,7 @@ package junit
 import org.junit.runner.{JUnitCore, Result}
 import org.scalamu.core.ClassName
 
-class JUnitRunner extends TestRunner[Result] {
+class JUnitRunner(override val arguments: String) extends TestRunner[Result] {
   override protected def converter: SuiteResultTypeConverter[Result] = JUnitConverters
 
   override def run(suite: ClassName): TestSuiteResult = {

@@ -8,7 +8,7 @@ class UTestFramework(override val arguments: String) extends TestingFramework {
   type R = Tree[Result]
 
   override def name: String          = "utest"
-  override def runner: TestRunner[R] = new UTestRunner
+  override def runner: TestRunner[R] = new UTestRunner(arguments)
 
   override def classFilter: TestClassFilter =
     new SuperclassBasedFilter(classOf[TestSuite], this) with IsAModule with HasNoArgConstructor

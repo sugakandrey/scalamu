@@ -7,7 +7,7 @@ class ScalaTestFramework(override val arguments: String) extends TestingFramewor
   type R = Status
 
   override def name: String          = "ScalaTest"
-  override def runner: TestRunner[R] = new ScalaTestRunner
+  override def runner: TestRunner[R] = new ScalaTestRunner(arguments)
   
   override def classFilter: TestClassFilter = new CompositeTestClassFilter(
     new SuperclassBasedFilter(classOf[Suite], this) with NotAModule with HasNoArgConstructor with NotAbstract,

@@ -9,7 +9,7 @@ class JUnitFramework(override val arguments: String) extends TestingFramework {
   type R = Result
 
   override def name: String          = "JUnit"
-  override def runner: TestRunner[R] = new JUnitRunner
+  override def runner: TestRunner[R] = new JUnitRunner(arguments)
 
   override def classFilter: TestClassFilter = new CompositeTestClassFilter(
     new AnnotationBasedFilter(classOf[Test], this) with NotAModule with NotAbstract,
