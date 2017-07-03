@@ -17,7 +17,7 @@ object RemoteProcessFailure {
     case 1  => InternalFailure
     case 48 => TimedOut
     case 49 => OutOfMemory
-    case _  =>
+    case _ =>
       throw new IllegalArgumentException(
         s"Can't construct RemoteProcessFailure from exit value: $exitValue."
       )

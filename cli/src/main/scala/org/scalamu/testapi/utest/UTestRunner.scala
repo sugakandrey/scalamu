@@ -3,13 +3,16 @@ package utest
 
 import _root_.utest.TestSuite
 import _root_.utest.framework.{ExecutionContext, Result, Tree}
+import org.scalamu.common.TryBackCompatibility
 import org.scalamu.core.ClassName
 import org.scalamu.utils.ClassLoadingUtils
 
 import scala.reflect.runtime.universe
 import scala.util.Try
 
-class UTestRunner(override val arguments: String) extends TestRunner[Tree[Result]] {
+class UTestRunner(override val arguments: String)
+    extends TestRunner[Tree[Result]]
+    with TryBackCompatibility {
 
   override protected def converter: SuiteResultTypeConverter[Tree[Result]] = UTestConverters
 
@@ -21,7 +24,9 @@ class UTestRunner(override val arguments: String) extends TestRunner[Tree[Result
       SuiteExecutionAborted(suiteName, _),
       mirror.reflectModule _
         andThen { _.instance.asInstanceOf[TestSuite] }
-        andThen { suite => suite.tests.run(wrap = suite.utestWrap(_)) }
+        andThen { suite =>
+          suite.tests.run(wrap = suite.utestWrap(_))
+        }
         andThen converter.fromResult(suiteName)
     )
   }

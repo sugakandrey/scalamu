@@ -9,19 +9,17 @@ import org.scalamu.core.die
 import org.scalamu.core.InternalFailure
 import org.scalamu.core.runners._
 
-trait Process[R] {
+abstract class Process[R: Encoder] {
   type Result = R
 
   type Configuration
 
   def name: String = getClass.getName.dropRight(1)
 
-  protected def execute(
-    args: Array[String]
-  )(implicit encoder: Encoder[R]): Unit =
+  protected def execute(args: Array[String]): Unit =
     tryWith(new Socket("localhost", args.head.toInt)) { socket =>
-      val dis = new DataInputStream(new BufferedInputStream(socket.getInputStream))
-      val dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream))
+      val dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()))
+      val dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()))
 
       val parseConfig = readConfigurationFromParent(dis)
 

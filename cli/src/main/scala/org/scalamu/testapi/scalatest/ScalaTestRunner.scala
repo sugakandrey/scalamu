@@ -1,13 +1,17 @@
 package org.scalamu.testapi
 package scalatest
 
+import org.scalamu.common.TryBackCompatibility
 import org.scalamu.core.ClassName
 import org.scalatest._
-import org.scalatest.tools.{Runner, ScalaTestInteractionLayer}
+import org.scalatest.tools.ScalaTestInteractionLayer
 
 import scala.util.{Failure, Try}
 
-class ScalaTestRunner(override val arguments: String) extends TestRunner[Status] {
+class ScalaTestRunner(override val arguments: String)
+    extends TestRunner[Status]
+    with TryBackCompatibility {
+    
   override protected val converter: ScalaTestConverters = new ScalaTestConverters
 
   private def resolveRunnerClass(testClass: Class[_]): Try[Suite] =
@@ -39,7 +43,7 @@ class ScalaTestRunner(override val arguments: String) extends TestRunner[Status]
     val parseArgs   = ScalaTestInteractionLayer.parseArgumentsString(arguments)
     val defaultArgs = Args(converter.reporter, converter.stopper)
 
-    val args = parseArgs.map {
+    val args = parseArgs.right.map {
       case ScalaTestArgs(configMap, include, exclude, scale) =>
         val filter = Filter(if (include.isEmpty) None else Some(include), exclude)
         ScalaTestInteractionLayer.setSpanScaleFactor(scale)
@@ -50,7 +54,7 @@ class ScalaTestRunner(override val arguments: String) extends TestRunner[Status]
           filter,
           configMap
         )
-    }.getOrElse(defaultArgs)
+    }.right.getOrElse(defaultArgs)
 
     suiteClass.fold(
       SuiteExecutionAborted(suite, _),

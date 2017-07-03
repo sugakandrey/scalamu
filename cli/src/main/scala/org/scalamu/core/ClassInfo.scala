@@ -4,6 +4,7 @@ import java.nio.file.Path
 
 import cats.syntax.option._
 import com.typesafe.scalalogging.Logger
+import org.scalamu.common.TryBackCompatibility
 import org.scalamu.utils.FileSystemUtils
 
 final case class ClassInfo(
@@ -16,7 +17,7 @@ final case class ClassInfo(
   source: Option[String]
 )
 
-object ClassInfo {
+object ClassInfo extends TryBackCompatibility {
   import org.scalamu.utils.ASMUtils._
   import FileSystemUtils._
   private val log = Logger[ClassInfo]

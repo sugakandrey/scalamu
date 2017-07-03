@@ -12,7 +12,7 @@ class ProcessSupervisor[I, O](
   def waitFor(): Int                                   = process.waitFor()
   def waitFor(time: Long, timeUnit: TimeUnit): Boolean = process.waitFor(time, timeUnit)
   def exitValue(): Int                                 = process.exitValue()
-  def errStream(): InputStream                         = process.getErrorStream
-  def outStream(): InputStream                         = process.getInputStream
+  def errStream(): InputStream                         = process.getErrorStream()
+  def outStream(): InputStream                         = process.getInputStream()
   def isProcessAlive: Boolean                          = process.isAlive
 }

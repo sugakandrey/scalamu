@@ -13,8 +13,8 @@ abstract class SocketConnectionHandler[I: Encoder, O: Decoder] {
   def handle(): Either[CommunicationException, CommunicationPipe[I, O]] =
     Either.catchNonFatal {
       val client = socket.accept()
-      val is     = new DataInputStream(new BufferedInputStream(client.getInputStream))
-      val os     = new DataOutputStream(new BufferedOutputStream(client.getOutputStream))
+      val is     = new DataInputStream(new BufferedInputStream(client.getInputStream()))
+      val os     = new DataOutputStream(new BufferedOutputStream(client.getOutputStream()))
       new CommunicationPipe[I, O](client, is, os)
     }.leftMap(CommunicationException)
 }

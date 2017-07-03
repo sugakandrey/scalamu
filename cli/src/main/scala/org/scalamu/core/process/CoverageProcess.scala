@@ -21,8 +21,8 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
     dis: DataInputStream
   ): Either[Throwable, Configuration] =
     for {
-      config    <- decode[CoverageProcessConfig](dis.readUTF())
-      outputDir <- decode[Path](dis.readUTF())
+      config    <- decode[CoverageProcessConfig](dis.readUTF()).right
+      outputDir <- decode[Path](dis.readUTF()).right
     } yield (config, outputDir)
 
   override def run(
@@ -44,6 +44,7 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
 
   def main(args: Array[String]): Unit = {
     LoggerConfiguration.configurePatternForName("COVERAGE-WORKER")
+    println(implicitly[io.circe.Encoder[org.scalamu.testapi.SuiteExecutionAborted]])
     execute(args)
   }
 }

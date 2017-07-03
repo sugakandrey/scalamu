@@ -4,7 +4,6 @@ package process
 import java.io.{DataInputStream, DataOutputStream}
 
 import cats.syntax.either._
-import io.circe.syntax._
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.scalamu.common.MutantId

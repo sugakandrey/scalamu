@@ -6,7 +6,8 @@ import sbt._
 object ScalamuBuild {
   lazy val commonSettings = Seq(
     organization := "org.scalamu",
-    scalaVersion := "2.12.1",
+    scalaVersion := "2.11.8",
+    crossScalaVersions := Seq("2.11.8", "2.12.2"),
     scalacOptions := Seq(
       "-encoding",
       "UTF-8",
@@ -20,7 +21,9 @@ object ScalamuBuild {
       "-Yno-adapted-args",
       "-Ywarn-dead-code",
       "-Ywarn-unused-import",
-      "-Xfuture"
+      "-Xfuture",
+      "-Xexperimental"
+
 //      "-Xfatal-warnings"
     ),
     fork in Test := true,
@@ -88,7 +91,7 @@ object ScalamuBuild {
         "io.circe" %% "circe-core",
         "io.circe" %% "circe-generic",
         "io.circe" %% "circe-parser"
-      ).map(_ % "0.7.0")
+      ).map(_ % "0.8.0")
     )
     .dependsOn(plugin % "compile->compile;test->test")
     .dependsOn(common)
