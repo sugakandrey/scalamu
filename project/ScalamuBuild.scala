@@ -6,8 +6,8 @@ import sbt._
 object ScalamuBuild {
   lazy val commonSettings = Seq(
     organization := "org.scalamu",
-    scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.11.8", "2.12.2"),
+    scalaVersion := "2.11.11",
+    crossScalaVersions := Seq("2.11.11", "2.12.2"),
     scalacOptions := Seq(
       "-encoding",
       "UTF-8",
