@@ -9,6 +9,7 @@ import io.circe.syntax._
 import org.scalamu.common.MutantId
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.process.{MutationAnalysisProcess, _}
+import org.scalamu.core.StatusImplicits._
 
 class MutationAnalysisRunner(
   override val socket: ServerSocket,
