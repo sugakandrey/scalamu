@@ -7,7 +7,6 @@ import cats.syntax.either._
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.scalamu.common.MutantId
-import org.scalamu.core.StatusImplicits._
 
 object MutationAnalysisProcess extends Process[MutationProcessResponse] {
   override type Configuration = MutationAnalysisProcessConfig

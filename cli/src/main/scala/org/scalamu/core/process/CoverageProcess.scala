@@ -11,7 +11,6 @@ import io.circe.parser.decode
 import org.scalamu.core.coverage._
 import org.scalamu.core.runners._
 import org.scalamu.testapi.{CompositeFramework, SuiteFailure, TestClassFileFinder}
-import org.scalamu.testapi.ResultImplicits._
 
 object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]] {
   private val log = Logger[CoverageProcess.type]

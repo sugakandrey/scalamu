@@ -1,6 +1,7 @@
 package org.scalamu.core
 
-import io.circe.{Encoder, Decoder}
+import io.circe.{Decoder, Encoder}
+import io.circe.generic.semiauto._
 
 /**
  * Represents the status of a single mutant, after mutation analysis is completed.
@@ -38,7 +39,7 @@ case object Alive          extends DetectionStatus(false)
 case object NoTestCoverage extends DetectionStatus(false)
 case object Untested       extends DetectionStatus(false)
 
-object StatusImplicits {
-  implicit val decoderStatus: Decoder[DetectionStatus] = implicitly[Decoder[DetectionStatus]]
-  implicit val encodeStatus: Encoder[DetectionStatus]  = implicitly[Encoder[DetectionStatus]]
+trait DetectionStatusImplicits {
+  implicit val decodeStatus: Decoder[DetectionStatus] = deriveDecoder[DetectionStatus]
+  implicit val encodeStatus: Encoder[DetectionStatus] = deriveEncoder[DetectionStatus]
 }

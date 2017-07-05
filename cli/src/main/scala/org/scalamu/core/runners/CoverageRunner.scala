@@ -8,7 +8,6 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.process.{CoverageProcess, CoverageProcessConfig, Process}
-import org.scalamu.testapi.ResultImplicits._
 
 class CoverageRunner(
   override val socket: ServerSocket,

@@ -1,6 +1,6 @@
 package org.scalamu.testapi
 
-import io.circe._
+import io.circe.{Decoder, Encoder}
 import org.scalamu.core.ClassName
 
 /**
@@ -24,7 +24,7 @@ object SuiteExecutionAborted {
 }
 
 // This exists for cross building against scala 2.11, since circe won't work for me out of the box
-object ResultImplicits {
-  implicit val decoder: Decoder[SuiteFailure] = implicitly[Decoder[SuiteFailure]]
-  implicit val encoder: Encoder[SuiteFailure] = implicitly[Encoder[SuiteFailure]]
+trait TestSuiteResultImplicits {
+  implicit val decodeResult: Decoder[TestSuiteResult] = implicitly[Decoder[TestSuiteResult]]
+  implicit val encodeResult: Encoder[TestSuiteResult] = implicitly[Encoder[TestSuiteResult]]
 }

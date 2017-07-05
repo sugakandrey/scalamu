@@ -1,12 +1,10 @@
 package org.scalatest.tools
 
-import cats.syntax.either._
-import com.typesafe.scalalogging.Logger
 import org.scalamu.testapi.scalatest.ScalaTestArgs
 
-object ScalaTestInteractionLayer {
-  private val log = Logger[ScalaTestInteractionLayer.type]
+import cats.syntax.either._
 
+object ScalaTestInteractionLayer {
   def parseArgumentsString(argString: String): Either[Throwable, ScalaTestArgs] = {
     val args             = argString.split("\\s+")
     val isValidArgString = Either.catchNonFatal(ArgsParser.checkArgsForValidity(args))
