@@ -6,6 +6,7 @@ lazy val commandLine = ScalamuBuild.commandLine
 lazy val common      = ScalamuBuild.common
 lazy val report      = ScalamuBuild.report
 lazy val entryPoint  = ScalamuBuild.entryPoint
+lazy val scalamuSbt  = ScalamuBuild.scalamuSbt
 
 /* Testing subprojects */
 lazy val testingSimple = ScalamuTestingBuild.testingSimple

@@ -20,10 +20,9 @@ object ScalamuBuild {
       "-Xlint",
       "-Yno-adapted-args",
       "-Ywarn-dead-code",
-      "-Ywarn-unused-import",
+//      "-Ywarn-unused-import",
       "-Xfuture",
       "-Xexperimental"
-
 //      "-Xfatal-warnings"
     ),
     fork in Test := true,
@@ -35,10 +34,13 @@ object ScalamuBuild {
       """,
     scalacOptions in (Compile, console) -= "-Ywarn-unused-import",
     libraryDependencies ++= Seq(
-      "ch.qos.logback"             % "logback-classic" % "1.1.7",
-      "com.typesafe.scala-logging" %% "scala-logging"  % "3.5.0",
-      "org.scalatest"              %% "scalatest"      % "3.0.1" % Test
-    ),
+      "ch.qos.logback" % "logback-classic" % "1.1.7",
+      "org.scalatest"  %% "scalatest"      % "3.0.1" % Test
+    ) ++ (if (scalaBinaryVersion.value == "2.10") Seq()
+          else
+            Seq(
+              "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+            )),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     publishTo := {
@@ -115,6 +117,17 @@ object ScalamuBuild {
         "io.circe" %% "circe-generic",
         "io.circe" %% "circe-parser"
       ).map(_ % "0.7.0") ++ testingFrameworks
+    )
+
+  lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
+    .settings(
+      commonSettings ++ Seq(
+        sbtPlugin := true,
+        scalaVersion := "2.10.6",
+        crossScalaVersions := Seq(),
+        name := "sbt-scalamu",
+        CrossBuilding.crossSbtVersions := Vector("0.13.15", "1.0.0-M6")
+      )
     )
 }
 
