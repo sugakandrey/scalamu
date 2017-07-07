@@ -13,8 +13,7 @@ trait ScalamuConfigFixture extends TestSuite {
   def sourceDirs: Set[Path]               = Set.empty
   def testClassDirs: Set[Path]            = Set.empty
   def classPath: Set[Path]                = Set.empty
-  def scalaPath: String                   = ""
-  def jvmArgs: Seq[String]                = Seq.empty
+  def jvmArgs: String                     = ""
   def mutations: Seq[Mutation]            = ScalamuPluginConfig.allMutations
   def excludeSources: Seq[Regex]          = Seq.empty
   def excludeTestsClasses: Seq[Regex]     = Seq.empty
@@ -32,7 +31,6 @@ trait ScalamuConfigFixture extends TestSuite {
         sourceDirs,
         testClassDirs,
         classPath,
-        scalaPath,
         jvmArgs,
         mutations,
         excludeSources,

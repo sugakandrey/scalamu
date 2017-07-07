@@ -11,6 +11,7 @@ import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.process.Process
 
 import scala.collection.mutable
+import scala.util.Properties
 
 abstract class Runner[I: Encoder, O: Decoder] {
   def config: ScalamuConfig
@@ -23,14 +24,20 @@ abstract class Runner[I: Encoder, O: Decoder] {
   type Result = O
   type Input  = I
 
+  protected val mainRunnerClass = "scala.tools.nsc.MainGenericRunner"
+
   protected def connectionHandler: SocketConnectionHandler[I, O] =
     new ProcessCommunicationHandler[I, O](socket, sendConfigurationToWorker)
+
+  protected def javaExecutable: String =
+    if (Properties.isWin) Properties.javaHome + """\bin\javaw.exe"""
+    else Properties.javaHome + "/bin/java"
 
   def start(): Either[CommunicationException, ProcessSupervisor[I, O]] = {
     val args = List(socket.getLocalPort.toString)
 
     val builder = new ProcessBuilder(
-      generateProcessArgs(worker, config.scalaPath, config.jvmArgs, args): _*
+      generateProcessArgs(worker, config.jvmOpts, args): _*
     )
 
     configureProcessEnv(builder)
@@ -46,19 +53,19 @@ abstract class Runner[I: Encoder, O: Decoder] {
   ): Unit = {
     val classPathSegments = compiledSourcesDir :: (config.classPath | config.testClassDirs).toList
     val classPath         = classPathSegments.foldLeft("")(_ + _ + File.pathSeparator)
-    val currentClassPath  = System.getProperty("java.class.path")
+    val currentClassPath  = Properties.javaClassPath
     pb.environment().put("CLASSPATH", classPath + currentClassPath)
   }
 
   protected def generateProcessArgs(
     worker: Process[_],
-    executablePath: String,
-    jvmArgs: Seq[String],
+    jvmArgs: String,
     runnerArgs: Seq[String]
   ): Seq[String] = {
     val args = mutable.ArrayBuffer.empty[String]
-    args += executablePath
-    args ++= jvmArgs
+    args += javaExecutable
+    args += jvmArgs
+    args += mainRunnerClass
     args += worker.name
     args ++= runnerArgs
     args

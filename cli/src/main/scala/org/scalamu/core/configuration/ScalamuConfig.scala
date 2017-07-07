@@ -15,8 +15,7 @@ import scala.util.matching.Regex
  * @param sourceDirs directories containing scala sources to be mutated
  * @param testClassDirs directories containing compiled test classes
  * @param classPath list of classpath elements for applications "test" config
- * @param scalaPath path to scala executable
- * @param jvmArgs arguments, passed to spawned JVMs
+ * @param jvmOpts arguments, passed to spawned JVMs
  * @param mutations set of active mutation operators
  * @param excludeSources filters, used to exclude certain source files from being mutated
  * @param excludeTestsClasses filters, used to exclude certain test classes from being run
@@ -32,8 +31,7 @@ final case class ScalamuConfig(
   sourceDirs: Set[Path] = Set.empty,
   testClassDirs: Set[Path] = Set.empty,
   classPath: Set[Path] = Set.empty,
-  scalaPath: String = "",
-  jvmArgs: Seq[String] = Seq.empty,
+  jvmOpts: String = "",
   mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
   excludeSources: Seq[Regex] = Seq.empty,
   excludeTestsClasses: Seq[Regex] = Seq.empty,
@@ -77,15 +75,6 @@ object ScalamuConfig {
       }
       .action((testClassPath, config) => config.copy(testClassDirs = testClassPath.toSet))
 
-    arg[String]("<scalaPath>")
-      .text("path to scala executable")
-      .validate { scalaPath =>
-        val executablePath = Paths.get(scalaPath)
-        val satisfies      = Files.exists(executablePath) && Files.isExecutable(executablePath)
-        if (!satisfies) failure("File at scalaPath must exist and be executable.") else success
-      }
-      .action((scalaPath, config) => config.copy(scalaPath = scalaPath))
-
     opt[Seq[Path]]("cp")
       .text("list of classpath elements")
       .validate { classpath =>
@@ -97,9 +86,9 @@ object ScalamuConfig {
       }
       .action((cp, config) => config.copy(classPath = cp.toSet))
 
-    opt[Seq[String]]("jvmArgs")
-      .text("list of jvm args used by tests")
-      .action((jvmArgs, config) => config.copy(jvmArgs = jvmArgs))
+    opt[String]("jvmOpts")
+      .text("jvm args used by tests")
+      .action((jvmOpts, config) => config.copy(jvmOpts = jvmOpts))
 
     opt[Seq[String]]('m', "mutations")
       .text("set of mutation operators")
@@ -124,14 +113,15 @@ object ScalamuConfig {
       .abbr("to")
       .valueName("framework1=optionString1, framework2=optionString2...")
       .text("Per framework test runner options")
-      .validate(options =>
+      .validate(
+        options =>
           if (!options.keys.forall(TestingFramework.frameworkByName.contains))
             failure("Unsupported framework name.")
           else
-            success
+          success
       )
       .action((options, config) => config.copy(testingOptions = options))
-      
+
     opt[String]("scalacOptions")
       .text("Options to be passed to scalac")
       .action((scalacOptions, config) => config.copy(scalacOptions = scalacOptions))
