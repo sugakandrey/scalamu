@@ -39,7 +39,7 @@ object EntryPoint {
     }
 
   def main(args: Array[String]): Unit = {
-    LoggerConfiguration.configurePatternForName("MAIN-APP")
+    LoggerConfiguration.configureLoggingForName("MAIN-APP")
     val config = ScalamuConfig.parseConfig(args)
     if (config.verbose) {
       log.info(s"Running Scalamu with config:\n ${config.asJson.spaces2}")

@@ -1,0 +1,234 @@
+
+
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        {xml.Unparsed("""$(document).ready(function() {$(".tablesorter").tablesorter();});""")}
+      </script>
+    
+    <style type="text/css">
+        .meter {
+                height: 14px;
+                position: relative;
+                background: #BB2020;
+        }
+        
+        .meter span {
+        	display: block;
+        	height: 100%;
+        	background-color: rgb(43,194,83);
+        	background-image: -webkit-gradient(
+        	  linear,
+        	  left bottom,
+        	  left top,
+        	  color-stop(0, rgb(43,194,83)),
+        	  color-stop(1, rgb(84,240,84))
+        	 );
+        	background-image: -webkit-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -moz-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -ms-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -o-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	-webkit-box-shadow:
+        	  inset 0 2px 9px  rgba(255,255,255,0.3),
+        	  inset 0 -2px 6px rgba(0,0,0,0.4);
+        	-moz-box-shadow:
+        	  inset 0 2px 9px  rgba(255,255,255,0.3),
+        	  inset 0 -2px 6px rgba(0,0,0,0.4);
+        	position: relative;
+        	overflow: hidden;
+        }
+    </style>
+</head>
+<body style="font-family: monospace;">
+<div class="alert alert-info">
+    <b>
+        Scalamu Mutation Analysis Report
+    </b>
+    generated at
+    Fri Jul 07 16:26:36 MSK 2017
+</div>
+
+<h1 class="display-4">Project Overview</h1>
+<table class="table">
+    <tr>
+        <td>
+            Lines of Code 
+        </td>
+        <td>
+            1713
+        </td>
+        <td>
+            Source Files
+        </td>
+        <td>
+            14
+        </td>
+        <td>
+            Packages
+        </td>
+        <td>
+            1
+        </td>
+        <td>
+            Test Classes
+        </td>
+        <td>
+            0
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Total Statements
+        </td>
+        <td>
+            1282
+        </td>
+        <td>
+            Invoked Statements
+        </td>
+        <td>
+            1156
+        </td>
+        <td>
+            Total Mutants
+        </td>
+        <td>
+            496
+        </td>
+        <td>
+            Mutants Killed
+        </td>
+        <td>
+            294
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Statement Coverage:
+        </td>
+        <td>
+            90.2
+            %
+        </td>
+        <td colspan="2">
+            <div class="meter">
+                <span style="width: 90.2%"></span>
+            </div>
+        </td>
+        <td>
+            Mutation Coverage:
+        </td>
+        <td>
+            59.3
+            %
+        </td>
+        <td colspan="2">
+            <div class="meter">
+                <span style="width: 59.3%"></span>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<h1 class="display-4">Breakdown by Package</h1>
+<table class="tablesorter table table-striped" style="font-size:13px">
+    <thead>
+    <tr>
+        <th>
+            Package
+        </th>
+        <th>
+            Source files
+        </th>
+        <th>
+            Total Statements
+        </th>
+        <th>
+            Invoked
+        </th>
+        <th>
+            Statement Coverage
+        </th>
+        <th>
+        </th>
+        <th>
+            Total Mutants
+        </th>
+        <th>
+            Killed
+        </th>
+        <th>
+            Mutation Coverage
+        </th>
+        <th>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    
+        
+            <tr>
+                <td>
+                    <a href="./gnieh\diffson/overview.html">gnieh.diffson</a>
+                </td>
+                <td>
+                    14
+                </td>
+                <td>
+                    1282
+                </td>
+                <td>
+                    1156
+                </td>
+                <td>
+                    <div class="meter">
+                        <span style="width: 90.2%"></span>
+                    </div>
+                </td>
+                <td>
+                    90.2
+                </td>
+                <td>
+                    496
+                </td>
+                <td>
+                    294
+                </td>
+                <td>
+                    <div class="meter">
+                        <span style="width: 59.3%"></span>
+                    </div>
+                </td>
+                <td>
+                    59.3
+                    %
+                </td>
+            </tr>
+        
+    
+    </tbody> 
+</table>
+
+</body>
+</html>

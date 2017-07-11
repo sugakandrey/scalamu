@@ -1,0 +1,266 @@
+
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        html, body, div, span, p, blockquote, pre {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+body{
+	line-height: 1;
+	color: black;
+	background: white;
+	margin-left: 20px;
+}
+
+.src { 
+	border: 1px solid #dddddd;
+	padding: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+	font-family: Fira Code, Source Code Pro, monospace;
+}
+
+.hljs {
+    padding: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+}
+
+.covered {background-color: #aaffaa}
+.uncovered {background-color: #ffaaaa}
+.na {background-color: #f8f8f8}
+
+.killed {background-color: #aaffaa}
+.no_coverage {background-color: #ffaaaa}
+.alive {background-color: #ffaaaa}
+.failure {background-color: #FFFF4D, color: red}
+.timed_out {background-color: #FFFF4D, color: red}
+.oom {background-color: #FFFF4D, color: red}
+.untested {background-color: #FFFF4D}
+
+    </style>
+</head>
+<body>
+<div class="alert alert-info">
+    WillHaveInfiniteLoop.scala
+</div>
+
+<table class="src" style="font-size:13px; padding: 0px;">
+
+    
+    <tr id="line1">
+        <td class=na>
+            1
+        </td>
+        <td class="na">
+            <a href="#group1"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">package demo </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line2">
+        <td class=na>
+            2
+        </td>
+        <td class="na">
+            <a href="#group2"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line3">
+        <td class=na>
+            3
+        </td>
+        <td class="na">
+            <a href="#group3"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">case class WillHaveInfiniteLoop() { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line4">
+        <td class=na>
+            4
+        </td>
+        <td class="na">
+            <a href="#group4"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  def foo(): Int = { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line5">
+        <td class=uncovered>
+            5
+        </td>
+        <td class="uncovered">
+            <a href="#group5"><b>1</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    println(&quot;123&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line6">
+        <td class=uncovered>
+            6
+        </td>
+        <td class="uncovered">
+            <a href="#group6"><b>1</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    val x = -123 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line7">
+        <td class=uncovered>
+            7
+        </td>
+        <td class="uncovered">
+            <a href="#group7"><b>1</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    while (x &gt; 0) {} </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line8">
+        <td class=covered>
+            8
+        </td>
+        <td class="covered">
+            <a href="#group8"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    x + x </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line9">
+        <td class=na>
+            9
+        </td>
+        <td class="na">
+            <a href="#group9"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line10">
+        <td class=na>
+            10
+        </td>
+        <td class="na">
+            <a href="#group10"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+</table>
+
+<h2>Mutants</h2>
+<table class="src" cellpadding="3px">
+    
+    <tr>
+        <td>
+            <a href="#line5" id="group5">5</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Removed method call with Unit return type          -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line6" id="group6">6</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=timed_out>Removed numeric negation                           -&gt; TimedOut</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line7" id="group7">7</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=no_coverage>Removed method call with Unit return type          -&gt; NoTestCoverage</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line8" id="group8">8</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by demo.WillHaveInfiniteLoopTest</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+</table>
+
+<h2>Active mutators</h2>
+<ul class="list-group">
+    
+    <li class="list-group-item">RemoveUnitMethodCalls</li>
+    
+    <li class="list-group-item">InvertNegations</li>
+    
+    <li class="list-group-item">ReplaceMathOperators</li>
+    
+</ul>
+
+<h2>Examined tests</h2>
+<ul class="list-group">
+    
+</ul>
+
+<br/>
+</body>
+</html>

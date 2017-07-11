@@ -1,0 +1,382 @@
+
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        html, body, div, span, p, blockquote, pre {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+body{
+	line-height: 1;
+	color: black;
+	background: white;
+	margin-left: 20px;
+}
+
+.src { 
+	border: 1px solid #dddddd;
+	padding: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+	font-family: Fira Code, Source Code Pro, monospace;
+}
+
+.hljs {
+    padding: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+}
+
+.covered {background-color: #aaffaa}
+.uncovered {background-color: #ffaaaa}
+.na {background-color: #f8f8f8}
+
+.killed {background-color: #aaffaa}
+.no_coverage {background-color: #ffaaaa}
+.alive {background-color: #ffaaaa}
+.failure {background-color: #FFFF4D, color: red}
+.timed_out {background-color: #FFFF4D, color: red}
+.oom {background-color: #FFFF4D, color: red}
+.untested {background-color: #FFFF4D}
+
+    </style>
+</head>
+<body>
+<div class="alert alert-info">
+    DiffsonInstance.scala
+</div>
+
+<table class="src" style="font-size:13px; padding: 0px;">
+
+    
+    <tr id="line1">
+        <td class=na>
+            1
+        </td>
+        <td class="na">
+            <a href="#group1"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">/* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line2">
+        <td class=na>
+            2
+        </td>
+        <td class="na">
+            <a href="#group2"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* This file is part of the diffson project. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line3">
+        <td class=na>
+            3
+        </td>
+        <td class="na">
+            <a href="#group3"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line4">
+        <td class=na>
+            4
+        </td>
+        <td class="na">
+            <a href="#group4"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line5">
+        <td class=na>
+            5
+        </td>
+        <td class="na">
+            <a href="#group5"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* you may not use this file except in compliance with the License. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line6">
+        <td class=na>
+            6
+        </td>
+        <td class="na">
+            <a href="#group6"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* You may obtain a copy of the License at </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line7">
+        <td class=na>
+            7
+        </td>
+        <td class="na">
+            <a href="#group7"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line8">
+        <td class=na>
+            8
+        </td>
+        <td class="na">
+            <a href="#group8"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* http://www.apache.org/licenses/LICENSE-2.0 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line9">
+        <td class=na>
+            9
+        </td>
+        <td class="na">
+            <a href="#group9"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line10">
+        <td class=na>
+            10
+        </td>
+        <td class="na">
+            <a href="#group10"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Unless required by applicable law or agreed to in writing, software </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line11">
+        <td class=na>
+            11
+        </td>
+        <td class="na">
+            <a href="#group11"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* distributed under the License is distributed on an &quot;AS IS&quot; BASIS, </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line12">
+        <td class=na>
+            12
+        </td>
+        <td class="na">
+            <a href="#group12"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line13">
+        <td class=na>
+            13
+        </td>
+        <td class="na">
+            <a href="#group13"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* See the License for the specific language governing permissions and </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line14">
+        <td class=na>
+            14
+        </td>
+        <td class="na">
+            <a href="#group14"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* limitations under the License. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line15">
+        <td class=na>
+            15
+        </td>
+        <td class="na">
+            <a href="#group15"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">*/ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line16">
+        <td class=na>
+            16
+        </td>
+        <td class="na">
+            <a href="#group16"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">package gnieh.diffson </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line17">
+        <td class=na>
+            17
+        </td>
+        <td class="na">
+            <a href="#group17"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line18">
+        <td class=na>
+            18
+        </td>
+        <td class="na">
+            <a href="#group18"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">abstract class DiffsonInstance[JsValue] extends JsonDiffSupport[JsValue] with JsonPatchSupport[JsValue] with JsonPointerSupport[JsValue] with JsonSupport[JsValue] { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line19">
+        <td class=na>
+            19
+        </td>
+        <td class="na">
+            <a href="#group19"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line20">
+        <td class=na>
+            20
+        </td>
+        <td class="na">
+            <a href="#group20"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  val provider: JsonProvider </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line21">
+        <td class=na>
+            21
+        </td>
+        <td class="na">
+            <a href="#group21"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line22">
+        <td class=na>
+            22
+        </td>
+        <td class="na">
+            <a href="#group22"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+</table>
+
+<h2>Mutants</h2>
+<table class="src" cellpadding="3px">
+    
+</table>
+
+<h2>Active mutators</h2>
+<ul class="list-group">
+    
+    <li class="list-group-item">ReplaceCaseWithWildcard</li>
+    
+    <li class="list-group-item">ReplaceMathOperators</li>
+    
+    <li class="list-group-item">ReplaceWithIdentityFunction</li>
+    
+    <li class="list-group-item">InvertNegations</li>
+    
+    <li class="list-group-item">AlwaysExecuteConditionals</li>
+    
+    <li class="list-group-item">NeverExecuteConditionals</li>
+    
+    <li class="list-group-item">ReplaceConditionalBoundaries</li>
+    
+    <li class="list-group-item">NegateConditionals</li>
+    
+    <li class="list-group-item">RemoveUnitMethodCalls</li>
+    
+    <li class="list-group-item">ChangeRangeBoundary</li>
+    
+    <li class="list-group-item">ReplaceLogicalOperators</li>
+    
+    <li class="list-group-item">ReplaceWithNone</li>
+    
+    <li class="list-group-item">ReplaceWithNil</li>
+    
+</ul>
+
+<h2>Examined tests</h2>
+<ul class="list-group">
+    
+</ul>
+
+<br/>
+</body>
+</html>

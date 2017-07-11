@@ -1,0 +1,658 @@
+
+
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        {xml.Unparsed("""$(document).ready(function() {$(".tablesorter").tablesorter();});""")}
+      </script>
+
+    <style type="text/css">
+        .meter {
+                height: 14px;
+                position: relative;
+                background: #BB2020;
+        }
+        
+        .meter span {
+        	display: block;
+        	height: 100%;
+        	background-color: rgb(43,194,83);
+        	background-image: -webkit-gradient(
+        	  linear,
+        	  left bottom,
+        	  left top,
+        	  color-stop(0, rgb(43,194,83)),
+        	  color-stop(1, rgb(84,240,84))
+        	 );
+        	background-image: -webkit-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -moz-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -ms-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	background-image: -o-linear-gradient(
+        	  center bottom,
+        	  rgb(43,194,83) 37%,
+        	  rgb(84,240,84) 69%
+        	 );
+        	-webkit-box-shadow:
+        	  inset 0 2px 9px  rgba(255,255,255,0.3),
+        	  inset 0 -2px 6px rgba(0,0,0,0.4);
+        	-moz-box-shadow:
+        	  inset 0 2px 9px  rgba(255,255,255,0.3),
+        	  inset 0 -2px 6px rgba(0,0,0,0.4);
+        	position: relative;
+        	overflow: hidden;
+        }
+    </style>
+</head>
+<body style="font-family: monospace;">
+<div class="alert alert-info">
+    <b>
+        Scalamu Mutation Analysis Report
+    </b>
+    generated at
+    Fri Jul 07 16:26:36 MSK 2017
+</div>
+
+<h1 class="display-4">Package Overview</h1>
+<h3 style="font-family: monospace">gnieh.diffson</h3>
+<table class="table">
+    <tr>
+        <td>
+            Total Statements
+        </td>
+        <td>
+            1282
+        </td>
+        <td>
+            Invoked Statements
+        </td>
+        <td>
+            1156
+        </td>
+        <td>
+            Total Mutants
+        </td>
+        <td>
+            496
+        </td>
+        <td>
+            Mutants Killed
+        </td>
+        <td>
+            294
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Statement Coverage:
+        </td>
+        <td>
+            90.2
+            %
+        </td>
+        <td colspan="2">
+            <div class="meter">
+                <span style="width: 90.2%"></span>
+            </div>
+        </td>
+        <td>
+            Mutation Coverage:
+        </td>
+        <td>
+            59.3
+            %
+        </td>
+        <td colspan="2">
+            <div class="meter">
+                <span style="width: 59.3%"></span>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<h1 class="display-4">Breakdown by File</h1>
+<table class="tablesorter table table-striped" style="font-size:13px">
+    <thead>
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Total Statements
+        </th>
+        <th>
+            Invoked
+        </th>
+        <th>
+            Statement Coverage
+        </th>
+        <th>
+        </th>
+        <th>
+            Total Mutants
+        </th>
+        <th>
+            Killed
+        </th>
+        <th>
+            Mutation Coverage
+        </th>
+        <th>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+
+    
+    <tr>
+        <td>
+            <a href="SprayJsonInstance.scala.html">SprayJsonInstance.scala</a>
+        </td>
+        <td>
+            146
+        </td>
+        <td>
+            137
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 93.8%"></span>
+            </div>
+        </td>
+        <td>
+            93.8
+        </td>
+        <td>
+            9
+        </td>
+        <td>
+            8
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 88.9%"></span>
+            </div>
+        </td>
+        <td>
+            88.9
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="JsonProvider.scala.html">JsonProvider.scala</a>
+        </td>
+        <td>
+            6
+        </td>
+        <td>
+            6
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100.0%"></span>
+            </div>
+        </td>
+        <td>
+            100.0
+        </td>
+        <td>
+            2
+        </td>
+        <td>
+            1
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 50.0%"></span>
+            </div>
+        </td>
+        <td>
+            50.0
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="DynamicProgLcs.scala.html">DynamicProgLcs.scala</a>
+        </td>
+        <td>
+            118
+        </td>
+        <td>
+            118
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100.0%"></span>
+            </div>
+        </td>
+        <td>
+            100.0
+        </td>
+        <td>
+            118
+        </td>
+        <td>
+            83
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 70.3%"></span>
+            </div>
+        </td>
+        <td>
+            70.3
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="JsonPatch.scala.html">JsonPatch.scala</a>
+        </td>
+        <td>
+            189
+        </td>
+        <td>
+            135
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 71.4%"></span>
+            </div>
+        </td>
+        <td>
+            71.4
+        </td>
+        <td>
+            58
+        </td>
+        <td>
+            38
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 65.5%"></span>
+            </div>
+        </td>
+        <td>
+            65.5
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="PlayJsonInstance.scala.html">PlayJsonInstance.scala</a>
+        </td>
+        <td>
+            222
+        </td>
+        <td>
+            209
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 94.1%"></span>
+            </div>
+        </td>
+        <td>
+            94.1
+        </td>
+        <td>
+            9
+        </td>
+        <td>
+            8
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 88.9%"></span>
+            </div>
+        </td>
+        <td>
+            88.9
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="Patience.scala.html">Patience.scala</a>
+        </td>
+        <td>
+            158
+        </td>
+        <td>
+            132
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 83.5%"></span>
+            </div>
+        </td>
+        <td>
+            83.5
+        </td>
+        <td>
+            151
+        </td>
+        <td>
+            40
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 26.5%"></span>
+            </div>
+        </td>
+        <td>
+            26.5
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="DiffsonInstance.scala.html">DiffsonInstance.scala</a>
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100%"></span>
+            </div>
+        </td>
+        <td>
+            100
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100%"></span>
+            </div>
+        </td>
+        <td>
+            100
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="pointer.scala.html">pointer.scala</a>
+        </td>
+        <td>
+            29
+        </td>
+        <td>
+            26
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 89.7%"></span>
+            </div>
+        </td>
+        <td>
+            89.7
+        </td>
+        <td>
+            8
+        </td>
+        <td>
+            6
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 75.0%"></span>
+            </div>
+        </td>
+        <td>
+            75.0
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="Lcs.scala.html">Lcs.scala</a>
+        </td>
+        <td>
+            5
+        </td>
+        <td>
+            5
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100.0%"></span>
+            </div>
+        </td>
+        <td>
+            100.0
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100%"></span>
+            </div>
+        </td>
+        <td>
+            100
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="JsonPointer.scala.html">JsonPointer.scala</a>
+        </td>
+        <td>
+            69
+        </td>
+        <td>
+            61
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 88.4%"></span>
+            </div>
+        </td>
+        <td>
+            88.4
+        </td>
+        <td>
+            29
+        </td>
+        <td>
+            21
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 72.4%"></span>
+            </div>
+        </td>
+        <td>
+            72.4
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="JsonDiff.scala.html">JsonDiff.scala</a>
+        </td>
+        <td>
+            131
+        </td>
+        <td>
+            125
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 95.4%"></span>
+            </div>
+        </td>
+        <td>
+            95.4
+        </td>
+        <td>
+            104
+        </td>
+        <td>
+            83
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 79.8%"></span>
+            </div>
+        </td>
+        <td>
+            79.8
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="package.scala.html">package.scala</a>
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100%"></span>
+            </div>
+        </td>
+        <td>
+            100
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100%"></span>
+            </div>
+        </td>
+        <td>
+            100
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="CirceInstance.scala.html">CirceInstance.scala</a>
+        </td>
+        <td>
+            209
+        </td>
+        <td>
+            202
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 96.7%"></span>
+            </div>
+        </td>
+        <td>
+            96.7
+        </td>
+        <td>
+            8
+        </td>
+        <td>
+            6
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 75.0%"></span>
+            </div>
+        </td>
+        <td>
+            75.0
+            %
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <a href="exceptions.scala.html">exceptions.scala</a>
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100%"></span>
+            </div>
+        </td>
+        <td>
+            100
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            0
+        </td>
+        <td>
+            <div class="meter">
+                <span style="width: 100%"></span>
+            </div>
+        </td>
+        <td>
+            100
+            %
+        </td>
+    </tr>
+    
+
+    </tbody>
+</table>
+
+</body>
+</html>

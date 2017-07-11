@@ -1,0 +1,2822 @@
+
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        html, body, div, span, p, blockquote, pre {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+body{
+	line-height: 1;
+	color: black;
+	background: white;
+	margin-left: 20px;
+}
+
+.src { 
+	border: 1px solid #dddddd;
+	padding: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+	font-family: Fira Code, Source Code Pro, monospace;
+}
+
+.hljs {
+    padding: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+}
+
+.covered {background-color: #aaffaa}
+.uncovered {background-color: #ffaaaa}
+.na {background-color: #f8f8f8}
+
+.killed {background-color: #aaffaa}
+.no_coverage {background-color: #ffaaaa}
+.alive {background-color: #ffaaaa}
+.failure {background-color: #FFFF4D, color: red}
+.timed_out {background-color: #FFFF4D, color: red}
+.oom {background-color: #FFFF4D, color: red}
+.untested {background-color: #FFFF4D}
+
+    </style>
+</head>
+<body>
+<div class="alert alert-info">
+    JsonDiff.scala
+</div>
+
+<table class="src" style="font-size:13px; padding: 0px;">
+
+    
+    <tr id="line1">
+        <td class=na>
+            1
+        </td>
+        <td class="na">
+            <a href="#group1"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">/* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line2">
+        <td class=na>
+            2
+        </td>
+        <td class="na">
+            <a href="#group2"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* This file is part of the diffson project. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line3">
+        <td class=na>
+            3
+        </td>
+        <td class="na">
+            <a href="#group3"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line4">
+        <td class=na>
+            4
+        </td>
+        <td class="na">
+            <a href="#group4"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line5">
+        <td class=na>
+            5
+        </td>
+        <td class="na">
+            <a href="#group5"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* you may not use this file except in compliance with the License. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line6">
+        <td class=na>
+            6
+        </td>
+        <td class="na">
+            <a href="#group6"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* You may obtain a copy of the License at </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line7">
+        <td class=na>
+            7
+        </td>
+        <td class="na">
+            <a href="#group7"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line8">
+        <td class=na>
+            8
+        </td>
+        <td class="na">
+            <a href="#group8"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* http://www.apache.org/licenses/LICENSE-2.0 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line9">
+        <td class=na>
+            9
+        </td>
+        <td class="na">
+            <a href="#group9"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line10">
+        <td class=na>
+            10
+        </td>
+        <td class="na">
+            <a href="#group10"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Unless required by applicable law or agreed to in writing, software </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line11">
+        <td class=na>
+            11
+        </td>
+        <td class="na">
+            <a href="#group11"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* distributed under the License is distributed on an &quot;AS IS&quot; BASIS, </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line12">
+        <td class=na>
+            12
+        </td>
+        <td class="na">
+            <a href="#group12"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line13">
+        <td class=na>
+            13
+        </td>
+        <td class="na">
+            <a href="#group13"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* See the License for the specific language governing permissions and </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line14">
+        <td class=na>
+            14
+        </td>
+        <td class="na">
+            <a href="#group14"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* limitations under the License. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line15">
+        <td class=na>
+            15
+        </td>
+        <td class="na">
+            <a href="#group15"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">*/ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line16">
+        <td class=na>
+            16
+        </td>
+        <td class="na">
+            <a href="#group16"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">package gnieh.diffson </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line17">
+        <td class=na>
+            17
+        </td>
+        <td class="na">
+            <a href="#group17"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line18">
+        <td class=na>
+            18
+        </td>
+        <td class="na">
+            <a href="#group18"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">import scala.annotation.tailrec </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line19">
+        <td class=na>
+            19
+        </td>
+        <td class="na">
+            <a href="#group19"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line20">
+        <td class=na>
+            20
+        </td>
+        <td class="na">
+            <a href="#group20"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">trait JsonDiffSupport[JsValue] { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line21">
+        <td class=na>
+            21
+        </td>
+        <td class="na">
+            <a href="#group21"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  this: DiffsonInstance[JsValue] =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line22">
+        <td class=na>
+            22
+        </td>
+        <td class="na">
+            <a href="#group22"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line23">
+        <td class=na>
+            23
+        </td>
+        <td class="na">
+            <a href="#group23"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  import provider._ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line24">
+        <td class=na>
+            24
+        </td>
+        <td class="na">
+            <a href="#group24"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line25">
+        <td class=na>
+            25
+        </td>
+        <td class="na">
+            <a href="#group25"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  /** Default `JsonDiff` instance that uses the patience algorithm to compute lcs for arrays </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line26">
+        <td class=na>
+            26
+        </td>
+        <td class="na">
+            <a href="#group26"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">   * </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line27">
+        <td class=na>
+            27
+        </td>
+        <td class="na">
+            <a href="#group27"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">   *  @author Lucas Satabin </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line28">
+        <td class=na>
+            28
+        </td>
+        <td class="na">
+            <a href="#group28"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">   */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line29">
+        <td class=na>
+            29
+        </td>
+        <td class="na">
+            <a href="#group29"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  object JsonDiff extends JsonDiff(new Patience[JsValue]) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line30">
+        <td class=na>
+            30
+        </td>
+        <td class="na">
+            <a href="#group30"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line31">
+        <td class=na>
+            31
+        </td>
+        <td class="na">
+            <a href="#group31"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  /** Methods to compute diffs between two Json values </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line32">
+        <td class=na>
+            32
+        </td>
+        <td class="na">
+            <a href="#group32"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">   * </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line33">
+        <td class=na>
+            33
+        </td>
+        <td class="na">
+            <a href="#group33"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">   *  @author Lucas Satabin </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line34">
+        <td class=na>
+            34
+        </td>
+        <td class="na">
+            <a href="#group34"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">   */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line35">
+        <td class=na>
+            35
+        </td>
+        <td class="na">
+            <a href="#group35"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  class JsonDiff(lcsalg: Lcs[JsValue]) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line36">
+        <td class=na>
+            36
+        </td>
+        <td class="na">
+            <a href="#group36"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line37">
+        <td class=na>
+            37
+        </td>
+        <td class="na">
+            <a href="#group37"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    /** Computes the patch from `json1` to `json2`. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line38">
+        <td class=na>
+            38
+        </td>
+        <td class="na">
+            <a href="#group38"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     *  If `remember` is set to true, the removed and replaced value are rememberd in the patch in a field named `old`. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line39">
+        <td class=na>
+            39
+        </td>
+        <td class="na">
+            <a href="#group39"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line40">
+        <td class=na>
+            40
+        </td>
+        <td class="na">
+            <a href="#group40"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def diff(json1: String, json2: String, remember: Boolean): JsonPatch = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line41">
+        <td class=na>
+            41
+        </td>
+        <td class="na">
+            <a href="#group41"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new JsonPatch(diff(parseJson(json1), parseJson(json2), remember, true, Pointer.root)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line42">
+        <td class=na>
+            42
+        </td>
+        <td class="na">
+            <a href="#group42"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line43">
+        <td class=na>
+            43
+        </td>
+        <td class="na">
+            <a href="#group43"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    /** Computes the patch from `json1` to `json2` without performing array diff. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line44">
+        <td class=na>
+            44
+        </td>
+        <td class="na">
+            <a href="#group44"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     *  If `remember` is set to true, the removed and replaced value are rememberd in the patch in a field named `old`. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line45">
+        <td class=na>
+            45
+        </td>
+        <td class="na">
+            <a href="#group45"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line46">
+        <td class=na>
+            46
+        </td>
+        <td class="na">
+            <a href="#group46"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def simpleDiff(json1: String, json2: String, remember: Boolean): JsonPatch = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line47">
+        <td class=na>
+            47
+        </td>
+        <td class="na">
+            <a href="#group47"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new JsonPatch(diff(parseJson(json1), parseJson(json2), remember, false, Pointer.root)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line48">
+        <td class=na>
+            48
+        </td>
+        <td class="na">
+            <a href="#group48"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line49">
+        <td class=na>
+            49
+        </td>
+        <td class="na">
+            <a href="#group49"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    /** Computes the patch from `json1` to `json2` </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line50">
+        <td class=na>
+            50
+        </td>
+        <td class="na">
+            <a href="#group50"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     *  If `remember` is set to true, the removed and replaced value are rememberd in the patch in a field named `old`. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line51">
+        <td class=na>
+            51
+        </td>
+        <td class="na">
+            <a href="#group51"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line52">
+        <td class=na>
+            52
+        </td>
+        <td class="na">
+            <a href="#group52"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def diff(json1: JsValue, json2: JsValue, remember: Boolean): JsonPatch = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line53">
+        <td class=na>
+            53
+        </td>
+        <td class="na">
+            <a href="#group53"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new JsonPatch(diff(json1, json2, remember, true, Pointer.root)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line54">
+        <td class=na>
+            54
+        </td>
+        <td class="na">
+            <a href="#group54"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line55">
+        <td class=na>
+            55
+        </td>
+        <td class="na">
+            <a href="#group55"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    /** Computes the patch from `json1` to `json2` without performing array diff. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line56">
+        <td class=na>
+            56
+        </td>
+        <td class="na">
+            <a href="#group56"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     *  If `remember` is set to true, the removed and replaced value are rememberd in the patch in a field named `old`. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line57">
+        <td class=na>
+            57
+        </td>
+        <td class="na">
+            <a href="#group57"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line58">
+        <td class=na>
+            58
+        </td>
+        <td class="na">
+            <a href="#group58"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def simpleDiff(json1: JsValue, json2: JsValue, remember: Boolean): JsonPatch = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line59">
+        <td class=na>
+            59
+        </td>
+        <td class="na">
+            <a href="#group59"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new JsonPatch(diff(json1, json2, remember, false, Pointer.root)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line60">
+        <td class=na>
+            60
+        </td>
+        <td class="na">
+            <a href="#group60"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line61">
+        <td class=na>
+            61
+        </td>
+        <td class="na">
+            <a href="#group61"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    /** Computes the patch from `json1` to `json2` </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line62">
+        <td class=na>
+            62
+        </td>
+        <td class="na">
+            <a href="#group62"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     *  If `remember` is set to true, the removed and replaced value are rememberd in the patch in a field named `old`. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line63">
+        <td class=na>
+            63
+        </td>
+        <td class="na">
+            <a href="#group63"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line64">
+        <td class=na>
+            64
+        </td>
+        <td class="na">
+            <a href="#group64"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def diff[T1: Marshaller, T2: Marshaller](json1: T1, json2: T2, remember: Boolean): JsonPatch = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line65">
+        <td class=na>
+            65
+        </td>
+        <td class="na">
+            <a href="#group65"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new JsonPatch(diff(marshall(json1), marshall(json2), remember, true, Pointer.root)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line66">
+        <td class=na>
+            66
+        </td>
+        <td class="na">
+            <a href="#group66"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line67">
+        <td class=na>
+            67
+        </td>
+        <td class="na">
+            <a href="#group67"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    /** Computes the patch from `json1` to `json2` without performing array diff. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line68">
+        <td class=na>
+            68
+        </td>
+        <td class="na">
+            <a href="#group68"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     *  If `remember` is set to true, the removed and replaced value are rememberd in the patch in a field named `old`. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line69">
+        <td class=na>
+            69
+        </td>
+        <td class="na">
+            <a href="#group69"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">     */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line70">
+        <td class=na>
+            70
+        </td>
+        <td class="na">
+            <a href="#group70"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def simpleDiff[T1: Marshaller, T2: Marshaller](json1: T1, json2: T2, remember: Boolean): JsonPatch = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line71">
+        <td class=na>
+            71
+        </td>
+        <td class="na">
+            <a href="#group71"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new JsonPatch(diff(marshall(json1), marshall(json2), remember, false, Pointer.root)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line72">
+        <td class=na>
+            72
+        </td>
+        <td class="na">
+            <a href="#group72"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line73">
+        <td class=na>
+            73
+        </td>
+        <td class="na">
+            <a href="#group73"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    private def diff(json1: JsValue, json2: JsValue, remember: Boolean, arrayDiffs: Boolean, pointer: Pointer): List[Operation] = (json1, json2) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line74">
+        <td class=na>
+            74
+        </td>
+        <td class="na">
+            <a href="#group74"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      case (v1, v2) if v1 == v2                         =&gt; Nil // if they are equal, this one is easy... </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line75">
+        <td class=na>
+            75
+        </td>
+        <td class="na">
+            <a href="#group75"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      case (JsObject(fields1), JsObject(fields2))       =&gt; fieldsDiff(fields1.toList, fields2.toList, remember, arrayDiffs, pointer) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line76">
+        <td class=na>
+            76
+        </td>
+        <td class="na">
+            <a href="#group76"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      case (JsArray(arr1), JsArray(arr2)) if arrayDiffs =&gt; arraysDiff(arr1.toList, arr2.toList, remember, pointer) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line77">
+        <td class=covered>
+            77
+        </td>
+        <td class="covered">
+            <a href="#group77"><b>4</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      case (_, _)                                       =&gt; List(Replace(pointer, json2, if (remember) Some(json1) else None)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line78">
+        <td class=na>
+            78
+        </td>
+        <td class="na">
+            <a href="#group78"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line79">
+        <td class=na>
+            79
+        </td>
+        <td class="na">
+            <a href="#group79"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line80">
+        <td class=na>
+            80
+        </td>
+        <td class="na">
+            <a href="#group80"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    private def fieldsDiff(fields1: List[(String, JsValue)], fields2: List[(String, JsValue)], remember: Boolean, arraysDiff: Boolean, path: Pointer): List[Operation] = { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line81">
+        <td class=na>
+            81
+        </td>
+        <td class="na">
+            <a href="#group81"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // sort fields by name in both objects </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line82">
+        <td class=na>
+            82
+        </td>
+        <td class="na">
+            <a href="#group82"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      val sorted1 = fields1.sortBy(_._1) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line83">
+        <td class=na>
+            83
+        </td>
+        <td class="na">
+            <a href="#group83"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      val sorted2 = fields2.sortBy(_._1) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line84">
+        <td class=na>
+            84
+        </td>
+        <td class="na">
+            <a href="#group84"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      @tailrec </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line85">
+        <td class=na>
+            85
+        </td>
+        <td class="na">
+            <a href="#group85"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      def associate( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line86">
+        <td class=na>
+            86
+        </td>
+        <td class="na">
+            <a href="#group86"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        fields1: List[(String, JsValue)], </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line87">
+        <td class=na>
+            87
+        </td>
+        <td class="na">
+            <a href="#group87"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        fields2: List[(String, JsValue)], </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line88">
+        <td class=na>
+            88
+        </td>
+        <td class="na">
+            <a href="#group88"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        acc: List[(Option[(String, JsValue)], Option[(String, JsValue)])]): List[(Option[(String, JsValue)], Option[(String, JsValue)])] = (fields1, fields2) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line89">
+        <td class=na>
+            89
+        </td>
+        <td class="na">
+            <a href="#group89"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (f1 :: t1, f2 :: t2) if f1._1 == f2._1 =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line90">
+        <td class=na>
+            90
+        </td>
+        <td class="na">
+            <a href="#group90"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // same name, associate both </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line91">
+        <td class=covered>
+            91
+        </td>
+        <td class="covered">
+            <a href="#group91"><b>3</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          associate(t1, t2, (Some(f1), Some(f2)) :: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line92">
+        <td class=na>
+            92
+        </td>
+        <td class="na">
+            <a href="#group92"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (f1 :: t1, f2 :: _) if f1._1 &lt; f2._1 =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line93">
+        <td class=na>
+            93
+        </td>
+        <td class="na">
+            <a href="#group93"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // the first field is not present in the second object </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line94">
+        <td class=covered>
+            94
+        </td>
+        <td class="covered">
+            <a href="#group94"><b>2</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          associate(t1, fields2, (Some(f1), None) :: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line95">
+        <td class=na>
+            95
+        </td>
+        <td class="na">
+            <a href="#group95"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (f1 :: _, f2 :: t2) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line96">
+        <td class=na>
+            96
+        </td>
+        <td class="na">
+            <a href="#group96"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // the second field is not present in the first object </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line97">
+        <td class=covered>
+            97
+        </td>
+        <td class="covered">
+            <a href="#group97"><b>2</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          associate(fields1, t2, (None, Some(f2)) :: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line98">
+        <td class=na>
+            98
+        </td>
+        <td class="na">
+            <a href="#group98"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (_, Nil) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line99">
+        <td class=uncovered>
+            99
+        </td>
+        <td class="uncovered">
+            <a href="#group99"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          fields1.map(Some(_) -&gt; None) ::: acc </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line100">
+        <td class=na>
+            100
+        </td>
+        <td class="na">
+            <a href="#group100"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (Nil, _) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line101">
+        <td class=uncovered>
+            101
+        </td>
+        <td class="uncovered">
+            <a href="#group101"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          fields2.map(None -&gt; Some(_)) ::: acc </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line102">
+        <td class=na>
+            102
+        </td>
+        <td class="na">
+            <a href="#group102"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line103">
+        <td class=na>
+            103
+        </td>
+        <td class="na">
+            <a href="#group103"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      @tailrec </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line104">
+        <td class=covered>
+            104
+        </td>
+        <td class="covered">
+            <a href="#group104"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      def fields(fs: List[(Option[(String, JsValue)], Option[(String, JsValue)])], acc: List[Operation]): List[Operation] = fs match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line105">
+        <td class=na>
+            105
+        </td>
+        <td class="na">
+            <a href="#group105"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (Some(f1), Some(f2)) :: tl if f1 == f2 =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line106">
+        <td class=na>
+            106
+        </td>
+        <td class="na">
+            <a href="#group106"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // allright, nothing changed </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line107">
+        <td class=na>
+            107
+        </td>
+        <td class="na">
+            <a href="#group107"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          fields(tl, acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line108">
+        <td class=na>
+            108
+        </td>
+        <td class="na">
+            <a href="#group108"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (Some(f1), Some(f2)) :: tl =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line109">
+        <td class=na>
+            109
+        </td>
+        <td class="na">
+            <a href="#group109"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // same field name, different values </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line110">
+        <td class=covered>
+            110
+        </td>
+        <td class="covered">
+            <a href="#group110"><b>2</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          fields(tl, diff(f1._2, f2._2, remember, arraysDiff, path / f1._1) ::: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line111">
+        <td class=na>
+            111
+        </td>
+        <td class="na">
+            <a href="#group111"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (Some(f1), None) :: tl =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line112">
+        <td class=na>
+            112
+        </td>
+        <td class="na">
+            <a href="#group112"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // the field was deleted </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line113">
+        <td class=covered>
+            113
+        </td>
+        <td class="covered">
+            <a href="#group113"><b>5</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          fields(tl, Remove(path / f1._1, if (remember) Some(f1._2) else None) :: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line114">
+        <td class=na>
+            114
+        </td>
+        <td class="na">
+            <a href="#group114"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (None, Some(f2)) :: tl =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line115">
+        <td class=na>
+            115
+        </td>
+        <td class="na">
+            <a href="#group115"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // the field was added </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line116">
+        <td class=covered>
+            116
+        </td>
+        <td class="covered">
+            <a href="#group116"><b>2</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          fields(tl, Add(path / f2._1, f2._2) :: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line117">
+        <td class=na>
+            117
+        </td>
+        <td class="na">
+            <a href="#group117"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line118">
+        <td class=na>
+            118
+        </td>
+        <td class="na">
+            <a href="#group118"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          acc </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line119">
+        <td class=na>
+            119
+        </td>
+        <td class="na">
+            <a href="#group119"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line120">
+        <td class=na>
+            120
+        </td>
+        <td class="na">
+            <a href="#group120"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      fields(associate(sorted1, sorted2, Nil), Nil) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line121">
+        <td class=na>
+            121
+        </td>
+        <td class="na">
+            <a href="#group121"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line122">
+        <td class=na>
+            122
+        </td>
+        <td class="na">
+            <a href="#group122"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line123">
+        <td class=na>
+            123
+        </td>
+        <td class="na">
+            <a href="#group123"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    private def arraysDiff(arr1: List[JsValue], arr2: List[JsValue], remember: Boolean, path: Pointer): List[Operation] = { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line124">
+        <td class=na>
+            124
+        </td>
+        <td class="na">
+            <a href="#group124"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // get the longest common subsequence in the array </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line125">
+        <td class=na>
+            125
+        </td>
+        <td class="na">
+            <a href="#group125"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      val lcs = lcsalg.lcs(arr1, arr2) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line126">
+        <td class=na>
+            126
+        </td>
+        <td class="na">
+            <a href="#group126"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line127">
+        <td class=na>
+            127
+        </td>
+        <td class="na">
+            <a href="#group127"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // indicates whether the index is in the lcs of the first sequence </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line128">
+        <td class=covered>
+            128
+        </td>
+        <td class="covered">
+            <a href="#group128"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      def isCommon1(idx1: Int, lcs: List[(Int, Int)]): Boolean = lcs match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line129">
+        <td class=covered>
+            129
+        </td>
+        <td class="covered">
+            <a href="#group129"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        case (cidx1, _) :: _ if idx1 == cidx1 =&gt; true </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line130">
+        <td class=na>
+            130
+        </td>
+        <td class="na">
+            <a href="#group130"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case _                                =&gt; false </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line131">
+        <td class=na>
+            131
+        </td>
+        <td class="na">
+            <a href="#group131"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line132">
+        <td class=na>
+            132
+        </td>
+        <td class="na">
+            <a href="#group132"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line133">
+        <td class=na>
+            133
+        </td>
+        <td class="na">
+            <a href="#group133"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // indicates whether the index is in the lcs of the second sequence </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line134">
+        <td class=covered>
+            134
+        </td>
+        <td class="covered">
+            <a href="#group134"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      def isCommon2(idx2: Int, lcs: List[(Int, Int)]): Boolean = lcs match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line135">
+        <td class=covered>
+            135
+        </td>
+        <td class="covered">
+            <a href="#group135"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        case (_, cidx2) :: _ if idx2 == cidx2 =&gt; true </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line136">
+        <td class=na>
+            136
+        </td>
+        <td class="na">
+            <a href="#group136"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case _                                =&gt; false </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line137">
+        <td class=na>
+            137
+        </td>
+        <td class="na">
+            <a href="#group137"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line138">
+        <td class=na>
+            138
+        </td>
+        <td class="na">
+            <a href="#group138"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line139">
+        <td class=na>
+            139
+        </td>
+        <td class="na">
+            <a href="#group139"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // add a bunch of values to an array starting at the specified index </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line140">
+        <td class=na>
+            140
+        </td>
+        <td class="na">
+            <a href="#group140"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      @tailrec </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line141">
+        <td class=na>
+            141
+        </td>
+        <td class="na">
+            <a href="#group141"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      def add(arr: List[JsValue], idx: Int, acc: List[Operation]): List[Operation] = arr match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line142">
+        <td class=covered>
+            142
+        </td>
+        <td class="covered">
+            <a href="#group142"><b>4</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        case v :: tl =&gt; add(tl, idx + 1, Add(path / idx, v) :: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line143">
+        <td class=na>
+            143
+        </td>
+        <td class="na">
+            <a href="#group143"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case Nil     =&gt; acc.reverse </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line144">
+        <td class=na>
+            144
+        </td>
+        <td class="na">
+            <a href="#group144"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line145">
+        <td class=na>
+            145
+        </td>
+        <td class="na">
+            <a href="#group145"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line146">
+        <td class=na>
+            146
+        </td>
+        <td class="na">
+            <a href="#group146"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // remove a bunch of array elements starting by the last one in the range </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line147">
+        <td class=na>
+            147
+        </td>
+        <td class="na">
+            <a href="#group147"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      def remove(from: Int, until: Int, shift: Int, arr: List[JsValue]): List[Operation] = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line148">
+        <td class=covered>
+            148
+        </td>
+        <td class="covered">
+            <a href="#group148"><b>3</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        (for (idx &lt;- until to from by -1) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line149">
+        <td class=covered>
+            149
+        </td>
+        <td class="covered">
+            <a href="#group149"><b>6</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          yield Remove(path / idx, if (remember) Some(arr(idx - shift)) else None)).toList </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line150">
+        <td class=na>
+            150
+        </td>
+        <td class="na">
+            <a href="#group150"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line151">
+        <td class=na>
+            151
+        </td>
+        <td class="na">
+            <a href="#group151"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // now iterate over the first array to computes what was added, what was removed and what was modified </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line152">
+        <td class=na>
+            152
+        </td>
+        <td class="na">
+            <a href="#group152"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      @tailrec </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line153">
+        <td class=na>
+            153
+        </td>
+        <td class="na">
+            <a href="#group153"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      def loop( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line154">
+        <td class=na>
+            154
+        </td>
+        <td class="na">
+            <a href="#group154"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        arr1: List[JsValue], // the first array </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line155">
+        <td class=na>
+            155
+        </td>
+        <td class="na">
+            <a href="#group155"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        arr2: List[JsValue], // the second array </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line156">
+        <td class=na>
+            156
+        </td>
+        <td class="na">
+            <a href="#group156"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        idx1: Int, // current index in the first array </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line157">
+        <td class=na>
+            157
+        </td>
+        <td class="na">
+            <a href="#group157"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        shift1: Int, // current index shift in the first array (due to elements being add or removed) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line158">
+        <td class=na>
+            158
+        </td>
+        <td class="na">
+            <a href="#group158"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        idx2: Int, // current index in the second array </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line159">
+        <td class=na>
+            159
+        </td>
+        <td class="na">
+            <a href="#group159"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        lcs: List[(Int, Int)], // the list of remaining matching indices </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line160">
+        <td class=na>
+            160
+        </td>
+        <td class="na">
+            <a href="#group160"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        acc: List[Operation] // the already accumulated result </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line161">
+        <td class=na>
+            161
+        </td>
+        <td class="na">
+            <a href="#group161"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      ): List[Operation] = (arr1, arr2) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line162">
+        <td class=na>
+            162
+        </td>
+        <td class="na">
+            <a href="#group162"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (_ :: tl1, _) if isCommon1(idx1, lcs) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line163">
+        <td class=na>
+            163
+        </td>
+        <td class="na">
+            <a href="#group163"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // all values in arr2 were added until the index of common value </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line164">
+        <td class=na>
+            164
+        </td>
+        <td class="na">
+            <a href="#group164"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          val until = lcs.head._2 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line165">
+        <td class=covered>
+            165
+        </td>
+        <td class="covered">
+            <a href="#group165"><b>13</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          loop(tl1, arr2.drop(until - idx2 + 1), idx1 + 1, shift1 + until - idx2, until + 1, lcs.tail, </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line166">
+        <td class=covered>
+            166
+        </td>
+        <td class="covered">
+            <a href="#group166"><b>6</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">            add(arr2.take(until - idx2), idx1 + shift1, Nil) reverse_::: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line167">
+        <td class=na>
+            167
+        </td>
+        <td class="na">
+            <a href="#group167"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (_, _ :: tl2) if isCommon2(idx2, lcs) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line168">
+        <td class=na>
+            168
+        </td>
+        <td class="na">
+            <a href="#group168"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // all values in arr1 were removed until the index of common value </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line169">
+        <td class=na>
+            169
+        </td>
+        <td class="na">
+            <a href="#group169"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          val until = lcs.head._1 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line170">
+        <td class=covered>
+            170
+        </td>
+        <td class="covered">
+            <a href="#group170"><b>13</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">          loop(arr1.drop(until - idx1 + 1), tl2, until + 1, shift1 - (until - idx1), idx2 + 1, lcs.tail, </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line171">
+        <td class=uncovered>
+            171
+        </td>
+        <td class="uncovered">
+            <a href="#group171"><b>9</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">            remove(idx1 + shift1, until - 1 + shift1, idx1 + shift1, arr1) reverse_::: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line172">
+        <td class=na>
+            172
+        </td>
+        <td class="na">
+            <a href="#group172"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (v1 :: tl1, v2 :: tl2) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line173">
+        <td class=na>
+            173
+        </td>
+        <td class="na">
+            <a href="#group173"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // values are different, recursively compute the diff of these values </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line174">
+        <td class=uncovered>
+            174
+        </td>
+        <td class="uncovered">
+            <a href="#group174"><b>8</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          loop(tl1, tl2, idx1 + 1, shift1, idx2 + 1, lcs, diff(v1, v2, remember, true, path / (idx1 + shift1)) reverse_::: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line175">
+        <td class=na>
+            175
+        </td>
+        <td class="na">
+            <a href="#group175"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (_, Nil) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line176">
+        <td class=na>
+            176
+        </td>
+        <td class="na">
+            <a href="#group176"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // all subsequent values in arr1 were removed </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line177">
+        <td class=uncovered>
+            177
+        </td>
+        <td class="uncovered">
+            <a href="#group177"><b>11</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          remove(idx1 + shift1, idx1 + arr1.size - 1 + shift1, idx1 + shift1, arr1) reverse_::: acc </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line178">
+        <td class=na>
+            178
+        </td>
+        <td class="na">
+            <a href="#group178"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (Nil, _) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line179">
+        <td class=na>
+            179
+        </td>
+        <td class="na">
+            <a href="#group179"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          // all subsequent value in arr2 were added </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line180">
+        <td class=uncovered>
+            180
+        </td>
+        <td class="uncovered">
+            <a href="#group180"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          arr2.map(Add(path / &quot;-&quot;, _)) reverse_::: acc </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line181">
+        <td class=na>
+            181
+        </td>
+        <td class="na">
+            <a href="#group181"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line182">
+        <td class=na>
+            182
+        </td>
+        <td class="na">
+            <a href="#group182"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line183">
+        <td class=na>
+            183
+        </td>
+        <td class="na">
+            <a href="#group183"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      loop(arr1, arr2, 0, 0, 0, lcs, Nil).reverse </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line184">
+        <td class=na>
+            184
+        </td>
+        <td class="na">
+            <a href="#group184"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line185">
+        <td class=na>
+            185
+        </td>
+        <td class="na">
+            <a href="#group185"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line186">
+        <td class=na>
+            186
+        </td>
+        <td class="na">
+            <a href="#group186"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line187">
+        <td class=na>
+            187
+        </td>
+        <td class="na">
+            <a href="#group187"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line188">
+        <td class=na>
+            188
+        </td>
+        <td class="na">
+            <a href="#group188"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+</table>
+
+<h2>Mutants</h2>
+<table class="src" cellpadding="3px">
+    
+    <tr>
+        <td>
+            <a href="#line77" id="group77">77</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced conditional with its &quot;else&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced List.apply[T] with Nil                    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line91" id="group91">91</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line94" id="group94">94</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line97" id="group97">97</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line99" id="group99">99</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=no_coverage>Replaced Option.apply[T] with None                 -&gt; NoTestCoverage</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line101" id="group101">101</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=no_coverage>Replaced Option.apply[T] with None                 -&gt; NoTestCoverage</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line104" id="group104">104</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced pattern match with wildcard case          -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line110" id="group110">110</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line113" id="group113">113</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;else&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line116" id="group116">116</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line128" id="group128">128</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced pattern match with wildcard case          -&gt; Killed by gnieh.diffson.test.playJson.PlayTestSerialization</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line129" id="group129">129</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Negated conditional operator                       -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line134" id="group134">134</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced pattern match with wildcard case          -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line135" id="group135">135</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Negated conditional operator                       -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line142" id="group142">142</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line148" id="group148">148</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Removed numeric negation                           -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Changed range boundary inclusive &lt;=&gt; exclusive     -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line149" id="group149">149</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;else&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line165" id="group165">165</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.playJson.PlayTestSerialization</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.playJson.PlayTestSerialization</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.playJson.PlayTestSerialization</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line166" id="group166">166</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.playJson.PlayTestSerialization</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.playJson.PlayTestSerialization</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line170" id="group170">170</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line171" id="group171">171</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line174" id="group174">174</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line177" id="group177">177</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=no_coverage>Replaced math operator                             -&gt; NoTestCoverage</pre>
+            
+                <pre class=no_coverage>Replaced expression, typed A =&gt; A, with its lhs    -&gt; NoTestCoverage</pre>
+            
+                <pre class=no_coverage>Replaced math operator                             -&gt; NoTestCoverage</pre>
+            
+                <pre class=no_coverage>Replaced math operator                             -&gt; NoTestCoverage</pre>
+            
+                <pre class=no_coverage>Replaced expression, typed A =&gt; A, with its lhs    -&gt; NoTestCoverage</pre>
+            
+                <pre class=no_coverage>Replaced math operator                             -&gt; NoTestCoverage</pre>
+            
+                <pre class=no_coverage>Replaced expression, typed A =&gt; A, with its lhs    -&gt; NoTestCoverage</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=no_coverage>Replaced expression, typed A =&gt; A, with its lhs    -&gt; NoTestCoverage</pre>
+            
+                <pre class=no_coverage>Replaced math operator                             -&gt; NoTestCoverage</pre>
+            
+                <pre class=no_coverage>Replaced expression, typed A =&gt; A, with its lhs    -&gt; NoTestCoverage</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line180" id="group180">180</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=no_coverage>Replaced expression, typed A =&gt; A, with its lhs    -&gt; NoTestCoverage</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+</table>
+
+<h2>Active mutators</h2>
+<ul class="list-group">
+    
+    <li class="list-group-item">ReplaceCaseWithWildcard</li>
+    
+    <li class="list-group-item">ReplaceMathOperators</li>
+    
+    <li class="list-group-item">ReplaceWithIdentityFunction</li>
+    
+    <li class="list-group-item">InvertNegations</li>
+    
+    <li class="list-group-item">AlwaysExecuteConditionals</li>
+    
+    <li class="list-group-item">NeverExecuteConditionals</li>
+    
+    <li class="list-group-item">ReplaceConditionalBoundaries</li>
+    
+    <li class="list-group-item">NegateConditionals</li>
+    
+    <li class="list-group-item">RemoveUnitMethodCalls</li>
+    
+    <li class="list-group-item">ChangeRangeBoundary</li>
+    
+    <li class="list-group-item">ReplaceLogicalOperators</li>
+    
+    <li class="list-group-item">ReplaceWithNone</li>
+    
+    <li class="list-group-item">ReplaceWithNil</li>
+    
+</ul>
+
+<h2>Examined tests</h2>
+<ul class="list-group">
+    
+</ul>
+
+<br/>
+</body>
+</html>

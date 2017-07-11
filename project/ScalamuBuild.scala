@@ -2,9 +2,12 @@ import play.twirl.sbt.Import.TwirlKeys
 import play.twirl.sbt.SbtTwirl
 import sbt.Keys._
 import sbt._
+import sbtassembly.AssemblyKeys._
+import sbtassembly.ShadeRule
 
 object ScalamuBuild {
   lazy val commonSettings = Seq(
+    test in assembly := {},
     organization := "org.scalamu",
     scalaVersion := "2.12.2",
     crossScalaVersions := Seq("2.11.11", "2.12.2"),
@@ -34,7 +37,7 @@ object ScalamuBuild {
       """,
     scalacOptions in (Compile, console) -= "-Ywarn-unused-import",
     libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % "1.1.7",
+      "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.scalatest"  %% "scalatest"      % "3.0.1" % Test
     ) ++ (if (scalaBinaryVersion.value == "2.10") Seq()
           else
@@ -105,19 +108,21 @@ object ScalamuBuild {
     .dependsOn(commandLine, common, plugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
-    .settings(commonSettings)
     .aggregate(plugin, commandLine, report, common, entryPoint)
 
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
     .settings(commonSettings)
     .dependsOn(commandLine, common, plugin, report)
     .settings(
-      libraryDependencies ++= Seq(
-        "io.circe" %% "circe-core",
-        "io.circe" %% "circe-generic",
-        "io.circe" %% "circe-parser"
-      ).map(_ % "0.7.0") ++ testingFrameworks
+      artifact in (Compile, assembly) ~= { _.copy(`classifier` = Some("assembly")) },
+      assemblyOption in assembly ~= { _.copy(includeScala = false) },
+      addArtifact(artifact in (Compile, assembly), assembly),
+      assemblyShadeRules in assembly := 
+        Seq("cats.**", "shapeless.**", "io.circe.**", "scalaz.**").map(shade)
     )
+
+  private def shade(packageName: String): ShadeRule =
+    ShadeRule.rename(packageName -> "shaded.@0").inAll
 
   lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
     .settings(

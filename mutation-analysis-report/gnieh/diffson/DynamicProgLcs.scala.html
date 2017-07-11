@@ -1,0 +1,1512 @@
+
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        html, body, div, span, p, blockquote, pre {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+body{
+	line-height: 1;
+	color: black;
+	background: white;
+	margin-left: 20px;
+}
+
+.src { 
+	border: 1px solid #dddddd;
+	padding: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+	font-family: Fira Code, Source Code Pro, monospace;
+}
+
+.hljs {
+    padding: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+}
+
+.covered {background-color: #aaffaa}
+.uncovered {background-color: #ffaaaa}
+.na {background-color: #f8f8f8}
+
+.killed {background-color: #aaffaa}
+.no_coverage {background-color: #ffaaaa}
+.alive {background-color: #ffaaaa}
+.failure {background-color: #FFFF4D, color: red}
+.timed_out {background-color: #FFFF4D, color: red}
+.oom {background-color: #FFFF4D, color: red}
+.untested {background-color: #FFFF4D}
+
+    </style>
+</head>
+<body>
+<div class="alert alert-info">
+    DynamicProgLcs.scala
+</div>
+
+<table class="src" style="font-size:13px; padding: 0px;">
+
+    
+    <tr id="line1">
+        <td class=na>
+            1
+        </td>
+        <td class="na">
+            <a href="#group1"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">package gnieh.diffson </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line2">
+        <td class=na>
+            2
+        </td>
+        <td class="na">
+            <a href="#group2"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line3">
+        <td class=na>
+            3
+        </td>
+        <td class="na">
+            <a href="#group3"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">import scala.annotation.tailrec </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line4">
+        <td class=na>
+            4
+        </td>
+        <td class="na">
+            <a href="#group4"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line5">
+        <td class=na>
+            5
+        </td>
+        <td class="na">
+            <a href="#group5"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">/** Implementation of the LCS using dynamic programming. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line6">
+        <td class=na>
+            6
+        </td>
+        <td class="na">
+            <a href="#group6"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> * </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line7">
+        <td class=na>
+            7
+        </td>
+        <td class="na">
+            <a href="#group7"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> *  @author Lucas Satabin </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line8">
+        <td class=na>
+            8
+        </td>
+        <td class="na">
+            <a href="#group8"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line9">
+        <td class=na>
+            9
+        </td>
+        <td class="na">
+            <a href="#group9"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">class DynamicProgLcs[T] extends Lcs[T] { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line10">
+        <td class=na>
+            10
+        </td>
+        <td class="na">
+            <a href="#group10"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line11">
+        <td class=na>
+            11
+        </td>
+        <td class="na">
+            <a href="#group11"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  def lcs(s1: Seq[T], s2: Seq[T], low1: Int, high1: Int, low2: Int, high2: Int): List[(Int, Int)] = { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line12">
+        <td class=covered>
+            12
+        </td>
+        <td class="covered">
+            <a href="#group12"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    val seq1 = s1.slice(low1, high1) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line13">
+        <td class=covered>
+            13
+        </td>
+        <td class="covered">
+            <a href="#group13"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    val seq2 = s2.slice(low2, high2) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line14">
+        <td class=uncovered>
+            14
+        </td>
+        <td class="uncovered">
+            <a href="#group14"><b>4</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    if (seq1.isEmpty || seq2.isEmpty) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line15">
+        <td class=na>
+            15
+        </td>
+        <td class="na">
+            <a href="#group15"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // shortcut if at least on sequence is empty, the lcs, is empty as well </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line16">
+        <td class=na>
+            16
+        </td>
+        <td class="na">
+            <a href="#group16"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      Nil </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line17">
+        <td class=uncovered>
+            17
+        </td>
+        <td class="uncovered">
+            <a href="#group17"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    } else if (seq1 == seq2) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line18">
+        <td class=na>
+            18
+        </td>
+        <td class="na">
+            <a href="#group18"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // both sequences are equal, the lcs is either of them </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line19">
+        <td class=uncovered>
+            19
+        </td>
+        <td class="uncovered">
+            <a href="#group19"><b>4</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">      seq1.indices.map(i =&gt; (i + low1, i + low2)).toList </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line20">
+        <td class=uncovered>
+            20
+        </td>
+        <td class="uncovered">
+            <a href="#group20"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    } else if (seq1.startsWith(seq2)) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line21">
+        <td class=na>
+            21
+        </td>
+        <td class="na">
+            <a href="#group21"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // the second sequence is a prefix of the first one </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line22">
+        <td class=na>
+            22
+        </td>
+        <td class="na">
+            <a href="#group22"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // the lcs is the second sequence </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line23">
+        <td class=uncovered>
+            23
+        </td>
+        <td class="uncovered">
+            <a href="#group23"><b>4</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">      seq2.indices.map(i =&gt; (i + low1, i + low2)).toList </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line24">
+        <td class=uncovered>
+            24
+        </td>
+        <td class="uncovered">
+            <a href="#group24"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    } else if (seq2.startsWith(seq1)) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line25">
+        <td class=na>
+            25
+        </td>
+        <td class="na">
+            <a href="#group25"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // the first sequence is a prefix of the second one </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line26">
+        <td class=na>
+            26
+        </td>
+        <td class="na">
+            <a href="#group26"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // the lcs is the first sequence </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line27">
+        <td class=uncovered>
+            27
+        </td>
+        <td class="uncovered">
+            <a href="#group27"><b>4</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">      seq1.indices.map(i =&gt; (i + low1, i + low2)).toList </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line28">
+        <td class=na>
+            28
+        </td>
+        <td class="na">
+            <a href="#group28"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    } else { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line29">
+        <td class=na>
+            29
+        </td>
+        <td class="na">
+            <a href="#group29"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // we try to reduce the problem by stripping common suffix and prefix </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line30">
+        <td class=na>
+            30
+        </td>
+        <td class="na">
+            <a href="#group30"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      val (prefix, middle1, middle2, suffix) = splitPrefixSuffix(seq1, seq2, low1, low2) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line31">
+        <td class=na>
+            31
+        </td>
+        <td class="na">
+            <a href="#group31"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      val offset = prefix.size </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line32">
+        <td class=covered>
+            32
+        </td>
+        <td class="covered">
+            <a href="#group32"><b>4</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      val lengths = Array.ofDim[Int](middle1.size + 1, middle2.size + 1) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line33">
+        <td class=na>
+            33
+        </td>
+        <td class="na">
+            <a href="#group33"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // fill up the length matrix </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line34">
+        <td class=na>
+            34
+        </td>
+        <td class="na">
+            <a href="#group34"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      for { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line35">
+        <td class=covered>
+            35
+        </td>
+        <td class="covered">
+            <a href="#group35"><b>2</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        i &lt;- 0 until middle1.size </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line36">
+        <td class=covered>
+            36
+        </td>
+        <td class="covered">
+            <a href="#group36"><b>2</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        j &lt;- 0 until middle2.size </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line37">
+        <td class=covered>
+            37
+        </td>
+        <td class="covered">
+            <a href="#group37"><b>2</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      } if (middle1(i) == middle2(j)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line38">
+        <td class=covered>
+            38
+        </td>
+        <td class="covered">
+            <a href="#group38"><b>7</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        lengths(i + 1)(j + 1) = lengths(i)(j) + 1 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line39">
+        <td class=na>
+            39
+        </td>
+        <td class="na">
+            <a href="#group39"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      else </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line40">
+        <td class=covered>
+            40
+        </td>
+        <td class="covered">
+            <a href="#group40"><b>9</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        lengths(i + 1)(j + 1) = math.max(lengths(i + 1)(j), lengths(i)(j + 1)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line41">
+        <td class=na>
+            41
+        </td>
+        <td class="na">
+            <a href="#group41"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      // and compute the lcs out of the matrix </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line42">
+        <td class=na>
+            42
+        </td>
+        <td class="na">
+            <a href="#group42"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      @tailrec </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line43">
+        <td class=na>
+            43
+        </td>
+        <td class="na">
+            <a href="#group43"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      def loop(idx1: Int, idx2: Int, acc: List[(Int, Int)]): List[(Int, Int)] = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line44">
+        <td class=uncovered>
+            44
+        </td>
+        <td class="uncovered">
+            <a href="#group44"><b>6</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">        if (idx1 == 0 || idx2 == 0) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line45">
+        <td class=na>
+            45
+        </td>
+        <td class="na">
+            <a href="#group45"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          acc </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line46">
+        <td class=covered>
+            46
+        </td>
+        <td class="covered">
+            <a href="#group46"><b>5</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        } else if (lengths(idx1)(idx2) == lengths(idx1 - 1)(idx2)) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line47">
+        <td class=uncovered>
+            47
+        </td>
+        <td class="uncovered">
+            <a href="#group47"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          loop(idx1 - 1, idx2, acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line48">
+        <td class=covered>
+            48
+        </td>
+        <td class="covered">
+            <a href="#group48"><b>5</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        } else if (lengths(idx1)(idx2) == lengths(idx1)(idx2 - 1)) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line49">
+        <td class=uncovered>
+            49
+        </td>
+        <td class="uncovered">
+            <a href="#group49"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          loop(idx1, idx2 - 1, acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line50">
+        <td class=na>
+            50
+        </td>
+        <td class="na">
+            <a href="#group50"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        } else { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line51">
+        <td class=uncovered>
+            51
+        </td>
+        <td class="uncovered">
+            <a href="#group51"><b>9</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          assert(seq1(offset + idx1 - 1) == seq2(offset + idx2 - 1)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line52">
+        <td class=uncovered>
+            52
+        </td>
+        <td class="uncovered">
+            <a href="#group52"><b>17</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">          loop(idx1 - 1, idx2 - 1, (low1 + offset + idx1 - 1, low2 + offset + idx2 - 1) :: acc) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line53">
+        <td class=na>
+            53
+        </td>
+        <td class="na">
+            <a href="#group53"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line54">
+        <td class=na>
+            54
+        </td>
+        <td class="na">
+            <a href="#group54"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line55">
+        <td class=na>
+            55
+        </td>
+        <td class="na">
+            <a href="#group55"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      prefix ++ loop(middle1.size, middle2.size, Nil) ++ suffix </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line56">
+        <td class=na>
+            56
+        </td>
+        <td class="na">
+            <a href="#group56"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line57">
+        <td class=na>
+            57
+        </td>
+        <td class="na">
+            <a href="#group57"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line58">
+        <td class=na>
+            58
+        </td>
+        <td class="na">
+            <a href="#group58"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line59">
+        <td class=na>
+            59
+        </td>
+        <td class="na">
+            <a href="#group59"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  /* Extract common prefix and suffix from both sequences */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line60">
+        <td class=na>
+            60
+        </td>
+        <td class="na">
+            <a href="#group60"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  private def splitPrefixSuffix(seq1: Seq[T], seq2: Seq[T], low1: Int, low2: Int): (List[(Int, Int)], Seq[T], Seq[T], List[(Int, Int)]) = { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line61">
+        <td class=na>
+            61
+        </td>
+        <td class="na">
+            <a href="#group61"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    val size1 = seq1.size </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line62">
+        <td class=na>
+            62
+        </td>
+        <td class="na">
+            <a href="#group62"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    val size2 = seq2.size </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line63">
+        <td class=na>
+            63
+        </td>
+        <td class="na">
+            <a href="#group63"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    val prefix = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line64">
+        <td class=covered>
+            64
+        </td>
+        <td class="covered">
+            <a href="#group64"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      seq1.zip(seq2).takeWhile { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line65">
+        <td class=na>
+            65
+        </td>
+        <td class="na">
+            <a href="#group65"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (e1, e2) =&gt; e1 == e2 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line66">
+        <td class=uncovered>
+            66
+        </td>
+        <td class="uncovered">
+            <a href="#group66"><b>4</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">      }.indices.map(i =&gt; (i + low1, i + low2)).toList </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line67">
+        <td class=na>
+            67
+        </td>
+        <td class="na">
+            <a href="#group67"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    val suffix = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line68">
+        <td class=covered>
+            68
+        </td>
+        <td class="covered">
+            <a href="#group68"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      seq1.reverse.zip(seq2.reverse).takeWhile { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line69">
+        <td class=na>
+            69
+        </td>
+        <td class="na">
+            <a href="#group69"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        case (e1, e2) =&gt; e1 == e2 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line70">
+        <td class=uncovered>
+            70
+        </td>
+        <td class="uncovered">
+            <a href="#group70"><b>12</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">      }.indices.map(i =&gt; (size1 - i - 1 + low1, size2 - i - 1 + low2)).toList.reverse </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line71">
+        <td class=uncovered>
+            71
+        </td>
+        <td class="uncovered">
+            <a href="#group71"><b>4</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    (prefix, seq1.drop(prefix.size).dropRight(suffix.size), seq2.drop(prefix.size).dropRight(suffix.size), suffix) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line72">
+        <td class=na>
+            72
+        </td>
+        <td class="na">
+            <a href="#group72"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line73">
+        <td class=na>
+            73
+        </td>
+        <td class="na">
+            <a href="#group73"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line74">
+        <td class=na>
+            74
+        </td>
+        <td class="na">
+            <a href="#group74"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+</table>
+
+<h2>Mutants</h2>
+<table class="src" cellpadding="3px">
+    
+    <tr>
+        <td>
+            <a href="#line12" id="group12">12</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line13" id="group13">13</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line14" id="group14">14</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=alive>Replaced logical operator &amp;&amp; &lt;=&gt; ||                -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced conditional with its &quot;else&quot; branch        -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line17" id="group17">17</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced conditional with its &quot;else&quot; branch        -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line19" id="group19">19</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line20" id="group20">20</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced conditional with its &quot;else&quot; branch        -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line23" id="group23">23</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line24" id="group24">24</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=alive>Replaced conditional with its &quot;else&quot; branch        -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line27" id="group27">27</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line32" id="group32">32</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.playJson.PlayTestJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line35" id="group35">35</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Removed method call with Unit return type          -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Changed range boundary inclusive &lt;=&gt; exclusive     -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line36" id="group36">36</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Removed method call with Unit return type          -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Changed range boundary inclusive &lt;=&gt; exclusive     -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line37" id="group37">37</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;else&quot; branch        -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line38" id="group38">38</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Removed method call with Unit return type          -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line40" id="group40">40</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonDiff</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Removed method call with Unit return type          -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line44" id="group44">44</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced logical operator &amp;&amp; &lt;=&gt; ||                -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Negated conditional operator                       -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;else&quot; branch        -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Negated conditional operator                       -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line46" id="group46">46</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced conditional with its &quot;else&quot; branch        -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonDiff</pre>
+            
+                <pre class=killed>Negated conditional operator                       -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line47" id="group47">47</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=timed_out>Replaced expression, typed A =&gt; A, with its lhs    -&gt; TimedOut</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line48" id="group48">48</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;else&quot; branch        -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced conditional with its &quot;then&quot; branch        -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Negated conditional operator                       -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line49" id="group49">49</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=timed_out>Replaced expression, typed A =&gt; A, with its lhs    -&gt; TimedOut</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line51" id="group51">51</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=alive>Removed method call with Unit return type          -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line52" id="group52">52</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestPatience</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line64" id="group64">64</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line66" id="group66">66</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line68" id="group68">68</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line70" id="group70">70</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=alive>Replaced math operator                             -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced math operator                             -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line71" id="group71">71</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.TestDynLcs</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+</table>
+
+<h2>Active mutators</h2>
+<ul class="list-group">
+    
+    <li class="list-group-item">ReplaceCaseWithWildcard</li>
+    
+    <li class="list-group-item">ReplaceMathOperators</li>
+    
+    <li class="list-group-item">ReplaceWithIdentityFunction</li>
+    
+    <li class="list-group-item">InvertNegations</li>
+    
+    <li class="list-group-item">AlwaysExecuteConditionals</li>
+    
+    <li class="list-group-item">NeverExecuteConditionals</li>
+    
+    <li class="list-group-item">ReplaceConditionalBoundaries</li>
+    
+    <li class="list-group-item">NegateConditionals</li>
+    
+    <li class="list-group-item">RemoveUnitMethodCalls</li>
+    
+    <li class="list-group-item">ChangeRangeBoundary</li>
+    
+    <li class="list-group-item">ReplaceLogicalOperators</li>
+    
+    <li class="list-group-item">ReplaceWithNone</li>
+    
+    <li class="list-group-item">ReplaceWithNil</li>
+    
+</ul>
+
+<h2>Examined tests</h2>
+<ul class="list-group">
+    
+</ul>
+
+<br/>
+</body>
+</html>

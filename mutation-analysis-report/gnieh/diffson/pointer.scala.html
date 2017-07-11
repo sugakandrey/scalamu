@@ -1,0 +1,1044 @@
+
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        html, body, div, span, p, blockquote, pre {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+body{
+	line-height: 1;
+	color: black;
+	background: white;
+	margin-left: 20px;
+}
+
+.src { 
+	border: 1px solid #dddddd;
+	padding: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+	font-family: Fira Code, Source Code Pro, monospace;
+}
+
+.hljs {
+    padding: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+}
+
+.covered {background-color: #aaffaa}
+.uncovered {background-color: #ffaaaa}
+.na {background-color: #f8f8f8}
+
+.killed {background-color: #aaffaa}
+.no_coverage {background-color: #ffaaaa}
+.alive {background-color: #ffaaaa}
+.failure {background-color: #FFFF4D, color: red}
+.timed_out {background-color: #FFFF4D, color: red}
+.oom {background-color: #FFFF4D, color: red}
+.untested {background-color: #FFFF4D}
+
+    </style>
+</head>
+<body>
+<div class="alert alert-info">
+    pointer.scala
+</div>
+
+<table class="src" style="font-size:13px; padding: 0px;">
+
+    
+    <tr id="line1">
+        <td class=na>
+            1
+        </td>
+        <td class="na">
+            <a href="#group1"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">/* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line2">
+        <td class=na>
+            2
+        </td>
+        <td class="na">
+            <a href="#group2"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* This file is part of the diffson project. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line3">
+        <td class=na>
+            3
+        </td>
+        <td class="na">
+            <a href="#group3"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line4">
+        <td class=na>
+            4
+        </td>
+        <td class="na">
+            <a href="#group4"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line5">
+        <td class=na>
+            5
+        </td>
+        <td class="na">
+            <a href="#group5"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* you may not use this file except in compliance with the License. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line6">
+        <td class=na>
+            6
+        </td>
+        <td class="na">
+            <a href="#group6"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* You may obtain a copy of the License at </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line7">
+        <td class=na>
+            7
+        </td>
+        <td class="na">
+            <a href="#group7"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line8">
+        <td class=na>
+            8
+        </td>
+        <td class="na">
+            <a href="#group8"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* http://www.apache.org/licenses/LICENSE-2.0 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line9">
+        <td class=na>
+            9
+        </td>
+        <td class="na">
+            <a href="#group9"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line10">
+        <td class=na>
+            10
+        </td>
+        <td class="na">
+            <a href="#group10"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Unless required by applicable law or agreed to in writing, software </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line11">
+        <td class=na>
+            11
+        </td>
+        <td class="na">
+            <a href="#group11"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* distributed under the License is distributed on an &quot;AS IS&quot; BASIS, </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line12">
+        <td class=na>
+            12
+        </td>
+        <td class="na">
+            <a href="#group12"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line13">
+        <td class=na>
+            13
+        </td>
+        <td class="na">
+            <a href="#group13"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* See the License for the specific language governing permissions and </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line14">
+        <td class=na>
+            14
+        </td>
+        <td class="na">
+            <a href="#group14"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* limitations under the License. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line15">
+        <td class=na>
+            15
+        </td>
+        <td class="na">
+            <a href="#group15"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">*/ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line16">
+        <td class=na>
+            16
+        </td>
+        <td class="na">
+            <a href="#group16"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">package gnieh.diffson </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line17">
+        <td class=na>
+            17
+        </td>
+        <td class="na">
+            <a href="#group17"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line18">
+        <td class=na>
+            18
+        </td>
+        <td class="na">
+            <a href="#group18"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">/** A parsed Json pointer as per RFC-6901. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line19">
+        <td class=na>
+            19
+        </td>
+        <td class="na">
+            <a href="#group19"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> * </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line20">
+        <td class=na>
+            20
+        </td>
+        <td class="na">
+            <a href="#group20"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> *  @author Lucas Satabin </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line21">
+        <td class=na>
+            21
+        </td>
+        <td class="na">
+            <a href="#group21"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> */ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line22">
+        <td class=na>
+            22
+        </td>
+        <td class="na">
+            <a href="#group22"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">sealed abstract class Pointer { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line23">
+        <td class=na>
+            23
+        </td>
+        <td class="na">
+            <a href="#group23"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line24">
+        <td class=na>
+            24
+        </td>
+        <td class="na">
+            <a href="#group24"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  def /(elem: String): Pointer = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line25">
+        <td class=na>
+            25
+        </td>
+        <td class="na">
+            <a href="#group25"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    Path(this, elem) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line26">
+        <td class=na>
+            26
+        </td>
+        <td class="na">
+            <a href="#group26"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line27">
+        <td class=na>
+            27
+        </td>
+        <td class="na">
+            <a href="#group27"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  def /(elem: Int): Pointer = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line28">
+        <td class=na>
+            28
+        </td>
+        <td class="na">
+            <a href="#group28"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    Path(this, elem.toString) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line29">
+        <td class=na>
+            29
+        </td>
+        <td class="na">
+            <a href="#group29"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line30">
+        <td class=na>
+            30
+        </td>
+        <td class="na">
+            <a href="#group30"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line31">
+        <td class=na>
+            31
+        </td>
+        <td class="na">
+            <a href="#group31"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line32">
+        <td class=na>
+            32
+        </td>
+        <td class="na">
+            <a href="#group32"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">object Pointer { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line33">
+        <td class=na>
+            33
+        </td>
+        <td class="na">
+            <a href="#group33"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line34">
+        <td class=na>
+            34
+        </td>
+        <td class="na">
+            <a href="#group34"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  val root: Pointer = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line35">
+        <td class=na>
+            35
+        </td>
+        <td class="na">
+            <a href="#group35"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    Root </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line36">
+        <td class=na>
+            36
+        </td>
+        <td class="na">
+            <a href="#group36"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line37">
+        <td class=na>
+            37
+        </td>
+        <td class="na">
+            <a href="#group37"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  val empty: Pointer = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line38">
+        <td class=na>
+            38
+        </td>
+        <td class="na">
+            <a href="#group38"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    Root </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line39">
+        <td class=na>
+            39
+        </td>
+        <td class="na">
+            <a href="#group39"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line40">
+        <td class=na>
+            40
+        </td>
+        <td class="na">
+            <a href="#group40"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  val Empty: Pointer = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line41">
+        <td class=na>
+            41
+        </td>
+        <td class="na">
+            <a href="#group41"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    Root </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line42">
+        <td class=na>
+            42
+        </td>
+        <td class="na">
+            <a href="#group42"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line43">
+        <td class=na>
+            43
+        </td>
+        <td class="na">
+            <a href="#group43"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  def apply(elems: String*) = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line44">
+        <td class=covered>
+            44
+        </td>
+        <td class="covered">
+            <a href="#group44"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    elems.foldLeft(root)(_ / _) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line45">
+        <td class=na>
+            45
+        </td>
+        <td class="na">
+            <a href="#group45"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line46">
+        <td class=na>
+            46
+        </td>
+        <td class="na">
+            <a href="#group46"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  def unapplySeq(pointer: Pointer): Option[Seq[String]] = pointer match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line47">
+        <td class=covered>
+            47
+        </td>
+        <td class="covered">
+            <a href="#group47"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    case Root             =&gt; Some(Seq()) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line48">
+        <td class=covered>
+            48
+        </td>
+        <td class="covered">
+            <a href="#group48"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    case Path(base, elem) =&gt; unapplySeq(base).map(_ :+ elem) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line49">
+        <td class=na>
+            49
+        </td>
+        <td class="na">
+            <a href="#group49"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line50">
+        <td class=na>
+            50
+        </td>
+        <td class="na">
+            <a href="#group50"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line51">
+        <td class=na>
+            51
+        </td>
+        <td class="na">
+            <a href="#group51"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line52">
+        <td class=na>
+            52
+        </td>
+        <td class="na">
+            <a href="#group52"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line53">
+        <td class=na>
+            53
+        </td>
+        <td class="na">
+            <a href="#group53"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">object / { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line54">
+        <td class=na>
+            54
+        </td>
+        <td class="na">
+            <a href="#group54"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  def unapply(pointer: Pointer): Option[(String, Pointer)] = pointer match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line55">
+        <td class=na>
+            55
+        </td>
+        <td class="na">
+            <a href="#group55"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    case Root             =&gt; None </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line56">
+        <td class=covered>
+            56
+        </td>
+        <td class="covered">
+            <a href="#group56"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    case Path(Root, elem) =&gt; Some(elem -&gt; Pointer.empty) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line57">
+        <td class=uncovered>
+            57
+        </td>
+        <td class="uncovered">
+            <a href="#group57"><b>1</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    case Path(base, elem) =&gt; unapply(base).fold(Some(elem -&gt; Pointer.empty)) { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line58">
+        <td class=covered>
+            58
+        </td>
+        <td class="covered">
+            <a href="#group58"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">      case (first, rest) =&gt; Some(first -&gt; Path(rest, elem)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line59">
+        <td class=na>
+            59
+        </td>
+        <td class="na">
+            <a href="#group59"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line60">
+        <td class=na>
+            60
+        </td>
+        <td class="na">
+            <a href="#group60"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line61">
+        <td class=na>
+            61
+        </td>
+        <td class="na">
+            <a href="#group61"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line62">
+        <td class=na>
+            62
+        </td>
+        <td class="na">
+            <a href="#group62"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line63">
+        <td class=na>
+            63
+        </td>
+        <td class="na">
+            <a href="#group63"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">private case object Root extends Pointer { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line64">
+        <td class=na>
+            64
+        </td>
+        <td class="na">
+            <a href="#group64"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  override def toString = &quot;&quot; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line65">
+        <td class=na>
+            65
+        </td>
+        <td class="na">
+            <a href="#group65"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line66">
+        <td class=na>
+            66
+        </td>
+        <td class="na">
+            <a href="#group66"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line67">
+        <td class=na>
+            67
+        </td>
+        <td class="na">
+            <a href="#group67"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">private final case class Path(prefix: Pointer, elem: String) extends Pointer { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line68">
+        <td class=na>
+            68
+        </td>
+        <td class="na">
+            <a href="#group68"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  override def toString = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line69">
+        <td class=uncovered>
+            69
+        </td>
+        <td class="uncovered">
+            <a href="#group69"><b>2</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">    s&quot;${prefix}/${elem.replace(&quot;~&quot;, &quot;~0&quot;).replace(&quot;/&quot;, &quot;~1&quot;)}&quot; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line70">
+        <td class=na>
+            70
+        </td>
+        <td class="na">
+            <a href="#group70"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+</table>
+
+<h2>Mutants</h2>
+<table class="src" cellpadding="3px">
+    
+    <tr>
+        <td>
+            <a href="#line44" id="group44">44</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line47" id="group47">47</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line48" id="group48">48</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line56" id="group56">56</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line57" id="group57">57</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=alive>Replaced Option.apply[T] with None                 -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line58" id="group58">58</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.circe.CirceSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line69" id="group69">69</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Killed by gnieh.diffson.conformance.SprayConformance</pre>
+            
+                <pre class=alive>Replaced expression, typed A =&gt; A, with its lhs    -&gt; Alive</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+</table>
+
+<h2>Active mutators</h2>
+<ul class="list-group">
+    
+    <li class="list-group-item">ReplaceCaseWithWildcard</li>
+    
+    <li class="list-group-item">ReplaceMathOperators</li>
+    
+    <li class="list-group-item">ReplaceWithIdentityFunction</li>
+    
+    <li class="list-group-item">InvertNegations</li>
+    
+    <li class="list-group-item">AlwaysExecuteConditionals</li>
+    
+    <li class="list-group-item">NeverExecuteConditionals</li>
+    
+    <li class="list-group-item">ReplaceConditionalBoundaries</li>
+    
+    <li class="list-group-item">NegateConditionals</li>
+    
+    <li class="list-group-item">RemoveUnitMethodCalls</li>
+    
+    <li class="list-group-item">ChangeRangeBoundary</li>
+    
+    <li class="list-group-item">ReplaceLogicalOperators</li>
+    
+    <li class="list-group-item">ReplaceWithNone</li>
+    
+    <li class="list-group-item">ReplaceWithNil</li>
+    
+</ul>
+
+<h2>Examined tests</h2>
+<ul class="list-group">
+    
+</ul>
+
+<br/>
+</body>
+</html>

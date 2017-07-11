@@ -1,0 +1,2782 @@
+
+
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        html, body, div, span, p, blockquote, pre {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+body{
+	line-height: 1;
+	color: black;
+	background: white;
+	margin-left: 20px;
+}
+
+.src { 
+	border: 1px solid #dddddd;
+	padding: 0px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+	font-family: Fira Code, Source Code Pro, monospace;
+}
+
+.hljs {
+    padding: 1px;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+}
+
+.covered {background-color: #aaffaa}
+.uncovered {background-color: #ffaaaa}
+.na {background-color: #f8f8f8}
+
+.killed {background-color: #aaffaa}
+.no_coverage {background-color: #ffaaaa}
+.alive {background-color: #ffaaaa}
+.failure {background-color: #FFFF4D, color: red}
+.timed_out {background-color: #FFFF4D, color: red}
+.oom {background-color: #FFFF4D, color: red}
+.untested {background-color: #FFFF4D}
+
+    </style>
+</head>
+<body>
+<div class="alert alert-info">
+    SprayJsonInstance.scala
+</div>
+
+<table class="src" style="font-size:13px; padding: 0px;">
+
+    
+    <tr id="line1">
+        <td class=na>
+            1
+        </td>
+        <td class="na">
+            <a href="#group1"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">/* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line2">
+        <td class=na>
+            2
+        </td>
+        <td class="na">
+            <a href="#group2"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* This file is part of the diffson project. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line3">
+        <td class=na>
+            3
+        </td>
+        <td class="na">
+            <a href="#group3"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Copyright (c) 2016 Lucas Satabin </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line4">
+        <td class=na>
+            4
+        </td>
+        <td class="na">
+            <a href="#group4"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line5">
+        <td class=na>
+            5
+        </td>
+        <td class="na">
+            <a href="#group5"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line6">
+        <td class=na>
+            6
+        </td>
+        <td class="na">
+            <a href="#group6"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* you may not use this file except in compliance with the License. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line7">
+        <td class=na>
+            7
+        </td>
+        <td class="na">
+            <a href="#group7"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* You may obtain a copy of the License at </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line8">
+        <td class=na>
+            8
+        </td>
+        <td class="na">
+            <a href="#group8"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line9">
+        <td class=na>
+            9
+        </td>
+        <td class="na">
+            <a href="#group9"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* http://www.apache.org/licenses/LICENSE-2.0 </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line10">
+        <td class=na>
+            10
+        </td>
+        <td class="na">
+            <a href="#group10"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line11">
+        <td class=na>
+            11
+        </td>
+        <td class="na">
+            <a href="#group11"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* Unless required by applicable law or agreed to in writing, software </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line12">
+        <td class=na>
+            12
+        </td>
+        <td class="na">
+            <a href="#group12"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* distributed under the License is distributed on an &quot;AS IS&quot; BASIS, </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line13">
+        <td class=na>
+            13
+        </td>
+        <td class="na">
+            <a href="#group13"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line14">
+        <td class=na>
+            14
+        </td>
+        <td class="na">
+            <a href="#group14"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* See the License for the specific language governing permissions and </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line15">
+        <td class=na>
+            15
+        </td>
+        <td class="na">
+            <a href="#group15"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">* limitations under the License. </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line16">
+        <td class=na>
+            16
+        </td>
+        <td class="na">
+            <a href="#group16"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">*/ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line17">
+        <td class=na>
+            17
+        </td>
+        <td class="na">
+            <a href="#group17"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">package gnieh.diffson </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line18">
+        <td class=na>
+            18
+        </td>
+        <td class="na">
+            <a href="#group18"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line19">
+        <td class=na>
+            19
+        </td>
+        <td class="na">
+            <a href="#group19"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">import spray.json._ </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line20">
+        <td class=na>
+            20
+        </td>
+        <td class="na">
+            <a href="#group20"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line21">
+        <td class=na>
+            21
+        </td>
+        <td class="na">
+            <a href="#group21"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">object sprayJson extends SprayJsonInstance </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line22">
+        <td class=na>
+            22
+        </td>
+        <td class="na">
+            <a href="#group22"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line23">
+        <td class=na>
+            23
+        </td>
+        <td class="na">
+            <a href="#group23"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">class SprayJsonInstance extends DiffsonInstance[JsValue] { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line24">
+        <td class=na>
+            24
+        </td>
+        <td class="na">
+            <a href="#group24"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line25">
+        <td class=na>
+            25
+        </td>
+        <td class="na">
+            <a href="#group25"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  object DiffsonProtocol extends DiffsonProtocol </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line26">
+        <td class=na>
+            26
+        </td>
+        <td class="na">
+            <a href="#group26"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line27">
+        <td class=na>
+            27
+        </td>
+        <td class="na">
+            <a href="#group27"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  trait DiffsonProtocol extends DefaultJsonProtocol { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line28">
+        <td class=na>
+            28
+        </td>
+        <td class="na">
+            <a href="#group28"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line29">
+        <td class=na>
+            29
+        </td>
+        <td class="na">
+            <a href="#group29"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    implicit def PointerFormat(implicit pointer: JsonPointer): JsonFormat[Pointer] = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line30">
+        <td class=na>
+            30
+        </td>
+        <td class="na">
+            <a href="#group30"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new JsonFormat[Pointer] { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line31">
+        <td class=na>
+            31
+        </td>
+        <td class="na">
+            <a href="#group31"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line32">
+        <td class=na>
+            32
+        </td>
+        <td class="na">
+            <a href="#group32"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        def write(p: Pointer): JsString = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line33">
+        <td class=na>
+            33
+        </td>
+        <td class="na">
+            <a href="#group33"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          JsString(p.toString) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line34">
+        <td class=na>
+            34
+        </td>
+        <td class="na">
+            <a href="#group34"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line35">
+        <td class=uncovered>
+            35
+        </td>
+        <td class="uncovered">
+            <a href="#group35"><b>1</b></a>
+        </td>
+        <td width="99%" class="uncovered">
+            <pre><code class="scala uncovered">        def read(value: JsValue): Pointer = value match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line36">
+        <td class=na>
+            36
+        </td>
+        <td class="na">
+            <a href="#group36"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          case JsString(s) =&gt; pointer.parse(s) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line37">
+        <td class=na>
+            37
+        </td>
+        <td class="na">
+            <a href="#group37"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          case _           =&gt; throw new FormatException(f&quot;Pointer expected: $value&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line38">
+        <td class=na>
+            38
+        </td>
+        <td class="na">
+            <a href="#group38"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line39">
+        <td class=na>
+            39
+        </td>
+        <td class="na">
+            <a href="#group39"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line40">
+        <td class=na>
+            40
+        </td>
+        <td class="na">
+            <a href="#group40"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line41">
+        <td class=na>
+            41
+        </td>
+        <td class="na">
+            <a href="#group41"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line42">
+        <td class=na>
+            42
+        </td>
+        <td class="na">
+            <a href="#group42"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    implicit def OperationFormat(implicit pointer: JsonPointer): RootJsonFormat[Operation] = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line43">
+        <td class=na>
+            43
+        </td>
+        <td class="na">
+            <a href="#group43"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new RootJsonFormat[Operation] { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line44">
+        <td class=na>
+            44
+        </td>
+        <td class="na">
+            <a href="#group44"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line45">
+        <td class=na>
+            45
+        </td>
+        <td class="na">
+            <a href="#group45"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        def write(op: Operation): JsObject = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line46">
+        <td class=na>
+            46
+        </td>
+        <td class="na">
+            <a href="#group46"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          op match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line47">
+        <td class=na>
+            47
+        </td>
+        <td class="na">
+            <a href="#group47"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            case Add(path, value) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line48">
+        <td class=na>
+            48
+        </td>
+        <td class="na">
+            <a href="#group48"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              JsObject( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line49">
+        <td class=na>
+            49
+        </td>
+        <td class="na">
+            <a href="#group49"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;op&quot; -&gt; JsString(&quot;add&quot;), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line50">
+        <td class=na>
+            50
+        </td>
+        <td class="na">
+            <a href="#group50"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;path&quot; -&gt; JsString(path.toString), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line51">
+        <td class=na>
+            51
+        </td>
+        <td class="na">
+            <a href="#group51"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;value&quot; -&gt; value) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line52">
+        <td class=na>
+            52
+        </td>
+        <td class="na">
+            <a href="#group52"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            case Remove(path, None) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line53">
+        <td class=na>
+            53
+        </td>
+        <td class="na">
+            <a href="#group53"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              JsObject( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line54">
+        <td class=na>
+            54
+        </td>
+        <td class="na">
+            <a href="#group54"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;op&quot; -&gt; JsString(&quot;remove&quot;), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line55">
+        <td class=na>
+            55
+        </td>
+        <td class="na">
+            <a href="#group55"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;path&quot; -&gt; JsString(path.toString)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line56">
+        <td class=na>
+            56
+        </td>
+        <td class="na">
+            <a href="#group56"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            case Remove(path, Some(old)) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line57">
+        <td class=na>
+            57
+        </td>
+        <td class="na">
+            <a href="#group57"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              JsObject( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line58">
+        <td class=na>
+            58
+        </td>
+        <td class="na">
+            <a href="#group58"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;op&quot; -&gt; JsString(&quot;remove&quot;), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line59">
+        <td class=na>
+            59
+        </td>
+        <td class="na">
+            <a href="#group59"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;path&quot; -&gt; JsString(path.toString), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line60">
+        <td class=na>
+            60
+        </td>
+        <td class="na">
+            <a href="#group60"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;old&quot; -&gt; old) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line61">
+        <td class=na>
+            61
+        </td>
+        <td class="na">
+            <a href="#group61"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            case Replace(path, value, None) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line62">
+        <td class=na>
+            62
+        </td>
+        <td class="na">
+            <a href="#group62"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              JsObject( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line63">
+        <td class=na>
+            63
+        </td>
+        <td class="na">
+            <a href="#group63"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;op&quot; -&gt; JsString(&quot;replace&quot;), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line64">
+        <td class=na>
+            64
+        </td>
+        <td class="na">
+            <a href="#group64"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;path&quot; -&gt; JsString(path.toString), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line65">
+        <td class=na>
+            65
+        </td>
+        <td class="na">
+            <a href="#group65"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;value&quot; -&gt; value) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line66">
+        <td class=na>
+            66
+        </td>
+        <td class="na">
+            <a href="#group66"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            case Replace(path, value, Some(old)) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line67">
+        <td class=na>
+            67
+        </td>
+        <td class="na">
+            <a href="#group67"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              JsObject( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line68">
+        <td class=na>
+            68
+        </td>
+        <td class="na">
+            <a href="#group68"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;op&quot; -&gt; JsString(&quot;replace&quot;), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line69">
+        <td class=na>
+            69
+        </td>
+        <td class="na">
+            <a href="#group69"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;path&quot; -&gt; JsString(path.toString), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line70">
+        <td class=na>
+            70
+        </td>
+        <td class="na">
+            <a href="#group70"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;value&quot; -&gt; value, </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line71">
+        <td class=na>
+            71
+        </td>
+        <td class="na">
+            <a href="#group71"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;old&quot; -&gt; old) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line72">
+        <td class=na>
+            72
+        </td>
+        <td class="na">
+            <a href="#group72"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            case Move(from, path) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line73">
+        <td class=na>
+            73
+        </td>
+        <td class="na">
+            <a href="#group73"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              JsObject( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line74">
+        <td class=na>
+            74
+        </td>
+        <td class="na">
+            <a href="#group74"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;op&quot; -&gt; JsString(&quot;move&quot;), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line75">
+        <td class=na>
+            75
+        </td>
+        <td class="na">
+            <a href="#group75"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;from&quot; -&gt; JsString(from.toString), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line76">
+        <td class=na>
+            76
+        </td>
+        <td class="na">
+            <a href="#group76"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;path&quot; -&gt; JsString(path.toString)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line77">
+        <td class=na>
+            77
+        </td>
+        <td class="na">
+            <a href="#group77"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            case Copy(from, path) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line78">
+        <td class=na>
+            78
+        </td>
+        <td class="na">
+            <a href="#group78"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              JsObject( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line79">
+        <td class=na>
+            79
+        </td>
+        <td class="na">
+            <a href="#group79"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;op&quot; -&gt; JsString(&quot;copy&quot;), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line80">
+        <td class=na>
+            80
+        </td>
+        <td class="na">
+            <a href="#group80"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;from&quot; -&gt; JsString(from.toString), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line81">
+        <td class=na>
+            81
+        </td>
+        <td class="na">
+            <a href="#group81"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;path&quot; -&gt; JsString(path.toString)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line82">
+        <td class=na>
+            82
+        </td>
+        <td class="na">
+            <a href="#group82"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            case Test(path, value) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line83">
+        <td class=na>
+            83
+        </td>
+        <td class="na">
+            <a href="#group83"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              JsObject( </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line84">
+        <td class=na>
+            84
+        </td>
+        <td class="na">
+            <a href="#group84"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;op&quot; -&gt; JsString(&quot;test&quot;), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line85">
+        <td class=na>
+            85
+        </td>
+        <td class="na">
+            <a href="#group85"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;path&quot; -&gt; JsString(path.toString), </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line86">
+        <td class=na>
+            86
+        </td>
+        <td class="na">
+            <a href="#group86"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                &quot;value&quot; -&gt; value) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line87">
+        <td class=na>
+            87
+        </td>
+        <td class="na">
+            <a href="#group87"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line88">
+        <td class=na>
+            88
+        </td>
+        <td class="na">
+            <a href="#group88"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line89">
+        <td class=covered>
+            89
+        </td>
+        <td class="covered">
+            <a href="#group89"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        def read(value: JsValue): Operation = value match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line90">
+        <td class=na>
+            90
+        </td>
+        <td class="na">
+            <a href="#group90"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          case obj @ JsObject(fields) if fields.contains(&quot;op&quot;) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line91">
+        <td class=na>
+            91
+        </td>
+        <td class="na">
+            <a href="#group91"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            fields(&quot;op&quot;) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line92">
+        <td class=na>
+            92
+        </td>
+        <td class="na">
+            <a href="#group92"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              case JsString(&quot;add&quot;) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line93">
+        <td class=na>
+            93
+        </td>
+        <td class="na">
+            <a href="#group93"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                obj.getFields(&quot;path&quot;, &quot;value&quot;) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line94">
+        <td class=na>
+            94
+        </td>
+        <td class="na">
+            <a href="#group94"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case Seq(JsString(path), value) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line95">
+        <td class=na>
+            95
+        </td>
+        <td class="na">
+            <a href="#group95"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    Add(pointer.parse(path), value) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line96">
+        <td class=na>
+            96
+        </td>
+        <td class="na">
+            <a href="#group96"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line97">
+        <td class=na>
+            97
+        </td>
+        <td class="na">
+            <a href="#group97"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    throw new FormatException(&quot;missing &#x27;path&#x27; or &#x27;value&#x27; field&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line98">
+        <td class=na>
+            98
+        </td>
+        <td class="na">
+            <a href="#group98"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line99">
+        <td class=na>
+            99
+        </td>
+        <td class="na">
+            <a href="#group99"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              case JsString(&quot;remove&quot;) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line100">
+        <td class=na>
+            100
+        </td>
+        <td class="na">
+            <a href="#group100"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                obj.getFields(&quot;path&quot;, &quot;old&quot;) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line101">
+        <td class=na>
+            101
+        </td>
+        <td class="na">
+            <a href="#group101"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case Seq(JsString(path)) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line102">
+        <td class=na>
+            102
+        </td>
+        <td class="na">
+            <a href="#group102"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    Remove(pointer.parse(path)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line103">
+        <td class=na>
+            103
+        </td>
+        <td class="na">
+            <a href="#group103"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case Seq(JsString(path), value) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line104">
+        <td class=covered>
+            104
+        </td>
+        <td class="covered">
+            <a href="#group104"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">                    Remove(pointer.parse(path), Some(value)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line105">
+        <td class=na>
+            105
+        </td>
+        <td class="na">
+            <a href="#group105"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line106">
+        <td class=na>
+            106
+        </td>
+        <td class="na">
+            <a href="#group106"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    throw new FormatException(&quot;missing &#x27;path&#x27; field&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line107">
+        <td class=na>
+            107
+        </td>
+        <td class="na">
+            <a href="#group107"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line108">
+        <td class=na>
+            108
+        </td>
+        <td class="na">
+            <a href="#group108"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              case JsString(&quot;replace&quot;) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line109">
+        <td class=na>
+            109
+        </td>
+        <td class="na">
+            <a href="#group109"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                obj.getFields(&quot;path&quot;, &quot;value&quot;, &quot;old&quot;) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line110">
+        <td class=na>
+            110
+        </td>
+        <td class="na">
+            <a href="#group110"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case Seq(JsString(path), value) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line111">
+        <td class=na>
+            111
+        </td>
+        <td class="na">
+            <a href="#group111"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    Replace(pointer.parse(path), value) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line112">
+        <td class=na>
+            112
+        </td>
+        <td class="na">
+            <a href="#group112"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case Seq(JsString(path), value, old) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line113">
+        <td class=covered>
+            113
+        </td>
+        <td class="covered">
+            <a href="#group113"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">                    Replace(pointer.parse(path), value, Some(old)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line114">
+        <td class=na>
+            114
+        </td>
+        <td class="na">
+            <a href="#group114"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line115">
+        <td class=na>
+            115
+        </td>
+        <td class="na">
+            <a href="#group115"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    throw new FormatException(&quot;missing &#x27;path&#x27; or &#x27;value&#x27; field&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line116">
+        <td class=na>
+            116
+        </td>
+        <td class="na">
+            <a href="#group116"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line117">
+        <td class=na>
+            117
+        </td>
+        <td class="na">
+            <a href="#group117"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              case JsString(&quot;move&quot;) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line118">
+        <td class=na>
+            118
+        </td>
+        <td class="na">
+            <a href="#group118"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                obj.getFields(&quot;from&quot;, &quot;path&quot;) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line119">
+        <td class=na>
+            119
+        </td>
+        <td class="na">
+            <a href="#group119"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case Seq(JsString(from), JsString(path)) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line120">
+        <td class=na>
+            120
+        </td>
+        <td class="na">
+            <a href="#group120"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    Move(pointer.parse(from), pointer.parse(path)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line121">
+        <td class=na>
+            121
+        </td>
+        <td class="na">
+            <a href="#group121"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line122">
+        <td class=na>
+            122
+        </td>
+        <td class="na">
+            <a href="#group122"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    throw new FormatException(&quot;missing &#x27;from&#x27; or &#x27;path&#x27; field&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line123">
+        <td class=na>
+            123
+        </td>
+        <td class="na">
+            <a href="#group123"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line124">
+        <td class=na>
+            124
+        </td>
+        <td class="na">
+            <a href="#group124"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              case JsString(&quot;copy&quot;) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line125">
+        <td class=na>
+            125
+        </td>
+        <td class="na">
+            <a href="#group125"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                obj.getFields(&quot;from&quot;, &quot;path&quot;) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line126">
+        <td class=na>
+            126
+        </td>
+        <td class="na">
+            <a href="#group126"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case Seq(JsString(from), JsString(path)) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line127">
+        <td class=na>
+            127
+        </td>
+        <td class="na">
+            <a href="#group127"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    Copy(pointer.parse(from), pointer.parse(path)) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line128">
+        <td class=na>
+            128
+        </td>
+        <td class="na">
+            <a href="#group128"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line129">
+        <td class=na>
+            129
+        </td>
+        <td class="na">
+            <a href="#group129"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    throw new FormatException(&quot;missing &#x27;from&#x27; or &#x27;path&#x27; field&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line130">
+        <td class=na>
+            130
+        </td>
+        <td class="na">
+            <a href="#group130"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line131">
+        <td class=na>
+            131
+        </td>
+        <td class="na">
+            <a href="#group131"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              case JsString(&quot;test&quot;) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line132">
+        <td class=na>
+            132
+        </td>
+        <td class="na">
+            <a href="#group132"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                obj.getFields(&quot;path&quot;, &quot;value&quot;) match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line133">
+        <td class=na>
+            133
+        </td>
+        <td class="na">
+            <a href="#group133"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case Seq(JsString(path), value) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line134">
+        <td class=na>
+            134
+        </td>
+        <td class="na">
+            <a href="#group134"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    Test(pointer.parse(path), value) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line135">
+        <td class=na>
+            135
+        </td>
+        <td class="na">
+            <a href="#group135"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                  case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line136">
+        <td class=na>
+            136
+        </td>
+        <td class="na">
+            <a href="#group136"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                    throw new FormatException(&quot;missing &#x27;path&#x27; or &#x27;value&#x27; field&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line137">
+        <td class=na>
+            137
+        </td>
+        <td class="na">
+            <a href="#group137"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line138">
+        <td class=na>
+            138
+        </td>
+        <td class="na">
+            <a href="#group138"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">              case op =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line139">
+        <td class=na>
+            139
+        </td>
+        <td class="na">
+            <a href="#group139"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">                throw new FormatException(f&quot;Unknown operation ${op.compactPrint}&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line140">
+        <td class=na>
+            140
+        </td>
+        <td class="na">
+            <a href="#group140"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line141">
+        <td class=na>
+            141
+        </td>
+        <td class="na">
+            <a href="#group141"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line142">
+        <td class=na>
+            142
+        </td>
+        <td class="na">
+            <a href="#group142"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            throw new FormatException(f&quot;Operation expected: $value&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line143">
+        <td class=na>
+            143
+        </td>
+        <td class="na">
+            <a href="#group143"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line144">
+        <td class=na>
+            144
+        </td>
+        <td class="na">
+            <a href="#group144"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line145">
+        <td class=na>
+            145
+        </td>
+        <td class="na">
+            <a href="#group145"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line146">
+        <td class=na>
+            146
+        </td>
+        <td class="na">
+            <a href="#group146"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    implicit def JsonPatchFormat(implicit pointer: JsonPointer): RootJsonFormat[JsonPatch] = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line147">
+        <td class=na>
+            147
+        </td>
+        <td class="na">
+            <a href="#group147"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      new RootJsonFormat[JsonPatch] { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line148">
+        <td class=na>
+            148
+        </td>
+        <td class="na">
+            <a href="#group148"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line149">
+        <td class=na>
+            149
+        </td>
+        <td class="na">
+            <a href="#group149"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        def write(patch: JsonPatch): JsArray = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line150">
+        <td class=na>
+            150
+        </td>
+        <td class="na">
+            <a href="#group150"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          JsArray(patch.ops.map(_.toJson).toVector) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line151">
+        <td class=na>
+            151
+        </td>
+        <td class="na">
+            <a href="#group151"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line152">
+        <td class=covered>
+            152
+        </td>
+        <td class="covered">
+            <a href="#group152"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        def read(value: JsValue): JsonPatch = value match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line153">
+        <td class=na>
+            153
+        </td>
+        <td class="na">
+            <a href="#group153"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          case JsArray(ops) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line154">
+        <td class=na>
+            154
+        </td>
+        <td class="na">
+            <a href="#group154"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">            new JsonPatch(ops.map(_.convertTo[Operation]).toList) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line155">
+        <td class=na>
+            155
+        </td>
+        <td class="na">
+            <a href="#group155"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">          case _ =&gt; throw new FormatException(&quot;JsonPatch expected&quot;) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line156">
+        <td class=na>
+            156
+        </td>
+        <td class="na">
+            <a href="#group156"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line157">
+        <td class=na>
+            157
+        </td>
+        <td class="na">
+            <a href="#group157"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line158">
+        <td class=na>
+            158
+        </td>
+        <td class="na">
+            <a href="#group158"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line159">
+        <td class=na>
+            159
+        </td>
+        <td class="na">
+            <a href="#group159"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line160">
+        <td class=na>
+            160
+        </td>
+        <td class="na">
+            <a href="#group160"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line161">
+        <td class=na>
+            161
+        </td>
+        <td class="na">
+            <a href="#group161"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line162">
+        <td class=na>
+            162
+        </td>
+        <td class="na">
+            <a href="#group162"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  object provider extends JsonProvider { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line163">
+        <td class=na>
+            163
+        </td>
+        <td class="na">
+            <a href="#group163"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line164">
+        <td class=na>
+            164
+        </td>
+        <td class="na">
+            <a href="#group164"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    type Marshaller[T] = JsonWriter[T] </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line165">
+        <td class=na>
+            165
+        </td>
+        <td class="na">
+            <a href="#group165"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    type Unmarshaller[T] = JsonReader[T] </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line166">
+        <td class=na>
+            166
+        </td>
+        <td class="na">
+            <a href="#group166"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line167">
+        <td class=na>
+            167
+        </td>
+        <td class="na">
+            <a href="#group167"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    val JsNull: JsValue = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line168">
+        <td class=na>
+            168
+        </td>
+        <td class="na">
+            <a href="#group168"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      spray.json.JsNull </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line169">
+        <td class=na>
+            169
+        </td>
+        <td class="na">
+            <a href="#group169"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line170">
+        <td class=na>
+            170
+        </td>
+        <td class="na">
+            <a href="#group170"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def applyArray(elems: Vector[JsValue]): JsValue = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line171">
+        <td class=na>
+            171
+        </td>
+        <td class="na">
+            <a href="#group171"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      spray.json.JsArray(elems) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line172">
+        <td class=na>
+            172
+        </td>
+        <td class="na">
+            <a href="#group172"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line173">
+        <td class=na>
+            173
+        </td>
+        <td class="na">
+            <a href="#group173"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def applyObject(fields: Map[String, JsValue]): JsValue = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line174">
+        <td class=na>
+            174
+        </td>
+        <td class="na">
+            <a href="#group174"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      spray.json.JsObject(fields) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line175">
+        <td class=na>
+            175
+        </td>
+        <td class="na">
+            <a href="#group175"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line176">
+        <td class=na>
+            176
+        </td>
+        <td class="na">
+            <a href="#group176"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def compactPrint(value: JsValue): String = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line177">
+        <td class=na>
+            177
+        </td>
+        <td class="na">
+            <a href="#group177"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      value.compactPrint </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line178">
+        <td class=na>
+            178
+        </td>
+        <td class="na">
+            <a href="#group178"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line179">
+        <td class=na>
+            179
+        </td>
+        <td class="na">
+            <a href="#group179"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def marshall[T: Marshaller](value: T): JsValue = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line180">
+        <td class=na>
+            180
+        </td>
+        <td class="na">
+            <a href="#group180"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      value.toJson </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line181">
+        <td class=na>
+            181
+        </td>
+        <td class="na">
+            <a href="#group181"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line182">
+        <td class=na>
+            182
+        </td>
+        <td class="na">
+            <a href="#group182"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def unmarshall[T: Unmarshaller](value: JsValue): T = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line183">
+        <td class=na>
+            183
+        </td>
+        <td class="na">
+            <a href="#group183"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      value.convertTo[T] </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line184">
+        <td class=na>
+            184
+        </td>
+        <td class="na">
+            <a href="#group184"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line185">
+        <td class=na>
+            185
+        </td>
+        <td class="na">
+            <a href="#group185"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def parseJson(s: String): JsValue = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line186">
+        <td class=na>
+            186
+        </td>
+        <td class="na">
+            <a href="#group186"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      JsonParser(s) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line187">
+        <td class=na>
+            187
+        </td>
+        <td class="na">
+            <a href="#group187"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line188">
+        <td class=na>
+            188
+        </td>
+        <td class="na">
+            <a href="#group188"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    implicit val patchMarshaller: Marshaller[JsonPatch] = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line189">
+        <td class=na>
+            189
+        </td>
+        <td class="na">
+            <a href="#group189"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      DiffsonProtocol.JsonPatchFormat </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line190">
+        <td class=na>
+            190
+        </td>
+        <td class="na">
+            <a href="#group190"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line191">
+        <td class=na>
+            191
+        </td>
+        <td class="na">
+            <a href="#group191"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    implicit val patchUnmarshaller: Unmarshaller[JsonPatch] = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line192">
+        <td class=na>
+            192
+        </td>
+        <td class="na">
+            <a href="#group192"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      DiffsonProtocol.JsonPatchFormat </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line193">
+        <td class=na>
+            193
+        </td>
+        <td class="na">
+            <a href="#group193"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line194">
+        <td class=na>
+            194
+        </td>
+        <td class="na">
+            <a href="#group194"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    def prettyPrint(value: JsValue): String = </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line195">
+        <td class=na>
+            195
+        </td>
+        <td class="na">
+            <a href="#group195"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      value.prettyPrint </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line196">
+        <td class=na>
+            196
+        </td>
+        <td class="na">
+            <a href="#group196"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line197">
+        <td class=covered>
+            197
+        </td>
+        <td class="covered">
+            <a href="#group197"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    def unapplyArray(value: JsValue): Option[Vector[JsValue]] = value match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line198">
+        <td class=na>
+            198
+        </td>
+        <td class="na">
+            <a href="#group198"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      case spray.json.JsArray(elems) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line199">
+        <td class=covered>
+            199
+        </td>
+        <td class="covered">
+            <a href="#group199"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        Some(elems) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line200">
+        <td class=na>
+            200
+        </td>
+        <td class="na">
+            <a href="#group200"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line201">
+        <td class=na>
+            201
+        </td>
+        <td class="na">
+            <a href="#group201"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        None </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line202">
+        <td class=na>
+            202
+        </td>
+        <td class="na">
+            <a href="#group202"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line203">
+        <td class=na>
+            203
+        </td>
+        <td class="na">
+            <a href="#group203"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line204">
+        <td class=covered>
+            204
+        </td>
+        <td class="covered">
+            <a href="#group204"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">    def unapplyObject(value: JsValue): Option[Map[String, JsValue]] = value match { </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line205">
+        <td class=na>
+            205
+        </td>
+        <td class="na">
+            <a href="#group205"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      case spray.json.JsObject(fields) =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line206">
+        <td class=covered>
+            206
+        </td>
+        <td class="covered">
+            <a href="#group206"><b>1</b></a>
+        </td>
+        <td width="99%" class="covered">
+            <pre><code class="scala covered">        Some(fields) </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line207">
+        <td class=na>
+            207
+        </td>
+        <td class="na">
+            <a href="#group207"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">      case _ =&gt; </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line208">
+        <td class=na>
+            208
+        </td>
+        <td class="na">
+            <a href="#group208"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">        None </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line209">
+        <td class=na>
+            209
+        </td>
+        <td class="na">
+            <a href="#group209"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">    } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line210">
+        <td class=na>
+            210
+        </td>
+        <td class="na">
+            <a href="#group210"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line211">
+        <td class=na>
+            211
+        </td>
+        <td class="na">
+            <a href="#group211"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">  } </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line212">
+        <td class=na>
+            212
+        </td>
+        <td class="na">
+            <a href="#group212"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na"> </code></pre>
+        </td>
+    </tr>
+    
+    <tr id="line213">
+        <td class=na>
+            213
+        </td>
+        <td class="na">
+            <a href="#group213"><b></b></a>
+        </td>
+        <td width="99%" class="na">
+            <pre><code class="scala na">} </code></pre>
+        </td>
+    </tr>
+    
+</table>
+
+<h2>Mutants</h2>
+<table class="src" cellpadding="3px">
+    
+    <tr>
+        <td>
+            <a href="#line35" id="group35">35</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=no_coverage>Replaced pattern match with wildcard case          -&gt; NoTestCoverage</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line89" id="group89">89</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced pattern match with wildcard case          -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestSerialization</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line104" id="group104">104</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestSerialization</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line113" id="group113">113</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestSerialization</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line152" id="group152">152</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced pattern match with wildcard case          -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestSerialization</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line197" id="group197">197</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced pattern match with wildcard case          -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonPatch</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line199" id="group199">199</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestJsonPatch</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line204" id="group204">204</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced pattern match with wildcard case          -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+    <tr>
+        <td>
+            <a href="#line206" id="group206">206</a>
+        </td>
+        <td width="99%">
+            
+                <pre class=killed>Replaced Option.apply[T] with None                 -&gt; Killed by gnieh.diffson.test.sprayJson.SprayTestSimpleDiff</pre>
+            
+        </td>
+    </tr>
+    <tr></tr>
+    
+</table>
+
+<h2>Active mutators</h2>
+<ul class="list-group">
+    
+    <li class="list-group-item">ReplaceCaseWithWildcard</li>
+    
+    <li class="list-group-item">ReplaceMathOperators</li>
+    
+    <li class="list-group-item">ReplaceWithIdentityFunction</li>
+    
+    <li class="list-group-item">InvertNegations</li>
+    
+    <li class="list-group-item">AlwaysExecuteConditionals</li>
+    
+    <li class="list-group-item">NeverExecuteConditionals</li>
+    
+    <li class="list-group-item">ReplaceConditionalBoundaries</li>
+    
+    <li class="list-group-item">NegateConditionals</li>
+    
+    <li class="list-group-item">RemoveUnitMethodCalls</li>
+    
+    <li class="list-group-item">ChangeRangeBoundary</li>
+    
+    <li class="list-group-item">ReplaceLogicalOperators</li>
+    
+    <li class="list-group-item">ReplaceWithNone</li>
+    
+    <li class="list-group-item">ReplaceWithNil</li>
+    
+</ul>
+
+<h2>Examined tests</h2>
+<ul class="list-group">
+    
+</ul>
+
+<br/>
+</body>
+</html>
