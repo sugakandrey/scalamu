@@ -43,7 +43,7 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
   }
 
   def main(args: Array[String]): Unit = {
-    LoggerConfiguration.configurePatternForName("COVERAGE-WORKER")
+    LoggerConfiguration.configureLoggingForName("COVERAGE-WORKER")
     execute(args)
   }
 }

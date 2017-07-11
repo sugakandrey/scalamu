@@ -6,7 +6,7 @@ import ch.qos.logback.core.ConsoleAppender
 import org.slf4j.{LoggerFactory, Logger => SL4JLogger}
 
 object LoggerConfiguration {
-  def configurePatternForName(name: String): Unit = {
+  def configureLoggingForName(name: String): Unit = {
     val logger = LoggerFactory.getLogger(SL4JLogger.ROOT_LOGGER_NAME).asInstanceOf[LogbackLogger]
     logger.detachAndStopAllAppenders()
 
