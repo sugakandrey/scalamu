@@ -18,4 +18,6 @@ class JUnitFramework(override val arguments: String) extends TestingFramework {
   )
 }
 
-object JUnitFramework extends JUnitFramework("")
+object JUnitFramework extends JUnitFramework("") {
+  def apply(arguments: String): JUnitFramework = new JUnitFramework(arguments)
+}

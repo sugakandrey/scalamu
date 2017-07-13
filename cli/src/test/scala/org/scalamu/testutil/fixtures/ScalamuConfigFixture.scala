@@ -23,6 +23,7 @@ trait ScalamuConfigFixture extends TestSuite {
   def timeoutConst: Long                  = 2000
   def threads: Int                        = Runtime.getRuntime.availableProcessors()
   def verbose: Boolean                    = false
+  def recompileOnly: Boolean              = false
 
   def withConfig(code: ScalamuConfig => Any): Any =
     code(
@@ -40,7 +41,8 @@ trait ScalamuConfigFixture extends TestSuite {
         timeoutFactor,
         timeoutConst,
         threads,
-        verbose
+        verbose,
+        recompileOnly
       )
     )
 }

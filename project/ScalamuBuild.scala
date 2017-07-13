@@ -115,7 +115,6 @@ object ScalamuBuild {
     .dependsOn(commandLine, common, plugin, report)
     .settings(
       artifact in (Compile, assembly) ~= { _.copy(`classifier` = Some("assembly")) },
-      assemblyOption in assembly ~= { _.copy(includeScala = false) },
       addArtifact(artifact in (Compile, assembly), assembly),
       assemblyShadeRules in assembly := 
         Seq("cats.**", "shapeless.**", "io.circe.**", "scalaz.**").map(shade)

@@ -28,7 +28,7 @@ trait HasAppropriateName extends TestClassFilter {
   val nameFilter: NameFilter
 
   override def apply(info: ClassInfo): Option[TestClassInfo] =
-    super.apply(info).filter(test => !nameFilter(test.info.name.fullName))
+    super.apply(info).filterNot(test => nameFilter(test.info.name.fullName))
 }
 
 trait NotAbstract extends TestClassFilterMixin {

@@ -67,6 +67,8 @@ object EntryPoint {
     val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
     log.info(s"Finished recompilation in $compilationTime seconds.")
     log.info(s"Total mutations generated: ${reporter.mutants.size}")
+    
+    if (config.recompileOnly) sys.exit(0)
 
     if (reporter.mutants.isEmpty) {
       log.error(

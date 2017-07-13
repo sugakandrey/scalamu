@@ -14,4 +14,6 @@ class Specs2Framework(override val arguments: String) extends TestingFramework {
     new SuperclassBasedFilter(classOf[SpecificationStructure], this) with NotAbstract
 }
 
-object Specs2Framework extends Specs2Framework("")
+object Specs2Framework extends Specs2Framework("") {
+  def apply(arguments: String): Specs2Framework = new Specs2Framework(arguments)
+}

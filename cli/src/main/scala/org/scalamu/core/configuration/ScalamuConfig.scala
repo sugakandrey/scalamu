@@ -25,6 +25,7 @@ import scala.util.matching.Regex
  * @param timeoutConst additional flat amount of allowed time for tests to run (applied after timeoutFactor)
  * @param parallelism number of runners to be used for mutation analysis
  * @param verbose if true, be verbose about every step
+ * @param recompileOnly Only run project recompilation (for internal testing)
  */
 final case class ScalamuConfig(
   reportDir: Path = Paths.get("."),
@@ -40,7 +41,8 @@ final case class ScalamuConfig(
   timeoutFactor: Double = 1.5,
   timeoutConst: Long = 2000,
   parallelism: Int = 1,
-  verbose: Boolean = false
+  verbose: Boolean = false,
+  recompileOnly: Boolean = false
 ) {
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
 }
@@ -115,7 +117,7 @@ object ScalamuConfig {
       .text("Per framework test runner options")
       .validate(
         options =>
-          if (!options.keys.forall(TestingFramework.frameworkByName.contains))
+          if (!options.keys.forall(TestingFramework.frameworkNames.contains))
             failure("Unsupported framework name.")
           else
           success
@@ -148,6 +150,10 @@ object ScalamuConfig {
     opt[Unit]("verbose")
       .text("be verbose about every step")
       .action((_, config) => config.copy(verbose = true))
+
+    opt[Unit]("recompileOnly")
+      .text("Do not perform mutation analysis (internal testing option)")
+      .action((_, config) => config.copy(recompileOnly = true))
   }
 
   def parseConfig[T](args: Seq[String]): ScalamuConfig =

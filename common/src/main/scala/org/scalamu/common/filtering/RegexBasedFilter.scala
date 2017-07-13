@@ -7,6 +7,6 @@ object RegexBasedFilter {
 }
 
 class RegexBasedFilter(ignoreSymbols: Seq[Regex]) extends NameFilter {
-  override def isSymbolIgnored(symbolName: String): Boolean =
+  override def isNameIgnored(symbolName: String): Boolean =
     ignoreSymbols.exists(_.pattern.matcher(symbolName).matches())
 }

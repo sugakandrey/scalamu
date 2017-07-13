@@ -14,4 +14,6 @@ class UTestFramework(override val arguments: String) extends TestingFramework {
     new SuperclassBasedFilter(classOf[TestSuite], this) with IsAModule with HasNoArgConstructor
 }
 
-object UTestFramework extends UTestFramework("")
+object UTestFramework extends UTestFramework("") {
+  def apply(arguments: String): UTestFramework = new UTestFramework(arguments)
+}

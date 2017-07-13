@@ -10,7 +10,7 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.scalamu.core.coverage._
 import org.scalamu.core.runners._
-import org.scalamu.testapi.{CompositeFramework, SuiteFailure, TestClassFileFinder}
+import org.scalamu.testapi.{SuiteFailure, TestClassFileFinder, TestClassFilter, TestingFramework}
 
 object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]] {
   private val log = Logger[CoverageProcess.type]
@@ -34,16 +34,18 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
     val reader                      = new InvocationDataReader(invocationDataDir)
     reader.clearData()
     log.debug(s"Initialized InvocationDataReader in $invocationDataDir.")
-    val analyzer = new StatementCoverageAnalyzer(reader)
-    val suites = new TestClassFileFinder(
-      new CompositeFramework(config.testingOptions, config.excludeTestsClasses).filter
-    ).findAll(config.testClassDirs)
+    val analyzer   = new StatementCoverageAnalyzer(reader)
+    val frameworks = TestingFramework.instantiateAvailableFrameworks(config.testingOptions)
+    val filter     = TestClassFilter.forFrameworks(frameworks, config.excludeTestsClasses)
+    val finder     = new TestClassFileFinder(filter)
+    val suites     = finder.findAll(config.testClassDirs)
     log.info(s"Discovered ${suites.size} test suites. Analyzing coverage now...")
     suites.iterator.map(analyzer.forSuite)
   }
 
   def main(args: Array[String]): Unit = {
     LoggerConfiguration.configureLoggingForName("COVERAGE-WORKER")
+    log.debug(scala.util.Properties.javaClassPath)
     execute(args)
   }
 }
