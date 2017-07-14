@@ -9,5 +9,5 @@ final case class IgnoreCoverageStatementsFilter(filters: Seq[Regex])
     extends RegexBasedFilter(IgnoreCoverageStatementsFilter.coverageStatementsFilter +: filters)
 
 object IgnoreCoverageStatementsFilter {
-  private val coverageStatementsFilter = """org.scalamu.core.coverage.*""".r
+  private val coverageStatementsFilter = """org.scalamu.compilation.ForgetfulInvoker.*""".r
 }

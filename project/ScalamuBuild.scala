@@ -7,9 +7,9 @@ import sbtassembly.ShadeRule
 
 object ScalamuBuild {
   lazy val commonSettings = Seq(
-    test in assembly := {},
-    organization := "org.scalamu",
-    scalaVersion := "2.12.2",
+    test in assembly   := {},
+    organization       := "org.scalamu",
+    scalaVersion       := "2.12.2",
     crossScalaVersions := Seq("2.11.11", "2.12.2"),
     scalacOptions := Seq(
       "-encoding",
@@ -28,7 +28,7 @@ object ScalamuBuild {
       "-Xexperimental"
 //      "-Xfatal-warnings"
     ),
-    fork in Test := true,
+    fork in Test               := true,
     initialCommands in console := """
       import scala.reflect.runtime.universe._
       import scala.reflect.runtime.currentMirror
@@ -44,7 +44,7 @@ object ScalamuBuild {
             Seq(
               "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
             )),
-    publishMavenStyle := true,
+    publishMavenStyle       := true,
     publishArtifact in Test := false,
     publishTo := {
       if (isSnapshot.value)
@@ -99,37 +99,53 @@ object ScalamuBuild {
       ).map(_ % "0.8.0")
     )
     .dependsOn(plugin % "compile->compile;test->test")
-    .dependsOn(common)
+    .dependsOn(common, compilation)
 
   lazy val report = Project(id = "report", base = file("report"))
     .settings(commonSettings)
-    .settings(TwirlKeys.templateImports := Seq())
     .enablePlugins(SbtTwirl)
+    .settings(TwirlKeys.templateImports := Seq())
     .dependsOn(commandLine, common, plugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
-    .aggregate(plugin, commandLine, report, common, entryPoint)
+    .aggregate(
+      plugin,
+      commandLine,
+      report,
+      common,
+      entryPoint,
+      compilation
+    )
 
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
     .settings(commonSettings)
-    .dependsOn(commandLine, common, plugin, report)
+    .dependsOn(commandLine, common, plugin, report, compilation)
     .settings(
       artifact in (Compile, assembly) ~= { _.copy(`classifier` = Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
-      assemblyShadeRules in assembly := 
-        Seq("cats.**", "shapeless.**", "io.circe.**", "scalaz.**").map(shade)
+      assemblyShadeRules in assembly :=
+        Seq("io.circe.**", "org.ow2.asm.**", "org.typelevel.**", "shapeless.**").map(shade)
     )
 
-  private def shade(packageName: String): ShadeRule =
-    ShadeRule.rename(packageName -> "shaded.@0").inAll
+  private def shade(pattern: String): ShadeRule =
+    ShadeRule.rename(pattern -> "shaded.@0").inAll
+
+  lazy val compilation = Project(id = "compilation", base = file("compilation"))
+    .settings(commonSettings)
+    .settings(
+      libraryDependencies := Seq(
+        "org.scoverage" %% "scalac-scoverage-plugin"  % "1.3.0",
+        "org.scoverage" %% "scalac-scoverage-runtime" % "1.3.0"
+      )
+    )
 
   lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
     .settings(
       commonSettings ++ Seq(
-        sbtPlugin := true,
-        scalaVersion := "2.10.6",
-        crossScalaVersions := Seq(),
-        name := "sbt-scalamu",
+        sbtPlugin                      := true,
+        scalaVersion                   := "2.10.6",
+        crossScalaVersions             := Seq(),
+        name                           := "sbt-scalamu",
         CrossBuilding.crossSbtVersions := Vector("0.13.15", "1.0.0-M6")
       )
     )

@@ -54,7 +54,7 @@ abstract class Runner[I: Encoder, O: Decoder] {
     val classPathSegments = compiledSourcesDir :: (config.classPath | config.testClassDirs).toList
     val classPath         = classPathSegments.foldLeft("")(_ + _ + File.pathSeparator)
     val currentClassPath  = Properties.javaClassPath
-    pb.environment().put("CLASSPATH", classPath + currentClassPath)
+    pb.environment().put("CLASSPATH", currentClassPath)
   }
 
   protected def generateProcessArgs(

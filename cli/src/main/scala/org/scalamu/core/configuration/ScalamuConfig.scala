@@ -58,9 +58,9 @@ object ScalamuConfig {
     arg[Seq[Path]]("<sourceDirs>")
       .text("list of source directories")
       .validate { sdirs =>
-        if (sdirs.exists(!Files.exists(_)))
+        if (!sdirs.exists(Files.exists(_)))
           failure(
-            s"Source file directories must exist, but ${sdirs.filterNot(Files.exists(_))} were non-existent."
+            s"Source file directories must exist, but all provided directories were non-existent."
           )
         else success
       }
@@ -69,9 +69,9 @@ object ScalamuConfig {
     arg[Seq[Path]]("<testClassDirs>")
       .text("list of test class directories")
       .validate { tdirs =>
-        if (tdirs.exists(!Files.exists(_)))
+        if (!tdirs.exists(Files.exists(_)))
           failure(
-            s"Test class directories must exist, but ${tdirs.filterNot(Files.exists(_))} were non-existent."
+            s"Test class directories must exist, but all provided directories were non-existent."
           )
         else success
       }

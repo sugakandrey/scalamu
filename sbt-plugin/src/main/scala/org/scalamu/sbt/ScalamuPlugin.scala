@@ -1,29 +1,32 @@
 package org.scalamu.sbt
 
 import sbt.{Def, _}
-import sbt.Keys._
+import sbt.{Keys => K}
 import sbt.plugins.JvmPlugin
+import org.scalamu.sbt.Import.{ScalamuKeys => SK}
 
 object ScalamuPlugin extends AutoPlugin {
-  private val OrgScalamu = "org.scalamu"
-  private val artifactId = "entry-point"
-  private val version    = "0.1-SNAPSHOT"
-  private val mainClass  = "org.scalamu.entry.EntryPoint"
+  private val OrgScalamu          = "org.scalamu"
+  private val entryPointId        = "entry-point"
+  private val compilationModuleId = "compilation"
+  private val version             = "0.1-SNAPSHOT"
+  private val mainClass           = "org.scalamu.entry.EntryPoint"
 
-  val autoImport = ScalamuKeys
-  import autoImport._
+  val autoImport = Import
 
   override def requires: Plugins      = JvmPlugin
   override def trigger: PluginTrigger = allRequirements
+
   override def globalSettings: Seq[Def.Setting[_]] = Seq(
-    commands ++= Seq(mutationTest, mutationTestAggregated),
-    scalamuTimeoutFactor := 1.5,
-    scalamuParallelism := 1,
-    scalamuTimeoutConst := 2000,
-    scalamuExclludeSources := Seq.empty,
-    scalamuExcludeTests := Seq.empty,
-    scalamuVerbose := false,
-    scalamuActiveMutations := allMutations
+    K.commands ++= Seq(mutationTest, mutationTestAggregated),
+    SK.timeoutFactor   := 1.5,
+    SK.parallelism     := 1,
+    SK.timeoutConst    := 2000,
+    SK.excludeSources  := Seq.empty,
+    SK.excludeTests    := Seq.empty,
+    SK.activeMutations := allMutations,
+    SK.verbose         := false,
+    SK.recompileOnly   := true
   )
 
   private def allMutations: Seq[String] = Seq(
@@ -54,21 +57,23 @@ object ScalamuPlugin extends AutoPlugin {
     val extracted = Project.extract(state)
     import extracted._
 
-    val sourceDirs         = get(sourceDirectory)
-    val target             = get(Keys.target)
-    val crossTarget        = get(Keys.crossTarget)
-    val testClasses        = crossTarget / "test-classes"
-    val (_, testClassPath) = runTask(fullClasspath in Test, state)
-    val (_, javaOptions)   = runTask(Keys.javaOptions in Test, state)
-    val (_, scalacOptions) = runTask(Keys.scalacOptions, state)
-    val excludeSource      = get(scalamuExclludeSources)
-    val excludeTests       = get(scalamuExcludeTests)
-    val timeoutFactor      = get(scalamuTimeoutFactor)
-    val timeoutConst       = get(scalamuTimeoutConst)
-    val parallelism        = get(scalamuParallelism)
-    val verbose            = get(scalamuVerbose)
-    val activeMutations    = get(scalamuActiveMutations)
-    val (_, testOptions)   = runTask(Keys.testOptions, state)
+    val sourceDirs            = get(K.sourceDirectories in Compile)
+    val target                = get(K.target)
+    val crossTarget           = get(K.crossTarget)
+    val testClasses           = crossTarget / "test-classes"
+    val (_, compileClassPath) = runTask(K.dependencyClasspath in Compile, state)
+    val (_, testClassPath)    = runTask(K.dependencyClasspath in Test, state)
+    val (_, javaOptions)      = runTask(K.javaOptions in Test, state)
+    val (_, scalacOptions)    = runTask(K.scalacOptions, state)
+    val excludeSource         = get(SK.excludeSources)
+    val excludeTests          = get(SK.excludeTests)
+    val timeoutFactor         = get(SK.timeoutFactor)
+    val timeoutConst          = get(SK.timeoutConst)
+    val parallelism           = get(SK.parallelism)
+    val verbose               = get(SK.verbose)
+    val recompileOnly         = get(SK.recompileOnly)
+    val activeMutations       = get(SK.activeMutations)
+    val (_, testOptions)      = runTask(K.testOptions, state)
 
     val testRunnerArgs = testOptions
       .foldLeft(Map.empty[String, String]) {
@@ -82,17 +87,15 @@ object ScalamuPlugin extends AutoPlugin {
           }
         case (acc, _) => acc
       }
-      .map {
-        case (fname, args) => s"$fname=$args"
-      }
+      .map { case (fname, args) => s"$fname=$args" }
       .mkString
 
-    val possiblyEmptyOptions = Seq(
-      optionString(testClassPath.map(_.data.getAbsolutePath), ",", "--cp"),
+    val possiblyUndefinedOptions = Seq(
+      optionString(compileClassPath.map(_.data.getAbsolutePath), ",", "--cp"),
       optionString(javaOptions, " ", "--jvmOpts"),
       optionString(excludeSource.map(_.toString), ",", "--excludeSource"),
       optionString(excludeTests.map(_.toString), ",", "--excludeTestClasses"),
-      optionString(scalacOptions, "", "--scalacOptions")
+      optionString(scalacOptions, " ", "--scalacOptions")
     ).flatten
 
     val options = Seq(
@@ -104,17 +107,19 @@ object ScalamuPlugin extends AutoPlugin {
       parallelism.toString,
       "--mutations",
       activeMutations.mkString(",")
-    ) ++ (if (verbose) Seq("--verbose") else Seq.empty) ++
-      (if (testRunnerArgs.nonEmpty) Seq("--testOptions", testRunnerArgs)
-       else Seq.empty)
+    ) ++
+      (if (verbose) Seq("--verbose") else Seq.empty) ++
+      (if (testRunnerArgs.nonEmpty) Seq("--testOptions", testRunnerArgs) else Seq.empty) ++
+//      (if (recompileOnly) Seq("--recompileOnly") else Seq.empty)
+      Seq("--recompileOnly")
 
     val arguments = Seq(
       target.getAbsolutePath,
-      sourceDirs.getAbsolutePath,
+      sourceDirs.map(_.getAbsolutePath).mkString(","),
       testClasses.getAbsolutePath
     )
 
-    possiblyEmptyOptions ++ options ++ arguments
+    possiblyUndefinedOptions ++ options ++ arguments
   }
 
   private def optionString[T](
@@ -127,35 +132,35 @@ object ScalamuPlugin extends AutoPlugin {
 
   private def mutationTestImpl(initialExt: Extracted, state: State): State = {
     val log           = state.log
-    val binaryVersion = initialExt.get(scalaBinaryVersion)
+    val binaryVersion = initialExt.get(K.scalaBinaryVersion)
 
     CrossVersion.partialVersion(binaryVersion) match {
       case Some((2, 11)) | Some((2, 12)) =>
-        val arguments = buildScalamuArguments(state)
+        val mainArtifact    = OrgScalamu % s"${entryPointId}_$binaryVersion" % version
+        val guardArtifact   = OrgScalamu % s"${compilationModuleId}_$binaryVersion" % version
+        val withAssemblyJar = initialExt.append(Seq(K.libraryDependencies += mainArtifact), state)
 
-        val newS = initialExt.append(
-          Seq(
-            libraryDependencies += OrgScalamu % s"${artifactId}_$binaryVersion" % version classifier "assembly"
-          ),
-          state
+        val assemblyExtracted = Project.extract(withAssemblyJar)
+        val (_, report)       = assemblyExtracted.runTask(K.update, withAssemblyJar)
+
+        val assemblyJar = report.matching(
+          moduleFilter(organization = OrgScalamu) &&
+            artifactFilter(name = "*entry-point*", `type` = "jar", classifier = "assembly")
         )
 
-        val extracted = Project.extract(newS)
-        import extracted._
+        val withGuardJar   = initialExt.append(Seq(K.libraryDependencies += guardArtifact), state)
+        val guardExtracted = Project.extract(withAssemblyJar)
+        import guardExtracted._
 
-        val (compiled, _) = runTask(compile in Test, newS)
-        val (_, report)   = runTask(update, newS)
-        val (_, si)       = runTask(scalaInstance, compiled)
-        val forkOptions   = ForkOptions()
-        val run           = new ForkRun(forkOptions)
-
-        val cp = report.matching(
-          artifactFilter(name = "*entry-point*", `type` = "jar", `classifier` = "assembly")
-        )
+        val (updated, _) = runTask(K.update, withGuardJar)
+        runTask(K.compile in Test, updated)
+        val forkOptions = ForkOptions()
+        val run         = new ForkRun(forkOptions)
+        val arguments   = buildScalamuArguments(withGuardJar)
 
         run.run(
           mainClass,
-          cp,
+          assemblyJar,
           arguments,
           log
         )

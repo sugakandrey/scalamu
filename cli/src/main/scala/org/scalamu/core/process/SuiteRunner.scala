@@ -4,12 +4,12 @@ package process
 import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
 import org.scalamu.common.MutantId
-import org.scalamu.core.compilation.MutationGuard
+import org.scalamu.compilation.MutationGuard
 import org.scalamu.testapi.{SuiteExecutionAborted, SuiteSuccess, TestsFailed}
 
 import scala.collection.{Map, Set}
 import scala.annotation.tailrec
-import scala.concurrent.{blocking, Await, Future, TimeoutException}
+import scala.concurrent.{Await, Future, TimeoutException, blocking}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -27,7 +27,7 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
     inverseCov.map(Function.tupled(runMutantInverseCoverage))(collection.breakOut)
 
   private def runSuites(suites: Set[MeasuredSuite], id: MutantId): DetectionStatus = {
-    MutationGuard.enableForId(id)
+    MutationGuard.enableForId(id.id)
     @tailrec
     def loop(suites: Iterator[MeasuredSuite]): DetectionStatus =
       if (suites.hasNext) {

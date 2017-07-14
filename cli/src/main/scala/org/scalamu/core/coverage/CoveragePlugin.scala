@@ -31,7 +31,7 @@ class CoveragePlugin(override val global: Global, listener: InstrumentationRepor
 
     class ScalamuCoverageTransformer(unit: global.CompilationUnit) extends Transformer(unit) {
       override def invokeCall(id: Int): Tree = {
-        val target = findMemberFromRoot(TermName("org.scalamu.core.coverage.ForgetfulInvoker.invoked")).asTerm
+        val target = findMemberFromRoot(TermName("org.scalamu.compilation.ForgetfulInvoker.invoked")).asTerm
         val idLit = Literal(Constant(id))
         val outDir = Literal(Constant(global.settings.outputDirs.getSingleOutput.get.path))
         q"$target($idLit, $outDir)"

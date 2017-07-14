@@ -5,6 +5,7 @@ lazy val plugin      = ScalamuBuild.plugin
 lazy val commandLine = ScalamuBuild.commandLine
 lazy val common      = ScalamuBuild.common
 lazy val report      = ScalamuBuild.report
+lazy val compilation = ScalamuBuild.compilation
 lazy val entryPoint  = ScalamuBuild.entryPoint
 lazy val scalamuSbt  = ScalamuBuild.scalamuSbt
 

@@ -36,16 +36,16 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
     log.debug(s"Initialized InvocationDataReader in $invocationDataDir.")
     val analyzer   = new StatementCoverageAnalyzer(reader)
     val frameworks = TestingFramework.instantiateAvailableFrameworks(config.testingOptions)
-    val filter     = TestClassFilter.forFrameworks(frameworks, config.excludeTestsClasses)
-    val finder     = new TestClassFileFinder(filter)
-    val suites     = finder.findAll(config.testClassDirs)
+    log.debug(s"Searching for tests conforming to the following frameworks ${frameworks.map(_.name).mkString(", ")}.")
+    val filter = TestClassFilter.forFrameworks(frameworks, config.excludeTestsClasses)
+    val finder = new TestClassFileFinder(filter)
+    val suites = finder.findAll(config.testClassDirs)
     log.info(s"Discovered ${suites.size} test suites. Analyzing coverage now...")
     suites.iterator.map(analyzer.forSuite)
   }
 
   def main(args: Array[String]): Unit = {
     LoggerConfiguration.configureLoggingForName("COVERAGE-WORKER")
-    log.debug(scala.util.Properties.javaClassPath)
     execute(args)
   }
 }

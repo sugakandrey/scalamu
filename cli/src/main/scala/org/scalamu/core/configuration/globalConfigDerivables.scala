@@ -30,9 +30,9 @@ trait SettingsDerivable {
     config => {
       val settings = new Settings {
         Yrangepos.value = true
-        usejavacp.value = true
-        sourcepath.value += pathsToString(config.sourceDirs)
+//        usejavacp.value = true
         classpath.value += pathsToString(config.classPath)
+        sourcepath.value += pathsToString(config.sourceDirs)
         outputDirs.setSingleOutput(dir)
       }
 
@@ -60,7 +60,7 @@ trait ReporterDerivable extends SettingsDerivable {
 
 trait MutationConfigDerivable {
   def guard: MutationGuard = FqnGuard(
-    "org.scalamu.core.compilation.MutationGuard.enabledMutation"
+    "org.scalamu.compilation.MutationGuard.enabledMutation"
   )
 
   implicit def mutationConfigDerivable(

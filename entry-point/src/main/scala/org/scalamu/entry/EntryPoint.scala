@@ -1,7 +1,7 @@
 package org.scalamu.entry
 
 import java.io.{BufferedWriter, FileWriter}
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Files, Path}
 
 import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
@@ -45,7 +45,7 @@ object EntryPoint {
       log.info(s"Running Scalamu with config:\n ${config.asJson.spaces2}")
     }
 
-    val reportDir = Paths.get("mutation-analysis-report")
+    val reportDir = config.reportDir
     ensureDirExits(reportDir)
 
     val instrumentation = new cov.MemoryReporter
@@ -68,7 +68,6 @@ object EntryPoint {
     log.info(s"Finished recompilation in $compilationTime seconds.")
     log.info(s"Total mutations generated: ${reporter.mutants.size}")
     
-    if (config.recompileOnly) sys.exit(0)
 
     if (reporter.mutants.isEmpty) {
       log.error(
@@ -82,6 +81,8 @@ object EntryPoint {
         reporter.mutants.foreach(m => writer.write(m.asJson.spaces2 + "\n"))
       }
     }
+
+    if (config.recompileOnly) sys.exit(0)
 
     val coverageAnalyser = new CoverageAnalyser(config, outputPath)
     val coverage         = coverageAnalyser.analyse(instrumentation)
