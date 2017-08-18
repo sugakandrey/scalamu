@@ -41,14 +41,7 @@ class ScalamuGlobal private[compilation] (
   }
 
   def compile(suites: List[SourceInfo]): Int = {
-    val sourceFiles = suites.map(
-      suite =>
-        new BatchSourceFile(
-          new PlainFile(
-            ReflectPath(suite.fullPath.toFile)
-          )
-      )
-    )
+    val sourceFiles = suites.map(suite => getSourceFile(suite.fullPath.toString))
     ScalamuGlobal.log.debug(s"Compiling source files: ${sourceFiles.mkString("[\n\t", "\n\t", "\n]")}")
     val run = new Run
     val id  = currentRunId
