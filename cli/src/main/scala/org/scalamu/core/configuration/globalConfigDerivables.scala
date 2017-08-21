@@ -1,9 +1,6 @@
 package org.scalamu.core
 package configuration
 
-import java.io.File
-import java.nio.file.Path
-
 import com.typesafe.scalalogging.Logger
 import org.scalamu.common.filtering.{CompositeNameFilter, RegexFilter}
 import org.scalamu.core.compilation.{IgnoreCoverageStatementsFilter, LoggingReporter}
@@ -20,9 +17,6 @@ trait GlobalDerivableInstances extends SettingsDerivable with ReporterDerivable 
 
 trait SettingsDerivable {
   def log: Logger
-
-  private def pathsToString: Traversable[Path] => String =
-    _.foldLeft("")(_ + File.pathSeparator + _)
 
   implicit def settingsDerivable(implicit dir: AbstractFile): Derivable[Settings] =
     config => {

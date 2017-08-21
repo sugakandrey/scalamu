@@ -10,8 +10,7 @@ class ScalaTestFramework(override val arguments: String) extends TestingFramewor
   override def runner: TestRunner[R] = new ScalaTestRunner(arguments)
 
   override def classFilter: TestClassFilter = new CompositeTestClassFilter(
-    new SuperclassBasedFilter(classOf[Suite], this) with NotAModule with HasNoArgConstructor
-    with NotAbstract,
+    new SuperclassBasedFilter(classOf[Suite], this) with NotAModule with HasNoArgConstructor with NotAbstract,
     new SuperclassBasedFilter(classOf[WrapWith], this) with NotAModule with NotAbstract
   )
 }

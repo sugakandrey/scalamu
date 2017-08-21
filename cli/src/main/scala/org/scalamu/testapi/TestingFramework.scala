@@ -16,6 +16,11 @@ trait TestingFramework {
 }
 
 object TestingFramework {
+  private val specs2BaseClass    = "org.specs2.specification.core.SpecificationStructure"
+  private val scalatestBaseClass = "org.scalatest.Suite"
+  private val utestBaseClass     = "utest.TestSuite"
+  private val junitBaseClass     = "org.junit.Test"
+
   private val frameworkBuilderForName: Map[String, String => TestingFramework] = Map(
     "scalatest" -> ScalaTestFramework.apply,
     "junit"     -> JUnitFramework.apply,
@@ -32,12 +37,11 @@ object TestingFramework {
     def isClassResolvable(className: String): Boolean =
       try { Class.forName(className); true } catch { case _: ClassNotFoundException => false }
 
-    val specs2 =
-      if (isClassResolvable("org.specs2.specification.core.SpecificationStructure")) Some("specs2")
-      else None
-    val scalaTest = if (isClassResolvable("org.scalatest.Suite")) Some("scalatest") else None
-    val utest     = if (isClassResolvable("utest.TestSuite")) Some("utest") else None
-    val junit     = if (isClassResolvable("org.junit.Test")) Some("junit") else None
+    val specs2    = if (isClassResolvable(specs2BaseClass)) Some("specs2")       else None
+    val scalaTest = if (isClassResolvable(scalatestBaseClass)) Some("scalatest") else None
+    val utest     = if (isClassResolvable(utestBaseClass)) Some("utest")         else None
+    val junit     = if (isClassResolvable(junitBaseClass)) Some("junit")         else None
+
     Seq(specs2, scalaTest, utest, junit).flatten.map { framework =>
       val options = frameworkOptions.getOrElse(framework, "")
       TestingFramework.frameworkBuilderForName(framework)(options)
@@ -52,7 +56,7 @@ object TestingFramework {
       case (name, args) =>
         frameworkBuilderForName.get(name) match {
           case Some(frameworkBuilder) => Right(frameworkBuilder(args))
-          case _                      => Left("s")
+          case _                      => Left("Unrecognised testing framework")
         }
     }
 }

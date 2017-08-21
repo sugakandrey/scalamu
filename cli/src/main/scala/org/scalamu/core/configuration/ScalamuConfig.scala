@@ -14,7 +14,8 @@ import scala.util.matching.Regex
  * @param reportDir a directory, to create mutation analysis reports in
  * @param sourceDirs directories containing scala sources to be mutated
  * @param testClassDirs directories containing compiled test classes
- * @param classPath list of classpath elements for applications "test" config
+ * @param classPath list of classpath elements for applications "compile" config
+ * @param testClassPath list of classpath elements for application "test" config
  * @param jvmOpts arguments, passed to spawned JVMs
  * @param mutations set of active mutation operators
  * @param includeSources filters, used to only include certain source files into mutation process
@@ -32,6 +33,7 @@ final case class ScalamuConfig(
   sourceDirs: Set[Path] = Set.empty,
   testClassDirs: Set[Path] = Set.empty,
   classPath: Set[Path] = Set.empty,
+  testClassPath: Set[Path] = Set.empty,
   jvmOpts: String = "",
   mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
   includeSources: Seq[Regex] = Seq.empty,
@@ -78,7 +80,7 @@ object ScalamuConfig {
       .action((testClassPath, config) => config.copy(testClassDirs = testClassPath.toSet))
 
     opt[Seq[Path]]("cp")
-      .text("list of classpath elements")
+      .text("""list of "compile" classpath elements""")
       .validate { classpath =>
         if (classpath.exists(!Files.exists(_)))
           failure(
@@ -88,6 +90,10 @@ object ScalamuConfig {
       }
       .action((cp, config) => config.copy(classPath = cp.toSet))
 
+    opt[Seq[Path]]("tcp")
+      .text("""list of "test" classpath elements""")
+      .action((tcp, config) => config.copy(testClassPath = tcp.toSet))
+
     opt[String]("jvmOpts")
       .text("jvm args used by tests")
       .action((jvmOpts, config) => config.copy(jvmOpts = jvmOpts))
@@ -95,7 +101,8 @@ object ScalamuConfig {
     opt[Seq[String]]('m', "mutations")
       .text("set of mutation operators")
       .action(
-        (mutations, config) => config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
+        (mutations, config) =>
+          config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
       )
 
     opt[Seq[Regex]]("excludeSource")
