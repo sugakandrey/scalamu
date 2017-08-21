@@ -32,16 +32,6 @@ abstract class Process[R: Encoder] {
       }
     }
 
-  protected def readCompiledSources(dis: DataInputStream): Map[String, Array[Byte]] =
-    Iterator.continually {
-      val name   = dis.readUTF()
-      val length = dis.readInt()
-      dis.readUTF()
-      val bytes = Array.ofDim[Byte](length)
-      dis.readFully(bytes)
-      name -> bytes
-    }.toMap
-
   protected def readConfigurationFromParent(dis: DataInputStream): Either[Throwable, Configuration]
 
   protected def run(

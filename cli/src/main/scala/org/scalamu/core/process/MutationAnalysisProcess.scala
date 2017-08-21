@@ -9,13 +9,26 @@ import io.circe.parser.decode
 import org.scalamu.common.MutantId
 
 object MutationAnalysisProcess extends Process[MutationProcessResponse] {
-  override type Configuration = MutationAnalysisProcessConfig
+  override type Configuration = (MutationAnalysisProcessConfig, Map[String, Array[Byte]])
+
+  protected def readCompiledSources(dis: DataInputStream): Map[String, Array[Byte]] =
+    Iterator.continually {
+      val name   = dis.readUTF()
+      val length = dis.readInt()
+      dis.readUTF()
+      val bytes = Array.ofDim[Byte](length)
+      dis.readFully(bytes)
+      name -> bytes
+    }.toMap
 
   override def readConfigurationFromParent(
     dis: DataInputStream
   ): Either[Throwable, Configuration] =
-    decode[MutationAnalysisProcessConfig](dis.readUTF())
-  
+    for {
+      config  <- decode[MutationAnalysisProcessConfig](dis.readUTF())
+      classes <- readCompiledSources(dis)
+    } yield (config, classes)
+
   private def communicate(
     runner: SuiteRunner,
     dis: DataInputStream,

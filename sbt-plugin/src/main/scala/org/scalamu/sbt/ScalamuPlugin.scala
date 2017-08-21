@@ -26,7 +26,7 @@ object ScalamuPlugin extends AutoPlugin {
     SK.excludeTests    := Seq.empty,
     SK.activeMutations := allMutations,
     SK.verbose         := false,
-    SK.recompileOnly   := true
+    SK.recompileOnly   := false
   )
 
   private def allMutations: Seq[String] = Seq(
@@ -62,7 +62,7 @@ object ScalamuPlugin extends AutoPlugin {
     val crossTarget           = get(K.crossTarget)
     val testClasses           = crossTarget / "test-classes"
     val (_, compileClassPath) = runTask(K.dependencyClasspath in Compile, state)
-    val (_, testClassPath)    = runTask(K.dependencyClasspath in Test, state)
+    val (_, testClassPath)    = runTask(K.fullClasspath in Test, state)
     val (_, javaOptions)      = runTask(K.javaOptions in Test, state)
     val (_, scalacOptions)    = runTask(K.scalacOptions, state)
     val excludeSource         = get(SK.excludeSources)
@@ -92,6 +92,7 @@ object ScalamuPlugin extends AutoPlugin {
 
     val possiblyUndefinedOptions = Seq(
       optionString(compileClassPath.map(_.data.getAbsolutePath), ",", "--cp"),
+      optionString(testClassPath.map(_.data.getAbsolutePath), ",", "--tcp"),
       optionString(javaOptions, " ", "--jvmOpts"),
       optionString(excludeSource.map(_.toString), ",", "--excludeSource"),
       optionString(excludeTests.map(_.toString), ",", "--excludeTestClasses"),
@@ -108,10 +109,10 @@ object ScalamuPlugin extends AutoPlugin {
       "--mutations",
       activeMutations.mkString(",")
     ) ++
-      (if (verbose) Seq("--verbose") else Seq.empty) ++
+      (if (verbose) Seq("--verbose")                                     else Seq.empty) ++
       (if (testRunnerArgs.nonEmpty) Seq("--testOptions", testRunnerArgs) else Seq.empty) ++
-//      (if (recompileOnly) Seq("--recompileOnly") else Seq.empty)
-      Seq("--recompileOnly")
+      (if (recompileOnly) Seq("--recompileOnly")                         else Seq.empty)
+//      Seq("--recompileOnly")
 
     val arguments = Seq(
       target.getAbsolutePath,
@@ -149,7 +150,7 @@ object ScalamuPlugin extends AutoPlugin {
         )
 
         val withGuardJar   = initialExt.append(Seq(K.libraryDependencies += guardArtifact), state)
-        val guardExtracted = Project.extract(withAssemblyJar)
+        val guardExtracted = Project.extract(withGuardJar)
         import guardExtracted._
 
         val (updated, _) = runTask(K.update, withGuardJar)
@@ -172,11 +173,25 @@ object ScalamuPlugin extends AutoPlugin {
     }
   }
 
+  private def resolveAggregates(extracted: Extracted): Seq[ProjectRef] = {
+    import extracted._
+
+    def findAggregates(project: ProjectRef): List[ProjectRef] =
+      project :: (structure.allProjects(project.build).find(_.id == project.project) match {
+        case Some(resolved) => resolved.aggregate.toList.flatMap(findAggregates)
+        case None           => Nil
+      })
+
+    (currentRef :: currentProject.aggregate.toList.flatMap(findAggregates)).distinct
+  }
+
   lazy val mutationTestAggregated: Command = Command.command("mutationTestAggregated") { state =>
     val extracted = Project.extract(state)
     import sbt.Project.showContextKey
 
-    extracted.structure.allProjectRefs.foreach { ref =>
+    val aggregates = resolveAggregates(extracted)
+
+    aggregates.foreach { ref =>
       val ext = Extracted(extracted.structure, extracted.session, ref)(showContextKey(state))
       mutationTestImpl(ext, state)
     }
@@ -185,6 +200,8 @@ object ScalamuPlugin extends AutoPlugin {
 
   lazy val mutationTest: Command = Command.command("mutationTest") { state =>
     val extracted = Project.extract(state)
-    mutationTestImpl(extracted, state)
+//    mutationTestImpl(extracted, state)
+    println(extracted.get(K.sourceDirectories in Compile))
+    state
   }
 }
