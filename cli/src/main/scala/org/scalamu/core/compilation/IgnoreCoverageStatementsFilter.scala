@@ -1,13 +1,6 @@
 package org.scalamu.core.compilation
 
+import org.scalamu.common.filtering.InverseRegexFilter
 
-import org.scalamu.common.filtering.RegexBasedFilter
-
-import scala.util.matching.Regex
-
-final case class IgnoreCoverageStatementsFilter(filters: Seq[Regex])
-    extends RegexBasedFilter(IgnoreCoverageStatementsFilter.coverageStatementsFilter +: filters)
-
-object IgnoreCoverageStatementsFilter {
-  private val coverageStatementsFilter = """org.scalamu.compilation.ForgetfulInvoker.*""".r
-}
+object IgnoreCoverageStatementsFilter
+    extends InverseRegexFilter(Seq("org.scalamu.compilation.ForgetfulInvoker.*".r))

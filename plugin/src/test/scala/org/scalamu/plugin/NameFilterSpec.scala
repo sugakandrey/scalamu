@@ -1,12 +1,12 @@
 package org.scalamu.plugin
 
-import org.scalamu.common.filtering.{AcceptAllFilter, NameFilter, RegexBasedFilter}
+import org.scalamu.common.filtering.{AcceptAllFilter, InverseRegexFilter, NameFilter}
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 class NameFilterSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
 
-  override val filter: NameFilter = RegexBasedFilter(
+  override val filter: NameFilter = InverseRegexFilter(
     ".*scala.Predef.print.*".r,
     ".*foobar.*".r,
     ".*Foo.Bar".r

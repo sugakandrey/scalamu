@@ -2,7 +2,7 @@ package org.scalamu.testapi
 
 import cats.Foldable
 import cats.implicits._
-import org.scalamu.common.filtering.{NameFilter, RegexBasedFilter}
+import org.scalamu.common.filtering.{NameFilter, RegexFilter}
 import org.scalamu.core.{ClassInfo, ClassName}
 
 import scala.util.matching.Regex
@@ -23,10 +23,10 @@ trait TestClassFilter extends (ClassInfo => Option[TestClassInfo]) {
 object TestClassFilter {
   def forFrameworks(
     frameworks: Seq[TestingFramework],
-    exclusionRules: Seq[Regex] = Seq.empty
+    inclusionRules: Seq[Regex] = Seq.empty
   ): TestClassFilter =
     new CompositeTestClassFilter(frameworks.map(_.classFilter): _*) with HasAppropriateName {
-      override val nameFilter: NameFilter = RegexBasedFilter(exclusionRules: _*)
+      override val nameFilter: NameFilter = RegexFilter(inclusionRules: _*)
     }
 }
 

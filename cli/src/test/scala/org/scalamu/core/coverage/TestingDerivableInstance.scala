@@ -1,6 +1,7 @@
 package org.scalamu.core.coverage
 
 import com.typesafe.scalalogging.Logger
+import org.scalamu.common.filtering.{CompositeNameFilter, RegexFilter}
 import org.scalamu.core.compilation.{IgnoreCoverageStatementsFilter, LoggingReporter}
 import org.scalamu.core.configuration.Derivable
 import org.scalamu.plugin._
@@ -24,6 +25,9 @@ trait TestingDerivableInstance {
       MutationConfig(
         mutationReporter,
         guard,
-        IgnoreCoverageStatementsFilter(config.excludeSources)
+        new CompositeNameFilter(
+          IgnoreCoverageStatementsFilter,
+          RegexFilter(config.includeSources: _*)
+        )
     )
 }

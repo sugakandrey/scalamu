@@ -54,7 +54,7 @@ abstract class MutatingTransformer(
 
     override final def transform(tree: Tree): Tree = tree match {
       case t if t.attachments.all.toString.contains("MacroExpansionAttachment") => tree
-      case t if Option(t.symbol).exists(fullName andThen config.filter)         => tree
+      case t if Option(t.symbol).forall(s => !config.filter.accepts(fullName(s)))         => tree
       case DefDef(mods, _, _, _, _, _) if mods.isSynthetic || mods.isMacro      => tree
       case macroImpl: DefDef
           if Option(macroImpl.tpt.symbol).exists(fullName andThen excludedSymbols.contains) =>

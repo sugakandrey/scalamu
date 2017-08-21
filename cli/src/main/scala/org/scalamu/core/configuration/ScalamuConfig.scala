@@ -17,8 +17,8 @@ import scala.util.matching.Regex
  * @param classPath list of classpath elements for applications "test" config
  * @param jvmOpts arguments, passed to spawned JVMs
  * @param mutations set of active mutation operators
- * @param excludeSources filters, used to exclude certain source files from being mutated
- * @param excludeTestsClasses filters, used to exclude certain test classes from being run
+ * @param includeSources filters, used to only include certain source files into mutation process
+ * @param includeTestClasses filters, used to only run certain test classes
  * @param testingOptions options to pass to framework's test runner
  * @param scalacOptions options to be passed to scalac
  * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
@@ -34,8 +34,8 @@ final case class ScalamuConfig(
   classPath: Set[Path] = Set.empty,
   jvmOpts: String = "",
   mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
-  excludeSources: Seq[Regex] = Seq.empty,
-  excludeTestsClasses: Seq[Regex] = Seq.empty,
+  includeSources: Seq[Regex] = Seq.empty,
+  includeTestClasses: Seq[Regex] = Seq.empty,
   testingOptions: Map[String, String] = Map.empty,
   scalacOptions: String = "",
   timeoutFactor: Double = 1.5,
@@ -95,21 +95,20 @@ object ScalamuConfig {
     opt[Seq[String]]('m', "mutations")
       .text("set of mutation operators")
       .action(
-        (mutations, config) =>
-          config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
+        (mutations, config) => config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
       )
 
     opt[Seq[Regex]]("excludeSource")
       .abbr("es")
       .valueName("<regex1>,<regex2>..")
       .text("list of filters for ignored source files")
-      .action((filters, config) => config.copy(excludeSources = filters))
+      .action((filters, config) => config.copy(includeSources = filters))
 
     opt[Seq[Regex]]("excludeTestClasses")
       .abbr("et")
       .valueName("<regex1>,<regex2>..")
       .text("list of filters for ignored test classes")
-      .action((filters, config) => config.copy(excludeTestsClasses = filters))
+      .action((filters, config) => config.copy(includeTestClasses = filters))
 
     opt[Map[String, String]]("testOptions")
       .abbr("to")

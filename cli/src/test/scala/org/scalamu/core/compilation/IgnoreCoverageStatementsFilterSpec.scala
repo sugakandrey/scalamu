@@ -43,7 +43,7 @@ class IgnoreCoverageStatementsFilterSpec
     }
 
   it should "ignore scoverage instrumentation if enabled" in withPluginConfig { cfg =>
-    withScalamuGlobal(cfg.copy(filter = IgnoreCoverageStatementsFilter(Seq()))) {
+    withScalamuGlobal(cfg.copy(filter = IgnoreCoverageStatementsFilter)) {
       (global, reporter, instrumentation) =>
         val code =
           """

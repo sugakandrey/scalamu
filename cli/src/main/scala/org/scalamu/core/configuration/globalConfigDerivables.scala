@@ -5,6 +5,7 @@ import java.io.File
 import java.nio.file.Path
 
 import com.typesafe.scalalogging.Logger
+import org.scalamu.common.filtering.{CompositeNameFilter, RegexFilter}
 import org.scalamu.core.compilation.{IgnoreCoverageStatementsFilter, LoggingReporter}
 import org.scalamu.plugin._
 
@@ -15,10 +16,7 @@ import scala.tools.nsc.reporters.Reporter
 /**
  * Aggregates derivable instances, needed for the creation of [[org.scalamu.core.compilation.ScalamuGlobal]]
  */
-trait GlobalDerivableInstances
-    extends SettingsDerivable
-    with ReporterDerivable
-    with MutationConfigDerivable
+trait GlobalDerivableInstances extends SettingsDerivable with ReporterDerivable with MutationConfigDerivable
 
 trait SettingsDerivable {
   def log: Logger
@@ -30,7 +28,6 @@ trait SettingsDerivable {
     config => {
       val settings = new Settings {
         Yrangepos.value = true
-//        usejavacp.value = true
         classpath.value += pathsToString(config.classPath)
         sourcepath.value += pathsToString(config.sourceDirs)
         outputDirs.setSingleOutput(dir)
@@ -70,7 +67,10 @@ trait MutationConfigDerivable {
       MutationConfig(
         reporter,
         guard,
-        IgnoreCoverageStatementsFilter(config.excludeSources),
+        new CompositeNameFilter(
+          IgnoreCoverageStatementsFilter,
+          RegexFilter(config.includeSources: _*)
+        ),
         config.mutations
     )
 }
