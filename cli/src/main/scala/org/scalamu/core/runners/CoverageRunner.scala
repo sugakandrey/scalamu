@@ -12,15 +12,27 @@ import org.scalamu.core.process.{CoverageProcess, CoverageProcessConfig, Process
 class CoverageRunner(
   override val socket: ServerSocket,
   override val config: ScalamuConfig,
-  override val compiledSourcesDir: Path
+  override val compiledSourcesDir: Path,
+  compiledSources: Map[String, Array[Byte]]
 ) extends Runner[Nothing, CoverageProcess.Result] {
   override protected def worker: Process[CoverageProcess.Result] = CoverageProcess
+
+  private def writeCompiledSources(os: DataOutputStream): Unit = {
+    os.writeInt(compiledSources.size)
+    compiledSources.foreach {
+      case (bname, bytes) =>
+        os.writeUTF(bname)
+        os.writeInt(bytes.length)
+        os.write(bytes)
+    }
+  }
 
   override protected def sendConfigurationToWorker(dos: DataOutputStream): Unit = {
     val configData        = config.derive[CoverageProcessConfig].asJson.noSpaces
     val invocationDataDir = compiledSourcesDir.asJson.noSpaces
     dos.writeUTF(configData)
     dos.writeUTF(invocationDataDir)
+    writeCompiledSources(dos)
     dos.flush()
   }
 }

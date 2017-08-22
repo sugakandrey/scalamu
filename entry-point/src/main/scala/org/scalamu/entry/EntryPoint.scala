@@ -28,7 +28,7 @@ import org.scalamu.utils.FileSystemUtils._
 
 import scala.collection.JavaConverters._
 import scala.collection.breakOut
-import scala.reflect.io.{Directory, PlainDirectory}
+import scala.reflect.io.{Directory, PlainDirectory, VirtualDirectory}
 
 object EntryPoint {
   private val log = Logger[EntryPoint.type]
@@ -37,6 +37,9 @@ object EntryPoint {
     if (!Files.exists(dir)) {
       Files.createDirectories(dir)
     }
+
+  private def fileNameToClassBinaryName(dirPrefix: String, name: String): String =
+    name.substring(dirPrefix.length + 1, name.lastIndexOf(".")).replaceAll("/", "\\.")
 
   def main(args: Array[String]): Unit = {
     LoggerConfiguration.configureLoggingForName("MAIN-APP")
@@ -52,7 +55,8 @@ object EntryPoint {
     val reporter        = new plugin.MemoryReporter
 
     val outputPath = Files.createTempDirectory("mutated-classes")
-    val outDir     = new PlainDirectory(new Directory(outputPath.toFile))
+//    val outDir     = new PlainDirectory(new Directory(outputPath.toFile))
+    val outDir = new VirtualDirectory("[memory]", None)
 
     val global      = ScalamuGlobal(config, instrumentation, reporter, outDir)
     val sourceFiles = new SourceFileFinder().findAll(config.sourceDirs)
@@ -62,12 +66,16 @@ object EntryPoint {
         sourceFiles.foreach(sf => writer.write(sf.asJson.spaces2 + "\n"))
       }
     }
+    
     val compilationStart = System.currentTimeMillis()
     global.compile(sourceFiles)
     val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
     log.info(s"Finished recompilation in $compilationTime seconds.")
     log.info(s"Total mutations generated: ${reporter.mutants.size}")
-    
+
+    val compiledSources: Map[String, Array[Byte]] = outDir.traverseFiles.map(
+      file => fileNameToClassBinaryName("[memory]", file.path) -> file.toByteArray
+    )(breakOut)
 
     if (reporter.mutants.isEmpty) {
       log.error(
@@ -84,7 +92,7 @@ object EntryPoint {
 
     if (config.recompileOnly) sys.exit(0)
 
-    val coverageAnalyser = new CoverageAnalyser(config, outputPath)
+    val coverageAnalyser = new CoverageAnalyser(config, outputPath, compiledSources)
     val coverage         = coverageAnalyser.analyse(instrumentation)
 
     log.debug(s"Test suites examined: ${coverage.keySet.mkString("[\n\t", "\n\t", "\n]")}.")

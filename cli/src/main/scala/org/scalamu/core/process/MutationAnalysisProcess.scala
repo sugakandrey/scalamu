@@ -7,26 +7,18 @@ import cats.syntax.either._
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.scalamu.common.MutantId
+import org.scalamu.utils.InMemoryClassLoader
+import org.scalamu.utils.ClassLoadingUtils._
 
 object MutationAnalysisProcess extends Process[MutationProcessResponse] {
   override type Configuration = (MutationAnalysisProcessConfig, Map[String, Array[Byte]])
-
-  protected def readCompiledSources(dis: DataInputStream): Map[String, Array[Byte]] =
-    Iterator.continually {
-      val name   = dis.readUTF()
-      val length = dis.readInt()
-      dis.readUTF()
-      val bytes = Array.ofDim[Byte](length)
-      dis.readFully(bytes)
-      name -> bytes
-    }.toMap
 
   override def readConfigurationFromParent(
     dis: DataInputStream
   ): Either[Throwable, Configuration] =
     for {
-      config  <- decode[MutationAnalysisProcessConfig](dis.readUTF())
-      classes <- readCompiledSources(dis)
+      config  <- decode[MutationAnalysisProcessConfig](dis.readUTF()).right
+      classes <- Either.catchNonFatal(readCompiledSources(dis)).right
     } yield (config, classes)
 
   private def communicate(
@@ -50,15 +42,19 @@ object MutationAnalysisProcess extends Process[MutationProcessResponse] {
     dis: DataInputStream,
     dos: DataOutputStream
   ): Iterator[MutationProcessResponse] = {
-    val id = System.getProperty("worker.name")
+    val (config, classes) = configuration
+    val classLoader       = new InMemoryClassLoader(classes)
+    val id                = System.getProperty("worker.name")
     LoggerConfiguration.configureLoggingForName(s"MUTATION-WORKER-$id")
     MemoryWatcher.startMemoryWatcher(90)
-    val runner = new SuiteRunner(configuration)
+    val runner = new SuiteRunner(config)
 
-    Iterator
-      .continually(communicate(runner, dis, dos))
-      .takeWhile(_.isRight)
-      .map(_.right.get)
+    withContextClassLoader(classLoader) {
+      Iterator
+        .continually(communicate(runner, dis, dos))
+        .takeWhile(_.isRight)
+        .map(_.right.get)
+    }
   }
 
   def main(args: Array[String]): Unit = execute(args)

@@ -14,14 +14,26 @@ class MutationAnalysisRunner(
   override val socket: ServerSocket,
   override val config: ScalamuConfig,
   override val compiledSourcesDir: Path,
-  val workerId: Long
+  val workerId: Long,
+  compiledSources: Map[String, Array[Byte]]
 ) extends Runner[(MutantId, Set[MeasuredSuite]), MutationAnalysisProcess.Result] {
 
   override protected def worker: Process[Result] = MutationAnalysisProcess
 
+  private def writeCompiledSources(os: DataOutputStream): Unit = {
+    os.writeInt(compiledSources.size)
+    compiledSources.foreach {
+      case (bname, bytes) =>
+        os.writeUTF(bname)
+        os.writeInt(bytes.length)
+        os.write(bytes)
+    }
+  }
+
   override protected def sendConfigurationToWorker(os: DataOutputStream): Unit = {
     val configData = config.derive[MutationAnalysisProcessConfig].asJson.noSpaces
     os.writeUTF(configData)
+    writeCompiledSources(os)
     os.flush()
   }
 

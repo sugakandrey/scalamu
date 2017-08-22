@@ -5,6 +5,7 @@ import io.circe.{Decoder, Encoder}
 import org.scalamu.testapi.scalatest.ScalaTestFramework
 import org.scalamu.testapi.specs2.Specs2Framework
 import org.scalamu.testapi.utest.UTestFramework
+import org.scalamu.utils.ClassLoadingUtils._
 
 trait TestingFramework {
   type R
@@ -35,7 +36,12 @@ object TestingFramework {
   ): Seq[TestingFramework] = {
 
     def isClassResolvable(className: String): Boolean =
-      try { Class.forName(className); true } catch { case _: ClassNotFoundException => false }
+      try {
+        println(contextClassLoader)
+        Class.forName(className, true, contextClassLoader); true
+      } catch {
+        case _: ClassNotFoundException => false
+      }
 
     val specs2    = if (isClassResolvable(specs2BaseClass)) Some("specs2")       else None
     val scalaTest = if (isClassResolvable(scalatestBaseClass)) Some("scalatest") else None

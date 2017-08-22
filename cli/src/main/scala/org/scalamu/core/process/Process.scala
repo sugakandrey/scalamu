@@ -33,6 +33,18 @@ abstract class Process[R: Encoder] {
     }
 
   protected def readConfigurationFromParent(dis: DataInputStream): Either[Throwable, Configuration]
+  
+  protected def readCompiledSources(dis: DataInputStream): Map[String, Array[Byte]] = {
+    val classCount = dis.readInt()
+    
+    (1 to classCount).map { _ =>
+      val name   = dis.readUTF()
+      val length = dis.readInt()
+      val bytes  = Array.ofDim[Byte](length)
+      dis.readFully(bytes)
+      name -> bytes
+    }(collection.breakOut)
+  }
 
   protected def run(
     config: Configuration,

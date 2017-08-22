@@ -18,10 +18,10 @@ trait FileSystemUtils {
   implicit class RichAbstractFile(val f: AbstractFile) {
     def isClassFile: Boolean = f.name.endsWith(".class")
 
-    def allClassFiles: Set[AbstractFile] =
+    def traverseFiles: Set[AbstractFile] =
       f.flatMap {
         case file if !file.isDirectory => Set(file)
-        case dir                       => dir.allClassFiles
+        case dir                       => dir.traverseFiles
       }(collection.breakOut)
   }
 

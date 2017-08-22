@@ -20,11 +20,12 @@ import scala.concurrent.duration._
 
 class CoverageAnalyser(
   val config: ScalamuConfig,
-  val compiledSourcesDir: Path
+  val compiledSourcesDir: Path,
+  val compiledSources: Map[String, Array[Byte]] = Map.empty
 ) {
   import CoverageAnalyser._
   private type Result = CoverageRunner#Result
-  
+
   private def reportAndExit(message: String): Nothing = {
     log.error(message)
     die(InternalFailure)
@@ -59,7 +60,7 @@ class CoverageAnalyser(
 
   def analyse(instrumentation: InstrumentationReporter): Map[MeasuredSuite, Set[Statement]] = {
     val socket = new ServerSocket(0)
-    val runner = new CoverageRunner(socket, config, compiledSourcesDir)
+    val runner = new CoverageRunner(socket, config, compiledSourcesDir, compiledSources)
 
     val supervisor = runner
       .start()

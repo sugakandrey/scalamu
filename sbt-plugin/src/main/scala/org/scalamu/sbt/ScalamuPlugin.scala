@@ -200,8 +200,7 @@ object ScalamuPlugin extends AutoPlugin {
 
   lazy val mutationTest: Command = Command.command("mutationTest") { state =>
     val extracted = Project.extract(state)
-//    mutationTestImpl(extracted, state)
-    println(extracted.get(K.sourceDirectories in Compile))
+    mutationTestImpl(extracted, state)
     state
   }
 }
