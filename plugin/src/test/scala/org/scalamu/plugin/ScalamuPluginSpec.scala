@@ -1,16 +1,19 @@
 package org.scalamu.plugin
 
-import org.scalamu.common.filtering.InverseRegexFilter
+import org.scalamu.common.filtering.{InverseRegexFilter, NameFilter}
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.mutations.controllflow.{NegateConditionals, NeverExecuteConditionals}
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
-  override val mutations: Seq[Mutation]   = ScalamuPluginConfig.allMutations
-  override val guard: MutationGuard       = FqnGuard(s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation")
-  override val sanitizeTrees: Boolean     = true
-  override val verifyTrees: Boolean       = true
-  override val filter: InverseRegexFilter = InverseRegexFilter(".*ignored.*".r)
+  override val guard: MutationGuard = FqnGuard(
+    s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"
+  )
+
+  override val mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
+  override val sanitizeTrees: Boolean   = true
+  override val verifyTrees: Boolean     = true
+  override val filter: NameFilter       = InverseRegexFilter(".*ignored.*".r)
 
   private val guards =
     s"""
@@ -21,41 +24,42 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
        |}
     """.stripMargin
 
-  "ScalamuPlugin" should "insert all possible mutants" in withScalamuCompiler { (global, reporter) =>
-    val code =
-      """
-        |object Foo {
-        |  val xs = List(1, 2, 3)
-        |  val length = xs match {
-        |    case _ if xs.isEmpty => 0
-        |    case named @ _       => -10
-        |  }
-        |
-        |  if (xs.forall(_ + 1 > 0)) {
-        |    println("length = " + length)
-        |  }
-        |
-        |  val x = 123
-        |  val y = 456d
-        |
-        |  val z = (x * y + x / y) - -y
-        |
-        |  (1 until 100 by 10).map(x => List(x))
-        |
-        |  type Maybe[T] = Option[T]
-        |  def toOption[T](x: T): Maybe[T] = Option(x)
-        |
-        |  val t = true
-        |  val f = t && false
-        |
-        |  def ignored(): Unit = println("I am ignored")
-        |
-        |  (xs.toSet | Set(4)).foreach(x => ignored())
-        |}
+  "ScalamuPlugin" should "insert all possible mutants" in withScalamuCompiler {
+    (global, reporter) =>
+      val code =
+        """
+          |object Foo {
+          |  val xs = List(1, 2, 3)
+          |  val length = xs match {
+          |    case _ if xs.isEmpty => 0
+          |    case named @ _       => -10
+          |  }
+          |
+          |  if (xs.forall(_ + 1 > 0)) {
+          |    println("length = " + length)
+          |  }
+          |
+          |  val x = 123
+          |  val y = 456d
+          |
+          |  val z = (x * y + x / y) - -y
+          |
+          |  (1 until 100 by 10).map(x => List(x))
+          |
+          |  type Maybe[T] = Option[T]
+          |  def toOption[T](x: T): Maybe[T] = Option(x)
+          |
+          |  val t = true
+          |  val f = t && false
+          |
+          |  def ignored(): Unit = println("I am ignored")
+          |
+          |  (xs.toSet | Set(4)).foreach(x => ignored())
+          |}
       """.stripMargin
-    compile(NamedSnippet("Guards.scala", guards))(global)
-    val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, reporter)
-    mutantsInfo should have size 26
+      compile(NamedSnippet("Guards.scala", guards))(global)
+      val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, reporter)
+      mutantsInfo should have size 26
   }
 
   it should "ignore macro bodies" in withScalamuCompiler { (global, reporter) =>
@@ -134,32 +138,33 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
     }
   }
 
-  it should "test case where NeverExecuteConditionals fail on LambdaLift" in withPluginConfig { cfg =>
-    withScalamuCompiler(Seq(NeverExecuteConditionals), cfg) { (global, _) =>
-      val code =
-        """
-          |object Foo {
-          |  type Occurrence = (Int, Int)
-          |  private case class Stacked(idx1: Int, idx2: Int, next: Option[Stacked]) {
-          |    lazy val chain: List[(Int, Int)] = ???
-          |  }
-          |
-          |  val l: List[(Occurrence, Int)] = ???
-          |  if (l.length > 0) {
-          |    Nil
-          |  } else {
-          |    def sort(l: List[(Occurrence, Int)]): List[List[Stacked]] =
-          |      l.foldLeft(List[List[Stacked]]()) {
-          |        case (acc, ((_, idx1), idx2)) => acc
-          |      }
-          |    Nil
-          |  }
-          |}
+  it should "test case where NeverExecuteConditionals fail on LambdaLift" in withPluginConfig {
+    cfg =>
+      withScalamuCompiler(Seq(NeverExecuteConditionals), cfg) { (global, _) =>
+        val code =
+          """
+            |object Foo {
+            |  type Occurrence = (Int, Int)
+            |  private case class Stacked(idx1: Int, idx2: Int, next: Option[Stacked]) {
+            |    lazy val chain: List[(Int, Int)] = ???
+            |  }
+            |
+            |  val l: List[(Occurrence, Int)] = ???
+            |  if (l.length > 0) {
+            |    Nil
+            |  } else {
+            |    def sort(l: List[(Occurrence, Int)]): List[List[Stacked]] =
+            |      l.foldLeft(List[List[Stacked]]()) {
+            |        case (acc, ((_, idx1), idx2)) => acc
+            |      }
+            |    Nil
+            |  }
+            |}
         """.stripMargin
-      compile(
-        NamedSnippet("Guards.scala", guards),
-        NamedSnippet("Foo.scala", code)
-      )(global)
-    }
+        compile(
+          NamedSnippet("Guards.scala", guards),
+          NamedSnippet("Foo.scala", code)
+        )(global)
+      }
   }
 }

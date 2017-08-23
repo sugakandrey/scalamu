@@ -98,27 +98,24 @@ object ScalamuConfig {
       .text("jvm args used by tests")
       .action((jvmOpts, config) => config.copy(jvmOpts = jvmOpts))
 
-    opt[Seq[String]]('m', "mutations")
+    opt[Seq[String]]("mutations")
       .text("set of mutation operators")
       .action(
         (mutations, config) =>
           config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
       )
 
-    opt[Seq[Regex]]("excludeSource")
-      .abbr("es")
+    opt[Seq[Regex]]("includeSource")
       .valueName("<regex1>,<regex2>..")
       .text("list of filters for ignored source files")
       .action((filters, config) => config.copy(includeSources = filters))
 
-    opt[Seq[Regex]]("excludeTestClasses")
-      .abbr("et")
+    opt[Seq[Regex]]("includeTestClasses")
       .valueName("<regex1>,<regex2>..")
       .text("list of filters for ignored test classes")
       .action((filters, config) => config.copy(includeTestClasses = filters))
 
     opt[Map[String, String]]("testOptions")
-      .abbr("to")
       .valueName("framework1=optionString1, framework2=optionString2...")
       .text("Per framework test runner options")
       .validate(
@@ -144,7 +141,7 @@ object ScalamuConfig {
       .validate(tc => if (tc < 0) failure(s"Timeout const value must be >= 0.") else success)
       .action((tc, config) => config.copy(timeoutConst = tc))
 
-    opt[Int]('p', "parallelism")
+    opt[Int]("parallelism")
       .text("Number of runners used to perform mutation analysis")
       .validate(
         threads =>

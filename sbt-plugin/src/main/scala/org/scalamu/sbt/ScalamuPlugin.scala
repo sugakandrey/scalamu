@@ -19,14 +19,15 @@ object ScalamuPlugin extends AutoPlugin {
 
   override def globalSettings: Seq[Def.Setting[_]] = Seq(
     K.commands += mutationTest,
-    SK.timeoutFactor   := 1.5,
-    SK.parallelism     := 1,
-    SK.timeoutConst    := 2000,
-    SK.excludeSources  := Seq.empty,
-    SK.excludeTests    := Seq.empty,
-    SK.activeMutations := allMutations,
-    SK.verbose         := false,
-    SK.recompileOnly   := false
+    SK.timeoutFactor       := 1.5,
+    SK.parallelism         := 1,
+    SK.timeoutConst        := 2000,
+    SK.includeSources      := Seq.empty,
+    SK.includeTests        := Seq.empty,
+    SK.activeMutators      := allMutations,
+    SK.analyserJavaOptions := (K.javaOptions in Test).value,
+    SK.verbose             := false,
+    SK.recompileOnly       := false
   )
 
   private def allMutations: Seq[String] = Seq(
@@ -74,18 +75,18 @@ object ScalamuPlugin extends AutoPlugin {
           (accSource ++ sourceDirs, accTest + testDir, accCp ++ cp, accTcp ++ tcp)
       }
 
-    val target                = get(K.target)
-    val (_, javaOptions)      = runTask(K.javaOptions in Test, state)
-    val (_, scalacOptions)    = runTask(K.scalacOptions, state)
-    val excludeSource         = get(SK.excludeSources)
-    val excludeTests          = get(SK.excludeTests)
-    val timeoutFactor         = get(SK.timeoutFactor)
-    val timeoutConst          = get(SK.timeoutConst)
-    val parallelism           = get(SK.parallelism)
-    val verbose               = get(SK.verbose)
-    val recompileOnly         = get(SK.recompileOnly)
-    val activeMutations       = get(SK.activeMutations)
-    val (_, testOptions)      = runTask(K.testOptions, state)
+    val target             = get(K.target)
+    val javaOptions        = get(SK.analyserJavaOptions)
+    val (_, scalacOptions) = runTask(K.scalacOptions, state)
+    val excludeSource      = get(SK.includeSources)
+    val excludeTests       = get(SK.includeTests)
+    val timeoutFactor      = get(SK.timeoutFactor)
+    val timeoutConst       = get(SK.timeoutConst)
+    val parallelism        = get(SK.parallelism)
+    val verbose            = get(SK.verbose)
+    val recompileOnly      = get(SK.recompileOnly)
+    val activeMutations    = get(SK.activeMutators)
+    val (_, testOptions)   = runTask(K.testOptions, state)
 
     val testRunnerArgs = testOptions
       .foldLeft(Map.empty[String, String]) {
@@ -106,8 +107,8 @@ object ScalamuPlugin extends AutoPlugin {
       optionString(aggregatedClassPath.map(_.getAbsolutePath), ",", "--cp"),
       optionString(aggregatedTestClassPath.map(_.getAbsolutePath), ",", "--tcp"),
       optionString(javaOptions, " ", "--jvmOpts"),
-      optionString(excludeSource.map(_.toString), ",", "--excludeSource"),
-      optionString(excludeTests.map(_.toString), ",", "--excludeTestClasses"),
+      optionString(excludeSource.map(_.toString), ",", "--includeSource"),
+      optionString(excludeTests.map(_.toString), ",", "--includeTestClasses"),
       optionString(scalacOptions, " ", "--scalacOptions")
     ).flatten
 
@@ -180,7 +181,7 @@ object ScalamuPlugin extends AutoPlugin {
 
         val (updated, _) = runTask(K.update, withGuardJar)
         runTask(K.compile in Test, updated)
-        
+
         val forkOptions = ForkOptions()
         val run         = new ForkRun(forkOptions)
         val arguments   = buildScalamuArguments(resolveAggregates(extracted), updated)

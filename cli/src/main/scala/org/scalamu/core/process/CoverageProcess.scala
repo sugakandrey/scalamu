@@ -5,7 +5,6 @@ import java.io.{DataInputStream, DataOutputStream}
 import java.nio.file.Path
 
 import cats.data.ValidatedNel
-import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
 import io.circe.parser.decode
