@@ -18,7 +18,7 @@ object ScalamuPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
 
   override def globalSettings: Seq[Def.Setting[_]] = Seq(
-    K.commands ++= Seq(mutationTest, mutationTestAggregated),
+    K.commands += mutationTest,
     SK.timeoutFactor   := 1.5,
     SK.parallelism     := 1,
     SK.timeoutConst    := 2000,
@@ -53,16 +53,28 @@ object ScalamuPlugin extends AutoPlugin {
       case Some(framework) if framework == TestFrameworks.Specs2    => Seq("specs2")
     }
 
-  private def buildScalamuArguments(state: State): Seq[String] = {
+  private def buildScalamuArguments(projects: Seq[ProjectRef], state: State): Seq[String] = {
     val extracted = Project.extract(state)
     import extracted._
+    import sbt.Project.showContextKey
 
-    val sourceDirs            = get(K.sourceDirectories in Compile)
+    val (aggregatedSourceDirs, aggregatedTestDirs, aggregatedClassPath, aggregatedTestClassPath) =
+      projects.foldLeft((Set.empty[File], Set.empty[File], Set.empty[File], Set.empty[File])) {
+        (acc, ref) =>
+          val (accSource, accTest, accCp, accTcp) = acc
+
+          val ext                   = Extracted(extracted.structure, extracted.session, ref)(showContextKey(state))
+          val sourceDirs            = ext.get(K.sourceDirectories in Compile)
+          val testDir               = ext.get(K.crossTarget) / "test-classes"
+          val (_, compileClassPath) = ext.runTask(K.dependencyClasspath in Compile, state)
+          val cp                    = compileClassPath.map(_.data)
+          val (_, testClassPath)    = ext.runTask(K.fullClasspath in Test, state)
+          val tcp                   = testClassPath.map(_.data)
+
+          (accSource ++ sourceDirs, accTest + testDir, accCp ++ cp, accTcp ++ tcp)
+      }
+
     val target                = get(K.target)
-    val crossTarget           = get(K.crossTarget)
-    val testClasses           = crossTarget / "test-classes"
-    val (_, compileClassPath) = runTask(K.dependencyClasspath in Compile, state)
-    val (_, testClassPath)    = runTask(K.fullClasspath in Test, state)
     val (_, javaOptions)      = runTask(K.javaOptions in Test, state)
     val (_, scalacOptions)    = runTask(K.scalacOptions, state)
     val excludeSource         = get(SK.excludeSources)
@@ -91,8 +103,8 @@ object ScalamuPlugin extends AutoPlugin {
       .mkString
 
     val possiblyUndefinedOptions = Seq(
-      optionString(compileClassPath.map(_.data.getAbsolutePath), ",", "--cp"),
-      optionString(testClassPath.map(_.data.getAbsolutePath), ",", "--tcp"),
+      optionString(aggregatedClassPath.map(_.getAbsolutePath), ",", "--cp"),
+      optionString(aggregatedTestClassPath.map(_.getAbsolutePath), ",", "--tcp"),
       optionString(javaOptions, " ", "--jvmOpts"),
       optionString(excludeSource.map(_.toString), ",", "--excludeSource"),
       optionString(excludeTests.map(_.toString), ",", "--excludeTestClasses"),
@@ -112,66 +124,23 @@ object ScalamuPlugin extends AutoPlugin {
       (if (verbose) Seq("--verbose")                                     else Seq.empty) ++
       (if (testRunnerArgs.nonEmpty) Seq("--testOptions", testRunnerArgs) else Seq.empty) ++
       (if (recompileOnly) Seq("--recompileOnly")                         else Seq.empty)
-//      Seq("--recompileOnly")
 
     val arguments = Seq(
       target.getAbsolutePath,
-      sourceDirs.map(_.getAbsolutePath).mkString(","),
-      testClasses.getAbsolutePath
+      aggregatedSourceDirs.map(_.getAbsolutePath).mkString(","),
+      aggregatedTestDirs.map(_.getAbsolutePath).mkString(",")
     )
 
     possiblyUndefinedOptions ++ options ++ arguments
   }
 
   private def optionString[T](
-    options: Seq[T],
+    options: Traversable[T],
     separator: String,
     name: String
   ): Seq[String] =
     if (options.isEmpty) Seq.empty
     else Seq(name, options.mkString(separator))
-
-  private def mutationTestImpl(initialExt: Extracted, state: State): State = {
-    val log           = state.log
-    val binaryVersion = initialExt.get(K.scalaBinaryVersion)
-
-    CrossVersion.partialVersion(binaryVersion) match {
-      case Some((2, 11)) | Some((2, 12)) =>
-        val mainArtifact    = OrgScalamu % s"${entryPointId}_$binaryVersion" % version
-        val guardArtifact   = OrgScalamu % s"${compilationModuleId}_$binaryVersion" % version
-        val withAssemblyJar = initialExt.append(Seq(K.libraryDependencies += mainArtifact), state)
-
-        val assemblyExtracted = Project.extract(withAssemblyJar)
-        val (_, report)       = assemblyExtracted.runTask(K.update, withAssemblyJar)
-
-        val assemblyJar = report.matching(
-          moduleFilter(organization = OrgScalamu) &&
-            artifactFilter(name = "*entry-point*", `type` = "jar", classifier = "assembly")
-        )
-
-        val withGuardJar   = initialExt.append(Seq(K.libraryDependencies += guardArtifact), state)
-        val guardExtracted = Project.extract(withGuardJar)
-        import guardExtracted._
-
-        val (updated, _) = runTask(K.update, withGuardJar)
-        runTask(K.compile in Test, updated)
-        val forkOptions = ForkOptions()
-        val run         = new ForkRun(forkOptions)
-        val arguments   = buildScalamuArguments(withGuardJar)
-
-        run.run(
-          mainClass,
-          assemblyJar,
-          arguments,
-          log
-        )
-
-        state
-      case _ =>
-        log.error(s"Unsupported scala version: $binaryVersion.")
-        state.fail
-    }
-  }
 
   private def resolveAggregates(extracted: Extracted): Seq[ProjectRef] = {
     import extracted._
@@ -185,22 +154,48 @@ object ScalamuPlugin extends AutoPlugin {
     (currentRef :: currentProject.aggregate.toList.flatMap(findAggregates)).distinct
   }
 
-  lazy val mutationTestAggregated: Command = Command.command("mutationTestAggregated") { state =>
-    val extracted = Project.extract(state)
-    import sbt.Project.showContextKey
-
-    val aggregates = resolveAggregates(extracted)
-
-    aggregates.foreach { ref =>
-      val ext = Extracted(extracted.structure, extracted.session, ref)(showContextKey(state))
-      mutationTestImpl(ext, state)
-    }
-    state
-  }
-
   lazy val mutationTest: Command = Command.command("mutationTest") { state =>
     val extracted = Project.extract(state)
-    mutationTestImpl(extracted, state)
-    state
+
+    val log           = state.log
+    val binaryVersion = extracted.get(K.scalaBinaryVersion)
+
+    CrossVersion.partialVersion(binaryVersion) match {
+      case Some((2, 11)) | Some((2, 12)) =>
+        val mainArtifact    = OrgScalamu % s"${entryPointId}_$binaryVersion" % version
+        val guardArtifact   = OrgScalamu % s"${compilationModuleId}_$binaryVersion" % version
+        val withAssemblyJar = extracted.append(Seq(K.libraryDependencies += mainArtifact), state)
+
+        val assemblyExtracted = Project.extract(withAssemblyJar)
+        val (_, report)       = assemblyExtracted.runTask(K.update, withAssemblyJar)
+
+        val assemblyJar = report.matching(
+          moduleFilter(organization = OrgScalamu) &&
+            artifactFilter(name = "*entry-point*", `type` = "jar", classifier = "assembly")
+        )
+
+        val withGuardJar   = extracted.append(Seq(K.libraryDependencies += guardArtifact), state)
+        val guardExtracted = Project.extract(withGuardJar)
+        import guardExtracted._
+
+        val (updated, _) = runTask(K.update, withGuardJar)
+        runTask(K.compile in Test, updated)
+        
+        val forkOptions = ForkOptions()
+        val run         = new ForkRun(forkOptions)
+        val arguments   = buildScalamuArguments(resolveAggregates(extracted), updated)
+
+        run.run(
+          mainClass,
+          assemblyJar,
+          arguments,
+          log
+        )
+
+        state
+      case _ =>
+        log.error(s"Unsupported scala version: $binaryVersion.")
+        state.fail
+    }
   }
 }
