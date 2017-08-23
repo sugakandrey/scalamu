@@ -18,8 +18,7 @@ import scala.collection.breakOut
 
 class MutationAnalyser(
   val config: ScalamuConfig,
-  val compiledSourcesDir: Path,
-  val compiledSources: Map[String, Array[Byte]] = Map.empty
+  val compiledSourcesDir: Path
 ) {
   import MutationAnalyser._
 
@@ -37,13 +36,7 @@ class MutationAnalyser(
     private def initialiseProcessSupervisor()
       : Either[CommunicationException, ProcessSupervisor[Task, Result]] = {
       log.debug(s"Creating MutationAnalysisRunner#$processId ...")
-      val runner = new MutationAnalysisRunner(
-        socket,
-        config,
-        compiledSourcesDir,
-        processId,
-        compiledSources
-      )
+      val runner        = new MutationAnalysisRunner(socket, config, compiledSourcesDir, processId)
       val tryInitialise = runner.start()
       tryInitialise.left.foreach(
         failure => s"Failed to start mutation analysis process. Cause: ${failure.cause}"

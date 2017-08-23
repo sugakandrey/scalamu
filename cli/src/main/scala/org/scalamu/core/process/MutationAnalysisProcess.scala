@@ -8,18 +8,13 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.scalamu.common.MutantId
 import org.scalamu.utils.InMemoryClassLoader
-import org.scalamu.utils.ClassLoadingUtils._
 
 object MutationAnalysisProcess extends Process[MutationProcessResponse] {
-  override type Configuration = (MutationAnalysisProcessConfig, Map[String, Array[Byte]])
+  override type Configuration = (MutationAnalysisProcessConfig)
 
   override def readConfigurationFromParent(
     dis: DataInputStream
-  ): Either[Throwable, Configuration] =
-    for {
-      config  <- decode[MutationAnalysisProcessConfig](dis.readUTF()).right
-      classes <- Either.catchNonFatal(readCompiledSources(dis)).right
-    } yield (config, classes)
+  ): Either[Throwable, Configuration] = decode[MutationAnalysisProcessConfig](dis.readUTF())
 
   private def communicate(
     runner: SuiteRunner,
@@ -42,19 +37,16 @@ object MutationAnalysisProcess extends Process[MutationProcessResponse] {
     dis: DataInputStream,
     dos: DataOutputStream
   ): Iterator[MutationProcessResponse] = {
-    val (config, classes) = configuration
-    val classLoader       = new InMemoryClassLoader(classes)
-    val id                = System.getProperty("worker.name")
+    val id     = System.getProperty("worker.name")
+    val runner = new SuiteRunner(configuration)
+
     LoggerConfiguration.configureLoggingForName(s"MUTATION-WORKER-$id")
     MemoryWatcher.startMemoryWatcher(90)
-    val runner = new SuiteRunner(config)
 
-    withContextClassLoader(classLoader) {
-      Iterator
-        .continually(communicate(runner, dis, dos))
-        .takeWhile(_.isRight)
-        .map(_.right.get)
-    }
+    Iterator
+      .continually(communicate(runner, dis, dos))
+      .takeWhile(_.isRight)
+      .map(_.right.get)
   }
 
   def main(args: Array[String]): Unit = execute(args)

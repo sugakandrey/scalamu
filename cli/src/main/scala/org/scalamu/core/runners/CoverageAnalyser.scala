@@ -20,8 +20,7 @@ import scala.concurrent.duration._
 
 class CoverageAnalyser(
   val config: ScalamuConfig,
-  val compiledSourcesDir: Path,
-  val compiledSources: Map[String, Array[Byte]] = Map.empty
+  val compiledSourcesDir: Path
 ) {
   import CoverageAnalyser._
   private type Result = CoverageRunner#Result
@@ -60,7 +59,7 @@ class CoverageAnalyser(
 
   def analyse(instrumentation: InstrumentationReporter): Map[MeasuredSuite, Set[Statement]] = {
     val socket = new ServerSocket(0)
-    val runner = new CoverageRunner(socket, config, compiledSourcesDir, compiledSources)
+    val runner = new CoverageRunner(socket, config, compiledSourcesDir)
 
     val supervisor = runner
       .start()

@@ -55,8 +55,7 @@ object EntryPoint {
     val reporter        = new plugin.MemoryReporter
 
     val outputPath = Files.createTempDirectory("mutated-classes")
-//    val outDir     = new PlainDirectory(new Directory(outputPath.toFile))
-    val outDir = new VirtualDirectory("[memory]", None)
+    val outDir     = new PlainDirectory(new Directory(outputPath.toFile))
 
     val global      = ScalamuGlobal(config, instrumentation, reporter, outDir)
     val sourceFiles = new SourceFileFinder().findAll(config.sourceDirs)
@@ -73,10 +72,6 @@ object EntryPoint {
     log.info(s"Finished recompilation in $compilationTime seconds.")
     log.info(s"Total mutations generated: ${reporter.mutants.size}")
 
-    val compiledSources: Map[String, Array[Byte]] = outDir.traverseFiles.map(
-      file => fileNameToClassBinaryName("[memory]", file.path) -> file.toByteArray
-    )(breakOut)
-
     if (reporter.mutants.isEmpty) {
       log.error(
         "No mutants were generated. Make sure you have correctly applied exclusion filters."
@@ -92,7 +87,7 @@ object EntryPoint {
 
     if (config.recompileOnly) sys.exit(0)
 
-    val coverageAnalyser = new CoverageAnalyser(config, outputPath, compiledSources)
+    val coverageAnalyser = new CoverageAnalyser(config, outputPath)
     val coverage         = coverageAnalyser.analyse(instrumentation)
 
     log.debug(s"Test suites examined: ${coverage.keySet.mkString("[\n\t", "\n\t", "\n]")}.")

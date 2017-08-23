@@ -37,7 +37,6 @@ object TestingFramework {
 
     def isClassResolvable(className: String): Boolean =
       try {
-        println(contextClassLoader)
         Class.forName(className, true, contextClassLoader); true
       } catch {
         case _: ClassNotFoundException => false
