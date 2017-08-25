@@ -11,7 +11,7 @@ class NameFilterSpec extends MutationTestRunner with IsolatedScalamuCompilerFixt
     ".*foobar.*".r,
     ".*Foo.Bar".r
   )
-  override def mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
+  override def mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
 
   "NameFilter" should "ignore symbols according to their fullName using supplied regex" in
     withScalamuCompiler { (global, reporter) =>

@@ -21,16 +21,16 @@ scalamu
 Usage: scalamu-cli [options] <reportDir> <sourceDirs> <testClassDirs>
 
   <reportDir>              directory to create reports in
-  <sourceDirs>             comma-separated list of source directories
-  <testClassDirs>          comma-separated list of test class directories
-  --cp <value>             comma-separated list of "compile" classpath elements
-  --tcp <value>            comma-separated list of "test" classpath elements
-  --jvmOpts <value>        jvm args used by tests
-  --mutations <value>      set of mutation operators
+  <sourceDirs>             list of source directories
+  <testClassDirs>          list of test class directories
+  --cp <value>             list of "compile" classpath elements
+  --tcp <value>            list of "test" classpath elements
+  --jvmOpts <value>        arguments for forked JVM running tests
+  --mutations <value>      set of active mutators
   --includeSource <regex1>,<regex2>..
-                           list of filters for ignored source files
+                           only mutate certain source files
   --includeTestClasses <regex1>,<regex2>..
-                           list of filters for ignored test classes
+                           only run certain test classes
   --testOptions framework1=optionString1, framework2=optionString2...
                            per framework test runner options
   --scalacOptions <value>  options to be passed to scalac

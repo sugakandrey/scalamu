@@ -11,7 +11,7 @@ class IgnoreCoverageStatementsFilterSpec
 
   override def instrumentationReporter: TestingInstrumentationReporter =
     new TestingInstrumentationReporter
-  override def mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
+  override def mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
 
   override val guard = FqnGuard(
     s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"

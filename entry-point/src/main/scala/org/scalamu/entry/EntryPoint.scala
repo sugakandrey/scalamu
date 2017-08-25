@@ -28,7 +28,7 @@ import org.scalamu.utils.FileSystemUtils._
 
 import scala.collection.JavaConverters._
 import scala.collection.breakOut
-import scala.reflect.io.{Directory, PlainDirectory, VirtualDirectory}
+import scala.reflect.io.{Directory, PlainDirectory}
 
 object EntryPoint {
   private val log = Logger[EntryPoint.type]

@@ -3,7 +3,7 @@ package org.scalamu.testutil.fixtures
 import java.nio.file.{Path, Paths}
 
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
+import org.scalamu.plugin.{Mutator, ScalamuPluginConfig}
 import org.scalatest.TestSuite
 
 import scala.util.matching.Regex
@@ -15,7 +15,7 @@ trait ScalamuConfigFixture extends TestSuite {
   def classPath: Set[Path]                = Set.empty
   def testClassPath: Set[Path]            = Set.empty
   def jvmArgs: String                     = ""
-  def mutations: Seq[Mutation]            = ScalamuPluginConfig.allMutations
+  def mutations: Seq[Mutator]            = ScalamuPluginConfig.allMutators
   def excludeSources: Seq[Regex]          = Seq.empty
   def excludeTestsClasses: Seq[Regex]     = Seq.empty
   def testingOptions: Map[String, String] = Map.empty

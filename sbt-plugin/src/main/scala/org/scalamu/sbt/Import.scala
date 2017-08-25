@@ -14,6 +14,6 @@ object Import {
     lazy val includeTests        = settingKey[Seq[Regex]]("only run certain tests")
     lazy val activeMutators      = settingKey[Seq[String]]("set of active mutation operators")
     lazy val recompileOnly       = settingKey[Boolean]("do not run any analysis (for internal testing)")
-    lazy val analyserJavaOptions = settingKey[Seq[String]]("options passed to mutation analysis process when forking")
+    lazy val analyserJavaOptions = taskKey[Seq[String]]("options passed to mutation analysis process when forking")
   }
 }

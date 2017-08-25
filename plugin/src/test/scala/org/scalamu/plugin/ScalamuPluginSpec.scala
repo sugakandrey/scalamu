@@ -2,7 +2,7 @@ package org.scalamu.plugin
 
 import org.scalamu.common.filtering.{InverseRegexFilter, NameFilter}
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
-import org.scalamu.plugin.mutations.controllflow.{NegateConditionals, NeverExecuteConditionals}
+import org.scalamu.plugin.mutators.controllflow.{NegateConditionals, NeverExecuteConditionals}
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
@@ -10,7 +10,7 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
     s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"
   )
 
-  override val mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
+  override val mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
   override val sanitizeTrees: Boolean   = true
   override val verifyTrees: Boolean     = true
   override val filter: NameFilter       = InverseRegexFilter(".*ignored.*".r)

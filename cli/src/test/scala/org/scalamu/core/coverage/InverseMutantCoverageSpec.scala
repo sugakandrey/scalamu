@@ -4,7 +4,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalamu.common.position.Position
 import org.scalamu.core.process.MeasuredSuite
 import org.scalamu.plugin.MutantInfo
-import org.scalamu.plugin.mutations.arithmetic.ReplaceMathOperators
+import org.scalamu.plugin.mutators.arithmetic.ReplaceMathOperators
 import org.scalamu.testapi.AbstractTestSuite
 import org.scalamu.testutil.ScalamuSpec
 import scoverage.Location

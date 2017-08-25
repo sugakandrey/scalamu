@@ -1,8 +1,8 @@
 package org.scalamu.plugin
 
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
-import org.scalamu.plugin.mutations.arithmetic.{InvertNegations, ReplaceMathOperators}
-import org.scalamu.plugin.mutations.controllflow.{
+import org.scalamu.plugin.mutators.arithmetic.{InvertNegations, ReplaceMathOperators}
+import org.scalamu.plugin.mutators.controllflow.{
   ReplaceCaseWithWildcard,
   ReplaceConditionalBoundaries
 }
@@ -14,7 +14,7 @@ import scala.tools.nsc.reporters.{ConsoleReporter, Reporter}
 class MutationVerifierSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
 
   // Purposefully wrong mutation order
-  override val mutations: Seq[Mutation] = Seq(
+  override val mutations: Seq[Mutator] = Seq(
     InvertNegations,
     ReplaceMathOperators,
     ReplaceConditionalBoundaries,

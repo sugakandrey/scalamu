@@ -1,12 +1,12 @@
 package org.scalamu.plugin
 
-import org.scalamu.plugin.mutations.arithmetic._
-import org.scalamu.plugin.mutations.controllflow._
-import org.scalamu.plugin.mutations.methodcalls._
-import org.scalamu.plugin.mutations.{ReplaceWithNil, ReplaceWithNone}
+import org.scalamu.plugin.mutators.arithmetic._
+import org.scalamu.plugin.mutators.controllflow._
+import org.scalamu.plugin.mutators.methodcalls._
+import org.scalamu.plugin.mutators.{ReplaceWithNil, ReplaceWithNone}
 
 object ScalamuPluginConfig {
-  val allMutations: Seq[Mutation] = Seq(
+  val allMutators: Seq[Mutator] = Seq(
     ReplaceCaseWithWildcard,
     ReplaceMathOperators,
     ReplaceWithIdentityFunction,
@@ -22,8 +22,8 @@ object ScalamuPluginConfig {
     ReplaceWithNil
   )
 
-  val mutationByName: Map[String, Mutation] =
-    allMutations.map(m => m -> m.toString).toMap.map(_.swap)
+  val mutationByName: Map[String, Mutator] =
+    allMutators.map(m => m -> m.toString).toMap.map(_.swap)
 
   val mutationGuardPrefix: String = "org.scalamu.guards"
 }

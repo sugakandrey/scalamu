@@ -54,17 +54,11 @@ object ScalamuBuild {
     }
   )
 
-  lazy val testSettings = inConfig(Test)(
-    fullClasspath ++= (fullClasspath in Compile).value
-      .filter(_.data.getName.contains("org.scala-lang"))
-  )
-
   lazy val common = Project(id = "common", base = file("common"))
     .settings(commonSettings)
 
   lazy val plugin = Project(id = "plugin", base = file("plugin"))
     .settings(commonSettings)
-    .settings(testSettings)
     .settings(
       libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )

@@ -20,20 +20,20 @@ trait MutationReporter {
 /**
  * Contains information about a single inserted mutant.
  *
- * @param mutation [[org.scalamu.plugin.Mutation]], that spawned this mutant
- * @param runId Current global run id
- * @param pos Original tree position
- * @param oldTree Original tree
- * @param mutated Mutated tree
+ * @param mutation [[org.scalamu.plugin.Mutator]], that spawned this mutant
+ * @param runId    Current global run id
+ * @param pos      Original tree position
+ * @param oldTree  Original tree
+ * @param mutated  Mutated tree
  */
 final case class MutantInfo(
-  id: MutantId,
-  mutation: Mutation,
-  runId: Int,
-  packageName: String,
-  pos: Position,
-  oldTree: String,
-  mutated: String
+                             id: MutantId,
+                             mutation: Mutator,
+                             runId: Int,
+                             packageName: String,
+                             pos: Position,
+                             oldTree: String,
+                             mutated: String
 ) {
   def description: String = mutation.description
 }
@@ -42,12 +42,12 @@ object MutantInfo {
   private var currentId = 0
 
   def apply(
-    mutation: Mutation,
-    runId: Int,
-    packageName: String,
-    pos: ReflectPosition,
-    oldTree: String,
-    mutated: String
+             mutation: Mutator,
+             runId: Int,
+             packageName: String,
+             pos: ReflectPosition,
+             oldTree: String,
+             mutated: String
   ): MutantInfo = {
     val position = pos match {
       case _: UndefinedPosition => Position(pos.source.path, 0, 0, 0)

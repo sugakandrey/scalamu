@@ -76,7 +76,7 @@ object ScalamuPlugin extends AutoPlugin {
       }
 
     val target             = get(K.target)
-    val javaOptions        = get(SK.analyserJavaOptions)
+    val (_, javaOptions)   = runTask(SK.analyserJavaOptions, state)
     val (_, scalacOptions) = runTask(K.scalacOptions, state)
     val excludeSource      = get(SK.includeSources)
     val excludeTests       = get(SK.includeTests)
