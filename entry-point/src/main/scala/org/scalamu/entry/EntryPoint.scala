@@ -38,9 +38,6 @@ object EntryPoint {
       Files.createDirectories(dir)
     }
 
-  private def fileNameToClassBinaryName(dirPrefix: String, name: String): String =
-    name.substring(dirPrefix.length + 1, name.lastIndexOf(".")).replaceAll("/", "\\.")
-
   def main(args: Array[String]): Unit = {
     LoggerConfiguration.configureLoggingForName("MAIN-APP")
     val config = ScalamuConfig.parseConfig(args)
@@ -136,6 +133,7 @@ object EntryPoint {
       Set.empty,
       config
     )
+    log.info(s"Mutation analysis is finished. Report was written to $reportDir.")
   }
 
   def generateReport(

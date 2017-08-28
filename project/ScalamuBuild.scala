@@ -1,3 +1,5 @@
+import com.typesafe.sbt.SbtPgp
+import com.typesafe.sbt.pgp.PgpKeys
 import play.twirl.sbt.Import.TwirlKeys
 import play.twirl.sbt.SbtTwirl
 import sbt.Keys._
@@ -6,9 +8,11 @@ import sbtassembly.AssemblyKeys._
 import sbtassembly.ShadeRule
 
 object ScalamuBuild {
+  private val GPL3 = "GPL 3.0" -> url("http://www.gnu.org/licenses/gpl-3.0.en.html")
+
   lazy val commonSettings = Seq(
     test in assembly   := {},
-    organization       := "org.scalamu",
+    organization       := "io.github.sugakandrey",
     scalaVersion       := "2.12.2",
     crossScalaVersions := Seq("2.11.11", "2.12.2"),
     scalacOptions := Seq(
@@ -115,10 +119,35 @@ object ScalamuBuild {
     .settings(commonSettings)
     .dependsOn(commandLine, common, plugin, report, compilation)
     .settings(
+      PgpKeys.useGpg := true,
       artifact in (Compile, assembly) ~= { _.copy(`classifier` = Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
       assemblyShadeRules in assembly :=
-        Seq("io.circe.**", "org.ow2.asm.**", "org.typelevel.**", "shapeless.**").map(shade)
+        Seq("io.circe.**", "org.ow2.asm.**", "org.typelevel.**", "shapeless.**").map(shade),
+      isSnapshot := true,
+      homepage   := Some(url("https://github.com/sugakandrey/scalamu")),
+      licenses   := Seq(GPL3),
+      scmInfo := Some(
+        ScmInfo(
+          url("https://github.com/sugakandrey/scalamu"),
+          "git@github.com:sugakandrey/scalamu.git"
+        )
+      ),
+      developers += Developer(
+        id    = "sugakandrey",
+        name  = "Andrey Sugak",
+        email = "sugak.andr3y@gmail.com",
+        url   = url("https://github.com/sugakandrey")
+      ),
+      pomIncludeRepository := Function.const(false),
+      publishTo := {
+        val nexus = "https://oss.sonatype.org/"
+        if (isSnapshot.value)
+          Some("snapshots" at nexus + "content/repositories/snapshots")
+        else
+          Some("releases" at nexus + "service/local/staging/deploy/maven2")
+      },
+      publishArtifact in Test := false
     )
 
   private def shade(pattern: String): ShadeRule =
