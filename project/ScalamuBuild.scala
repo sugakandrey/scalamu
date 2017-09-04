@@ -49,7 +49,10 @@ object ScalamuBuild {
       import scala.tools.reflect.ToolBox
       val tb = currentMirror.mkToolBox() 
       """,
-    scalacOptions in (Compile, console) -= "-Ywarn-unused-import",
+    scalacOptions in (Compile, console) -= "-Ywarn-unused-import"
+  )
+
+  lazy val commonDeps = Seq(
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       scalatest        % Test
@@ -58,49 +61,80 @@ object ScalamuBuild {
        else
          Seq(
            "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-         )),
-    publishMavenStyle       := true,
+         ))
+  )
+
+  lazy val publishSettings = Seq(
+    PgpKeys.useGpg          := true,
+    homepage                := Some(url("https://github.com/sugakandrey/scalamu")),
+    licenses                := Seq(GPL3),
     publishArtifact in Test := false,
+    publishMavenStyle       := true,
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/sugakandrey/scalamu"),
+        "git@github.com:sugakandrey/scalamu.git"
+      )
+    ),
+    developers += Developer(
+      id = "sugakandrey",
+      name = "Andrey Sugak",
+      email = "sugak.andr3y@gmail.com",
+      url = url("https://github.com/sugakandrey")
+    ),
+    pomIncludeRepository := Function.const(false),
     publishTo := {
+      val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value)
-        Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
+        Some("snapshots" at nexus + "content/repositories/snapshots")
       else
-        Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+        Some("releases" at nexus + "service/local/staging/deploy/maven2")
     }
   )
 
   lazy val common = Project(id = "common", base = file("common"))
-    .settings(commonSettings)
+    .settings(commonSettings ++ commonDeps)
+    .settings(name := "scalamu-common")
 
   lazy val plugin = Project(id = "plugin", base = file("plugin"))
-    .settings(commonSettings)
-    .settings(libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value)
+    .settings(commonSettings ++ commonDeps)
+    .settings(
+      name                                    := "scalamu-plugin",
+      libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
+    )
     .dependsOn(common)
 
   private lazy val testingFrameworks = Seq(scalatest, specs2, utest, junit)
 
   lazy val commandLine = Project(id = "cli", base = file("cli"))
-    .settings(commonSettings)
+    .settings(commonSettings ++ commonDeps)
     .settings(
+      name := "scalamu-cli",
       libraryDependencies ++= Seq(
-        "org.ow2.asm"      % "asm-commons"                  % "5.2",
-        "org.ow2.asm"      % "asm-util"                     % "5.2",
-        "org.typelevel"    %% "cats"                        % "0.9.0",
-        "com.github.scopt" %% "scopt"                       % "3.5.0",
-        "org.scalamock"    %% "scalamock-scalatest-support" % "3.5.0" % Test,
-        "com.ironcorelabs" %% "cats-scalatest"              % "2.2.0" % Test
+        "org.ow2.asm"              % "asm-commons" % "5.2",
+        "org.ow2.asm"              % "asm-util" % "5.2",
+        "org.typelevel"            %% "cats" % "0.9.0",
+        "com.github.scopt"         %% "scopt" % "3.5.0",
+        "org.scalamock"            %% "scalamock-scalatest-support" % "3.5.0" % Test,
+        "com.ironcorelabs"         %% "cats-scalatest" % "2.2.0" % Test
       ) ++ testingFrameworks.map(_ % Optional) ++ circe
     )
     .dependsOn(plugin % "compile->compile;test->test")
     .dependsOn(common, compilation)
 
   lazy val report = Project(id = "report", base = file("report"))
-    .settings(commonSettings)
+    .settings(commonSettings ++ commonDeps)
     .enablePlugins(SbtTwirl)
-    .settings(TwirlKeys.templateImports := Seq())
+    .settings(
+      name                      := "scalamu-report",
+      TwirlKeys.templateImports := Seq()
+    )
     .dependsOn(commandLine, common, plugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
+    .dependsOn(
+      entryPoint
+    )
     .aggregate(
       plugin,
       commandLine,
@@ -109,77 +143,48 @@ object ScalamuBuild {
       entryPoint,
       compilation
     )
-
-  lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
     .settings(commonSettings)
-    .dependsOn(commandLine, common, plugin, report, compilation)
+    .settings(publishSettings)
     .settings(
-      PgpKeys.useGpg := true,
+      isSnapshot := true,
       artifact in (Compile, assembly) ~= { _.copy(`classifier` = Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
       assemblyShadeRules in assembly :=
-        Seq("io.circe.**", "org.ow2.asm.**", "org.typelevel.**", "shapeless.**").map(shade),
-      isSnapshot := true,
-      homepage   := Some(url("https://github.com/sugakandrey/scalamu")),
-      licenses   := Seq(GPL3),
-      scmInfo := Some(
-        ScmInfo(
-          url("https://github.com/sugakandrey/scalamu"),
-          "git@github.com:sugakandrey/scalamu.git"
-        )
-      ),
-      developers += Developer(
-        id    = "sugakandrey",
-        name  = "Andrey Sugak",
-        email = "sugak.andr3y@gmail.com",
-        url   = url("https://github.com/sugakandrey")
-      ),
-      pomIncludeRepository := Function.const(false),
-      publishTo := {
-        val nexus = "https://oss.sonatype.org/"
-        if (isSnapshot.value)
-          Some("snapshots" at nexus + "content/repositories/snapshots")
-        else
-          Some("releases" at nexus + "service/local/staging/deploy/maven2")
-      },
-      publishArtifact in Test := false
+        Seq(
+          "io.circe.**",
+          "org.ow2.asm.**",
+          "org.typelevel.**",
+          "shapeless.**",
+          "org.slf4j.**"
+        ).map(shade)
     )
+
+  lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
+    .settings(commonSettings ++ commonDeps)
+    .settings(name := "scalamu-entry-point")
+    .dependsOn(commandLine, common, plugin, report, compilation)
 
   private def shade(pattern: String): ShadeRule =
     ShadeRule.rename(pattern -> "shaded.@0").inAll
 
   lazy val compilation = Project(id = "compilation", base = file("compilation"))
     .settings(commonSettings)
+    .settings(publishSettings)
     .settings(
-      libraryDependencies := Seq(
+      libraryDependencies ++= Seq(
         "org.scoverage" %% "scalac-scoverage-plugin"  % "1.3.0",
         "org.scoverage" %% "scalac-scoverage-runtime" % "1.3.0"
       )
     )
 
-  lazy val pluginSettings = Seq(
-    organization                   := "io.github.sugakandrey",
-    sbtPlugin                      := true,
-    name                           := "sbt-scalamu",
-    CrossBuilding.crossSbtVersions := Seq("0.13.16", "1.0.0")
-  )
-
   lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
-    .settings(pluginSettings)
+    .settings(
+      organization                   := "io.github.sugakandrey",
+      sbtPlugin                      := true,
+      name                           := "sbt-scalamu",
+      CrossBuilding.crossSbtVersions := Seq("0.13.16", "1.0.0")
+    )
 
-  private def pluginProject(name: String, version: String): Project =
-    Project(name, file(name))
-      .settings(pluginSettings)
-      .settings(
-        libraryDependencies += "io.github.sugakandrey" % s"scalamu_$version" % "0.1-SNAPSHOT"
-      )
-      .settings(
-        scalaSource in Compile := baseDirectory.value / ".." / ".." / "sbt-plugin" / "scr" / "main" / "scala",
-        scalaSource in Test    := baseDirectory.value / ".." / ".." / "sbt-plugin" / "scr" / "main" / "scala"
-      )
-
-  lazy val scalamuSbt_211 = pluginProject("scalamu-sbt_2.11", "2.11")
-  lazy val scalamuSbt_212 = pluginProject("scalamu-sbt_2.12", "2.12")
 }
 
 object ScalamuTestingBuild {
@@ -187,7 +192,7 @@ object ScalamuTestingBuild {
 
   private def testProject(name: String): Project =
     Project(id = s"testing-$name", base = file(s"testing/$name"))
-      .settings(commonSettings)
+      .settings(commonSettings ++ commonDeps)
 
   lazy val testingSimple = testProject("simple")
     .settings(testFrameworks += new TestFramework("utest.runner.Framework"))

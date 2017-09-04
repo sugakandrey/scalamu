@@ -6,8 +6,7 @@ import sbt.plugins.JvmPlugin
 import org.scalamu.sbt.Import.{ScalamuKeys => SK}
 
 object ScalamuPlugin extends AutoPlugin {
-  private val OrgScalamu          = "org.scalamu"
-  private val entryPointId        = "entry-point"
+  private val organization        = "io.github.sugakandrey"
   private val compilationModuleId = "compilation"
   private val version             = "0.1-SNAPSHOT"
   private val mainClass           = "org.scalamu.entry.EntryPoint"
@@ -60,19 +59,18 @@ object ScalamuPlugin extends AutoPlugin {
     import sbt.Project.showContextKey
 
     val (aggregatedSourceDirs, aggregatedTestDirs, aggregatedClassPath, aggregatedTestClassPath) =
-      projects.foldLeft((Set.empty[File], Set.empty[File], Set.empty[File], Set.empty[File])) {
-        (acc, ref) =>
-          val (accSource, accTest, accCp, accTcp) = acc
+      projects.foldLeft((Set.empty[File], Set.empty[File], Set.empty[File], Set.empty[File])) { (acc, ref) =>
+        val (accSource, accTest, accCp, accTcp) = acc
 
-          val ext                   = Extracted(extracted.structure, extracted.session, ref)(showContextKey(state))
-          val sourceDirs            = ext.get(K.sourceDirectories in Compile)
-          val testDir               = ext.get(K.crossTarget) / "test-classes"
-          val (_, compileClassPath) = ext.runTask(K.dependencyClasspath in Compile, state)
-          val cp                    = compileClassPath.map(_.data)
-          val (_, testClassPath)    = ext.runTask(K.fullClasspath in Test, state)
-          val tcp                   = testClassPath.map(_.data)
+        val ext                   = Extracted(extracted.structure, extracted.session, ref)(showContextKey(state))
+        val sourceDirs            = ext.get(K.sourceDirectories in Compile)
+        val testDir               = ext.get(K.crossTarget) / "test-classes"
+        val (_, compileClassPath) = ext.runTask(K.dependencyClasspath in Compile, state)
+        val cp                    = compileClassPath.map(_.data)
+        val (_, testClassPath)    = ext.runTask(K.fullClasspath in Test, state)
+        val tcp                   = testClassPath.map(_.data)
 
-          (accSource ++ sourceDirs, accTest + testDir, accCp ++ cp, accTcp ++ tcp)
+        (accSource ++ sourceDirs, accTest + testDir, accCp ++ cp, accTcp ++ tcp)
       }
 
     val target             = get(K.target)
@@ -163,17 +161,7 @@ object ScalamuPlugin extends AutoPlugin {
 
     CrossVersion.partialVersion(binaryVersion) match {
       case Some((2, 11)) | Some((2, 12)) =>
-        val mainArtifact    = OrgScalamu % s"${entryPointId}_$binaryVersion" % version
-        val guardArtifact   = OrgScalamu % s"${compilationModuleId}_$binaryVersion" % version
-        val withAssemblyJar = extracted.append(Seq(K.libraryDependencies += mainArtifact), state)
-
-        val assemblyExtracted = Project.extract(withAssemblyJar)
-        val (_, report)       = assemblyExtracted.runTask(K.update, withAssemblyJar)
-
-        val assemblyJar = report.matching(
-          moduleFilter(organization = OrgScalamu) &&
-            artifactFilter(name = "*entry-point*", `type` = "jar", classifier = "assembly")
-        )
+        val guardArtifact   = organization % s"${compilationModuleId}_$binaryVersion" % version
 
         val withGuardJar   = extracted.append(Seq(K.libraryDependencies += guardArtifact), state)
         val guardExtracted = Project.extract(withGuardJar)
@@ -185,10 +173,10 @@ object ScalamuPlugin extends AutoPlugin {
         val forkOptions = ForkOptions()
         val run         = new ForkRun(forkOptions)
         val arguments   = buildScalamuArguments(resolveAggregates(extracted), updated)
-
+        
         run.run(
           mainClass,
-          assemblyJar,
+          Seq.empty,
           arguments,
           log
         )
