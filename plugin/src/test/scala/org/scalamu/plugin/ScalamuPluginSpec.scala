@@ -1,18 +1,19 @@
 package org.scalamu.plugin
 
-import org.scalamu.common.filtering.RegexBasedFilter
+import org.scalamu.common.filtering.{InverseRegexFilter, NameFilter}
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
-import org.scalamu.plugin.mutations.controllflow.{NegateConditionals, NeverExecuteConditionals}
+import org.scalamu.plugin.mutators.controllflow.{NegateConditionals, NeverExecuteConditionals}
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
-  override val mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
   override val guard: MutationGuard = FqnGuard(
     s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"
   )
+
+  override val mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
   override val sanitizeTrees: Boolean   = true
   override val verifyTrees: Boolean     = true
-  override val filter: RegexBasedFilter = RegexBasedFilter(".*ignored.*".r)
+  override val filter: NameFilter       = InverseRegexFilter(".*ignored.*".r)
 
   private val guards =
     s"""
@@ -137,32 +138,33 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
     }
   }
 
-  it should "test case where NeverExecuteConditionals fail on LambdaLift" in withPluginConfig { cfg =>
-    withScalamuCompiler(Seq(NeverExecuteConditionals), cfg) { (global, _) =>
-      val code =
-        """
-          |object Foo {
-          |  type Occurrence = (Int, Int)
-          |  private case class Stacked(idx1: Int, idx2: Int, next: Option[Stacked]) {
-          |    lazy val chain: List[(Int, Int)] = ???
-          |  }
-          |
-          |  val l: List[(Occurrence, Int)] = ???
-          |  if (l.length > 0) {
-          |    Nil
-          |  } else {
-          |    def sort(l: List[(Occurrence, Int)]): List[List[Stacked]] =
-          |      l.foldLeft(List[List[Stacked]]()) {
-          |        case (acc, ((_, idx1), idx2)) => acc
-          |      }
-          |    Nil
-          |  }
-          |}
+  it should "test case where NeverExecuteConditionals fail on LambdaLift" in withPluginConfig {
+    cfg =>
+      withScalamuCompiler(Seq(NeverExecuteConditionals), cfg) { (global, _) =>
+        val code =
+          """
+            |object Foo {
+            |  type Occurrence = (Int, Int)
+            |  private case class Stacked(idx1: Int, idx2: Int, next: Option[Stacked]) {
+            |    lazy val chain: List[(Int, Int)] = ???
+            |  }
+            |
+            |  val l: List[(Occurrence, Int)] = ???
+            |  if (l.length > 0) {
+            |    Nil
+            |  } else {
+            |    def sort(l: List[(Occurrence, Int)]): List[List[Stacked]] =
+            |      l.foldLeft(List[List[Stacked]]()) {
+            |        case (acc, ((_, idx1), idx2)) => acc
+            |      }
+            |    Nil
+            |  }
+            |}
         """.stripMargin
-      compile(
-        NamedSnippet("Guards.scala", guards),
-        NamedSnippet("Foo.scala", code)
-      )(global)
-    }
+        compile(
+          NamedSnippet("Guards.scala", guards),
+          NamedSnippet("Foo.scala", code)
+        )(global)
+      }
   }
 }

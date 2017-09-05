@@ -27,14 +27,12 @@ class MutationAnalysisRunner(
 
   override protected def generateProcessArgs(
     worker: Process[_],
-    executablePath: String,
-    jvmArgs: Seq[String],
+    jvmArgs: String,
     runnerArgs: Seq[String]
   ): Seq[String] =
     super.generateProcessArgs(
       worker,
-      executablePath,
-      s"-Dworker.name=$workerId" +: jvmArgs,
+      s"-Dworker.name=$workerId $jvmArgs",
       runnerArgs
     )
 }

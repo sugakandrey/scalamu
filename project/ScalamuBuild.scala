@@ -1,12 +1,29 @@
+import com.typesafe.sbt.pgp.PgpKeys
 import play.twirl.sbt.Import.TwirlKeys
 import play.twirl.sbt.SbtTwirl
 import sbt.Keys._
 import sbt._
+import sbtassembly.AssemblyKeys._
+import sbtassembly.ShadeRule
 
 object ScalamuBuild {
+  val GPL3 = "GPL 3.0" -> url("http://www.gnu.org/licenses/gpl-3.0.en.html")
+
+  val specs2    = "org.specs2"    %% "specs2-core" % "3.8.9"
+  val scalatest = "org.scalatest" %% "scalatest"   % "3.0.1"
+  val utest     = "com.lihaoyi"   %% "utest"       % "0.4.5"
+  val junit     = "junit"         % "junit"        % "4.12"
+
+  val circe = Seq(
+    "io.circe" %% "circe-core",
+    "io.circe" %% "circe-generic",
+    "io.circe" %% "circe-parser"
+  ).map(_ % "0.8.0")
+
   lazy val commonSettings = Seq(
-    organization := "org.scalamu",
-    scalaVersion := "2.12.2",
+    test in assembly   := {},
+    organization       := "io.github.sugakandrey",
+    scalaVersion       := "2.12.2",
     crossScalaVersions := Seq("2.11.11", "2.12.2"),
     scalacOptions := Seq(
       "-encoding",
@@ -20,102 +37,154 @@ object ScalamuBuild {
       "-Xlint",
       "-Yno-adapted-args",
       "-Ywarn-dead-code",
-      "-Ywarn-unused-import",
+//      "-Ywarn-unused-import",
       "-Xfuture",
       "-Xexperimental"
-
 //      "-Xfatal-warnings"
     ),
-    fork in Test := true,
+    fork in Test               := true,
     initialCommands in console := """
       import scala.reflect.runtime.universe._
       import scala.reflect.runtime.currentMirror
       import scala.tools.reflect.ToolBox
       val tb = currentMirror.mkToolBox() 
       """,
-    scalacOptions in (Compile, console) -= "-Ywarn-unused-import",
+    scalacOptions in (Compile, console) -= "-Ywarn-unused-import"
+  )
+
+  lazy val commonDeps = Seq(
     libraryDependencies ++= Seq(
-      "ch.qos.logback"             % "logback-classic" % "1.1.7",
-      "com.typesafe.scala-logging" %% "scala-logging"  % "3.5.0",
-      "org.scalatest"              %% "scalatest"      % "3.0.1" % Test
-    ),
-    publishMavenStyle := true,
+      "ch.qos.logback" % "logback-classic" % "1.2.3",
+      scalatest        % Test
+    ) ++
+      (if (scalaBinaryVersion.value == "2.10") Seq()
+       else
+         Seq(
+           "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+         ))
+  )
+
+  lazy val publishSettings = Seq(
+    PgpKeys.useGpg          := true,
+    homepage                := Some(url("https://github.com/sugakandrey/scalamu")),
+    licenses                := Seq(GPL3),
     publishArtifact in Test := false,
+    publishMavenStyle       := true,
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/sugakandrey/scalamu"),
+        "git@github.com:sugakandrey/scalamu.git"
+      )
+    ),
+    developers += Developer(
+      id = "sugakandrey",
+      name = "Andrey Sugak",
+      email = "sugak.andr3y@gmail.com",
+      url = url("https://github.com/sugakandrey")
+    ),
+    pomIncludeRepository := Function.const(false),
     publishTo := {
+      val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value)
-        Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
+        Some("snapshots" at nexus + "content/repositories/snapshots")
       else
-        Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+        Some("releases" at nexus + "service/local/staging/deploy/maven2")
     }
   )
 
-  lazy val testSettings = inConfig(Test)(
-    fullClasspath ++= (fullClasspath in Compile).value
-      .filter(_.data.getName.contains("org.scala-lang"))
-  )
-
   lazy val common = Project(id = "common", base = file("common"))
-    .settings(commonSettings)
+    .settings(commonSettings ++ commonDeps)
+    .settings(name := "scalamu-common")
 
   lazy val plugin = Project(id = "plugin", base = file("plugin"))
-    .settings(commonSettings)
-    .settings(testSettings)
+    .settings(commonSettings ++ commonDeps)
     .settings(
+      name                                    := "scalamu-plugin",
       libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )
     .dependsOn(common)
 
-  private lazy val testingFrameworks = Seq(
-    "org.specs2"    %% "specs2-core" % "3.8.9" % Optional,
-    "org.scalatest" %% "scalatest"   % "3.0.1" % Optional,
-    "com.lihaoyi"   %% "utest"       % "0.4.5" % Optional,
-    "junit"         % "junit"        % "4.12"  % Optional
-  )
+  private lazy val testingFrameworks = Seq(scalatest, specs2, utest, junit)
 
   lazy val commandLine = Project(id = "cli", base = file("cli"))
-    .settings(commonSettings)
+    .settings(commonSettings ++ commonDeps)
     .settings(
+      name := "scalamu-cli",
       libraryDependencies ++= Seq(
-        "org.ow2.asm"      % "asm-commons"                  % "5.2",
-        "org.ow2.asm"      % "asm-util"                     % "5.2",
-        "org.typelevel"    %% "cats"                        % "0.9.0",
-        "com.github.scopt" %% "scopt"                       % "3.5.0",
-        "org.scoverage"    %% "scalac-scoverage-plugin"     % "1.3.0",
-        "org.scoverage"    %% "scalac-scoverage-runtime"    % "1.3.0",
-        "org.scalamock"    %% "scalamock-scalatest-support" % "3.5.0" % Test,
-        "com.ironcorelabs" %% "cats-scalatest"              % "2.2.0" % Test
-      ) ++ testingFrameworks
-    )
-    .settings(
-      libraryDependencies ++= Seq(
-        "io.circe" %% "circe-core",
-        "io.circe" %% "circe-generic",
-        "io.circe" %% "circe-parser"
-      ).map(_ % "0.8.0")
+        "org.ow2.asm"              % "asm-commons" % "5.2",
+        "org.ow2.asm"              % "asm-util" % "5.2",
+        "org.typelevel"            %% "cats" % "0.9.0",
+        "com.github.scopt"         %% "scopt" % "3.5.0",
+        "org.scalamock"            %% "scalamock-scalatest-support" % "3.5.0" % Test,
+        "com.ironcorelabs"         %% "cats-scalatest" % "2.2.0" % Test
+      ) ++ testingFrameworks.map(_ % Optional) ++ circe
     )
     .dependsOn(plugin % "compile->compile;test->test")
-    .dependsOn(common)
+    .dependsOn(common, compilation)
 
   lazy val report = Project(id = "report", base = file("report"))
-    .settings(commonSettings)
-    .settings(TwirlKeys.templateImports := Seq())
+    .settings(commonSettings ++ commonDeps)
     .enablePlugins(SbtTwirl)
+    .settings(
+      name                      := "scalamu-report",
+      TwirlKeys.templateImports := Seq()
+    )
     .dependsOn(commandLine, common, plugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
+    .dependsOn(
+      entryPoint
+    )
+    .aggregate(
+      plugin,
+      commandLine,
+      report,
+      common,
+      entryPoint,
+      compilation
+    )
     .settings(commonSettings)
-    .aggregate(plugin, commandLine, report, common, entryPoint)
+    .settings(publishSettings)
+    .settings(
+      isSnapshot := true,
+      artifact in (Compile, assembly) ~= { _.copy(`classifier` = Some("assembly")) },
+      addArtifact(artifact in (Compile, assembly), assembly),
+      assemblyShadeRules in assembly :=
+        Seq(
+          "io.circe.**",
+          "org.ow2.asm.**",
+          "org.typelevel.**",
+          "shapeless.**",
+          "org.slf4j.**"
+        ).map(shade)
+    )
 
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
+    .settings(commonSettings ++ commonDeps)
+    .settings(name := "scalamu-entry-point")
+    .dependsOn(commandLine, common, plugin, report, compilation)
+
+  private def shade(pattern: String): ShadeRule =
+    ShadeRule.rename(pattern -> "shaded.@0").inAll
+
+  lazy val compilation = Project(id = "compilation", base = file("compilation"))
     .settings(commonSettings)
-    .dependsOn(commandLine, common, plugin, report)
+    .settings(publishSettings)
     .settings(
       libraryDependencies ++= Seq(
-        "io.circe" %% "circe-core",
-        "io.circe" %% "circe-generic",
-        "io.circe" %% "circe-parser"
-      ).map(_ % "0.7.0") ++ testingFrameworks
+        "org.scoverage" %% "scalac-scoverage-plugin"  % "1.3.0",
+        "org.scoverage" %% "scalac-scoverage-runtime" % "1.3.0"
+      )
     )
+
+  lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
+    .settings(
+      organization                   := "io.github.sugakandrey",
+      sbtPlugin                      := true,
+      name                           := "sbt-scalamu",
+      CrossBuilding.crossSbtVersions := Seq("0.13.16", "1.0.0")
+    )
+
 }
 
 object ScalamuTestingBuild {
@@ -123,22 +192,22 @@ object ScalamuTestingBuild {
 
   private def testProject(name: String): Project =
     Project(id = s"testing-$name", base = file(s"testing/$name"))
-      .settings(commonSettings)
+      .settings(commonSettings ++ commonDeps)
 
   lazy val testingSimple = testProject("simple")
     .settings(testFrameworks += new TestFramework("utest.runner.Framework"))
 
   lazy val junit = testProject("junit")
-    .settings(libraryDependencies += "junit" % "junit" % "4.12" % Test)
+    .settings(libraryDependencies += ScalamuBuild.junit % Test)
 
   lazy val scalatest = testProject("scalatest")
-    .settings(libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test)
+    .settings(libraryDependencies += ScalamuBuild.scalatest % Test)
 
   lazy val specs2 = testProject("specs2")
-    .settings(libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.9" % Test)
+    .settings(libraryDependencies += ScalamuBuild.specs2 % Test)
 
   lazy val utest = testProject("utest")
-    .settings(libraryDependencies += "com.lihaoyi" %% "utest" % "0.4.5" % Test)
+    .settings(libraryDependencies += ScalamuBuild.utest % Test)
 
   lazy val withScoverage = testProject("scoverage")
     .settings(

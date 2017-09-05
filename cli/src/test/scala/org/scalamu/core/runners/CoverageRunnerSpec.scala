@@ -33,14 +33,14 @@ class CoverageRunnerSpec
   )
 
   override def testClassDirs: Set[Path] = Set(testProject.testClasses)
-  override def scalaPath: String        = System.getenv("SCALA_HOME")
+  override def spanScaleFactor: Double  = 200.0
+
   override def classPath: Set[Path] =
     System
       .getProperty("java.class.path")
       .split(File.pathSeparator)
       .map(Paths.get(_))
       .toSet | testClassDirs
-  override def spanScaleFactor: Double = 200.0
 
   override def createSettings(): Settings = new Settings {
     usejavacp.value = true
@@ -56,10 +56,10 @@ class CoverageRunnerSpec
 
         val analyser = new CoverageAnalyser(
           config
-            .copy(excludeTestsClasses = Seq(".*Bad.*".r)),
+            .copy(includeTestClasses = Seq(".*Bad.*".r)),
           global.outputDir.file.toPath
         )
-        
+
         val coverage = analyser.analyse(instrumentation)
         coverage should have size 1
         forAll(coverage.values)(_.size should ===(11))
@@ -75,7 +75,7 @@ class CoverageRunnerSpec
         config,
         global.outputDir.file.toPath
       )
-      
+
       val failures = analyser.analyse(instrumentation)
       failures should have size 1
       failures should ===(

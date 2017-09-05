@@ -58,7 +58,8 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture {
   }
 
   it should "detect class files which contain tests" in withTestProject { project =>
-    val finder = new TestClassFileFinder(new CompositeFramework().filter)
+    val frameworks = Seq(Specs2Framework, UTestFramework, JUnitFramework, ScalaTestFramework)
+    val finder = new TestClassFileFinder(TestClassFilter.forFrameworks(frameworks))
     val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
       finder.findAll(project.target)
     )

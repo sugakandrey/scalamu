@@ -7,7 +7,7 @@ import cats.implicits._
 import org.scalamu.core.compilation.{IsolatedScalamuGlobalFixture, ScalamuMutationPhase}
 import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.plugin.testutil.MutationTestRunner
-import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
+import org.scalamu.plugin.{Mutator, ScalamuPluginConfig}
 import org.scalamu.testutil.fixtures.{ScalamuConfigFixture, TestProjectFixture}
 import org.scalamu.testutil.{ScalamuSpec, TestProject, TestingInstrumentationReporter}
 
@@ -24,7 +24,7 @@ class CoverageProcessSpec
   override def instrumentationReporter: TestingInstrumentationReporter =
     new TestingInstrumentationReporter
 
-  override def mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations
+  override def mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
   override def testProject: TestProject = TestProject.Scoverage
   override def testClassDirs: Set[Path] = Set(testProject.testClasses)
 
@@ -52,7 +52,7 @@ class CoverageProcessSpec
           val coverage = CoverageProcess
             .run(
               (
-                config.derive[CoverageProcessConfig].copy(excludeTestsClasses = Seq(".*Bad.*".r)),
+                config.derive[CoverageProcessConfig].copy(includeTestClasses = Seq(".*Bad.*".r)),
                 compiledSourcesPath
               ),
               null,

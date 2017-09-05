@@ -15,10 +15,10 @@ import org.scalamu.common.filtering.{AcceptAllFilter, NameFilter}
  * @param sanitizeTrees Should nested mutants be explicitly removed
  */
 final case class MutationConfig(
-  reporter: MutationReporter,
-  guard: MutationGuard,
-  filter: NameFilter = AcceptAllFilter,
-  mutations: Seq[Mutation] = ScalamuPluginConfig.allMutations,
-  verifyTrees: Boolean = false,
-  sanitizeTrees: Boolean = true
+                                 reporter: MutationReporter,
+                                 guard: MutationGuard,
+                                 filter: NameFilter = AcceptAllFilter,
+                                 mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators,
+                                 verifyTrees: Boolean = false,
+                                 sanitizeTrees: Boolean = true
 )

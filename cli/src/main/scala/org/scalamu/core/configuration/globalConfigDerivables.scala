@@ -1,10 +1,8 @@
 package org.scalamu.core
 package configuration
 
-import java.io.File
-import java.nio.file.Path
-
 import com.typesafe.scalalogging.Logger
+import org.scalamu.common.filtering.{CompositeNameFilter, RegexFilter}
 import org.scalamu.core.compilation.{IgnoreCoverageStatementsFilter, LoggingReporter}
 import org.scalamu.plugin._
 
@@ -15,24 +13,17 @@ import scala.tools.nsc.reporters.Reporter
 /**
  * Aggregates derivable instances, needed for the creation of [[org.scalamu.core.compilation.ScalamuGlobal]]
  */
-trait GlobalDerivableInstances
-    extends SettingsDerivable
-    with ReporterDerivable
-    with MutationConfigDerivable
+trait GlobalDerivableInstances extends SettingsDerivable with ReporterDerivable with MutationConfigDerivable
 
 trait SettingsDerivable {
   def log: Logger
-
-  private def pathsToString: Traversable[Path] => String =
-    _.foldLeft("")(_ + File.pathSeparator + _)
 
   implicit def settingsDerivable(implicit dir: AbstractFile): Derivable[Settings] =
     config => {
       val settings = new Settings {
         Yrangepos.value = true
-        usejavacp.value = true
-        sourcepath.value += pathsToString(config.sourceDirs)
         classpath.value += pathsToString(config.classPath)
+        sourcepath.value += pathsToString(config.sourceDirs)
         outputDirs.setSingleOutput(dir)
       }
 
@@ -60,7 +51,7 @@ trait ReporterDerivable extends SettingsDerivable {
 
 trait MutationConfigDerivable {
   def guard: MutationGuard = FqnGuard(
-    "org.scalamu.core.compilation.MutationGuard.enabledMutation"
+    "org.scalamu.compilation.MutationGuard.enabledMutation"
   )
 
   implicit def mutationConfigDerivable(
@@ -70,7 +61,10 @@ trait MutationConfigDerivable {
       MutationConfig(
         reporter,
         guard,
-        IgnoreCoverageStatementsFilter(config.excludeSources),
+        new CompositeNameFilter(
+          IgnoreCoverageStatementsFilter,
+          RegexFilter(config.includeSources: _*)
+        ),
         config.mutations
     )
 }

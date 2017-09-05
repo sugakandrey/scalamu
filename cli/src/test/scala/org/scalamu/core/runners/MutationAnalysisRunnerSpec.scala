@@ -30,7 +30,6 @@ class MutationAnalysisRunnerSpec
   )
 
   override def testClassDirs: Set[Path] = Set(testProject.testClasses)
-  override def scalaPath: String        = System.getenv("SCALA_HOME")
 
   override def classPath: Set[Path] =
     System

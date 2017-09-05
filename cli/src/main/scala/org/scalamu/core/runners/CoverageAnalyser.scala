@@ -24,7 +24,7 @@ class CoverageAnalyser(
 ) {
   import CoverageAnalyser._
   private type Result = CoverageRunner#Result
-  
+
   private def reportAndExit(message: String): Nothing = {
     log.error(message)
     die(InternalFailure)

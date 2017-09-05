@@ -7,7 +7,7 @@ import org.scalatest.{BeforeAndAfterAll, TestSuite}
 trait PluginConfigFixture extends TestSuite {
   def mutationReporter: MemoryReporter
   def guard: MutationGuard
-  def mutations: Seq[Mutation]
+  def mutations: Seq[Mutator]
   def verifyTrees: Boolean
   def sanitizeTrees: Boolean
   def filter: NameFilter

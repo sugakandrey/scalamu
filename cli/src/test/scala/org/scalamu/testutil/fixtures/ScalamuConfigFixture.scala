@@ -3,7 +3,7 @@ package org.scalamu.testutil.fixtures
 import java.nio.file.{Path, Paths}
 
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.plugin.{Mutation, ScalamuPluginConfig}
+import org.scalamu.plugin.{Mutator, ScalamuPluginConfig}
 import org.scalatest.TestSuite
 
 import scala.util.matching.Regex
@@ -13,9 +13,9 @@ trait ScalamuConfigFixture extends TestSuite {
   def sourceDirs: Set[Path]               = Set.empty
   def testClassDirs: Set[Path]            = Set.empty
   def classPath: Set[Path]                = Set.empty
-  def scalaPath: String                   = ""
-  def jvmArgs: Seq[String]                = Seq.empty
-  def mutations: Seq[Mutation]            = ScalamuPluginConfig.allMutations
+  def testClassPath: Set[Path]            = Set.empty
+  def jvmArgs: String                     = ""
+  def mutations: Seq[Mutator]            = ScalamuPluginConfig.allMutators
   def excludeSources: Seq[Regex]          = Seq.empty
   def excludeTestsClasses: Seq[Regex]     = Seq.empty
   def testingOptions: Map[String, String] = Map.empty
@@ -24,6 +24,7 @@ trait ScalamuConfigFixture extends TestSuite {
   def timeoutConst: Long                  = 2000
   def threads: Int                        = Runtime.getRuntime.availableProcessors()
   def verbose: Boolean                    = false
+  def recompileOnly: Boolean              = false
 
   def withConfig(code: ScalamuConfig => Any): Any =
     code(
@@ -32,7 +33,7 @@ trait ScalamuConfigFixture extends TestSuite {
         sourceDirs,
         testClassDirs,
         classPath,
-        scalaPath,
+        testClassPath,
         jvmArgs,
         mutations,
         excludeSources,
@@ -42,7 +43,8 @@ trait ScalamuConfigFixture extends TestSuite {
         timeoutFactor,
         timeoutConst,
         threads,
-        verbose
+        verbose,
+        recompileOnly
       )
     )
 }

@@ -1,7 +1,7 @@
 package org.scalamu.entry
 
 import java.io.{BufferedWriter, FileWriter}
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Files, Path}
 
 import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
@@ -39,13 +39,13 @@ object EntryPoint {
     }
 
   def main(args: Array[String]): Unit = {
-    LoggerConfiguration.configurePatternForName("MAIN-APP")
+    LoggerConfiguration.configureLoggingForName("MAIN-APP")
     val config = ScalamuConfig.parseConfig(args)
     if (config.verbose) {
       log.info(s"Running Scalamu with config:\n ${config.asJson.spaces2}")
     }
 
-    val reportDir = Paths.get("mutation-analysis-report")
+    val reportDir = config.reportDir
     ensureDirExits(reportDir)
 
     val instrumentation = new cov.MemoryReporter
@@ -62,6 +62,7 @@ object EntryPoint {
         sourceFiles.foreach(sf => writer.write(sf.asJson.spaces2 + "\n"))
       }
     }
+    
     val compilationStart = System.currentTimeMillis()
     global.compile(sourceFiles)
     val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
@@ -80,6 +81,8 @@ object EntryPoint {
         reporter.mutants.foreach(m => writer.write(m.asJson.spaces2 + "\n"))
       }
     }
+
+    if (config.recompileOnly) sys.exit(0)
 
     val coverageAnalyser = new CoverageAnalyser(config, outputPath)
     val coverage         = coverageAnalyser.analyse(instrumentation)
@@ -130,6 +133,7 @@ object EntryPoint {
       Set.empty,
       config
     )
+    log.info(s"Mutation analysis is finished. Report was written to $reportDir.")
   }
 
   def generateReport(

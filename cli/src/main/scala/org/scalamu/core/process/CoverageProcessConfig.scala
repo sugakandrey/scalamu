@@ -8,7 +8,7 @@ import scala.util.matching.Regex
 
 final case class CoverageProcessConfig(
   testClassDirs: Set[Path],
-  excludeTestsClasses: Seq[Regex],
+  includeTestClasses: Seq[Regex],
   testingOptions: Map[String, String],
   verbose: Boolean = false
 )
@@ -17,7 +17,7 @@ object CoverageProcessConfig {
   implicit val runnerConfigDerivable: Derivable[CoverageProcessConfig] = config =>
     CoverageProcessConfig(
       config.testClassDirs,
-      config.excludeTestsClasses,
+      config.includeTestClasses,
       config.testingOptions,
       config.verbose
   )

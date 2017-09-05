@@ -9,13 +9,12 @@ import io.circe.parser.decode
 import org.scalamu.common.MutantId
 
 object MutationAnalysisProcess extends Process[MutationProcessResponse] {
-  override type Configuration = MutationAnalysisProcessConfig
+  override type Configuration = (MutationAnalysisProcessConfig)
 
   override def readConfigurationFromParent(
     dis: DataInputStream
-  ): Either[Throwable, Configuration] =
-    decode[MutationAnalysisProcessConfig](dis.readUTF())
-  
+  ): Either[Throwable, Configuration] = decode[MutationAnalysisProcessConfig](dis.readUTF())
+
   private def communicate(
     runner: SuiteRunner,
     dis: DataInputStream,
@@ -37,10 +36,11 @@ object MutationAnalysisProcess extends Process[MutationProcessResponse] {
     dis: DataInputStream,
     dos: DataOutputStream
   ): Iterator[MutationProcessResponse] = {
-    val id = System.getProperty("worker.name")
-    LoggerConfiguration.configurePatternForName(s"MUTATION-WORKER-$id")
-    MemoryWatcher.startMemoryWatcher(90)
+    val id     = System.getProperty("worker.name")
     val runner = new SuiteRunner(configuration)
+
+    LoggerConfiguration.configureLoggingForName(s"MUTATION-WORKER-$id")
+    MemoryWatcher.startMemoryWatcher(90)
 
     Iterator
       .continually(communicate(runner, dis, dos))
