@@ -6,10 +6,10 @@ import sbt.plugins.JvmPlugin
 import org.scalamu.sbt.Import.{ScalamuKeys => SK}
 
 object ScalamuPlugin extends AutoPlugin {
-  private val organization        = "io.github.sugakandrey"
-  private val compilationModuleId = "compilation"
-  private val version             = "0.1-SNAPSHOT"
-  private val mainClass           = "org.scalamu.entry.EntryPoint"
+  private val organization = "io.github.sugakandrey"
+  private val artifactId   = "scalamu-compilation"
+  private val version      = "0.1-SNAPSHOT"
+  private val mainClass    = "org.scalamu.entry.EntryPoint"
 
   val autoImport = Import
 
@@ -154,36 +154,46 @@ object ScalamuPlugin extends AutoPlugin {
   }
 
   lazy val mutationTest: Command = Command.command("mutationTest") { state =>
+    def isValidJar(candidate: File): Boolean =
+      candidate.exists() && candidate.isFile && candidate.getName.endsWith(".jar")
+
     val extracted = Project.extract(state)
 
     val log           = state.log
     val binaryVersion = extracted.get(K.scalaBinaryVersion)
+    val assemblyJar   = extracted.getOpt(SK.scalamuJarPath)
 
-    CrossVersion.partialVersion(binaryVersion) match {
-      case Some((2, 11)) | Some((2, 12)) =>
-        val guardArtifact   = organization % s"${compilationModuleId}_$binaryVersion" % version
+    assemblyJar match {
+      case Some(jar) if isValidJar(jar) =>
+        CrossVersion.partialVersion(binaryVersion) match {
+          case Some((2, 11)) | Some((2, 12)) =>
+            val guardArtifact = organization % s"${artifactId}_$binaryVersion" % version
 
-        val withGuardJar   = extracted.append(Seq(K.libraryDependencies += guardArtifact), state)
-        val guardExtracted = Project.extract(withGuardJar)
-        import guardExtracted._
+            val withGuardJar   = extracted.append(Seq(K.libraryDependencies += guardArtifact), state)
+            val guardExtracted = Project.extract(withGuardJar)
+            import guardExtracted._
 
-        val (updated, _) = runTask(K.update, withGuardJar)
-        runTask(K.compile in Test, updated)
+            val (updated, _) = runTask(K.update, withGuardJar)
+            runTask(K.compile in Test, updated)
 
-        val forkOptions = ForkOptions()
-        val run         = new ForkRun(forkOptions)
-        val arguments   = buildScalamuArguments(resolveAggregates(extracted), updated)
-        
-        run.run(
-          mainClass,
-          Seq.empty,
-          arguments,
-          log
-        )
+            val forkOptions = ForkOptions()
+            val run         = new ForkRun(forkOptions)
+            val arguments   = buildScalamuArguments(resolveAggregates(extracted), updated)
 
-        state
+            run.run(
+              mainClass,
+              Seq(jar),
+              arguments,
+              log
+            )
+
+            state
+          case _ =>
+            log.error(s"Unsupported scala version: $binaryVersion. Only supported major version are 2.11 & 2.12.")
+            state.fail
+        }
       case _ =>
-        log.error(s"Unsupported scala version: $binaryVersion.")
+        log.error(s"No usable scalamu jar located. Make sure scalamuJarPath is set correctly.")
         state.fail
     }
   }

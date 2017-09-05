@@ -14,6 +14,7 @@ object Import {
     lazy val includeTests        = settingKey[Seq[Regex]]("only run certain tests")
     lazy val activeMutators      = settingKey[Seq[String]]("set of active mutation operators")
     lazy val recompileOnly       = settingKey[Boolean]("do not run any analysis (for internal testing)")
+    lazy val scalamuJarPath      = settingKey[File]("path to a jar file with scalamu internals")
     lazy val analyserJavaOptions = taskKey[Seq[String]]("options passed to mutation analysis process when forking")
   }
 }
