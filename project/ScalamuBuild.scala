@@ -23,8 +23,8 @@ object ScalamuBuild {
   lazy val commonSettings = Seq(
     test in assembly   := {},
     organization       := "io.github.sugakandrey",
-    scalaVersion       := "2.12.2",
-    crossScalaVersions := Seq("2.11.11", "2.12.2"),
+    scalaVersion       := "2.12.3",
+    crossScalaVersions := Seq("2.11.11", "2.12.3"),
     scalacOptions := Seq(
       "-encoding",
       "UTF-8",
