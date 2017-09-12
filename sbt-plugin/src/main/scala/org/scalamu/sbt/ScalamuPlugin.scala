@@ -193,7 +193,7 @@ object ScalamuPlugin extends AutoPlugin {
             state.fail
         }
       case _ =>
-        log.error(s"No usable scalamu jar located. Make sure scalamuJarPath is set correctly.")
+        log.warn(s"No usable scalamu jar found. Attempting to download scalamu.jar to ${}.")
         state.fail
     }
   }

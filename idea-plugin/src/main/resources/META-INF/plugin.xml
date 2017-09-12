@@ -1,0 +1,13 @@
+<idea-plugin url="https://github.com/mjedynak/pit-idea-plugin">
+    <name>Scalamu mutation testing plugin</name>
+    <version>0.0.1</version>
+
+    <vendor email="sugak.andr3y@gmail.com">Andrey Sugak</vendor>
+    <idea-version since-build="172.3968.16"/>
+
+
+    <depends>org.intellij.scala</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <configurationType implementation="org.scalamu.idea.configuration.ScalamuConfigurationType"/>
+    </extensions>
+</idea-plugin>

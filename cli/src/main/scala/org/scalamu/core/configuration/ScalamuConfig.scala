@@ -29,22 +29,22 @@ import scala.util.matching.Regex
  * @param recompileOnly Only run project recompilation (for internal testing)
  */
 final case class ScalamuConfig(
-                                reportDir: Path = Paths.get("."),
-                                sourceDirs: Set[Path] = Set.empty,
-                                testClassDirs: Set[Path] = Set.empty,
-                                classPath: Set[Path] = Set.empty,
-                                testClassPath: Set[Path] = Set.empty,
-                                jvmOpts: String = "",
-                                mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators,
-                                includeSources: Seq[Regex] = Seq.empty,
-                                includeTestClasses: Seq[Regex] = Seq.empty,
-                                testingOptions: Map[String, String] = Map.empty,
-                                scalacOptions: String = "",
-                                timeoutFactor: Double = 1.5,
-                                timeoutConst: Long = 2000,
-                                parallelism: Int = 1,
-                                verbose: Boolean = false,
-                                recompileOnly: Boolean = false
+  reportDir: Path = Paths.get("."),
+  sourceDirs: Set[Path] = Set.empty,
+  testClassDirs: Set[Path] = Set.empty,
+  classPath: Set[Path] = Set.empty,
+  testClassPath: Set[Path] = Set.empty,
+  jvmOpts: String = "",
+  mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators,
+  includeSources: Seq[Regex] = Seq.empty,
+  includeTestClasses: Seq[Regex] = Seq.empty,
+  testingOptions: Map[String, String] = Map.empty,
+  scalacOptions: String = "",
+  timeoutFactor: Double = 1.5,
+  timeoutConst: Long = 2000,
+  parallelism: Int = 1,
+  verbose: Boolean = false,
+  recompileOnly: Boolean = false
 ) {
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
 }
@@ -94,8 +94,7 @@ object ScalamuConfig {
     opt[Seq[String]]("mutations")
       .text("set of active mutators")
       .action(
-        (mutations, config) =>
-          config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
+        (mutations, config) => config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
       )
 
     opt[Seq[Regex]]("includeSource")
