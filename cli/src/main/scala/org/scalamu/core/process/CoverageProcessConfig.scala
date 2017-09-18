@@ -17,7 +17,7 @@ object CoverageProcessConfig {
   implicit val runnerConfigDerivable: Derivable[CoverageProcessConfig] = config =>
     CoverageProcessConfig(
       config.testClassDirs,
-      config.includeTestClasses,
+      config.targetTests,
       config.testingOptions,
       config.verbose
   )

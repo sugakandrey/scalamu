@@ -27,7 +27,7 @@ trait TestingDerivableInstance {
         guard,
         new CompositeNameFilter(
           IgnoreCoverageStatementsFilter,
-          RegexFilter(config.includeSources: _*)
+          RegexFilter(config.targetSources: _*)
         )
     )
 }

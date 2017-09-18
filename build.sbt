@@ -9,7 +9,7 @@ lazy val compilation = ScalamuBuild.compilation
 lazy val entryPoint  = ScalamuBuild.entryPoint
 lazy val scalamuSbt  = ScalamuBuild.scalamuSbt
 lazy val scalamuIdea = ScalamuBuild.scalamuIdea
-lazy val ideaRunner  = ScalamuBuild.runner
+lazy val ideaRunner  = ScalamuBuild.ideaRunner
 
 /* Testing subprojects */
 lazy val testingSimple = ScalamuTestingBuild.testingSimple

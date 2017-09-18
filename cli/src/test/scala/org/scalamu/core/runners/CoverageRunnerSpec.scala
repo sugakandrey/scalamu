@@ -56,7 +56,7 @@ class CoverageRunnerSpec
 
         val analyser = new CoverageAnalyser(
           config
-            .copy(includeTestClasses = Seq(".*Bad.*".r)),
+            .copy(targetTests = Seq(".*Bad.*".r)),
           global.outputDir.file.toPath
         )
 

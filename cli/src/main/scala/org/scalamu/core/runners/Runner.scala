@@ -35,7 +35,7 @@ abstract class Runner[I: Encoder, O: Decoder] {
 
   def start(): Either[CommunicationException, ProcessSupervisor[I, O]] = {
     val mainArgs = List(socket.getLocalPort.toString)
-    val args     = generateProcessArgs(worker, config.jvmOpts, mainArgs)
+    val args     = generateProcessArgs(worker, config.vmParameters, mainArgs)
     val builder  = new ProcessBuilder(args: _*)
     configureProcessEnv(builder)
     builder.inheritIO()

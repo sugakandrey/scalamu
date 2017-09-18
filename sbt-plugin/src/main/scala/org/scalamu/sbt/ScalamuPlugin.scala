@@ -11,7 +11,7 @@ object ScalamuPlugin extends AutoPlugin {
   private val version      = "0.1-SNAPSHOT"
   private val mainClass    = "org.scalamu.entry.EntryPoint"
 
-  val autoImport = Import
+  val autoImport: Import.type = Import
 
   override def requires: Plugins      = JvmPlugin
   override def trigger: PluginTrigger = allRequirements
@@ -83,7 +83,7 @@ object ScalamuPlugin extends AutoPlugin {
     val parallelism        = get(SK.parallelism)
     val verbose            = get(SK.verbose)
     val recompileOnly      = get(SK.recompileOnly)
-    val activeMutations    = get(SK.activeMutators)
+    val activeMutators     = get(SK.activeMutators)
     val (_, testOptions)   = runTask(K.testOptions, state)
 
     val testRunnerArgs = testOptions
@@ -102,12 +102,12 @@ object ScalamuPlugin extends AutoPlugin {
       .mkString
 
     val possiblyUndefinedOptions = Seq(
-      optionString(aggregatedClassPath.map(_.getAbsolutePath), ",", "--cp"),
-      optionString(aggregatedTestClassPath.map(_.getAbsolutePath), ",", "--tcp"),
-      optionString(javaOptions, " ", "--jvmOpts"),
-      optionString(excludeSource.map(_.toString), ",", "--includeSource"),
-      optionString(excludeTests.map(_.toString), ",", "--includeTestClasses"),
-      optionString(scalacOptions, " ", "--scalacOptions")
+      optionString(aggregatedClassPath.map(_.getAbsolutePath), ",", "cp"),
+      optionString(aggregatedTestClassPath.map(_.getAbsolutePath), ",", "tcp"),
+      optionString(javaOptions, " ", "vmParameters"),
+      optionString(excludeSource.map(_.toString), ",", "targetSources"),
+      optionString(excludeTests.map(_.toString), ",", "targetTests"),
+      optionString(scalacOptions, " ", "scalacParameters")
     ).flatten
 
     val options = Seq(
@@ -117,8 +117,8 @@ object ScalamuPlugin extends AutoPlugin {
       timeoutConst.toString,
       "--parallelism",
       parallelism.toString,
-      "--mutations",
-      activeMutations.mkString(",")
+      "--activeMutators",
+      activeMutators.mkString(",")
     ) ++
       (if (verbose) Seq("--verbose")                                     else Seq.empty) ++
       (if (testRunnerArgs.nonEmpty) Seq("--testOptions", testRunnerArgs) else Seq.empty) ++
@@ -139,7 +139,7 @@ object ScalamuPlugin extends AutoPlugin {
     name: String
   ): Seq[String] =
     if (options.isEmpty) Seq.empty
-    else Seq(name, options.mkString(separator))
+    else Seq(s"--$name", options.mkString(separator))
 
   private def resolveAggregates(extracted: Extracted): Seq[ProjectRef] = {
     import extracted._

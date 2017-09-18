@@ -27,10 +27,10 @@ trait SettingsDerivable {
         outputDirs.setSingleOutput(dir)
       }
 
-      val (success, unprocessed) = settings.processArgumentString(config.scalacOptions)
+      val (success, unprocessed) = settings.processArgumentString(config.scalacParameters)
 
       if (!success) {
-        log.error(s"Bad scalac options in ${config.scalacOptions}.")
+        log.error(s"Bad scalac options in ${config.scalacParameters}.")
         die(InternalFailure)
       }
 
@@ -63,8 +63,8 @@ trait MutationConfigDerivable {
         guard,
         new CompositeNameFilter(
           IgnoreCoverageStatementsFilter,
-          RegexFilter(config.includeSources: _*)
+          RegexFilter(config.targetSources: _*)
         ),
-        config.mutations
+        config.activeMutators
     )
 }

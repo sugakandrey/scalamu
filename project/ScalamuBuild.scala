@@ -1,6 +1,8 @@
 import com.typesafe.sbt.pgp.PgpKeys
-import play.twirl.sbt.Import.TwirlKeys
-import play.twirl.sbt.SbtTwirl
+import org.jetbrains.sbtidea.SbtIdeaPlugin
+//import play.twirl.sbt.Import.TwirlKeys
+//import play.twirl.sbt.SbtTwirl
+import org.jetbrains.sbtidea.Keys._
 import sbt.Keys._
 import sbt._
 import sbtassembly.AssemblyKeys._
@@ -99,7 +101,7 @@ object ScalamuBuild {
   lazy val plugin = Project(id = "plugin", base = file("plugin"))
     .settings(commonSettings ++ commonDeps)
     .settings(
-      name                                    := "scalamu-plugin",
+      name                := "scalamu-plugin",
       libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )
     .dependsOn(common)
@@ -124,10 +126,10 @@ object ScalamuBuild {
 
   lazy val report = Project(id = "report", base = file("report"))
     .settings(commonSettings ++ commonDeps)
-    .enablePlugins(SbtTwirl)
+//    .enablePlugins(SbtTwirl)
     .settings(
-      name                      := "scalamu-report",
-      TwirlKeys.templateImports := Seq()
+      name                      := "scalamu-report"
+//      TwirlKeys.templateImports := Seq()
     )
     .dependsOn(commandLine, common, plugin)
 
@@ -146,8 +148,8 @@ object ScalamuBuild {
     .settings(commonSettings)
     .settings(publishSettings)
     .settings(
-      isSnapshot := true,
-      artifact in (Compile, assembly) ~= { _.copy(`classifier` = Some("assembly")) },
+      isSnapshot                      := true,
+      artifact in (Compile, assembly) ~= { _.withClassifier(Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
       assemblyShadeRules in assembly :=
         Seq(
@@ -179,12 +181,49 @@ object ScalamuBuild {
 
   lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
     .settings(
-      organization                   := "io.github.sugakandrey",
-      sbtPlugin                      := true,
-      name                           := "sbt-scalamu",
-      CrossBuilding.crossSbtVersions := Seq("0.13.16", "1.0.0")
+      organization     := "io.github.sugakandrey",
+      sbtPlugin        := true,
+      name             := "sbt-scalamu",
+      crossSbtVersions := Seq("0.13.16", "1.0.0")
     )
 
+  lazy val scalamuIdea = Project(id = "idea-plugin", base = file("idea-plugin"))
+    .settings(commonSettings)
+    .enablePlugins(SbtIdeaPlugin)
+    .settings(
+      scalaVersion                     := "2.11.11",
+      ideaBuild                        := "172.3968.16",
+      onLoad in Global                 ~= { _.andThen("idea-plugin/updateIdea" :: _) },
+      assemblyOption in assembly       ~= { _.copy(includeScala = false) },
+      assemblyExcludedJars in assembly ++= ideaFullJars.value,
+      ideaExternalPlugins += IdeaPlugin
+        .Zip("scala-plugin", url("https://download.plugins.jetbrains.com/1347/37646/scala-intellij-bin-2017.2.6.zip"))
+    )
+
+  lazy val ideaRunner = Project(id = "idea-runner", base = file("idea-plugin/target"))
+    .dependsOn(scalamuIdea)
+    .settings(
+      scalaVersion                := "2.11.11",
+      autoScalaLibrary            := false,
+      unmanagedJars in Compile    := (ideaMainJars in scalamuIdea).value,
+      unmanagedJars in Compile    += file(System.getProperty("java.home")).getParentFile / "lib" / "tools.jar",
+      fork in run                 := true,
+      mainClass in (Compile, run) := Some("com.intellij.idea.Main"),
+      javaOptions in run ++= Seq(
+        "-Xmx2g",
+        "-XX:ReservedCodeCacheSize=240m",
+        "-XX:MaxPermSize=250m",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-ea",
+        "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005",
+//        """-Didea.home.path=C:\Users\jetbrains\IdeaProjects\scalamu\idea\LATEST-EAP-SNAPSHOT""",
+        "-Didea.is.internal=true",
+        "-Didea.debug.mode=true",
+        "-Dapple.laf.useScreenMenuBar=true",
+        s"-Dplugin.path=${(assemblyOutputPath in (scalamuIdea, assembly)).value}",
+        "-Didea.ProcessCanceledException=disabled"
+      )
+    )
 }
 
 object ScalamuTestingBuild {

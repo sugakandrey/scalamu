@@ -16,12 +16,12 @@ import scala.util.matching.Regex
  * @param testClassDirs directories containing compiled test classes
  * @param classPath list of classpath elements for applications "compile" config
  * @param testClassPath list of classpath elements for application "test" config
- * @param jvmOpts arguments, passed to spawned JVMs
- * @param mutations set of active mutation operators
- * @param includeSources filters, used to only include certain source files into mutation process
- * @param includeTestClasses filters, used to only run certain test classes
+ * @param vmParameters arguments, passed to spawned JVMs
+ * @param activeMutators set of active mutation operators
+ * @param targetSources filters, used to only include certain source files into mutation process
+ * @param targetTests filters, used to only run certain test classes
  * @param testingOptions options to pass to framework's test runner
- * @param scalacOptions options to be passed to scalac
+ * @param scalacParameters options to be passed to scalac
  * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
  * @param timeoutConst additional flat amount of allowed time for tests to run (applied after timeoutFactor)
  * @param parallelism number of runners to be used for mutation analysis
@@ -34,12 +34,12 @@ final case class ScalamuConfig(
   testClassDirs: Set[Path] = Set.empty,
   classPath: Set[Path] = Set.empty,
   testClassPath: Set[Path] = Set.empty,
-  jvmOpts: String = "",
-  mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators,
-  includeSources: Seq[Regex] = Seq.empty,
-  includeTestClasses: Seq[Regex] = Seq.empty,
+  vmParameters: String = "",
+  activeMutators: Seq[Mutator] = ScalamuPluginConfig.allMutators,
+  targetSources: Seq[Regex] = Seq.empty,
+  targetTests: Seq[Regex] = Seq.empty,
   testingOptions: Map[String, String] = Map.empty,
-  scalacOptions: String = "",
+  scalacParameters: String = "",
   timeoutFactor: Double = 1.5,
   timeoutConst: Long = 2000,
   parallelism: Int = 1,
@@ -87,25 +87,25 @@ object ScalamuConfig {
       .text("""list of "test" classpath elements""")
       .action((tcp, config) => config.copy(testClassPath = tcp.toSet))
 
-    opt[String]("jvmOpts")
+    opt[String]("vmParameters")
       .text("arguments for forked JVM running tests")
-      .action((jvmOpts, config) => config.copy(jvmOpts = jvmOpts))
+      .action((jvmOpts, config) => config.copy(vmParameters = jvmOpts))
 
     opt[Seq[String]]("mutations")
       .text("set of active mutators")
       .action(
-        (mutations, config) => config.copy(mutations = mutations.map(ScalamuPluginConfig.mutationByName))
+        (mutations, config) => config.copy(activeMutators = mutations.map(ScalamuPluginConfig.mutationByName))
       )
 
-    opt[Seq[Regex]]("includeSource")
+    opt[Seq[Regex]]("targetSources")
       .valueName("<regex1>,<regex2>..")
       .text("only mutate certain source files")
-      .action((filters, config) => config.copy(includeSources = filters))
+      .action((filters, config) => config.copy(targetSources = filters))
 
-    opt[Seq[Regex]]("includeTestClasses")
+    opt[Seq[Regex]]("targetTests")
       .valueName("<regex1>,<regex2>..")
       .text("only run certain test classes")
-      .action((filters, config) => config.copy(includeTestClasses = filters))
+      .action((filters, config) => config.copy(targetTests = filters))
 
     opt[Map[String, String]]("testOptions")
       .valueName("framework1=optionString1, framework2=optionString2...")
@@ -119,9 +119,9 @@ object ScalamuConfig {
       )
       .action((options, config) => config.copy(testingOptions = options))
 
-    opt[String]("scalacOptions")
+    opt[String]("scalacParameters")
       .text("options to be passed to scalac")
-      .action((scalacOptions, config) => config.copy(scalacOptions = scalacOptions))
+      .action((scalacOptions, config) => config.copy(scalacParameters = scalacOptions))
 
     opt[Double]("timeoutFactor")
       .text("factor to apply to normal test duration before considering being stuck in a loop")
