@@ -40,8 +40,8 @@ class ScalamuRunConfiguration(
   private[idea] var targetTests: Seq[Regex]                = ScalamuDefaultSettings.targetTests
   private[idea] var verboseLogging: Boolean                = ScalamuDefaultSettings.verboseLogging
   private[idea] var openInBrowser: Boolean                 = ScalamuDefaultSettings.openInBrowser
-  private[idea] var vmParameters: Option[String]           = None
-  private[idea] var scalacParameters: Option[String]       = None
+  private[idea] var vmParameters: String                   = ScalamuDefaultSettings.vmParameters
+  private[idea] var scalacParameters: String               = ScalamuDefaultSettings.scalacParameters
   private[idea] var timeoutConst: Int                      = ScalamuDefaultSettings.timeoutConst
   private[idea] var timeoutFactor: Double                  = ScalamuDefaultSettings.timeoutFactor
   private[idea] var parallelism: Int                       = ScalamuDefaultSettings.parallelism
@@ -58,7 +58,7 @@ class ScalamuRunConfiguration(
     setModule(form.getModule)
 
     parallelism   = form.getParallelism
-    vmParameters  = Option(form.getVMOptions)
+    vmParameters  = form.getVMOptions
     pathToJar     = form.getJarPath
     reportDir     = form.getReportDir
     openInBrowser = form.getOpenInBrowser
@@ -72,7 +72,7 @@ class ScalamuRunConfiguration(
   def apply(form: ScalamuAdvancedConfigurationForm): Unit = {
     timeoutFactor    = form.getTimeoutFactor
     timeoutConst     = form.getTimeoutConst
-    scalacParameters = Option(form.getScalacOptions)
+    scalacParameters = form.getScalacOptions
     verboseLogging   = form.getVerboseLogging
 
     envVariables.clear()
@@ -151,7 +151,7 @@ class ScalamuRunConfiguration(
       "targetSources"  -> regexSeqToString(targetSources),
       "targetTests"    -> regexSeqToString(targetTests),
       "vmOptions"      -> vmParameters,
-      "scalacOptions"  -> scalacParameters.getOrElse(""),
+      "scalacOptions"  -> scalacParameters,
       "parallelism"    -> parallelism,
       "reportDir"      -> reportDir,
       "pathToJar"      -> pathToJar,
@@ -175,8 +175,8 @@ class ScalamuRunConfiguration(
     timeoutConst     = JDOMExternalizer.readInteger(element, "timeoutConst", ScalamuDefaultSettings.timeoutConst)
     timeoutFactor    = JDOMExternalizer.readString(element, "timeoutFactor").toDouble
     openInBrowser    = JDOMExternalizer.readBoolean(element, "openInBrowser")
-    vmParameters     = Option(JDOMExternalizer.readString(element, "vmOptions"))
-    scalacParameters = Option(JDOMExternalizer.readString(element, "scalacOptions"))
+    vmParameters     = JDOMExternalizer.readString(element, "vmOptions")
+    scalacParameters = JDOMExternalizer.readString(element, "scalacOptions")
     parallelism      = JDOMExternalizer.readInteger(element, "parallelism", ScalamuDefaultSettings.parallelism)
     browser          = Option(WebBrowserManager.getInstance().findBrowserById(JDOMExternalizer.readString(element, "browser")))
     activeMutators   = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "activeMutators"))

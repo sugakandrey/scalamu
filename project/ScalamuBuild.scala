@@ -11,10 +11,10 @@ import sbtassembly.ShadeRule
 object ScalamuBuild {
   val GPL3 = "GPL 3.0" -> url("http://www.gnu.org/licenses/gpl-3.0.en.html")
 
-  val specs2    = "org.specs2"    %% "specs2-core" % "3.8.9"
+  val specs2 = "org.specs2"       %% "specs2-core" % "3.8.9"
   val scalatest = "org.scalatest" %% "scalatest"   % "3.0.1"
-  val utest     = "com.lihaoyi"   %% "utest"       % "0.4.5"
-  val junit     = "junit"         % "junit"        % "4.12"
+  val utest = "com.lihaoyi"       %% "utest"       % "0.4.5"
+  val junit = "junit"             % "junit"        % "4.12"
 
   val circe = Seq(
     "io.circe" %% "circe-core",
@@ -98,10 +98,10 @@ object ScalamuBuild {
     .settings(commonSettings ++ commonDeps)
     .settings(name := "scalamu-common")
 
-  lazy val plugin = Project(id = "plugin", base = file("plugin"))
+  lazy val scalacPlugin = Project(id = "scalac-plugin", base = file("scalac-plugin"))
     .settings(commonSettings ++ commonDeps)
     .settings(
-      name                := "scalamu-plugin",
+      name                := "scalamu-scalac",
       libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )
     .dependsOn(common)
@@ -113,32 +113,33 @@ object ScalamuBuild {
     .settings(
       name := "scalamu-cli",
       libraryDependencies ++= Seq(
-        "org.ow2.asm"              % "asm-commons" % "5.2",
-        "org.ow2.asm"              % "asm-util" % "5.2",
-        "org.typelevel"            %% "cats" % "0.9.0",
-        "com.github.scopt"         %% "scopt" % "3.5.0",
-        "org.scalamock"            %% "scalamock-scalatest-support" % "3.5.0" % Test,
-        "com.ironcorelabs"         %% "cats-scalatest" % "2.2.0" % Test
-      ) ++ testingFrameworks.map(_ % Optional) ++ circe
+        "org.ow2.asm"      % "asm-commons"                  % "5.2",
+        "org.ow2.asm"      % "asm-util"                     % "5.2",
+        "org.typelevel"    %% "cats"                        % "0.9.0",
+        "com.github.scopt" %% "scopt"                       % "3.5.0",
+        "org.scalamock"    %% "scalamock-scalatest-support" % "3.5.0" % Test,
+        "com.ironcorelabs" %% "cats-scalatest"              % "2.2.0" % Test
+      ) ++
+        testingFrameworks.map(_ % Optional) ++ circe
     )
-    .dependsOn(plugin % "compile->compile;test->test")
+    .dependsOn(scalacPlugin % "compile->compile;test->test")
     .dependsOn(common, compilation)
 
   lazy val report = Project(id = "report", base = file("report"))
     .settings(commonSettings ++ commonDeps)
 //    .enablePlugins(SbtTwirl)
     .settings(
-      name                      := "scalamu-report"
+      name := "scalamu-report"
 //      TwirlKeys.templateImports := Seq()
     )
-    .dependsOn(commandLine, common, plugin)
+    .dependsOn(commandLine, common, scalacPlugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
     .dependsOn(
       entryPoint
     )
     .aggregate(
-      plugin,
+      scalacPlugin,
       commandLine,
       report,
       common,
@@ -164,7 +165,13 @@ object ScalamuBuild {
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
     .settings(commonSettings ++ commonDeps)
     .settings(name := "scalamu-entry-point")
-    .dependsOn(commandLine, common, plugin, report, compilation)
+    .dependsOn(
+      commandLine,
+      common,
+      scalacPlugin,
+      report,
+      compilation
+    )
 
   private def shade(pattern: String): ShadeRule =
     ShadeRule.rename(pattern -> "shaded.@0").inAll

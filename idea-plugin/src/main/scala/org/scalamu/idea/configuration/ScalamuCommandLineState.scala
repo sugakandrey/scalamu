@@ -63,8 +63,8 @@ class ScalamuCommandLineState(configuration: ScalamuRunConfiguration, env: Execu
     val timeoutFactor = s"--timeoutFactor ${configuration.timeoutFactor}"
     val timeoutConst  = s"--timeoutConst ${configuration.timeoutConst}"
     val parallelisn   = s"--parallelisn ${configuration.parallelism}"
-    val scalacOptions = configuration.scalacParameters.fold("")(opt => s"--scalacOptions $opt")
-    val vmParameters  = configuration.vmParameters.fold("")(params => s"--jvmOpts $params")
+    val scalacOptions = optionString(configuration.scalacParameters, "", "scalacParameters")
+    val vmParameters  = optionString(configuration.vmParameters, "", "vmParameters")
     val targetTests   = optionString(configuration.targetTests, ",", "targetTests")
     val targetSources = optionString(configuration.targetSources, ",", "targetSources")
     val mutations =  optionString(configuration.activeMutators, ",", "activeMutators")

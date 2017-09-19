@@ -13,4 +13,6 @@ object ScalamuDefaultSettings {
   val verboseLogging: Boolean     = false
   val openInBrowser: Boolean      = false
   val browser: Option[WebBrowser] = Option(WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.CHROME))
+  val scalacParameters: String    = ""
+  val vmParameters: String        = ""
 }

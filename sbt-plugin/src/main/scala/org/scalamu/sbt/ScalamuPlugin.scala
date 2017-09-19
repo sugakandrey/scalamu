@@ -117,7 +117,7 @@ object ScalamuPlugin extends AutoPlugin {
       timeoutConst.toString,
       "--parallelism",
       parallelism.toString,
-      "--activeMutators",
+      "--mutators",
       activeMutators.mkString(",")
     ) ++
       (if (verbose) Seq("--verbose")                                     else Seq.empty) ++

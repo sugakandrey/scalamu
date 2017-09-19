@@ -21,7 +21,7 @@ trait GenericApplyMutator extends Mutator { self: SupportedTypes =>
     override protected def transformer: Transformer = new Transformer {
       override protected def mutate: PartialFunction[Tree, Tree] = {
         case expr @ q"${TreeWithType(tree, tpe)}.apply[$targs](..$args)"
-            if supportedTypes.exists(_ <:< tpe) =>
+            if supportedTypes.exists(_ =:= tpe) =>
           
           val mutant = q"${replaceWith(global)}[$targs]".setPos(expr.pos)
           

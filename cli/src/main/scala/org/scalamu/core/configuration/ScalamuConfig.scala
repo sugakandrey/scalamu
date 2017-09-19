@@ -91,7 +91,7 @@ object ScalamuConfig {
       .text("arguments for forked JVM running tests")
       .action((jvmOpts, config) => config.copy(vmParameters = jvmOpts))
 
-    opt[Seq[String]]("mutations")
+    opt[Seq[String]]("mutators")
       .text("set of active mutators")
       .action(
         (mutations, config) => config.copy(activeMutators = mutations.map(ScalamuPluginConfig.mutationByName))
