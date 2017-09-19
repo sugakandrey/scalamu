@@ -4,9 +4,8 @@ import java.nio.file.Paths
 import java.util
 
 import com.intellij.execution.configurations._
-import com.intellij.execution.process.OSProcessHandler
-import com.intellij.execution.runners.{ExecutionEnvironment, ProgramRunner}
-import com.intellij.execution.{ExecutionBundle, ExecutionResult, Executor, JavaRunConfigurationExtensionManager}
+import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.{ExecutionBundle, Executor, JavaRunConfigurationExtensionManager}
 import com.intellij.ide.browsers.{WebBrowser, WebBrowserManager}
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.module.{JavaModuleType, Module, ModuleType}
@@ -58,7 +57,7 @@ class ScalamuRunConfiguration(
     setModule(form.getModule)
 
     parallelism   = form.getParallelism
-    vmParameters  = form.getVMOptions
+    vmParameters  = form.getVMParameters
     pathToJar     = form.getJarPath
     reportDir     = form.getReportDir
     openInBrowser = form.getOpenInBrowser
@@ -72,7 +71,7 @@ class ScalamuRunConfiguration(
   def apply(form: ScalamuAdvancedConfigurationForm): Unit = {
     timeoutFactor    = form.getTimeoutFactor
     timeoutConst     = form.getTimeoutConst
-    scalacParameters = form.getScalacOptions
+    scalacParameters = form.getScalacParameters
     verboseLogging   = form.getVerboseLogging
 
     envVariables.clear()
@@ -85,7 +84,7 @@ class ScalamuRunConfiguration(
 
   override def getConfigurationEditor: SettingsEditor[_ <: RunConfiguration] = {
     val group     = new SettingsEditorGroup[ScalamuRunConfiguration]
-    val extractor = new ProjectInfoExtractor(project, project.anyScalaModule.get)
+//    val extractor = new ProjectInfoExtractor(project, getConfigurationModule.getModule)
 
     group.addEditor(
       ExecutionBundle.message("run.configuration.configuration.tab.title"),

@@ -7,7 +7,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.scalamu.idea.configuration.ScalamuRunConfiguration;
-import scala.Option;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +19,7 @@ public class ScalamuAdvancedConfigurationForm {
   private JCheckBox enableVerboseLoggingCheckBox;
   private RawCommandLineEditor scalacOptions;
   private JPanel mainPanel;
+  private JCheckBox aggregateDependencyModulesCheckBox;
 
   public ScalamuAdvancedConfigurationForm() {
     setupTimeouts();
@@ -30,11 +30,7 @@ public class ScalamuAdvancedConfigurationForm {
     timeoutConst.setText(Integer.toString(configuration.timeoutConst()));
     timeoutFactor.setText(Double.toString(configuration.timeoutFactor()));
     enableVerboseLoggingCheckBox.setSelected(configuration.verboseLogging());
-
-    Option<String> stringOption = configuration.scalacParameters();
-    if (stringOption.isDefined()) {
-      scalacOptions.setText(stringOption.get());
-    }
+    scalacOptions.setText(configuration.scalacParameters());
   }
 
   private void setupTimeouts() {
@@ -87,7 +83,7 @@ public class ScalamuAdvancedConfigurationForm {
     return enableVerboseLoggingCheckBox.isSelected();
   }
 
-  public String getScalacOptions() {
+  public String getScalacParameters() {
     return scalacOptions.getText();
   }
 

@@ -21,13 +21,14 @@ class ScalamuCommandLineState(configuration: ScalamuRunConfiguration, env: Execu
     val pathToScalamuJar = configuration.pathToJar
     val arguments        = buildScalamuArgumentsString(project)
 
-    val maybeJDK = sdks.find { sdk =>
+    val compatibleJDK = sdks.find { sdk =>
       sdk.getSdkType == JavaSdk.getInstance() && sdk.getVersionString.contains(compatibleJDKVersion)
     }
 
-    maybeJDK match {
+    compatibleJDK match {
       case Some(jdk) =>
-        parameters.configureByProject(project, JavaParameters.JDK_ONLY, jdk)
+//        parameters.setJarPath(???)
+        parameters.setJdk(jdk)
         parameters.setWorkingDirectory(workingDir)
         parameters.setMainClass(mainClass)
         parameters.getClassPath.add(pathToScalamuJar)
@@ -48,26 +49,40 @@ class ScalamuCommandLineState(configuration: ScalamuRunConfiguration, env: Execu
     else s"--$name ${args.mkString(separator)}"
 
   private def buildScalamuArgumentsString(project: Project): String = {
-    val extractor = new ProjectInfoExtractor(project, configuration.getConfigurationModule.getModule)
+    val extractor        = ModuleInfoExtractor(configuration.getConfigurationModule.getModule)
     val sourceDirsString = extractor.sourcePaths.mkString(",")
-    val testDirsString = extractor.testTarget.mkString(",")
-    
+    val testDirsString   = extractor.testTarget.mkString(",")
+
     val arguments = Seq(
       configuration.reportDir,
       sourceDirsString,
       testDirsString
     )
-    
-    
+
     val verbose       = if (configuration.verboseLogging) "--verbose" else ""
     val timeoutFactor = s"--timeoutFactor ${configuration.timeoutFactor}"
     val timeoutConst  = s"--timeoutConst ${configuration.timeoutConst}"
-    val parallelisn   = s"--parallelisn ${configuration.parallelism}"
+    val parallelism   = s"--parallelism ${configuration.parallelism}"
     val scalacOptions = optionString(configuration.scalacParameters, "", "scalacParameters")
     val vmParameters  = optionString(configuration.vmParameters, "", "vmParameters")
     val targetTests   = optionString(configuration.targetTests, ",", "targetTests")
     val targetSources = optionString(configuration.targetSources, ",", "targetSources")
-    val mutations =  optionString(configuration.activeMutators, ",", "activeMutators")
-    ???
+    val mutators      = optionString(configuration.activeMutators, ",", "activeMutators")
+    val classPath     = optionString(extractor.compileClassPath.map(_.getPath), ",", "cp")
+    val testClassPath = optionString(extractor.runClassPath.map(_.getPath), ",", "tcp")
+
+    (Seq(
+      verbose,
+      timeoutFactor,
+      timeoutConst,
+      parallelism,
+      scalacOptions,
+      vmParameters,
+      targetSources,
+      targetTests,
+      mutators,
+      classPath,
+      testClassPath
+    ) ++ arguments).mkString(" ")
   }
 }

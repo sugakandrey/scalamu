@@ -33,7 +33,7 @@ public class ScalamuConfigurationForm {
   private JFormattedTextField parallelism;
   private ModulesComboBox modulesComboBox;
   private TextFieldWithBrowseButton reportDir;
-  private RawCommandLineEditor vmOptions;
+  private RawCommandLineEditor vmParameters;
   private JComboBox<BrowserFamily> browserComboBox;
   private JCheckBox openReportInBrowserCheckBox;
   private ConfigurationModuleSelector moduleSelector;
@@ -63,8 +63,8 @@ public class ScalamuConfigurationForm {
     return openReportInBrowserCheckBox.isSelected();
   }
 
-  public String getVMOptions() {
-    return vmOptions.getText();
+  public String getVMParameters() {
+    return vmParameters.getText();
   }
 
   public BrowserFamily getBrowserFamily() {
@@ -103,11 +103,7 @@ public class ScalamuConfigurationForm {
     scalamuJarPath.setText(configuration.pathToJar());
     targetSources.setText(configuration.getTargetSourceAsString());
     targetTests.setText(configuration.getTargetTestsAsString());
-
-    Option<String> vmOptions = configuration.vmParameters();
-    if (vmOptions.isDefined()) {
-      this.vmOptions.setText(vmOptions.get());
-    }
+    vmParameters.setText(configuration.vmParameters());
   }
 
   private void setupBrowserComboBox() {
@@ -204,9 +200,9 @@ public class ScalamuConfigurationForm {
     final JLabel label3 = new JLabel();
     label3.setText("VM options:");
     mainPanel.add(label3, new GridConstraints(4, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    vmOptions = new RawCommandLineEditor();
-    vmOptions.setText("");
-    mainPanel.add(vmOptions, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    vmParameters = new RawCommandLineEditor();
+    vmParameters.setText("");
+    mainPanel.add(vmParameters, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     final JLabel label4 = new JLabel();
     label4.setText("Path to Scalamu jar:");
     mainPanel.add(label4, new GridConstraints(6, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
