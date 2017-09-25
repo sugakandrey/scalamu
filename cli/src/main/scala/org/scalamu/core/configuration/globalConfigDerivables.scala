@@ -9,6 +9,7 @@ import org.scalamu.plugin._
 import scala.reflect.io.AbstractFile
 import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.Reporter
+import scala.util.Properties
 
 /**
  * Aggregates derivable instances, needed for the creation of [[org.scalamu.core.compilation.ScalamuGlobal]]
@@ -23,6 +24,7 @@ trait SettingsDerivable {
       val settings = new Settings {
         Yrangepos.value = true
         classpath.value += pathsToString(config.classPath)
+        classpath.value += Properties.javaClassPath
         sourcepath.value += pathsToString(config.sourceDirs)
         outputDirs.setSingleOutput(dir)
       }

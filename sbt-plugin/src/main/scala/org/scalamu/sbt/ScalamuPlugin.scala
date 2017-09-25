@@ -1,35 +1,47 @@
 package org.scalamu.sbt
 
-import sbt.{Def, _}
-import sbt.{Keys => K}
+import sbt.{Def, Keys => K, _}
 import sbt.plugins.JvmPlugin
-import org.scalamu.sbt.Import.{ScalamuKeys => SK}
 
 object ScalamuPlugin extends AutoPlugin {
-  private val organization = "io.github.sugakandrey"
-  private val artifactId   = "scalamu-compilation"
-  private val version      = "0.1-SNAPSHOT"
-  private val mainClass    = "org.scalamu.entry.EntryPoint"
+  private[this] val organization = "io.github.sugakandrey"
+  private[this] val artifactId   = "scalamu-assembly"
+  private[this] val version      = "0.1-SNAPSHOT"
+  private[this] val mainClass    = "org.scalamu.entry.EntryPoint"
 
-  val autoImport: Import.type = Import
+  object autoImport extends ScalamuImport {
+    lazy val MutationTest: Configuration =
+      config("mutation-test").describedAs("Dependencies and settings required for mutation testing.").hide
+  }
+
+  import autoImport.{ScalamuKeys => SK}
+  import autoImport._
 
   override def requires: Plugins      = JvmPlugin
   override def trigger: PluginTrigger = allRequirements
 
-  override def globalSettings: Seq[Def.Setting[_]] = Seq(
-    K.commands += mutationTest,
-    SK.timeoutFactor       := 1.5,
-    SK.parallelism         := 1,
-    SK.timeoutConst        := 2000,
-    SK.includeSources      := Seq.empty,
-    SK.includeTests        := Seq.empty,
-    SK.activeMutators      := allMutations,
-    SK.analyserJavaOptions := (K.javaOptions in Test).value,
-    SK.verbose             := false,
-    SK.recompileOnly       := false
-  )
+  override def projectConfigurations: Seq[Configuration] = Seq(MutationTest)
 
-  private def allMutations: Seq[String] = Seq(
+  override def projectSettings: Seq[Def.Setting[_]] =
+    Seq(
+      K.aggregate in SK.mutationTest := false,
+      SK.mutationTest                := mutationTestTask.value,
+      SK.timeoutFactor               := 1.5,
+      SK.parallelism                 := 1,
+      SK.timeoutConst                := 2000,
+      SK.includeSources              := Seq.empty,
+      SK.includeTests                := Seq.empty,
+      SK.activeMutators              := allMutators,
+      SK.analyserJavaOptions         := (K.javaOptions in Test).value,
+      SK.verbose                     := false,
+      SK.recompileOnly               := false
+    ) :+ dependencies
+
+  def dependencies: Setting[Seq[ModuleID]] =
+    K.libraryDependencies += (organization % s"${artifactId}_${K.scalaBinaryVersion.value}" % version % MutationTest)
+      .intransitive()
+
+  private def allMutators: Seq[String] = Seq(
     "ReplaceCaseWithWildcard",
     "ReplaceMathOperators",
     "ReplaceWithIdentityFunction",
@@ -53,38 +65,54 @@ object ScalamuPlugin extends AutoPlugin {
       case Some(framework) if framework == TestFrameworks.Specs2    => Seq("specs2")
     }
 
-  private def buildScalamuArguments(projects: Seq[ProjectRef], state: State): Seq[String] = {
-    val extracted = Project.extract(state)
-    import extracted._
-    import sbt.Project.showContextKey
+  private def aggregateTask[T](
+    taskKey: TaskKey[T],
+    configurations: Configuration*
+  ): Def.Initialize[Task[Seq[T]]] = Def.taskDyn {
+    val projectFilter       = inAggregates(K.thisProjectRef.value)
+    val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
+    val filter              = ScopeFilter(projectFilter, configurationFilter)
+    taskKey.all(filter)
+  }
 
-    val (aggregatedSourceDirs, aggregatedTestDirs, aggregatedClassPath, aggregatedTestClassPath) =
-      projects.foldLeft((Set.empty[File], Set.empty[File], Set.empty[File], Set.empty[File])) { (acc, ref) =>
-        val (accSource, accTest, accCp, accTcp) = acc
+  private def aggregateSetting[T](
+    settingKey: SettingKey[T],
+    configurations: Configuration*
+  ): Def.Initialize[Seq[T]] = Def.settingDyn {
+    val projectFilter       = inAggregates(K.thisProjectRef.value)
+    val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
+    val filter              = ScopeFilter(projectFilter, configurationFilter)
+    settingKey.all(filter)
+  }
 
-        val ext                   = Extracted(extracted.structure, extracted.session, ref)(showContextKey(state))
-        val sourceDirs            = ext.get(K.sourceDirectories in Compile)
-        val testDir               = ext.get(K.crossTarget) / "test-classes"
-        val (_, compileClassPath) = ext.runTask(K.dependencyClasspath in Compile, state)
-        val cp                    = compileClassPath.map(_.data)
-        val (_, testClassPath)    = ext.runTask(K.fullClasspath in Test, state)
-        val tcp                   = testClassPath.map(_.data)
+  private def aggregateClassPath(config: Configuration): Def.Initialize[Task[Set[File]]] =
+    aggregateTask(K.fullClasspath, config).map(
+      cps => cps.flatten.map(_.data)(collection.breakOut)
+    )
 
-        (accSource ++ sourceDirs, accTest + testDir, accCp ++ cp, accTcp ++ tcp)
-      }
+  private val testClassPath: Def.Initialize[Task[Set[File]]]    = aggregateClassPath(Test)
+  private val compileClassPath: Def.Initialize[Task[Set[File]]] = aggregateClassPath(Compile)
+  private val sourceDirs: Def.Initialize[Seq[Seq[File]]]        = aggregateSetting(K.sourceDirectories, Compile)
+  private val testClassDirs: Def.Initialize[Seq[File]]          = aggregateSetting(K.crossTarget)
 
-    val target             = get(K.target)
-    val (_, javaOptions)   = runTask(SK.analyserJavaOptions, state)
-    val (_, scalacOptions) = runTask(K.scalacOptions, state)
-    val excludeSource      = get(SK.includeSources)
-    val excludeTests       = get(SK.includeTests)
-    val timeoutFactor      = get(SK.timeoutFactor)
-    val timeoutConst       = get(SK.timeoutConst)
-    val parallelism        = get(SK.parallelism)
-    val verbose            = get(SK.verbose)
-    val recompileOnly      = get(SK.recompileOnly)
-    val activeMutators     = get(SK.activeMutators)
-    val (_, testOptions)   = runTask(K.testOptions, state)
+  private def scalamuArguments: Def.Initialize[Task[Seq[String]]] = Def.task {
+    val aggregatedTestClassPath = testClassPath.value
+    val aggregatedClassPath     = compileClassPath.value
+    val aggregatedSourceDirs    = sourceDirs.value.flatten.distinct
+    val aggregatedTestDirs      = testClassDirs.value.distinct
+
+    val target         = K.target.value
+    val javaOptions    = SK.analyserJavaOptions.value
+    val scalacOptions  = K.scalacOptions.value
+    val excludeSource  = SK.includeSources.value
+    val excludeTests   = SK.includeTests.value
+    val timeoutFactor  = SK.timeoutFactor.value
+    val timeoutConst   = SK.timeoutConst.value
+    val parallelism    = SK.parallelism.value
+    val verbose        = SK.verbose.value
+    val recompileOnly  = SK.recompileOnly.value
+    val activeMutators = SK.activeMutators.value
+    val testOptions    = K.testOptions.value
 
     val testRunnerArgs = testOptions
       .foldLeft(Map.empty[String, String]) {
@@ -141,60 +169,26 @@ object ScalamuPlugin extends AutoPlugin {
     if (options.isEmpty) Seq.empty
     else Seq(s"--$name", options.mkString(separator))
 
-  private def resolveAggregates(extracted: Extracted): Seq[ProjectRef] = {
-    import extracted._
+  lazy val mutationTestTask: Def.Initialize[Task[Unit]] = Def.task {
+    val scalaVersion = K.scalaBinaryVersion.value
+    val log          = K.streams.value.log
 
-    def findAggregates(project: ProjectRef): List[ProjectRef] =
-      project :: (structure.allProjects(project.build).find(_.id == project.project) match {
-        case Some(resolved) => resolved.aggregate.toList.flatMap(findAggregates)
-        case None           => Nil
-      })
+    CrossVersion.partialVersion(scalaVersion) match {
+      case Some((2, 11)) | Some((2, 12)) =>
+        val cp          = Classpaths.managedJars(MutationTest, Set("jar"), K.update.value)
+        val forkOptions = ForkOptions()
+        val run         = new ForkRun(forkOptions)
+        val arguments   = scalamuArguments.value
+        val javaOptions = (K.javaOptions in SK.mutationTest).value
 
-    (currentRef :: currentProject.aggregate.toList.flatMap(findAggregates)).distinct
-  }
+        run.run(
+          mainClass,
+          cp.map(_.data),
+          javaOptions ++ arguments,
+          log
+        )
 
-  lazy val mutationTest: Command = Command.command("mutationTest") { state =>
-    def isValidJar(candidate: File): Boolean =
-      candidate.exists() && candidate.isFile && candidate.getName.endsWith(".jar")
-
-    val extracted = Project.extract(state)
-
-    val log           = state.log
-    val binaryVersion = extracted.get(K.scalaBinaryVersion)
-    val assemblyJar   = extracted.getOpt(SK.scalamuJarPath)
-
-    assemblyJar match {
-      case Some(jar) if isValidJar(jar) =>
-        CrossVersion.partialVersion(binaryVersion) match {
-          case Some((2, 11)) | Some((2, 12)) =>
-            val guardArtifact = organization % s"${artifactId}_$binaryVersion" % version
-
-            val withGuardJar   = extracted.append(Seq(K.libraryDependencies += guardArtifact), state)
-            val guardExtracted = Project.extract(withGuardJar)
-            import guardExtracted._
-
-            val (updated, _) = runTask(K.update, withGuardJar)
-            runTask(K.compile in Test, updated)
-
-            val forkOptions = ForkOptions()
-            val run         = new ForkRun(forkOptions)
-            val arguments   = buildScalamuArguments(resolveAggregates(extracted), updated)
-
-            run.run(
-              mainClass,
-              Seq(jar),
-              arguments,
-              log
-            )
-
-            state
-          case _ =>
-            log.error(s"Unsupported scala version: $binaryVersion. Only supported major version are 2.11 & 2.12.")
-            state.fail
-        }
-      case _ =>
-        log.warn(s"No usable scalamu jar found. Attempting to download scalamu.jar to ${}.")
-        state.fail
+      case _ => log.error(s"Unsupported scala version $scalaVersion. Supported versions include scala 2.11 & 2.12.")
     }
   }
 }

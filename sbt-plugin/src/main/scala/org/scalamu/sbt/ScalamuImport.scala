@@ -4,8 +4,9 @@ import sbt._
 
 import scala.util.matching.Regex
 
-object Import {
+trait ScalamuImport {
   object ScalamuKeys {
+    lazy val mutationTest        = taskKey[Unit]("run mutation analysis")
     lazy val timeoutFactor       = settingKey[Double]("a factor to apply to normal test duration before considering being in an inf. loop")
     lazy val timeoutConst        = settingKey[Long]("additional flat amount of allowed test run time")
     lazy val parallelism         = settingKey[Int]("number of simultaneously running analyser JVMs")
