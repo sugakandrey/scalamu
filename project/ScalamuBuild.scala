@@ -1,8 +1,8 @@
 import com.typesafe.sbt.pgp.PgpKeys
-import org.jetbrains.sbtidea.SbtIdeaPlugin
-//import play.twirl.sbt.Import.TwirlKeys
-//import play.twirl.sbt.SbtTwirl
 import org.jetbrains.sbtidea.Keys._
+import org.jetbrains.sbtidea.SbtIdeaPlugin
+import play.twirl.sbt.Import.TwirlKeys
+import play.twirl.sbt.SbtTwirl
 import sbt.Keys._
 import sbt._
 import sbtassembly.AssemblyKeys._
@@ -11,10 +11,10 @@ import sbtassembly.ShadeRule
 object ScalamuBuild {
   val GPL3 = "GPL 3.0" -> url("http://www.gnu.org/licenses/gpl-3.0.en.html")
 
-  val specs2 = "org.specs2"       %% "specs2-core" % "3.8.9"
+  val specs2    = "org.specs2"    %% "specs2-core" % "3.8.9"
   val scalatest = "org.scalatest" %% "scalatest"   % "3.0.1"
-  val utest = "com.lihaoyi"       %% "utest"       % "0.4.5"
-  val junit = "junit"             % "junit"        % "4.12"
+  val utest     = "com.lihaoyi"   %% "utest"       % "0.4.5"
+  val junit     = "junit"         % "junit"        % "4.12"
 
   val circe = Seq(
     "io.circe" %% "circe-core",
@@ -23,6 +23,7 @@ object ScalamuBuild {
   ).map(_ % "0.8.0")
 
   lazy val commonSettings = Seq(
+    isSnapshot         := true,
     test in assembly   := {},
     organization       := "io.github.sugakandrey",
     scalaVersion       := "2.12.3",
@@ -127,10 +128,10 @@ object ScalamuBuild {
 
   lazy val report = Project(id = "report", base = file("report"))
     .settings(commonSettings ++ commonDeps)
-//    .enablePlugins(SbtTwirl)
+    .enablePlugins(SbtTwirl)
     .settings(
-      name := "scalamu-report"
-//      TwirlKeys.templateImports := Seq()
+      name                      := "scalamu-report",
+      TwirlKeys.templateImports := Seq()
     )
     .dependsOn(commandLine, common, scalacPlugin)
 
@@ -148,8 +149,12 @@ object ScalamuBuild {
     )
     .settings(commonSettings)
     .settings(publishSettings)
+
+  lazy val scalamuAssembly = Project(id = "scalamu-assembly", base = file("target"))
+    .settings(commonSettings)
+    .settings(publishSettings)
+    .dependsOn(root)
     .settings(
-      isSnapshot                      := true,
       artifact in (Compile, assembly) ~= { _.withClassifier(Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
       assemblyShadeRules in assembly :=
@@ -179,6 +184,7 @@ object ScalamuBuild {
   lazy val compilation = Project(id = "compilation", base = file("compilation"))
     .settings(commonSettings)
     .settings(publishSettings)
+    .settings(name := "scalamu-compilation")
     .settings(
       libraryDependencies ++= Seq(
         "org.scoverage" %% "scalac-scoverage-plugin"  % "1.3.0",
@@ -223,7 +229,6 @@ object ScalamuBuild {
         "-XX:+HeapDumpOnOutOfMemoryError",
         "-ea",
         "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005",
-//        """-Didea.home.path=C:\Users\jetbrains\IdeaProjects\scalamu\idea\LATEST-EAP-SNAPSHOT""",
         "-Didea.is.internal=true",
         "-Didea.debug.mode=true",
         "-Dapple.laf.useScreenMenuBar=true",
