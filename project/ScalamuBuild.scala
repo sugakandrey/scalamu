@@ -192,7 +192,12 @@ object ScalamuBuild {
       )
     )
 
+  import ScriptedPlugin.autoImport._
   lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
+    .settings(
+      scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value),
+      scriptedBufferLog  := false
+    )
     .settings(
       organization     := "io.github.sugakandrey",
       sbtPlugin        := true,
