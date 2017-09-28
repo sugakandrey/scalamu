@@ -27,7 +27,6 @@ class ScalamuCommandLineState(configuration: ScalamuRunConfiguration, env: Execu
 
     compatibleJDK match {
       case Some(jdk) =>
-//        parameters.setJarPath(???)
         parameters.setJdk(jdk)
         parameters.setWorkingDirectory(workingDir)
         parameters.setMainClass(mainClass)
@@ -66,7 +65,7 @@ class ScalamuCommandLineState(configuration: ScalamuRunConfiguration, env: Execu
     val scalacOptions = optionString(configuration.scalacParameters, "", "scalacParameters")
     val vmParameters  = optionString(configuration.vmParameters, "", "vmParameters")
     val targetTests   = optionString(configuration.targetTests, ",", "targetTests")
-    val targetSources = optionString(configuration.targetSources, ",", "targetSources")
+    val targetClasses = optionString(configuration.targetClasses, ",", "targetClasses")
     val mutators      = optionString(configuration.activeMutators, ",", "activeMutators")
     val classPath     = optionString(extractor.compileClassPath.map(_.getPath), ",", "cp")
     val testClassPath = optionString(extractor.runClassPath.map(_.getPath), ",", "tcp")
@@ -78,7 +77,7 @@ class ScalamuCommandLineState(configuration: ScalamuRunConfiguration, env: Execu
       parallelism,
       scalacOptions,
       vmParameters,
-      targetSources,
+      targetClasses,
       targetTests,
       mutators,
       classPath,

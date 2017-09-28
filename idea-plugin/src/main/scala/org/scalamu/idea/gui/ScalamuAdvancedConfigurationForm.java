@@ -30,6 +30,7 @@ public class ScalamuAdvancedConfigurationForm {
     timeoutConst.setText(Integer.toString(configuration.timeoutConst()));
     timeoutFactor.setText(Double.toString(configuration.timeoutFactor()));
     enableVerboseLoggingCheckBox.setSelected(configuration.verboseLogging());
+    aggregateDependencyModulesCheckBox.setSelected(configuration.aggregate());
     scalacOptions.setText(configuration.scalacParameters());
   }
 
@@ -83,6 +84,10 @@ public class ScalamuAdvancedConfigurationForm {
     return enableVerboseLoggingCheckBox.isSelected();
   }
 
+  public boolean getAggregate() {
+    return aggregateDependencyModulesCheckBox.isSelected();
+  }
+
   public String getScalacParameters() {
     return scalacOptions.getText();
   }
@@ -112,27 +117,31 @@ public class ScalamuAdvancedConfigurationForm {
    */
   private void $$$setupUI$$$() {
     mainPanel = new JPanel();
-    mainPanel.setLayout(new GridLayoutManager(6, 2, new Insets(0, 0, 0, 0), -1, -1));
+    mainPanel.setLayout(new GridLayoutManager(6, 3, new Insets(0, 0, 0, 0), -1, -1));
     final JLabel label1 = new JLabel();
     label1.setText("scalac options:");
-    mainPanel.add(label1, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    mainPanel.add(label1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     scalacOptions = new RawCommandLineEditor();
-    mainPanel.add(scalacOptions, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    mainPanel.add(scalacOptions, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     envVariables = new EnvironmentVariablesComponent();
-    mainPanel.add(envVariables, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    mainPanel.add(envVariables, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label2 = new JLabel();
     label2.setText("Timeout factor:");
     mainPanel.add(label2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     timeoutFactor = new JFormattedTextField();
-    mainPanel.add(timeoutFactor, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    mainPanel.add(timeoutFactor, new GridConstraints(3, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     final JLabel label3 = new JLabel();
     label3.setText("Timeout const, ms:");
     mainPanel.add(label3, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     timeoutConst = new JFormattedTextField();
-    mainPanel.add(timeoutConst, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    mainPanel.add(timeoutConst, new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     enableVerboseLoggingCheckBox = new JCheckBox();
     enableVerboseLoggingCheckBox.setText("Enable verbose logging");
     mainPanel.add(enableVerboseLoggingCheckBox, new GridConstraints(5, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    aggregateDependencyModulesCheckBox = new JCheckBox();
+    aggregateDependencyModulesCheckBox.setSelected(true);
+    aggregateDependencyModulesCheckBox.setText("Aggregate dependency modules");
+    mainPanel.add(aggregateDependencyModulesCheckBox, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
   }
 
   /**

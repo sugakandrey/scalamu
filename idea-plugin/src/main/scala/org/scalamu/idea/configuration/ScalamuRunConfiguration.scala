@@ -1,6 +1,6 @@
 package org.scalamu.idea.configuration
 
-import java.nio.file.Paths
+import java.nio.file.{Files, Paths}
 import java.util
 
 import com.intellij.execution.configurations._
@@ -35,7 +35,7 @@ class ScalamuRunConfiguration(
 
   private def readCommaSeparatedSeq(source: String): Seq[String] = if (source.isEmpty) Seq.empty else source.split(",")
 
-  private[idea] var targetSources: Seq[Regex]              = ScalamuDefaultSettings.targetSources
+  private[idea] var targetClasses: Seq[Regex]              = ScalamuDefaultSettings.targetSources
   private[idea] var targetTests: Seq[Regex]                = ScalamuDefaultSettings.targetTests
   private[idea] var verboseLogging: Boolean                = ScalamuDefaultSettings.verboseLogging
   private[idea] var openInBrowser: Boolean                 = ScalamuDefaultSettings.openInBrowser
@@ -45,12 +45,13 @@ class ScalamuRunConfiguration(
   private[idea] var timeoutFactor: Double                  = ScalamuDefaultSettings.timeoutFactor
   private[idea] var parallelism: Int                       = ScalamuDefaultSettings.parallelism
   private[idea] var browser: Option[WebBrowser]            = ScalamuDefaultSettings.browser
-  private[idea] var activeMutators: Seq[String]            = Seq.empty
+  private[idea] var activeMutators: Seq[String]            = ScalamuDefaultSettings.activeMutators
   private[idea] var envVariables: util.Map[String, String] = new util.HashMap[String, String]
   private[idea] var pathToJar: String                      = ""
   private[idea] var reportDir: String                      = ""
+  private[idea] var aggregate: Boolean                     = true
 
-  def getTargetSourceAsString: String = targetSources.map(_.toString).mkString(",")
+  def getTargetClassesAsString: String = targetClasses.map(_.toString).mkString(",")
   def getTargetTestsAsString: String  = targetTests.map(_.toString).mkString(",")
 
   def apply(form: ScalamuConfigurationForm): Unit = {
@@ -62,7 +63,7 @@ class ScalamuRunConfiguration(
     reportDir     = form.getReportDir
     openInBrowser = form.getOpenInBrowser
     browser       = Option(WebBrowserManager.getInstance().findBrowserById(form.getBrowserFamily.getName))
-    targetSources = readCommaSeparatedSeq(form.getTargetSources).map(_.r)
+    targetClasses = readCommaSeparatedSeq(form.getTargetClasses).map(_.r)
     targetTests   = readCommaSeparatedSeq(form.getTargetTests).map(_.r)
   }
 
@@ -73,6 +74,7 @@ class ScalamuRunConfiguration(
     timeoutConst     = form.getTimeoutConst
     scalacParameters = form.getScalacParameters
     verboseLogging   = form.getVerboseLogging
+    aggregate        = form.getAggregate
 
     envVariables.clear()
     envVariables.putAll(form.getEnvVariables)
@@ -83,8 +85,7 @@ class ScalamuRunConfiguration(
     project.modulesWithScala.filter(ModuleType.get(_) == JavaModuleType.getModuleType).asJava
 
   override def getConfigurationEditor: SettingsEditor[_ <: RunConfiguration] = {
-    val group     = new SettingsEditorGroup[ScalamuRunConfiguration]
-//    val extractor = new ProjectInfoExtractor(project, getConfigurationModule.getModule)
+    val group = new SettingsEditorGroup[ScalamuRunConfiguration]
 
     group.addEditor(
       ExecutionBundle.message("run.configuration.configuration.tab.title"),
@@ -106,11 +107,20 @@ class ScalamuRunConfiguration(
   }
 
   override def getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState =
-    new ScalamuCommandLineState(this, environment)
+    try { checkConfiguration(); new ScalamuCommandLineState(this, environment) } catch {
+      case _: RuntimeConfigurationException => null
+    }
 
-  override def checkConfiguration(): Unit =
-    // @TODO: validate user settings
-    ()
+  override def checkConfiguration(): Unit = {
+    if (pathToJar.isEmpty || !Files.exists(Paths.get(pathToJar)))
+      throw new RuntimeConfigurationError("Path to scalamu jar not specified.")
+
+    if (activeMutators.isEmpty)
+      throw new RuntimeConfigurationWarning("No active mutators specified.")
+
+    if (reportDir.isEmpty)
+      throw new RuntimeConfigurationWarning("Report directory is not specified.")
+  }
 
   override def getRefactoringElementListener(element: PsiElement): RefactoringElementListener = element match {
     case dir: PsiDirectory =>
@@ -147,7 +157,7 @@ class ScalamuRunConfiguration(
       "timeoutConst"   -> timeoutConst,
       "timeoutFactor"  -> timeoutFactor,
       "openInBrowser"  -> openInBrowser,
-      "targetSources"  -> regexSeqToString(targetSources),
+      "targetSources"  -> regexSeqToString(targetClasses),
       "targetTests"    -> regexSeqToString(targetTests),
       "vmOptions"      -> vmParameters,
       "scalacOptions"  -> scalacParameters,
@@ -179,7 +189,7 @@ class ScalamuRunConfiguration(
     parallelism      = JDOMExternalizer.readInteger(element, "parallelism", ScalamuDefaultSettings.parallelism)
     browser          = Option(WebBrowserManager.getInstance().findBrowserById(JDOMExternalizer.readString(element, "browser")))
     activeMutators   = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "activeMutators"))
-    targetSources    = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "targetSources")).map(_.r)
+    targetClasses    = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "targetSources")).map(_.r)
     targetTests      = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "targetTests")).map(_.r)
     reportDir        = JDOMExternalizer.readString(element, "reportDir")
     pathToJar        = JDOMExternalizer.readString(element, "pathToJar")

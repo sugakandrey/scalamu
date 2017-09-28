@@ -7,13 +7,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui._
 import com.intellij.ui.components.JBList
-import org.scalamu.idea.configuration.ScalamuRunConfiguration
+import org.scalamu.idea.configuration.{ScalamuDefaultSettings, ScalamuRunConfiguration}
 
 import scala.collection.JavaConverters._
 
 class ScalamuMutatorsForm(project: Project) {
   private[this] val listModel = new CollectionListModel[String]()
   private[this] val activeMutators = new JBList[String](listModel)
+  
+  listModel.add(ScalamuDefaultSettings.activeMutators.asJava)
 
   val mainPanel: JPanel = {
     val panel = new JPanel()
@@ -39,7 +41,7 @@ class ScalamuMutatorsForm(project: Project) {
   }
 
   def apply(configurationForm: ScalamuRunConfiguration): Unit =
-    listModel.replaceAll(configurationForm.activeMutators.asJava)
+//    listModel.replaceAll(configurationForm.activeMutators.asJava)
 
   def getActiveMutators: Seq[String] = listModel.getItems.asScala
 }

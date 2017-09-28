@@ -20,7 +20,7 @@ case class ModuleInfoExtractor(module: Module, aggregate: Boolean = true) {
 
   private def getModuleAndDependencies: Set[Module] = {
     val deps = new mutable.HashSet[Module]
-    enumerator.recursively().forEachModule(m => { deps += m; true })
+    enumerator.forEachModule(m => { deps += m; true })
     deps
   }
 }
