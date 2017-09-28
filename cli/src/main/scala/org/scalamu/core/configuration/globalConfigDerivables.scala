@@ -23,8 +23,8 @@ trait SettingsDerivable {
     config => {
       val settings = new Settings {
         Yrangepos.value = true
-        classpath.value += pathsToString(config.classPath)
-        classpath.value += Properties.javaClassPath
+        classpath.value  += pathsToString(config.classPath)
+        classpath.value  += Properties.javaClassPath
         sourcepath.value += pathsToString(config.sourceDirs)
         outputDirs.setSingleOutput(dir)
       }
@@ -58,15 +58,13 @@ trait MutationConfigDerivable {
 
   implicit def mutationConfigDerivable(
     implicit reporter: MutationReporter
-  ): Derivable[MutationConfig] =
+  ): Derivable[ScalamuScalacConfig] =
     config =>
-      MutationConfig(
+      ScalamuScalacConfig(
         reporter,
         guard,
-        new CompositeNameFilter(
-          IgnoreCoverageStatementsFilter,
-          RegexFilter(config.targetSources: _*)
-        ),
-        config.activeMutators
+        IgnoreCoverageStatementsFilter,
+        config.activeMutators,
+        RegexFilter(config.targetClasses: _*)
     )
 }

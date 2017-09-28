@@ -12,7 +12,7 @@ trait GenericApplyMutator extends Mutator { self: SupportedTypes =>
 
   override def mutatingTransformer(
     global: Global,
-    config: MutationConfig
+    config: ScalamuScalacConfig
   ): MutatingTransformer = new MutatingTransformer(config)(global) {
     import global._
 

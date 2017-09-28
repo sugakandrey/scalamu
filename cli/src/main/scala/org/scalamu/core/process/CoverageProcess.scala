@@ -41,7 +41,7 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
       s"Searching for tests conforming to the following frameworks: ${frameworks.map(_.name).mkString(", ")}."
     )
 
-    val filter = TestClassFilter.forFrameworks(frameworks, config.includeTestClasses)
+    val filter = TestClassFilter.forFrameworks(frameworks, config.targetTests)
     val finder = new TestClassFileFinder(filter)
     val suites = finder.findAll(config.testClassDirs)
     log.info(s"Discovered ${suites.size} test suites. Analyzing coverage now...")

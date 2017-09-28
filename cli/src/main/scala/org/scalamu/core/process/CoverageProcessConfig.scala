@@ -8,7 +8,7 @@ import scala.util.matching.Regex
 
 final case class CoverageProcessConfig(
   testClassDirs: Set[Path],
-  includeTestClasses: Seq[Regex],
+  targetTests: Seq[Regex],
   testingOptions: Map[String, String],
   verbose: Boolean = false
 )

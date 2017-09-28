@@ -27,8 +27,7 @@ package object runners {
   implicit val decoderRegex: Decoder[Regex] = Decoder.decodeString.map(_.r)
 
   implicit val encodeMutation: Encoder[Mutator] = Encoder.encodeString.contramap(_.toString)
-  implicit val decodeMutation: Decoder[Mutator] =
-    Decoder.decodeString.map(ScalamuPluginConfig.mutationByName)
+  implicit val decodeMutation: Decoder[Mutator] = Decoder.decodeString.map(ScalamuPluginConfig.mutatorsByName)
 
   implicit val encodeNothing: Encoder[Nothing] = nothing => ???
 }

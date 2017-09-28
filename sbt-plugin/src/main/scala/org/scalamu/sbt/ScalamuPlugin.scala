@@ -29,8 +29,9 @@ object ScalamuPlugin extends AutoPlugin {
       SK.timeoutFactor               := 1.5,
       SK.parallelism                 := 1,
       SK.timeoutConst                := 2000,
-      SK.includeSources              := Seq.empty,
-      SK.includeTests                := Seq.empty,
+      SK.targetClasses               := Seq.empty,
+      SK.targetTests                 := Seq.empty,
+      SK.ignoreSymbols               := Seq.empty,
       SK.activeMutators              := allMutators,
       SK.analyserJavaOptions         := (K.javaOptions in Test).value,
       SK.verbose                     := false,
@@ -101,18 +102,19 @@ object ScalamuPlugin extends AutoPlugin {
     val aggregatedSourceDirs    = sourceDirs.value.flatten.distinct
     val aggregatedTestDirs      = testClassDirs.value.distinct
 
-    val target         = K.target.value
-    val javaOptions    = SK.analyserJavaOptions.value
-    val scalacOptions  = K.scalacOptions.value
-    val excludeSource  = SK.includeSources.value
-    val excludeTests   = SK.includeTests.value
-    val timeoutFactor  = SK.timeoutFactor.value
-    val timeoutConst   = SK.timeoutConst.value
-    val parallelism    = SK.parallelism.value
-    val verbose        = SK.verbose.value
-    val recompileOnly  = SK.recompileOnly.value
-    val activeMutators = SK.activeMutators.value
-    val testOptions    = K.testOptions.value
+    val target           = K.target.value / "mutation-analysis-report"
+    val vmParameters     = SK.analyserJavaOptions.value
+    val scalacParameters = K.scalacOptions.value
+    val targetClasses    = SK.targetClasses.value
+    val targetTests      = SK.targetTests.value
+    val ignoreSymbols    = SK.ignoreSymbols.value
+    val timeoutFactor    = SK.timeoutFactor.value
+    val timeoutConst     = SK.timeoutConst.value
+    val parallelism      = SK.parallelism.value
+    val verbose          = SK.verbose.value
+    val recompileOnly    = SK.recompileOnly.value
+    val activeMutators   = SK.activeMutators.value
+    val testOptions      = K.testOptions.value
 
     val testRunnerArgs = testOptions
       .foldLeft(Map.empty[String, String]) {
@@ -120,22 +122,26 @@ object ScalamuPlugin extends AutoPlugin {
           val names = frameworkNames(framework)
           names.foldLeft(acc) {
             case (namesAcc, fname) =>
-              val oldVal  = namesAcc.getOrElse(fname, "")
-              val updated = s"$oldVal ${args.mkString(" ")}"
+              val oldVal = namesAcc.getOrElse(fname, "")
+              val updated =
+                if (oldVal.isEmpty) args.mkString(" ")
+                else
+                  s"$oldVal ${args.mkString(" ")}"
               namesAcc + (fname -> updated)
           }
         case (acc, _) => acc
       }
       .map { case (fname, args) => s"$fname=$args" }
-      .mkString
+      .mkString(",")
 
     val possiblyUndefinedOptions = Seq(
       optionString(aggregatedClassPath.map(_.getAbsolutePath), ",", "cp"),
       optionString(aggregatedTestClassPath.map(_.getAbsolutePath), ",", "tcp"),
-      optionString(javaOptions, " ", "vmParameters"),
-      optionString(excludeSource.map(_.toString), ",", "targetSources"),
-      optionString(excludeTests.map(_.toString), ",", "targetTests"),
-      optionString(scalacOptions, " ", "scalacParameters")
+      optionString(vmParameters, " ", "vmParameters"),
+      optionString(targetClasses.map(_.toString), ",", "targetClasses"),
+      optionString(targetTests.map(_.toString), ",", "targetTests"),
+      optionString(scalacParameters, " ", "scalacParameters"),
+      optionString(ignoreSymbols, ",", "ignoreSymbols")
     ).flatten
 
     val options = Seq(
@@ -181,12 +187,13 @@ object ScalamuPlugin extends AutoPlugin {
         val arguments   = scalamuArguments.value
         val javaOptions = (K.javaOptions in SK.mutationTest).value
 
-        run.run(
+        val runResult = run.run(
           mainClass,
           cp.map(_.data),
           javaOptions ++ arguments,
           log
         )
+        runResult.failed.foreach(e => sys.error(e.getMessage))
 
       case _ => log.error(s"Unsupported scala version $scalaVersion. Supported versions include scala 2.11 & 2.12.")
     }

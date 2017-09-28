@@ -13,15 +13,15 @@ trait PluginConfigFixture extends TestSuite {
   def filter: NameFilter
 
   def withPluginConfig(
-    code: MutationConfig => Any
+    code: ScalamuScalacConfig => Any
   ): Any
 }
 
 trait IsolatedPluginConfigFixture extends PluginConfigFixture {
   override def withPluginConfig(
-    code: (MutationConfig) => Any
+    code: (ScalamuScalacConfig) => Any
   ): Any = code(
-    MutationConfig(
+    ScalamuScalacConfig(
       mutationReporter,
       guard,
       filter,
@@ -35,11 +35,11 @@ trait IsolatedPluginConfigFixture extends PluginConfigFixture {
 trait SharedPluginConfigFixture
     extends PluginConfigFixture
     with BeforeAndAfterAll {
-  private[scalamu] var config: MutationConfig = _
+  private[scalamu] var config: ScalamuScalacConfig = _
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    config = MutationConfig(
+    config = ScalamuScalacConfig(
       mutationReporter,
       guard,
       filter,
@@ -50,6 +50,6 @@ trait SharedPluginConfigFixture
   }
 
   override def withPluginConfig(
-    code: (MutationConfig) => Any
+    code: (ScalamuScalacConfig) => Any
   ): Any = code(config)
 }

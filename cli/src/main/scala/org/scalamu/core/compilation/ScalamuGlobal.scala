@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.Logger
 import org.scalamu.core.SourceInfo
 import org.scalamu.core.configuration.{GlobalDerivableInstances, ScalamuConfig}
 import org.scalamu.core.coverage.{CoveragePlugin, InstrumentationReporter}
-import org.scalamu.plugin.{MutationConfig, MutationReporter, ScalamuPlugin}
+import org.scalamu.plugin.{MutationReporter, ScalamuPlugin, ScalamuScalacConfig}
 
 import scala.reflect.io.AbstractFile
 import scala.tools.nsc.plugins.Plugin
@@ -18,10 +18,10 @@ import scala.tools.nsc.{Global, Settings}
 class ScalamuGlobal private[compilation] (
   settings: Settings,
   reporter: Reporter,
-  mutationConfig: MutationConfig,
+  mutationConfig: ScalamuScalacConfig,
   instrumentationReporter: InstrumentationReporter
 ) extends Global(settings, reporter) {
-  
+
   require(
     settings.outputDirs.getSingleOutput.isDefined,
     "Single output dir must be set for ScalamuGlobal"
@@ -64,7 +64,7 @@ object ScalamuGlobal extends GlobalDerivableInstances {
     new ScalamuGlobal(
       config.derive[Settings],
       config.derive[Reporter],
-      config.derive[MutationConfig],
+      config.derive[ScalamuScalacConfig],
       instrumentationReporter
     )
   }

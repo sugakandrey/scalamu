@@ -14,12 +14,13 @@ trait ScalamuConfigFixture extends TestSuite {
   def testClassDirs: Set[Path]            = Set.empty
   def classPath: Set[Path]                = Set.empty
   def testClassPath: Set[Path]            = Set.empty
-  def jvmArgs: String                     = ""
-  def mutations: Seq[Mutator]            = ScalamuPluginConfig.allMutators
-  def excludeSources: Seq[Regex]          = Seq.empty
-  def excludeTestsClasses: Seq[Regex]     = Seq.empty
+  def vmParameters: String                = ""
+  def mutations: Seq[Mutator]             = ScalamuPluginConfig.allMutators
+  def targetSources: Seq[Regex]           = Seq.empty
+  def targetTests: Seq[Regex]             = Seq.empty
+  def ignoreSymbols: Seq[Regex]           = Seq.empty
   def testingOptions: Map[String, String] = Map.empty
-  def scalacOptions: String               = ""
+  def scalacParameters: String            = ""
   def timeoutFactor: Double               = 1.5
   def timeoutConst: Long                  = 2000
   def threads: Int                        = Runtime.getRuntime.availableProcessors()
@@ -34,12 +35,13 @@ trait ScalamuConfigFixture extends TestSuite {
         testClassDirs,
         classPath,
         testClassPath,
-        jvmArgs,
+        vmParameters,
         mutations,
-        excludeSources,
-        excludeTestsClasses,
+        targetSources,
+        targetTests,
+        ignoreSymbols,
         testingOptions,
-        scalacOptions,
+        scalacParameters,
         timeoutFactor,
         timeoutConst,
         threads,

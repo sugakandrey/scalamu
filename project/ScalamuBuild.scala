@@ -11,10 +11,10 @@ import sbtassembly.ShadeRule
 object ScalamuBuild {
   val GPL3 = "GPL 3.0" -> url("http://www.gnu.org/licenses/gpl-3.0.en.html")
 
-  val specs2    = "org.specs2"    %% "specs2-core" % "3.8.9"
+  val specs2 = "org.specs2"       %% "specs2-core" % "3.8.9"
   val scalatest = "org.scalatest" %% "scalatest"   % "3.0.1"
-  val utest     = "com.lihaoyi"   %% "utest"       % "0.4.5"
-  val junit     = "junit"         % "junit"        % "4.12"
+  val utest = "com.lihaoyi"       %% "utest"       % "0.4.5"
+  val junit = "junit"             % "junit"        % "4.12"
 
   val circe = Seq(
     "io.circe" %% "circe-core",
@@ -98,6 +98,7 @@ object ScalamuBuild {
   lazy val common = Project(id = "common", base = file("common"))
     .settings(commonSettings ++ commonDeps)
     .settings(name := "scalamu-common")
+    .disablePlugins(ScriptedPlugin)
 
   lazy val scalacPlugin = Project(id = "scalac-plugin", base = file("scalac-plugin"))
     .settings(commonSettings ++ commonDeps)
@@ -106,6 +107,7 @@ object ScalamuBuild {
       libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )
     .dependsOn(common)
+    .disablePlugins(ScriptedPlugin)
 
   private lazy val testingFrameworks = Seq(scalatest, specs2, utest, junit)
 
@@ -125,6 +127,7 @@ object ScalamuBuild {
     )
     .dependsOn(scalacPlugin % "compile->compile;test->test")
     .dependsOn(common, compilation)
+    .disablePlugins(ScriptedPlugin)
 
   lazy val report = Project(id = "report", base = file("report"))
     .settings(commonSettings ++ commonDeps)
@@ -134,6 +137,7 @@ object ScalamuBuild {
       TwirlKeys.templateImports := Seq()
     )
     .dependsOn(commandLine, common, scalacPlugin)
+    .disablePlugins(ScriptedPlugin)
 
   lazy val root = Project(id = "scalamu", base = file("."))
     .dependsOn(
@@ -149,6 +153,7 @@ object ScalamuBuild {
     )
     .settings(commonSettings)
     .settings(publishSettings)
+    .disablePlugins(ScriptedPlugin)
 
   lazy val scalamuAssembly = Project(id = "scalamu-assembly", base = file("target"))
     .settings(commonSettings)
@@ -166,6 +171,7 @@ object ScalamuBuild {
           "org.slf4j.**"
         ).map(shade)
     )
+    .disablePlugins(ScriptedPlugin)
 
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
     .settings(commonSettings ++ commonDeps)
@@ -177,6 +183,7 @@ object ScalamuBuild {
       report,
       compilation
     )
+    .disablePlugins(ScriptedPlugin)
 
   private def shade(pattern: String): ShadeRule =
     ShadeRule.rename(pattern -> "shaded.@0").inAll
@@ -191,6 +198,7 @@ object ScalamuBuild {
         "org.scoverage" %% "scalac-scoverage-runtime" % "1.3.0"
       )
     )
+    .disablePlugins(ScriptedPlugin)
 
   import ScriptedPlugin.autoImport._
   lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
@@ -217,6 +225,7 @@ object ScalamuBuild {
       ideaExternalPlugins += IdeaPlugin
         .Zip("scala-plugin", url("https://download.plugins.jetbrains.com/1347/37646/scala-intellij-bin-2017.2.6.zip"))
     )
+    .disablePlugins(ScriptedPlugin)
 
   lazy val ideaRunner = Project(id = "idea-runner", base = file("idea-plugin/target"))
     .dependsOn(scalamuIdea)
@@ -241,6 +250,7 @@ object ScalamuBuild {
         "-Didea.ProcessCanceledException=disabled"
       )
     )
+    .disablePlugins(ScriptedPlugin)
 }
 
 object ScalamuTestingBuild {

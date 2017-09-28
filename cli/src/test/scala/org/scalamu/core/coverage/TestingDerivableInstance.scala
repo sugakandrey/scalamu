@@ -20,14 +20,12 @@ trait TestingDerivableInstance {
   implicit val reporterDerivable: Derivable[Reporter] =
     Function.const(new LoggingReporter(log, settings))
 
-  implicit val mutationConfigDerivable: Derivable[MutationConfig] =
+  implicit val mutationConfigDerivable: Derivable[ScalamuScalacConfig] =
     config =>
-      MutationConfig(
+      ScalamuScalacConfig(
         mutationReporter,
         guard,
-        new CompositeNameFilter(
-          IgnoreCoverageStatementsFilter,
-          RegexFilter(config.targetSources: _*)
-        )
+        IgnoreCoverageStatementsFilter,
+        targetClasses = RegexFilter(config.targetClasses: _*)
     )
 }

@@ -1,7 +1,7 @@
 package org.scalamu.plugin.util
 
 /**
- * If [[org.scalamu.plugin.MutationConfig.sanitizeTrees]] is enabled,
+ * If [[org.scalamu.plugin.ScalamuScalacConfig.sanitizeTrees]] is enabled,
  * `removeNestedMutants` is invoked on every mutated tree, to remove any
  * nested mutants.
  */

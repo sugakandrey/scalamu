@@ -14,7 +14,7 @@ trait BinaryOperatorMutator extends Mutator with OperatorMutationRules with Supp
   
   override def mutatingTransformer(
     global: Global,
-    config: MutationConfig
+    config: ScalamuScalacConfig
   ): MutatingTransformer = new MutatingTransformer(config)(global) {
     import global._
 

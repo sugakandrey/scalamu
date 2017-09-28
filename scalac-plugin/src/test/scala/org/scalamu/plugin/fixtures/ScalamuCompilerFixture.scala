@@ -1,6 +1,6 @@
 package org.scalamu.plugin.fixtures
 
-import org.scalamu.plugin.{MemoryReporter, Mutator, MutationConfig, ScalamuPlugin}
+import org.scalamu.plugin.{MemoryReporter, Mutator, ScalamuScalacConfig, ScalamuPlugin}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.Matchers._
 
@@ -18,7 +18,7 @@ trait ScalamuCompilerFixture {
     settings: Settings,
     reporter: Reporter,
     outputDir: AbstractFile,
-    config: MutationConfig
+    config: ScalamuScalacConfig
   ): Global = new Global(settings, reporter) with ReplGlobal {
     override protected def loadRoughPluginsList(): List[Plugin] =
       new ScalamuPlugin(this, config) :: super.loadRoughPluginsList()
@@ -61,7 +61,7 @@ trait IsolatedScalamuCompilerFixture
 
   def withScalamuCompiler(
                            mutations: Seq[Mutator],
-                           config: MutationConfig
+                           config: ScalamuScalacConfig
   )(
     testCode: (Global, MemoryReporter) => Any
   ): Any = withGlobalConfig { (settings, reporter) =>
@@ -69,7 +69,7 @@ trait IsolatedScalamuCompilerFixture
       settings,
       reporter,
       outputDir,
-      config.copy(mutations = mutations)
+      config.copy(mutators = mutations)
     )
 
     testCode(global, config.reporter.asInstanceOf[MemoryReporter])

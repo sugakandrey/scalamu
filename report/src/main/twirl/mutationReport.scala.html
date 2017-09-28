@@ -61,7 +61,7 @@
 
 <h2>Active mutators</h2>
 <ul class="list-group">
-    @for(mutation <- config.mutations) {
+    @for(mutation <- config.activeMutators) {
     <li class="list-group-item">@mutation.toString</li>
     }
 </ul>

@@ -8,7 +8,7 @@ import scala.tools.nsc.transform.{Transform, TypingTransformers}
 
 class ScalamuPlugin(
   val global: Global,
-  val config: MutationConfig
+  val config: ScalamuScalacConfig
 ) extends Plugin { plugin =>
 
   override val name: String                      = "scalamu"
@@ -47,7 +47,7 @@ class ScalamuPlugin(
           }
         val mutatedUnit = applyTransformations(
           tree,
-          config.mutations.map(_.mutatingTransformer(global, config))(collection.breakOut)
+          config.mutators.map(_.mutatingTransformer(global, config))(collection.breakOut)
         )
         if (config.verifyTrees) {
           val nestedMutations = treesWithNestedMutations(mutatedUnit)

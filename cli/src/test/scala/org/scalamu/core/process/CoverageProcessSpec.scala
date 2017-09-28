@@ -52,7 +52,7 @@ class CoverageProcessSpec
           val coverage = CoverageProcess
             .run(
               (
-                config.derive[CoverageProcessConfig].copy(includeTestClasses = Seq(".*Bad.*".r)),
+                config.derive[CoverageProcessConfig].copy(targetTests = Seq(".*Bad.*".r)),
                 compiledSourcesPath
               ),
               null,

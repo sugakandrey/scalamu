@@ -23,3 +23,4 @@ lazy val utest         = ScalamuTestingBuild.utest
 lazy val scoverage     = ScalamuTestingBuild.withScoverage
 
 addCommandAlias("runIdea", "; idea-plugin/assembly; idea-runner/run")
+addCommandAlias("publishAssembly", "scalamu-assembly/publishLocal")

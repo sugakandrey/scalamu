@@ -1,7 +1,7 @@
 package org.scalamu.core.compilation
 
 import org.scalamu.core.coverage.InstrumentationReporter
-import org.scalamu.plugin.{MemoryReporter, MutationConfig}
+import org.scalamu.plugin.{MemoryReporter, ScalamuScalacConfig}
 import org.scalamu.plugin.fixtures._
 import org.scalamu.testutil.TestingInstrumentationReporter
 import org.scalamu.testutil.fixtures.{IsolatedInstrumentationReporterFixture, SharedInstrumentationReporterFixture}
@@ -14,11 +14,11 @@ import scala.tools.nsc.reporters.Reporter
 
 trait ScalamuGlobalFixture extends TestSuite with Matchers {
   def createGlobal(
-    settings: Settings,
-    reporter: Reporter,
-    outputDir: AbstractFile,
-    config: MutationConfig,
-    instrumentationReporter: InstrumentationReporter
+                    settings: Settings,
+                    reporter: Reporter,
+                    outputDir: AbstractFile,
+                    config: ScalamuScalacConfig,
+                    instrumentationReporter: InstrumentationReporter
   ): ScalamuGlobal =
     new ScalamuGlobal(settings, reporter, config, instrumentationReporter) with ReplGlobal
 }
@@ -63,7 +63,7 @@ trait IsolatedScalamuGlobalFixture
     with IsolatedInstrumentationReporterFixture {
 
   def withScalamuGlobal(
-    config: MutationConfig
+    config: ScalamuScalacConfig
   )(
     testCode: (ScalamuGlobal, MemoryReporter, TestingInstrumentationReporter) => Any
   ): Any = withGlobalConfig { (settings, reporter) =>
