@@ -1,0 +1,5 @@
+> mutationTest
+> check
+> set testOptions := Seq()
+> set ScalamuKeys.targetTests := Seq("example.FooTest".r)
+> mutationTest
