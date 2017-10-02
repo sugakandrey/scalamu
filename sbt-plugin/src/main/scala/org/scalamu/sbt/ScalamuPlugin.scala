@@ -11,7 +11,10 @@ object ScalamuPlugin extends AutoPlugin {
 
   object autoImport extends ScalamuImport {
     lazy val MutationTest: Configuration =
-      config("mutation-test").describedAs("Dependencies and settings required for mutation testing.").hide
+      config("mutation-test")
+        .describedAs("Dependencies and settings required for mutation testing.")
+        .extend(Compile)
+        .hide
   }
 
   import autoImport.{ScalamuKeys => SK}
@@ -23,23 +26,25 @@ object ScalamuPlugin extends AutoPlugin {
   override def projectConfigurations: Seq[Configuration] = Seq(MutationTest)
 
   override def projectSettings: Seq[Def.Setting[_]] =
-    Seq(
-      K.aggregate in SK.mutationTest := false,
-      SK.mutationTest                := mutationTestTask.value,
-      SK.timeoutFactor               := 1.5,
-      SK.parallelism                 := 1,
-      SK.timeoutConst                := 2000,
-      SK.targetClasses               := Seq.empty,
-      SK.targetTests                 := Seq.empty,
-      SK.ignoreSymbols               := Seq.empty,
-      SK.activeMutators              := allMutators,
-      SK.analyserJavaOptions         := (K.javaOptions in Test).value,
-      SK.verbose                     := false,
-      SK.recompileOnly               := false
-    ) :+ dependencies
+    inConfig(MutationTest)(Defaults.configSettings) ++
+      Seq(
+        SK.mutationTest                := mutationTestTask.value,
+        SK.timeoutFactor               := 1.5,
+        SK.parallelism                 := 1,
+        SK.timeoutConst                := 2000,
+        SK.targetClasses               := Seq.empty,
+        SK.targetTests                 := Seq.empty,
+        SK.ignoreSymbols               := Seq.empty,
+        SK.activeMutators              := allMutators,
+        SK.analyserJavaOptions         := (K.javaOptions in Test).value,
+        SK.verbose                     := false,
+        SK.recompileOnly               := false,
+        K.aggregate in SK.mutationTest := false
+      ) :+ dependencies
 
   def dependencies: Setting[Seq[ModuleID]] =
     K.libraryDependencies += (organization % s"${artifactId}_${K.scalaBinaryVersion.value}" % version % MutationTest)
+      .classifier("assembly")
       .intransitive()
 
   private def allMutators: Seq[String] = Seq(
@@ -178,24 +183,19 @@ object ScalamuPlugin extends AutoPlugin {
   lazy val mutationTestTask: Def.Initialize[Task[Unit]] = Def.task {
     val scalaVersion = K.scalaBinaryVersion.value
     val log          = K.streams.value.log
+    val cp           = Classpaths.managedJars(MutationTest, Set("jar"), K.update.value)
+    val forkOptions  = ForkOptions()
+    val run          = new ForkRun(forkOptions)
+    val arguments    = scalamuArguments.value
+    val javaOptions  = (K.javaOptions in SK.mutationTest).value
 
-    CrossVersion.partialVersion(scalaVersion) match {
-      case Some((2, 11)) | Some((2, 12)) =>
-        val cp          = Classpaths.managedJars(MutationTest, Set("jar"), K.update.value)
-        val forkOptions = ForkOptions()
-        val run         = new ForkRun(forkOptions)
-        val arguments   = scalamuArguments.value
-        val javaOptions = (K.javaOptions in SK.mutationTest).value
+    val runResult = run.run(
+      mainClass,
+      cp.map(_.data),
+      javaOptions ++ arguments,
+      log
+    )
+    runResult.failed.foreach(e => sys.error(e.getMessage))
 
-        val runResult = run.run(
-          mainClass,
-          cp.map(_.data),
-          javaOptions ++ arguments,
-          log
-        )
-        runResult.failed.foreach(e => sys.error(e.getMessage))
-
-      case _ => log.error(s"Unsupported scala version $scalaVersion. Supported versions include scala 2.11 & 2.12.")
-    }
   }
 }
