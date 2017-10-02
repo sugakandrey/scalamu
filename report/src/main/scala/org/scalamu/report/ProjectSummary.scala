@@ -33,8 +33,18 @@ object ProjectSummaryFactory {
         .groupBy(_.location.packageName)
         .map {
           case (name, stms) =>
-            val invoked = invokedStatements.filter(_.location.packageName == name)
-            PackageSummary(name, stms, invoked, mutants.filter(_.info.packageName == name), Set.empty, sourceFiles)
+            val invoked        = invokedStatements.filter(_.location.packageName == name)
+            val packageSources = stms.map(_.location.sourcePath)
+            val sfs            = sourceFiles.collect { case sf if packageSources(sf.fullPath.toString) => sf }
+
+            PackageSummary(
+              name,
+              stms,
+              invoked,
+              mutants.filter(_.info.packageName == name),
+              Set.empty,
+              sfs
+            )
         }(collection.breakOut)
 
     ProjectSummary(
