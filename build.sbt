@@ -11,8 +11,7 @@ lazy val scalamuSbt  = ScalamuBuild.scalamuSbt
 lazy val scalamuIdea = ScalamuBuild.scalamuIdea
 
 /* Auxilary projects */
-lazy val ideaRunner     = ScalamuBuild.ideaRunner
-lazy val scalamuAssemby = ScalamuBuild.scalamuAssembly
+lazy val ideaRunner      = ScalamuBuild.ideaRunner
 
 /* Testing subprojects */
 lazy val testingSimple = ScalamuTestingBuild.testingSimple
@@ -23,4 +22,4 @@ lazy val utest         = ScalamuTestingBuild.utest
 lazy val scoverage     = ScalamuTestingBuild.withScoverage
 
 addCommandAlias("runIdea", "; idea-plugin/assembly; idea-runner/run")
-addCommandAlias("publishAssembly", "scalamu-assembly/publishLocal")
+addCommandAlias("publishAssembly", "scalamu/publishLocal")

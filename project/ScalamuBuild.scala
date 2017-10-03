@@ -151,14 +151,6 @@ object ScalamuBuild {
       entryPoint,
       compilation
     )
-    .settings(commonSettings)
-    .settings(publishSettings)
-    .disablePlugins(ScriptedPlugin)
-
-  lazy val scalamuAssembly = Project(id = "scalamu-assembly", base = file("target"))
-    .settings(commonSettings)
-    .settings(publishSettings)
-    .dependsOn(root)
     .settings(
       artifact in (Compile, assembly) ~= { _.withClassifier(Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
@@ -171,6 +163,8 @@ object ScalamuBuild {
           "org.slf4j.**"
         ).map(shade)
     )
+    .settings(commonSettings)
+    .settings(publishSettings)
     .disablePlugins(ScriptedPlugin)
 
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))

@@ -5,7 +5,7 @@ import sbt.plugins.JvmPlugin
 
 object ScalamuPlugin extends AutoPlugin {
   private[this] val organization = "io.github.sugakandrey"
-  private[this] val artifactId   = "scalamu-assembly"
+  private[this] val artifactId   = "scalamu"
   private[this] val version      = "0.1-SNAPSHOT"
   private[this] val mainClass    = "org.scalamu.entry.EntryPoint"
 
@@ -181,7 +181,6 @@ object ScalamuPlugin extends AutoPlugin {
     else Seq(s"--$name", options.mkString(separator))
 
   lazy val mutationTestTask: Def.Initialize[Task[Unit]] = Def.task {
-    val scalaVersion = K.scalaBinaryVersion.value
     val log          = K.streams.value.log
     val cp           = Classpaths.managedJars(MutationTest, Set("jar"), K.update.value)
     val forkOptions  = ForkOptions()
