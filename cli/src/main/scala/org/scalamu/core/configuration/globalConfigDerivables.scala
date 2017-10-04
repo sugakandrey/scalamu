@@ -2,7 +2,7 @@ package org.scalamu.core
 package configuration
 
 import com.typesafe.scalalogging.Logger
-import org.scalamu.common.filtering.{CompositeNameFilter, RegexFilter}
+import org.scalamu.common.filtering.RegexFilter
 import org.scalamu.core.compilation.{IgnoreCoverageStatementsFilter, LoggingReporter}
 import org.scalamu.plugin._
 

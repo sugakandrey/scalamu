@@ -4,6 +4,7 @@ import java.io.File
 import java.nio.file.{Files, Path}
 
 import com.typesafe.scalalogging.Logger
+import org.scalamu.compilation.ForgetfulInvoker
 import scoverage.IOUtils
 
 import scala.util.control.NonFatal
