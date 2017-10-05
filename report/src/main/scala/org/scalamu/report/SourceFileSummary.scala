@@ -5,14 +5,15 @@ import org.scalamu.core.{SourceInfo, TestedMutant}
 import org.scalamu.testapi.AbstractTestSuite
 
 import scala.io.Source
+import scala.collection.{Map, Set}
 
 final case class SourceFileSummary(
-  name: String,
-  lines: Seq[Line],
-  statements: Set[Statement],
-  invokedStatements: Set[Statement],
-  mutantsByLine: Map[Int, Set[TestedMutant]],
-  exercisedTests: Set[AbstractTestSuite]
+                                    name: String,
+                                    lines: Seq[Line],
+                                    statements: Set[Statement],
+                                    coveredStatements: Set[Statement],
+                                    mutantsByLine: Map[Int, Set[TestedMutant]],
+                                    exercisedTests: Set[AbstractTestSuite]
 ) extends CoverageStats {
   override def mutants: Set[TestedMutant] = mutantsByLine.values.flatMap(identity)(collection.breakOut)
 }

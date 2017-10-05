@@ -10,15 +10,14 @@ html, body, div, span, p, blockquote, pre {
 	vertical-align: baseline;
 }
 
+
 body{
 	line-height: 1;
 	color: black;
 	background: white;
-	margin-left: 20px;
 }
 
 .src { 
-	border: 1px solid #dddddd;
 	padding: 0px;
 	padding-top: 0px;
 	padding-right: 0px;

@@ -22,7 +22,7 @@
 </head>
 <body>
 <div class="alert alert-info">
-    @source.name
+    <strong>@source.name</strong>
 </div>
 
 <table class="src" style="font-size:13px; padding: 0px;">
@@ -60,19 +60,18 @@
 </table>
 
 <h2>Active mutators</h2>
-<ul class="list-group">
+<ul>
     @for(mutation <- config.activeMutators) {
     <li class="list-group-item">@mutation.toString</li>
     }
 </ul>
 
 <h2>Examined tests</h2>
-<ul class="list-group">
+<ol>
     @for(test <- source.exercisedTests) {
-      <li class="list-group-item"><b>@test.toString</b></li>
+      <li class="list-group-item">@test.toString</li>
     }
-</ul>
-
+</ol>
 <br/>
 </body>
 </html>

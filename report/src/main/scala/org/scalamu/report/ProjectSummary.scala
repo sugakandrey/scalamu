@@ -4,21 +4,14 @@ import org.scalamu.core.{SourceInfo, TestedMutant}
 import org.scalamu.core.coverage.Statement
 import org.scalamu.testapi.AbstractTestSuite
 
+import scala.collection.{Map, Set}
+
 final case class ProjectSummary private (
   override val statements: Set[Statement],
-  override val invokedStatements: Set[Statement],
+  override val coveredStatements: Set[Statement],
   override val mutants: Set[TestedMutant],
-  tests: Set[AbstractTestSuite],
   packages: Set[PackageSummary]
-) extends CoverageStats {
-
-  def sourceFiles: Int = packages.map(_.sourceFiles.size).sum
-  def loc: Int =
-    (for {
-      aPackage   <- packages
-      sourceFile <- aPackage.sourceFiles
-    } yield sourceFile.lines.size).sum
-}
+) extends CoverageStats
 
 object ProjectSummaryFactory {
   def apply(
@@ -26,7 +19,7 @@ object ProjectSummaryFactory {
     invokedStatements: Set[Statement],
     mutants: Set[TestedMutant],
     sourceFiles: Set[SourceInfo],
-    tests: Set[AbstractTestSuite]
+    inverseFileCoverage: Map[String, Set[AbstractTestSuite]]
   ): ProjectSummary = {
     val packages: Set[PackageSummary] =
       statements
@@ -35,6 +28,7 @@ object ProjectSummaryFactory {
           case (name, stms) =>
             val invoked        = invokedStatements.filter(_.location.packageName == name)
             val packageSources = stms.map(_.location.sourcePath)
+            val packageTests   = inverseFileCoverage.filterKeys(packageSources)
             val sfs            = sourceFiles.collect { case sf if packageSources(sf.fullPath.toString) => sf }
 
             PackageSummary(
@@ -42,7 +36,7 @@ object ProjectSummaryFactory {
               stms,
               invoked,
               mutants.filter(_.info.packageName == name),
-              Set.empty,
+              packageTests,
               sfs
             )
         }(collection.breakOut)
@@ -51,7 +45,6 @@ object ProjectSummaryFactory {
       statements,
       invokedStatements,
       mutants,
-      tests,
       packages
     )
   }

@@ -6,9 +6,11 @@ import java.util.Locale
 import org.scalamu.core.TestedMutant
 import org.scalamu.core.coverage.Statement
 
+import scala.collection.Set
+
 trait CoverageStats {
   def statements: Set[Statement]
-  def invokedStatements: Set[Statement]
+  def coveredStatements: Set[Statement]
   def mutants: Set[TestedMutant]
 
   private val formatter = {
@@ -20,7 +22,7 @@ trait CoverageStats {
 
   def coverage: String =
     if (statements.isEmpty) "100"
-    else formatter.format(invokedStatements.size * 100.0 / statements.size)
+    else formatter.format(coveredStatements.size * 100.0 / statements.size)
 
   def mutationCoverage: String =
     if (mutants.isEmpty) "100"

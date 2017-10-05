@@ -1,10 +1,10 @@
 @(
-summary: org.scalamu.report.PackageSummary
+summary: org.scalamu.report.ProjectSummary
 )
 
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600'
           rel='stylesheet'
           type='text/css'/>
@@ -12,10 +12,10 @@ summary: org.scalamu.report.PackageSummary
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 
     <style type="text/css">
-        .meter {
-                height: 14px;
-                position: relative;
-                background: #BB2020;
+    .meter {
+            height: 16px;
+            position: relative;
+            background: #BB2020;
         }
         
         .meter span {
@@ -58,137 +58,92 @@ summary: org.scalamu.report.PackageSummary
         	position: relative;
         	overflow: hidden;
         }
-    
+    th {
+    text-align: left;
+}
     </style>
 </head>
+
 <body>
 <div class="alert alert-info">
-    <strong>
-        Scalamu Mutation Analysis Report
-    </strong>
-    generated at
-    @(new java.util.Date().toString)
+    <strong>Scalamu Mutation Analysis Report</strong>
+    generated at @(new java.util.Date().toString)
 </div>
-
-<h1 class="display-4">Package Overview</h1>
-<h3 style="font-family: monospace">@summary.name</h3>
+<h3>Project Overview</h3>
 <table class="table">
+    <tbody>
     <tr>
-        <td>
-            Total Statements:
-        </td>
-        <td>
-            @summary.statements.size
-        </td>
-        <td>
-            Invoked Statements:
-        </td>
-        <td>
-            @summary.coveredStatements.size
-        </td>
-        <td>
-            Total Mutants:
-        </td>
-        <td>
-            @summary.mutants.size
-        </td>
-        <td>
-            Mutants Killed:
-        </td>
-        <td>
-            @summary.mutants.filter(_.status.killed).size
-        </td>
-    </tr>
-    <tr>
+        <td>Total Statements:</td>
+        <td>@summary.statements.size</td>
+        <td>Covered Statements:</td>
+        <td>@summary.coveredStatements.size</td>
         <td>Statement Coverage:</td>
-        <td colspan="2">
+        <td style="width: 20%">
             <div class="meter">
                 <span style="width: @(summary.coverage)%"></span>
             </div>
         </td>
         <td>@(summary.coverage)%</td>
-        
-        <td>Mutation Coverage:</td>
-        <td colspan="2">
+    </tr>
+    <tr>
+        <td>Total Mutants:</td>
+        <td>@summary.mutants.size</td>
+        <td>Mutants Killed:</td>
+        <td>@summary.mutants.filter(_.status.killed).size</td>
+        <td>Mutation Coverage: </td>
+        <td style="width: 20%">
             <div class="meter">
                 <span style="width: @(summary.mutationCoverage)%"></span>
             </div>
         </td>
         <td>@(summary.mutationCoverage)%</td>
     </tr>
-</table>
-
-<h3>Breakdown by File</h3>
-<table class="table table-hover" style="font-size:13px">
-    <thead>
     <tr>
-        <th>
-            Name
-        </th>
-        <th>
-            Total Statements
-        </th>
-        <th>
-            Invoked
-        </th>
-        <th>
-            Statement Coverage
-        </th>
-        <th>
-        </th>
-        <th>
-            Total Mutants
-        </th>
-        <th>
-            Killed
-        </th>
-        <th>
-            Mutation Coverage
-        </th>
-        <th>
-        </th>
     </tr>
-    </thead>
-    <tbody>
-
-    @for(sf <- summary.sourceFiles){
-    <tr>
-        <td>
-            <a href="@(sf.name).html">@sf.name</a>
-        </td>
-        <td>
-            @sf.statements.size
-        </td>
-        <td>
-            @sf.coveredStatements.size
-        </td>
-        <td>
-            <div class="meter">
-                <span style="width: @(sf.coverage)%"></span>
-            </div>
-        </td>
-        <td>
-            @(sf.coverage)%
-        </td>
-        <td>
-            @sf.mutants.size
-        </td>
-        <td>
-            @sf.mutants.filter(_.status.killed).size
-        </td>
-        <td>
-            <div class="meter">
-                <span style="width: @(sf.mutationCoverage)%"></span>
-            </div>
-        </td>
-        <td>
-            @(sf.mutationCoverage)%
-        </td>
-    </tr>
-    }
-
     </tbody>
 </table>
 
+<h3>Breakdown By Package</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Package</th>
+                <th>Source Files</th>
+                <th>Total Statements</th>
+                <th>Covered</th>
+                <th>Statement Coverage</th>
+                <th/>
+                <th>Total Mutants</th>
+                <th>Killed</th>
+                <th>Mutation Coverage</th>
+                <th/>
+            </tr>
+        </thead>
+        
+    @for(aPackage <- summary.packages){
+    <tr>
+        <td>
+            <a href="./@(aPackage.path)/overview.html">@aPackage.name</a>
+        </td>
+        <td>@aPackage.sourceFiles.size</td>
+        <td>@aPackage.statements.size</td>
+        <td>@aPackage.coveredStatements.size</td>
+        <td>
+            <div class="meter">
+                <span style="width: @(aPackage.coverage)%"></span>
+            </div>
+        </td>
+        <td>@(aPackage.coverage)%</td>
+        <td>@aPackage.mutants.size</td>
+        <td>@aPackage.mutants.filter(_.status.killed).size</td>
+        <td>
+            <div class="meter">
+                <span style="width: @(aPackage.mutationCoverage)%"></span>
+            </div>
+        </td>
+        <td>@(aPackage.mutationCoverage)%</td>
+    </tr>
+    }
+    </table>
 </body>
 </html>

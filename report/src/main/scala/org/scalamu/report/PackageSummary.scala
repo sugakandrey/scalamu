@@ -6,10 +6,12 @@ import org.scalamu.core.{SourceInfo, TestedMutant}
 import org.scalamu.core.coverage.Statement
 import org.scalamu.testapi.AbstractTestSuite
 
+import scala.collection.{Map, Set}
+
 final case class PackageSummary(
   name: String,
   override val statements: Set[Statement],
-  override val invokedStatements: Set[Statement],
+  override val coveredStatements: Set[Statement],
   override val mutants: Set[TestedMutant],
   sourceFiles: Set[SourceFileSummary]
 ) extends CoverageStats {
@@ -22,7 +24,7 @@ object PackageSummary {
     statements: Set[Statement],
     invokedStatements: Set[Statement],
     mutants: Set[TestedMutant],
-    tests: Set[AbstractTestSuite],
+    inverseFileCoverage: Map[String, Set[AbstractTestSuite]],
     sources: Set[SourceInfo]
   ): PackageSummary =
     PackageSummary(
@@ -37,7 +39,7 @@ object PackageSummary {
             statements.filter(_.location.sourcePath == s.fullPath.toString),
             invokedStatements.filter(_.location.sourcePath == s.fullPath.toString),
             mutants.filter(_.info.pos.source == s.fullPath.toString),
-            tests
+            inverseFileCoverage.getOrElse(s.fullPath.toString, Set.empty)
         )
       )
     )

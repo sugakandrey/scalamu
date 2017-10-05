@@ -66,7 +66,7 @@ class InverseMutantCoverageSpec extends ScalamuSpec with MockFactory {
     )
 
     val inverseMutantCoverage =
-      InverseMutantCoverage.fromStatementCoverage(
+      CoverageConversionUtils.statementCoverageToInverseMutantCoverage(
         statementCoverage,
         Set(foo1, foo2, bar, baz, qux)
       )

@@ -10,7 +10,7 @@ import scala.io.Source
 
 object HtmlReportWriter {
   def generateFromProjectSummary(summary: ProjectSummary, config: ScalamuConfig, dir: Path): Unit = {
-    val projectOverview = html.mutationTestOverview(summary)
+    val projectOverview = html.projectOverview(summary)
 
     val css =
       Source.fromInputStream(getClass.getClassLoader.getResourceAsStream("style.css")).mkString
@@ -29,7 +29,7 @@ object HtmlReportWriter {
       }
 
       p.sourceFiles.foreach { sf =>
-        val sourceFileOverview = html.mutationReport(sf, config, css)
+        val sourceFileOverview = html.sourceFileOverview(sf, config, css)
         tryWith(Files.newBufferedWriter(reportPath / s"${sf.name}.html")) { writer =>
           writer.write(sourceFileOverview.body)
         }

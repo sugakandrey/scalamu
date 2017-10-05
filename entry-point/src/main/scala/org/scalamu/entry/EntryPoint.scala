@@ -9,17 +9,10 @@ import io.circe.syntax._
 import org.scalamu.common.MutantId
 import org.scalamu.core.compilation.ScalamuGlobal
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.core.coverage.{InverseMutantCoverage, Statement}
+import org.scalamu.core.coverage.{CoverageConversionUtils, Statement}
 import org.scalamu.core.detection.SourceFileFinder
 import org.scalamu.core.runners._
-import org.scalamu.core.{
-  InternalFailure,
-  LoggerConfiguration,
-  SourceInfo,
-  TestedMutant,
-  die,
-  coverage => cov
-}
+import org.scalamu.core.{InternalFailure, LoggerConfiguration, SourceInfo, TestedMutant, die, coverage => cov}
 import org.scalamu.plugin
 import org.scalamu.plugin.MutantInfo
 import org.scalamu.report.{HtmlReportWriter, ProjectSummaryFactory}
@@ -62,7 +55,7 @@ object EntryPoint {
         sourceFiles.foreach(sf => writer.write(sf.asJson.spaces2 + "\n"))
       }
     }
-    
+
     val compilationStart = System.currentTimeMillis()
     global.compile(sourceFiles)
     val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
@@ -82,7 +75,7 @@ object EntryPoint {
       }
     }
 
-    if (config.recompileOnly) sys.exit(0)
+    if (config.recompileOnly) die(0)
 
     val coverageAnalyser = new CoverageAnalyser(config, outputPath)
     val coverage         = coverageAnalyser.analyse(instrumentation)
@@ -100,7 +93,7 @@ object EntryPoint {
       }
     }
 
-    val inverseCoverage = InverseMutantCoverage.fromStatementCoverage(
+    val inverseCoverage = CoverageConversionUtils.statementCoverageToInverseMutantCoverage(
       coverage,
       reporter.mutants
     )
@@ -124,13 +117,16 @@ object EntryPoint {
 
     val invoked: Set[Statement] = coverage.valuesIterator.flatten.toSet
 
+    val inverseFileCoverage =
+      CoverageConversionUtils.inverseMutantCoverageToInverseFileCoverage(inverseCoverage, mutantsById)
+
     generateReport(
       reportDir,
       sourceFiles.toSet,
       testedMutants,
       instrumentation.instrumentedStatements.values().asScala.toSet,
       invoked,
-      Set.empty,
+      inverseFileCoverage,
       config
     )
     log.info(s"Mutation analysis is finished. Report was written to $reportDir.")
@@ -142,7 +138,7 @@ object EntryPoint {
     testedMutants: Set[TestedMutant],
     statements: Set[Statement],
     invokedStatements: Set[Statement],
-    tests: Set[AbstractTestSuite],
+    inverseFileCoverage: collection.Map[String, collection.Set[AbstractTestSuite]],
     config: ScalamuConfig
   ): Unit = {
     val summary = ProjectSummaryFactory(
@@ -150,7 +146,7 @@ object EntryPoint {
       invokedStatements,
       testedMutants,
       sourceFiles,
-      tests
+      inverseFileCoverage
     )
     HtmlReportWriter.generateFromProjectSummary(summary, config, targetDir)
   }
