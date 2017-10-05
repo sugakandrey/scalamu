@@ -62,14 +62,14 @@
 <h2>Active mutators</h2>
 <ul>
     @for(mutation <- config.activeMutators) {
-    <li class="list-group-item">@mutation.toString</li>
+    <li>@mutation.toString</li>
     }
 </ul>
 
 <h2>Examined tests</h2>
 <ol>
     @for(test <- source.exercisedTests) {
-      <li class="list-group-item">@test.toString</li>
+      <li>@test.toString</li>
     }
 </ol>
 <br/>
