@@ -3,7 +3,7 @@ package org.scalamu.sbt
 import sbt.{Def, Keys => K, _}
 import sbt.plugins.JvmPlugin
 
-object ScalamuPlugin extends AutoPlugin {
+object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
   private[this] val organization = "io.github.sugakandrey"
   private[this] val artifactId   = "scalamu"
   private[this] val version      = "0.1-SNAPSHOT"
@@ -181,20 +181,19 @@ object ScalamuPlugin extends AutoPlugin {
     else Seq(s"--$name", options.mkString(separator))
 
   lazy val mutationTestTask: Def.Initialize[Task[Unit]] = Def.task {
-    val log          = K.streams.value.log
-    val cp           = Classpaths.managedJars(MutationTest, Set("jar"), K.update.value)
-    val forkOptions  = ForkOptions()
-    val run          = new ForkRun(forkOptions)
-    val arguments    = scalamuArguments.value
-    val javaOptions  = (K.javaOptions in SK.mutationTest).value
+    val log         = K.streams.value.log
+    val cp          = Classpaths.managedJars(MutationTest, Set("jar"), K.update.value)
+    val forkOptions = ForkOptions()
+    val run         = new ForkRun(forkOptions)
+    val arguments   = scalamuArguments.value
+    val javaOptions = (K.javaOptions in SK.mutationTest).value
 
-    val runResult = run.run(
+    runAndPropagateResult(
+      run,
       mainClass,
       cp.map(_.data),
       javaOptions ++ arguments,
       log
     )
-    runResult.failed.foreach(e => sys.error(e.getMessage))
-
   }
 }
