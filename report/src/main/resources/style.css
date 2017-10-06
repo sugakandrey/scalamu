@@ -1,46 +1,93 @@
-html, body, div, span, p, blockquote, pre {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	outline: 0;
-	font-weight: inherit;
-	font-style: inherit;
-	font-size: 100%;
-	font-family: inherit;
-	vertical-align: baseline;
+@import url('https://fonts.googleapis.com/css?family=Fira+Mono|Raleway');
+
+html,
+body,
+div,
+span,
+p,
+blockquote,
+pre {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    font-family: inherit;
+    vertical-align: baseline;
 }
-
-
-body{
-	line-height: 1;
-	color: black;
-	background: white;
+.meter {
+    height: 16px;
+    position: relative;
+    background: #BB2020;
 }
-
-.src { 
-	padding: 0px;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-left: 0px;
-	font-family: Fira Code, Source Code Pro, monospace;
+.meter span {
+    display: block;
+    height: 100%;
+    background-color: rgb(43, 194, 83);
+    background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0, rgb(43, 194, 83)), color-stop(1, rgb(84, 240, 84)));
+    background-image: -webkit-linear-gradient( center bottom, rgb(43, 194, 83) 37%, rgb(84, 240, 84) 69%);
+    background-image: -moz-linear-gradient( center bottom, rgb(43, 194, 83) 37%, rgb(84, 240, 84) 69%);
+    background-image: -ms-linear-gradient( center bottom, rgb(43, 194, 83) 37%, rgb(84, 240, 84) 69%);
+    background-image: -o-linear-gradient( center bottom, rgb(43, 194, 83) 37%, rgb(84, 240, 84) 69%);
+    -webkit-box-shadow: inset 0 2px 9px rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: inset 0 2px 9px rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
 }
-
+th {
+    text-align: left;
+}
+body {
+    line-height: 1;
+    color: black;
+    background: white;
+    font-family: Raleway, sans-serif;
+}
+code, pre {
+    font-family: Fira Code, Fira Mono, monospace;
+}
+alert { 
+    border: 0;
+    border-radius: 0;
+}
+.src {
+    padding: 0;
+}
 .hljs {
     padding: 1px;
-    padding-bottom: 1px;
-    padding-left: 1px;
-    padding-right: 1px;
-    padding-top: 1px;
 }
-
-.covered {background-color: #aaffaa}
-.uncovered {background-color: #ffaaaa}
-.na {background-color: #f8f8f8}
-
-.killed {background-color: #aaffaa}
-.no_coverage {background-color: #ffaaaa}
-.alive {background-color: #ffaaaa}
-.failure {background-color: #FFFF4D, color: red}
-.timed_out {background-color: #FFFF4D, color: red}
-.oom {background-color: #FFFF4D, color: red}
-.untested {background-color: #FFFF4D}
+.covered {
+    background-color: #aaffaa
+}
+.uncovered {
+    background-color: #ffaaaa
+}
+.na {
+    background-color: #f8f8f8
+}
+.killed {
+    background-color: #aaffaa
+}
+.no_coverage {
+    background-color: #ffaaaa
+}
+.alive {
+    background-color: #ffaaaa
+}
+.failure {
+    background-color: #FFFF4D;
+}
+.timed_out {
+    background-color: #FFFF4D;
+}
+.oom {
+    background-color: #FFFF4D;
+}
+.untested {
+    background-color: #FFFF4D
+}
+.mono {
+    font-family: Fira Code, Fira Mono, monospace;
+}

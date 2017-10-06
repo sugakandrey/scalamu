@@ -1,16 +1,11 @@
-@(
-  source: org.scalamu.report.SourceFileSummary,
-  config: org.scalamu.core.configuration.ScalamuConfig,
-  css: String
-)
+@(source: org.scalamu.report.SourceFileSummary, css: String)
 @import _root_.org.scalamu.report.HtmlUtils._
-
 
 <html>
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
@@ -25,8 +20,8 @@
     <strong>@source.name</strong>
 </div>
 
-<table class="src" style="font-size:13px; padding: 0px;">
-
+<table class="src" style="font-size:13px">
+    
     @for(line <- source.lines) {
     <tr id="line@(line.number)">
         <td class=@lineStatus(line).styleName>
@@ -59,17 +54,10 @@
     }
 </table>
 
-<h2>Active mutators</h2>
-<ul>
-    @for(mutation <- config.activeMutators) {
-    <li>@mutation.toString</li>
-    }
-</ul>
-
 <h2>Examined tests</h2>
 <ol>
-    @for(test <- source.exercisedTests) {
-      <li>@test.toString</li>
+    @for(test <- source.exercisedTests.sorted) {
+      <li class="mono" style="white-space:pre;">@(test.toString)</li>
     }
 </ol>
 <br/>

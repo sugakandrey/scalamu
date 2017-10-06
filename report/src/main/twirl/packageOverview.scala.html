@@ -1,64 +1,16 @@
 @(
-summary: org.scalamu.report.PackageSummary
+summary: org.scalamu.report.PackageSummary,
+css: String
 )
 
 <html>
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600'
-          rel='stylesheet'
-          type='text/css'/>
      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 
     <style type="text/css">
-        .meter {
-                height: 14px;
-                position: relative;
-                background: #BB2020;
-        }
-        
-        .meter span {
-        	display: block;
-        	height: 100%;
-        	background-color: rgb(43,194,83);
-        	background-image: -webkit-gradient(
-        	  linear,
-        	  left bottom,
-        	  left top,
-        	  color-stop(0, rgb(43,194,83)),
-        	  color-stop(1, rgb(84,240,84))
-        	 );
-        	background-image: -webkit-linear-gradient(
-        	  center bottom,
-        	  rgb(43,194,83) 37%,
-        	  rgb(84,240,84) 69%
-        	 );
-        	background-image: -moz-linear-gradient(
-        	  center bottom,
-        	  rgb(43,194,83) 37%,
-        	  rgb(84,240,84) 69%
-        	 );
-        	background-image: -ms-linear-gradient(
-        	  center bottom,
-        	  rgb(43,194,83) 37%,
-        	  rgb(84,240,84) 69%
-        	 );
-        	background-image: -o-linear-gradient(
-        	  center bottom,
-        	  rgb(43,194,83) 37%,
-        	  rgb(84,240,84) 69%
-        	 );
-        	-webkit-box-shadow:
-        	  inset 0 2px 9px  rgba(255,255,255,0.3),
-        	  inset 0 -2px 6px rgba(0,0,0,0.4);
-        	-moz-box-shadow:
-        	  inset 0 2px 9px  rgba(255,255,255,0.3),
-        	  inset 0 -2px 6px rgba(0,0,0,0.4);
-        	position: relative;
-        	overflow: hidden;
-        }
-    
+        @css
     </style>
 </head>
 <body>
@@ -71,7 +23,7 @@ summary: org.scalamu.report.PackageSummary
 </div>
 
 <h1 class="display-4">Package Overview</h1>
-<h3 style="font-family: monospace">@summary.name</h3>
+<h3 class="mono">@summary.name</h3>
 <table class="table">
     <tr>
         <td>
@@ -87,7 +39,7 @@ summary: org.scalamu.report.PackageSummary
             @summary.coveredStatements.size
         </td>
         <td>Statement Coverage:</td>
-        <td colspan="2">
+        <td style="width: 20%">
             <div class="meter">
                 <span style="width: @(summary.coverage)%"></span>
             </div>
@@ -109,7 +61,7 @@ summary: org.scalamu.report.PackageSummary
             @summary.mutants.filter(_.status.killed).size
         </td>
         <td>Mutation Coverage:</td>
-        <td colspan="2">
+        <td style="width: 20%">
             <div class="meter">
                 <span style="width: @(summary.mutationCoverage)%"></span>
             </div>
@@ -154,7 +106,7 @@ summary: org.scalamu.report.PackageSummary
     @for(sf <- summary.sourceFiles){
     <tr>
         <td>
-            <a href="@(sf.name).html">@sf.name</a>
+            <a href="@(sf.name).html" class="mono">@sf.name</a>
         </td>
         <td>
             @sf.statements.size
