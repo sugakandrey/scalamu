@@ -11,7 +11,7 @@ lazy val scalamuSbt  = ScalamuBuild.scalamuSbt
 lazy val scalamuIdea = ScalamuBuild.scalamuIdea
 
 /* Auxilary projects */
-lazy val ideaRunner      = ScalamuBuild.ideaRunner
+lazy val ideaRunner = ScalamuBuild.ideaRunner
 
 /* Testing subprojects */
 lazy val testingSimple = ScalamuTestingBuild.testingSimple

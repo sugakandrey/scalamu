@@ -1,11 +1,11 @@
 package org.scalamu.core.coverage
 
-import java.nio.charset.StandardCharsets
+import java.nio.charset.{Charset, StandardCharsets}
 
 import org.scalamu.testutil.ScalamuSpec
 
 class InvocationDataReaderSpec extends ScalamuSpec {
-  private implicit val charset = StandardCharsets.UTF_8
+  private implicit val charset: Charset = StandardCharsets.UTF_8
 
   "InvocationDataReader" should "read instrumentation statement invocation data from files" in {
     val dir                 = createTempDirectory("invocationDir")
