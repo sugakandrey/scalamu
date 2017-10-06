@@ -15,7 +15,7 @@ object ScalamuDefaultSettings {
   val browser: Option[WebBrowser] = Option(WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.CHROME))
   val targetTests: Seq[Regex]     = Seq.empty
   val targetSources: Seq[Regex]   = Seq.empty
-  
+
   val activeMutators: Seq[String] = Seq(
     "ReplaceCaseWithWildcard",
     "ReplaceMathOperators",

@@ -41,7 +41,7 @@ class ScalamuMutatorsForm(project: Project) {
   }
 
   def apply(configurationForm: ScalamuRunConfiguration): Unit =
-//    listModel.replaceAll(configurationForm.activeMutators.asJava)
+    listModel.replaceAll(configurationForm.activeMutators.asJava)
 
   def getActiveMutators: Seq[String] = listModel.getItems.asScala
 }

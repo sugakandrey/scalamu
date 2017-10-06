@@ -1,42 +1,58 @@
 package org.scalamu.idea.configuration
 
-import com.intellij.execution.configurations.{JavaCommandLineState, JavaParameters}
-import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
-import com.intellij.openapi.vfs.VfsUtil
+import java.nio.file.Paths
 
-class ScalamuCommandLineState(configuration: ScalamuRunConfiguration, env: ExecutionEnvironment)
-    extends JavaCommandLineState(env) {
+import com.intellij.execution.configurations.{JavaCommandLineState, JavaParameters}
+import com.intellij.execution.process.{OSProcessHandler, ProcessAdapter, ProcessEvent}
+import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.ide.BrowserUtil
+import com.intellij.ide.browsers.BrowserLauncher
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
+import org.jetbrains.plugins.scala.extensions.invokeLater
+
+class ScalamuCommandLineState(
+  configuration: ScalamuRunConfiguration,
+  env: ExecutionEnvironment
+) extends JavaCommandLineState(env) {
   private[this] val mainClass            = "org.scalamu.entry.EntryPoint"
-  private[this] val compatibleJDKVersion = "1.8"
   private[this] val scalamuVMParameters  = ""
+  private[this] val reportOverviewPath   = Paths.get(configuration.reportDir).resolve("overview.html")
+
+  private class ScalamuProcessAdapter extends ProcessAdapter {
+    override def processTerminated(event: ProcessEvent): Unit = {
+      super.processTerminated(event)
+      if (configuration.openInBrowser) {
+        invokeLater {
+          configuration.browser.fold(BrowserUtil.browse(reportOverviewPath.toFile))(
+            BrowserLauncher.getInstance().browse(reportOverviewPath.toUri.toString, _)
+          )
+        }
+      }
+    }
+  }
+
+  override def startProcess(): OSProcessHandler = {
+    val processHandler = super.startProcess()
+    processHandler.addProcessListener(new ScalamuProcessAdapter)
+  }
 
   override def createJavaParameters(): JavaParameters = {
     val parameters       = new JavaParameters
     val project          = configuration.project
     val workingDir       = Option(project.getBaseDir).fold(VfsUtil.getUserHomeDir.getPath)(_.getPath)
-    val sdks             = ProjectStructureConfigurable.getInstance(project).getProjectJdksModel.getSdks
     val pathToScalamuJar = configuration.pathToJar
     val arguments        = buildScalamuArgumentsString(project)
+    val module           = configuration.getConfigurationModule.getModule
 
-    val compatibleJDK = sdks.find { sdk =>
-      sdk.getSdkType == JavaSdk.getInstance() && sdk.getVersionString.contains(compatibleJDKVersion)
-    }
-
-    compatibleJDK match {
-      case Some(jdk) =>
-        parameters.setJdk(jdk)
-        parameters.setWorkingDirectory(workingDir)
-        parameters.setMainClass(mainClass)
-        parameters.getClassPath.add(pathToScalamuJar)
-        parameters.setEnv(configuration.envVariables)
-        parameters.getVMParametersList.addParametersString(scalamuVMParameters)
-        parameters.getProgramParametersList.addParametersString(arguments)
-        parameters
-      case _ => null
-    }
+    parameters.configureByModule(module, JavaParameters.JDK_ONLY)
+    parameters.setJarPath(pathToScalamuJar)
+    parameters.setWorkingDirectory(workingDir)
+    parameters.setMainClass(mainClass)
+    parameters.setEnv(configuration.envVariables)
+    parameters.getVMParametersList.addParametersString(scalamuVMParameters)
+    parameters.getProgramParametersList.addParametersString(arguments)
+    parameters
   }
 
   private def optionString[T](

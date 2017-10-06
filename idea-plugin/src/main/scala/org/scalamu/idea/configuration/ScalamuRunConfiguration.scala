@@ -52,7 +52,7 @@ class ScalamuRunConfiguration(
   private[idea] var aggregate: Boolean                     = true
 
   def getTargetClassesAsString: String = targetClasses.map(_.toString).mkString(",")
-  def getTargetTestsAsString: String  = targetTests.map(_.toString).mkString(",")
+  def getTargetTestsAsString: String   = targetTests.map(_.toString).mkString(",")
 
   def apply(form: ScalamuConfigurationForm): Unit = {
     setModule(form.getModule)

@@ -9,7 +9,7 @@ import org.scalamu.utils.FileSystemUtils._
 object HtmlReportWriter {
   def generateFromProjectSummary(summary: ProjectSummary, config: ScalamuConfig, dir: Path): Unit = {
     val css: String = CSSResource("style.css").fold("")(_.render)
-    
+
     val projectOverview = html.projectOverview(summary, config, css)
 
     tryWith(Files.newBufferedWriter(dir / "overview.html")) { writer =>
