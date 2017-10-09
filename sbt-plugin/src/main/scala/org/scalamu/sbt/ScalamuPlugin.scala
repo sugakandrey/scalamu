@@ -85,7 +85,8 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
     settingKey: SettingKey[T],
     configurations: Configuration*
   ): Def.Initialize[Seq[T]] = Def.settingDyn {
-    val projectFilter       = inAggregates(K.thisProjectRef.value)
+    val projectRef = K.thisProjectRef.value
+    val projectFilter       = inAggregates(projectRef) && inDependencies(projectRef)
     val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
     val filter              = ScopeFilter(projectFilter, configurationFilter)
     settingKey.all(filter)
