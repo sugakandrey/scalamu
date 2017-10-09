@@ -59,8 +59,7 @@ class AnnotationBasedFilter(val annotation: Class[_], override val framework: Te
  * @param testClass class or interface to search for
  * @param framework corresponding test framework
  */
-class SuperclassBasedFilter(val testClass: Class[_], override val framework: TestingFramework)
-    extends TestClassFilter {
+class SuperclassBasedFilter(val testClass: Class[_], override val framework: TestingFramework) extends TestClassFilter {
   override protected lazy val predicate: (ClassInfo) => Boolean =
     _.superClasses.contains(ClassName.forClass(testClass))
 }

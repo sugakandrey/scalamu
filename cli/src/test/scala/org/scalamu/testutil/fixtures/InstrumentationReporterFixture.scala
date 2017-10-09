@@ -9,9 +9,7 @@ trait InstrumentationReporterFixture extends TestSuite {
   def withInstrumentationReporter(code: TestingInstrumentationReporter => Any): Any
 }
 
-trait SharedInstrumentationReporterFixture
-    extends InstrumentationReporterFixture
-    with BeforeAndAfterAll {
+trait SharedInstrumentationReporterFixture extends InstrumentationReporterFixture with BeforeAndAfterAll {
   private[scalamu] var instrumentation: TestingInstrumentationReporter = _
 
   override protected def beforeAll(): Unit = {

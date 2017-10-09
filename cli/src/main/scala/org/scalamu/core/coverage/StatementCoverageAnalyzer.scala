@@ -13,7 +13,7 @@ class StatementCoverageAnalyzer(
   def forSuites(
     suites: List[AbstractTestSuite]
   ): ValidatedNel[SuiteFailure, List[SuiteCoverage]] =
-      suites.traverseU(forSuite)
+    suites.traverseU(forSuite)
 
   def forSuite(suite: AbstractTestSuite): ValidatedNel[SuiteFailure, SuiteCoverage] =
     suite.execute() match {

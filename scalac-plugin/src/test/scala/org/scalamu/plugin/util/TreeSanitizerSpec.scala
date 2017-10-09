@@ -2,19 +2,12 @@ package org.scalamu.plugin.util
 
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.mutators.arithmetic.{InvertNegations, ReplaceMathOperators}
-import org.scalamu.plugin.mutators.controllflow.{
-  ReplaceCaseWithWildcard,
-  ReplaceConditionalBoundaries
-}
+import org.scalamu.plugin.mutators.controllflow.{ReplaceCaseWithWildcard, ReplaceConditionalBoundaries}
 import org.scalamu.plugin.testutil.MutationTestRunner
-import org.scalamu.plugin.{FqnGuard, Mutator, MutationGuard, ScalamuPluginConfig}
+import org.scalamu.plugin.{FqnGuard, MutationGuard, Mutator, ScalamuPluginConfig}
 import org.scalatest.{FlatSpec, Matchers}
 
-class TreeSanitizerSpec
-    extends FlatSpec
-    with Matchers
-    with MutationTestRunner
-    with IsolatedScalamuCompilerFixture {
+class TreeSanitizerSpec extends FlatSpec with Matchers with MutationTestRunner with IsolatedScalamuCompilerFixture {
 
   // Purposefully wrong mutation order
   override def mutations: Seq[Mutator] = Seq(

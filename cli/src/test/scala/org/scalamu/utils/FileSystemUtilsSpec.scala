@@ -24,9 +24,9 @@ class FileSystemUtilsSpec extends ScalamuSpec {
 
   it should "correctly identify directories" in {
     val directories = Seq(
-     createTempDirectory("aDirectory"),
-     createTempDirectory("directory99"),
-     createTempDirectory("1233")
+      createTempDirectory("aDirectory"),
+      createTempDirectory("directory99"),
+      createTempDirectory("1233")
     )
     forAll(directories)(_ should be a 'directory)
 

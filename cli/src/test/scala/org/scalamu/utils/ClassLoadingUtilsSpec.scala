@@ -8,16 +8,15 @@ import scala.util.Try
 class ClassLoadingUtilsSpec extends ScalamuSpec with TestProjectFixture {
   override def testProject: TestProject = TestProject.simpleTestProject
 
-  "ClassLoadingUtils" should "create a valid classloader from a target directory" in withTestProject {
-    project =>
-      val cl = loaderForPaths(project.target)
-      val classes = Seq(
-        "org.foo.bar.FizzBuzz",
-        "org.foo.bar.FizzBuzz$",
-        "org.baz.qux.FibsSpec",
-        "org.baz.qux.FibsMicroTest$"
-      )
-      classes.foreach(c => Try(cl.loadClass(c)) should be a 'success)
+  "ClassLoadingUtils" should "create a valid classloader from a target directory" in withTestProject { project =>
+    val cl = loaderForPaths(project.target)
+    val classes = Seq(
+      "org.foo.bar.FizzBuzz",
+      "org.foo.bar.FizzBuzz$",
+      "org.baz.qux.FibsSpec",
+      "org.baz.qux.FibsMicroTest$"
+    )
+    classes.foreach(c => Try(cl.loadClass(c)) should be a 'success)
   }
 
   it should "create a valid classloader from dependency jars" in withTestProject { project =>

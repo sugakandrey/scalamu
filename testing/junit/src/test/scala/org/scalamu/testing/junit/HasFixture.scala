@@ -15,12 +15,10 @@ object HasFixture {
   var resource: String = _
 
   @BeforeClass
-  def setUp(): Unit = {
+  def setUp(): Unit =
     resource = "hello"
-  }
 
   @AfterClass
-  def tearDown(): Unit = {
+  def tearDown(): Unit =
     resource = null
-  }
 }

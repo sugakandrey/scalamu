@@ -7,7 +7,7 @@ class Flat extends FlatSpec with Matchers {
     val a = 123
     a should be > 10
   }
-  
+
   it should "not fail" in {
     intercept[RuntimeException] {
       throw new RuntimeException

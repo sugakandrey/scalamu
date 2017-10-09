@@ -9,7 +9,7 @@ import org.scalamu.testapi.{SuiteExecutionAborted, SuiteSuccess, TestsFailed}
 
 import scala.collection.{Map, Set}
 import scala.annotation.tailrec
-import scala.concurrent.{Await, Future, TimeoutException, blocking}
+import scala.concurrent.{blocking, Await, Future, TimeoutException}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 

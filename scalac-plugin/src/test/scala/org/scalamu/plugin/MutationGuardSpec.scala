@@ -5,8 +5,8 @@ import org.scalamu.plugin.testutil.MutationTestRunner
 
 class MutationGuardSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
   override val mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
-  override val sanitizeTrees: Boolean   = true
-  override val verifyTrees: Boolean     = true
+  override val sanitizeTrees: Boolean  = true
+  override val verifyTrees: Boolean    = true
 
   override val guard: MutationGuard = FqnGuard(
     s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"

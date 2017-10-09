@@ -10,7 +10,7 @@ object LoggerConfiguration {
     val logger = LoggerFactory.getLogger(SL4JLogger.ROOT_LOGGER_NAME).asInstanceOf[LogbackLogger]
     logger.detachAndStopAllAppenders()
 
-    val pl = new PatternLayout
+    val pl  = new PatternLayout
     val ctx = logger.getLoggerContext
     pl.setContext(ctx)
     pl.setPattern(s"%d{HH:mm:ss.SSS} [$name - %thread{5}] %-5level %logger{10} - %msg%n")

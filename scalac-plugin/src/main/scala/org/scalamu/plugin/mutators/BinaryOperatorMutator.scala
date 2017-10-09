@@ -11,7 +11,7 @@ import scala.tools.nsc.Global
  */
 trait BinaryOperatorMutator extends Mutator with OperatorMutationRules with SupportedTypes {
   self =>
-  
+
   override def mutatingTransformer(
     global: Global,
     config: ScalamuScalacConfig

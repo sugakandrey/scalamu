@@ -49,8 +49,7 @@ class StatementCoverageAnalyzerSpec extends ScalamuSpec with OneInstancePerTest 
     (reporter.getStatementById _)
       .expects(*)
       .onCall(
-        (_: StatementId) =>
-          Statement(StatementId(1), location, Position(namesIterator.next + ".scala", 1, 10, 20))
+        (_: StatementId) => Statement(StatementId(1), location, Position(namesIterator.next + ".scala", 1, 10, 20))
       )
       .repeated(3)
 

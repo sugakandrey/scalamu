@@ -8,9 +8,8 @@ import org.junit.runners.Parameterized.Parameters
 @RunWith(classOf[JUParameterized])
 class RunWithParam(x: java.lang.Integer) {
   @Test
-  def test(): Unit = {
+  def test(): Unit =
     assert(x > 0)
-  }
 }
 
 object RunWithParam {

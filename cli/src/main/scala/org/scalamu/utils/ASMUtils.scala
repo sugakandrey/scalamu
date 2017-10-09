@@ -74,7 +74,7 @@ trait ASMUtils {
         superName: String,
         interfaces: Array[String]
       ): Unit = {
-        selfInfo = SuperClassInfo(name, mutable.Set.empty)
+        selfInfo   = SuperClassInfo(name, mutable.Set.empty)
         superClass = Option(superName)
         Option(interfaces).foreach(_.foreach(superInterfaces += _))
       }
@@ -105,7 +105,7 @@ trait ASMUtils {
 
       val superAnnotations: Set[ClassName] = wholeHierarchy.flatMap(_.annotations)(breakOut)
 
-      val className = ClassName.fromInternal(name)
+      val className  = ClassName.fromInternal(name)
       val isAbstract = ((access & ACC_ABSTRACT) | (access & ACC_INTERFACE)) != 0
 
       classInfo = ClassInfo(
@@ -123,8 +123,7 @@ trait ASMUtils {
       classInfo = classInfo.copy(source = Option(source))
 
     private def addAnnotation(desc: String): AnnotationVisitor = {
-      classInfo =
-        classInfo.copy(annotations = classInfo.annotations + ClassName.fromDescriptor(desc))
+      classInfo = classInfo.copy(annotations = classInfo.annotations + ClassName.fromDescriptor(desc))
       null
     }
 

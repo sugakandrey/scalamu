@@ -14,11 +14,11 @@ import scala.tools.nsc.reporters.Reporter
 
 trait ScalamuGlobalFixture extends TestSuite with Matchers {
   def createGlobal(
-                    settings: Settings,
-                    reporter: Reporter,
-                    outputDir: AbstractFile,
-                    config: ScalamuScalacConfig,
-                    instrumentationReporter: InstrumentationReporter
+    settings: Settings,
+    reporter: Reporter,
+    outputDir: AbstractFile,
+    config: ScalamuScalacConfig,
+    instrumentationReporter: InstrumentationReporter
   ): ScalamuGlobal =
     new ScalamuGlobal(settings, reporter, config, instrumentationReporter) with ReplGlobal
 }
@@ -75,7 +75,7 @@ trait IsolatedScalamuGlobalFixture
         config,
         instrumentationReporter
       )
-      
+
       testCode(global, config.reporter.asInstanceOf[MemoryReporter], instrumentationReporter)
       reporter.hasErrors should ===(false)
       global.settings.outputDirs.getSingleOutput match {

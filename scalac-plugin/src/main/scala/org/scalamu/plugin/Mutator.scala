@@ -40,7 +40,7 @@ abstract class MutatingTransformer(
       "scala.reflect.macros.Universe.Tree"
     )
 
-    private[this] var currentPackage: String = _
+    private[this] var currentPackage: String   = _
     private[this] var currentClassName: String = _
 
     private final def tryUpdatePackageAndClass(tree: Tree): (String, String) = {
@@ -48,7 +48,7 @@ abstract class MutatingTransformer(
         case t: DefTree =>
           Option(t.symbol) match {
             case Some(sym) =>
-              currentPackage = sym.enclosingPackage.fullName
+              currentPackage   = sym.enclosingPackage.fullName
               currentClassName = sym.enclosingTopLevelClass.fullName
             case None =>
           }

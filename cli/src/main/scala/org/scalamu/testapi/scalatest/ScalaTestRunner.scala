@@ -8,10 +8,8 @@ import org.scalatest.tools.ScalaTestInteractionLayer
 
 import scala.util.{Failure, Try}
 
-class ScalaTestRunner(override val arguments: String)
-    extends TestRunner[Status]
-    with TryBackCompatibility {
-    
+class ScalaTestRunner(override val arguments: String) extends TestRunner[Status] with TryBackCompatibility {
+
   override protected val converter: ScalaTestConverters = new ScalaTestConverters
 
   private def resolveRunnerClass(testClass: Class[_]): Try[Suite] =

@@ -1,6 +1,6 @@
 package org.scalamu.plugin.fixtures
 
-import org.scalamu.plugin.{MemoryReporter, Mutator, ScalamuScalacConfig, ScalamuPlugin}
+import org.scalamu.plugin.{MemoryReporter, Mutator, ScalamuPlugin, ScalamuScalacConfig}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.Matchers._
 
@@ -60,8 +60,8 @@ trait IsolatedScalamuCompilerFixture
     with IsolatedPluginConfigFixture {
 
   def withScalamuCompiler(
-                           mutations: Seq[Mutator],
-                           config: ScalamuScalacConfig
+    mutations: Seq[Mutator],
+    config: ScalamuScalacConfig
   )(
     testCode: (Global, MemoryReporter) => Any
   ): Any = withGlobalConfig { (settings, reporter) =>

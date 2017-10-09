@@ -32,9 +32,7 @@ trait IsolatedPluginConfigFixture extends PluginConfigFixture {
   )
 }
 
-trait SharedPluginConfigFixture
-    extends PluginConfigFixture
-    with BeforeAndAfterAll {
+trait SharedPluginConfigFixture extends PluginConfigFixture with BeforeAndAfterAll {
   private[scalamu] var config: ScalamuScalacConfig = _
 
   override protected def beforeAll(): Unit = {

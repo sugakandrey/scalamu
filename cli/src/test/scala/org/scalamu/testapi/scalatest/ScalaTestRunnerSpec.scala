@@ -39,7 +39,7 @@ class ScalaTestRunnerSpec extends TestRunnerSpec {
     val wrapWithSuite = classInfoForName("org/scalamu/testing/scalatest/WrapWithValid.class")
     execute(wrapWithSuite.name) should be a success
   }
-  
+
   it should "skip ignored tests" in withTestProjectInClassPath {
     val hasIgnoredSuite = classInfoForName("org/scalamu/testing/scalatest/HasIgnored.class")
     execute(hasIgnoredSuite.name) should be a success

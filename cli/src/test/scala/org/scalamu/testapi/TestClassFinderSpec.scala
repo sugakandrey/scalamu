@@ -10,17 +10,16 @@ import org.scalamu.testutil.fixtures.TestProjectFixture
 class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture {
   override def testProject: TestProject = TestProject.simpleTestProject
 
-  "TestClassFinder" should "detect class files, which contain ScalaTest tests" in withTestProject {
-    project =>
-      val finder = new TestClassFileFinder(ScalaTestFramework.classFilter)
-      val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
-        finder.findAll(project.target)
-      )
-      classFiles should have size 2
-      classFiles.map(_.info.name.fullName) should contain theSameElementsAs Seq(
-        "org.baz.qux.FibsSpec",
-        "org.foo.bar.FizzBuzzSpec"
-      )
+  "TestClassFinder" should "detect class files, which contain ScalaTest tests" in withTestProject { project =>
+    val finder = new TestClassFileFinder(ScalaTestFramework.classFilter)
+    val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
+      finder.findAll(project.target)
+    )
+    classFiles should have size 2
+    classFiles.map(_.info.name.fullName) should contain theSameElementsAs Seq(
+      "org.baz.qux.FibsSpec",
+      "org.foo.bar.FizzBuzzSpec"
+    )
   }
 
   it should "detect class files, which contain UTest tests" in withTestProject { project =>
@@ -59,7 +58,7 @@ class TestClassFinderSpec extends ScalamuSpec with TestProjectFixture {
 
   it should "detect class files which contain tests" in withTestProject { project =>
     val frameworks = Seq(Specs2Framework, UTestFramework, JUnitFramework, ScalaTestFramework)
-    val finder = new TestClassFileFinder(TestClassFilter.forFrameworks(frameworks))
+    val finder     = new TestClassFileFinder(TestClassFilter.forFrameworks(frameworks))
     val classFiles = withContextClassLoader(loaderForPaths(project.dependencies))(
       finder.findAll(project.target)
     )

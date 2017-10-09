@@ -41,7 +41,7 @@ case object ReplaceWithIdentityFunction extends Mutator { self =>
           val mutant      = qualifier.duplicate
           val mutatedBody = super.transform(qualifier)
           val mutatedArgs = args.map(super.transform)
-          val id = generateMutantReport(tree, mutant)
+          val id          = generateMutantReport(tree, mutant)
           guard(mutant, q"$mutatedBody.$name(..$mutatedArgs)".setPos(tree.pos), id)
       }
     }

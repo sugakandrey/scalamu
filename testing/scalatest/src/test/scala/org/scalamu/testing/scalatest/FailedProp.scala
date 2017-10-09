@@ -5,7 +5,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 
 import scala.collection.immutable._
 
-class FailedProp extends PropSpec with TableDrivenPropertyChecks with Matchers  {
+class FailedProp extends PropSpec with TableDrivenPropertyChecks with Matchers {
   val examples =
     Table(
       "set",
@@ -13,7 +13,7 @@ class FailedProp extends PropSpec with TableDrivenPropertyChecks with Matchers  
       HashSet(1),
       TreeSet(1)
     )
-  
+
   property("an empty Set should have size 1") {
     forAll(examples) { set =>
       set.size should be(0)

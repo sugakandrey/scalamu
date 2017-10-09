@@ -24,15 +24,15 @@ lazy val check = TaskKey[Unit]("check")
 check := {
   val reportDir = file("target/mutation-analysis-report")
   if (!reportDir.exists()) sys.error("Report directory doesn't exist.")
-  
+
   val fooDir = reportDir / "example/foo"
   val barDir = reportDir / "example/bar"
   val bazDir = reportDir / "example/baz"
-  
-  Seq(fooDir, barDir, bazDir).foreach { f => 
+
+  Seq(fooDir, barDir, bazDir).foreach { f =>
     if (!f.isDirectory) sys.error(s"Package directory: ${f.getName} doesn't exist.")
   }
-  
+
   val fooAnnSource = fooDir / "Foo.scala.html"
   val barAnnSource = barDir / "Bar.scala.html"
   val bazAnnSource = bazDir / "Baz.scala.html"

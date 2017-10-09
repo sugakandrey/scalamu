@@ -29,7 +29,6 @@ trait ScalamuSpec
 
   def classInfoForName(
     name: String
-  )(implicit loader: ClassLoader = contextClassLoader,
-    pos: org.scalactic.source.Position): ClassInfo =
+  )(implicit loader: ClassLoader = contextClassLoader, pos: org.scalactic.source.Position): ClassInfo =
     loadClassFileInfo(loader.getResourceAsStream(name)).success.value
 }

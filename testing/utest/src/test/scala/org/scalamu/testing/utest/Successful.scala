@@ -7,9 +7,9 @@ object Successful extends TestSuite {
   override def tests: Tree[Test] = this {
     val tests = this {
       "aTest" - {
-        * - {1 == 1}
-        * - {2 == 2}
-        * - {3 == 3}
+        * - { 1 == 1 }
+        * - { 2 == 2 }
+        * - { 3 == 3 }
       }
       val x = 1
       'outer {

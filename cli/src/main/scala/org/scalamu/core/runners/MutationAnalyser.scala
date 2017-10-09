@@ -33,8 +33,7 @@ class MutationAnalyser(
     socket: ServerSocket,
     processId: Long
   ) extends Runnable {
-    private def initialiseProcessSupervisor()
-      : Either[CommunicationException, ProcessSupervisor[Task, Result]] = {
+    private def initialiseProcessSupervisor(): Either[CommunicationException, ProcessSupervisor[Task, Result]] = {
       log.debug(s"Creating MutationAnalysisRunner#$processId ...")
       val runner        = new MutationAnalysisRunner(socket, config, compiledSourcesDir, processId)
       val tryInitialise = runner.start()

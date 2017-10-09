@@ -5,9 +5,8 @@ import org.scalatest.{FeatureSpec, GivenWhenThen}
 class TVSet {
   private var on: Boolean = false
   def isOn: Boolean       = on
-  def pressPowerButton(): Unit = {
+  def pressPowerButton(): Unit =
     on = !on
-  }
 }
 
 class Feature extends FeatureSpec with GivenWhenThen {

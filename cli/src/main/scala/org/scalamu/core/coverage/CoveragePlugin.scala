@@ -5,8 +5,7 @@ import scoverage.{ScoverageInstrumentationComponent, ScoveragePlugin}
 
 import scala.tools.nsc.Global
 
-class CoveragePlugin(override val global: Global, listener: InstrumentationReporter)
-    extends ScoveragePlugin(global) {
+class CoveragePlugin(override val global: Global, listener: InstrumentationReporter) extends ScoveragePlugin(global) {
 
   override val components: List[InMemoryScoverageComponent] = List(
     new InMemoryScoverageComponent(global)
@@ -32,7 +31,7 @@ class CoveragePlugin(override val global: Global, listener: InstrumentationRepor
     class ScalamuCoverageTransformer(unit: global.CompilationUnit) extends Transformer(unit) {
       override def invokeCall(id: Int): Tree = {
         val target = findMemberFromRoot(TermName("org.scalamu.compilation.ForgetfulInvoker.invoked")).asTerm
-        val idLit = Literal(Constant(id))
+        val idLit  = Literal(Constant(id))
         val outDir = Literal(Constant(global.settings.outputDirs.getSingleOutput.get.path))
         q"$target($idLit, $outDir)"
       }

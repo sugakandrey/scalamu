@@ -15,10 +15,8 @@ import scala.util.Try
 
 final case class InternalSpecs2Error(message: String) extends RuntimeException(message)
 
-class Specs2Runner(override val arguments: String)
-    extends TestRunner[Stats]
-    with TryBackCompatibility {
-    
+class Specs2Runner(override val arguments: String) extends TestRunner[Stats] with TryBackCompatibility {
+
   private val notifier = new Specs2Notifier
 
   override protected val converter: SuiteResultTypeConverter[Stats] =

@@ -7,8 +7,7 @@ import org.scalamu.common.position.Position
 import scoverage.Coverage
 
 class MemoryReporter(
-  val instrumentedStatements: ju.Map[StatementId, Statement] =
-    new ju.HashMap[StatementId, Statement]
+  val instrumentedStatements: ju.Map[StatementId, Statement] = new ju.HashMap[StatementId, Statement]
 ) extends InstrumentationReporter {
   import MemoryReporter._
 
@@ -23,7 +22,7 @@ class MemoryReporter(
             stm.location,
             Position(stm.source, stm.line, stm.start, stm.end)
           )
-        )
+      )
     )
   }
 

@@ -2,10 +2,7 @@ package org.scalamu.plugin
 
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.mutators.arithmetic.{InvertNegations, ReplaceMathOperators}
-import org.scalamu.plugin.mutators.controllflow.{
-  ReplaceCaseWithWildcard,
-  ReplaceConditionalBoundaries
-}
+import org.scalamu.plugin.mutators.controllflow.{ReplaceCaseWithWildcard, ReplaceConditionalBoundaries}
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 import scala.tools.nsc.Settings
@@ -72,30 +69,29 @@ class MutationVerifierSpec extends MutationTestRunner with IsolatedScalamuCompil
     InvertNegations
   )
 
-  it should "not reporter any errors if no nested mutants were generated" in withPluginConfig {
-    config =>
-      withScalamuCompiler(noNestedOrder, config) { (global, _) =>
-        val code =
-          """
-            |object Foo {
-            |  val a = 123
-            |  val b = a * -2
-            |
-            |  if (a * 2 >= 124) {
-            |    println("nested mutant")
-            |  }
-            |
-            |  a match {
-            |    case 123 => 0
-            |    case _   => a * a
-            |  }
-            |}
+  it should "not reporter any errors if no nested mutants were generated" in withPluginConfig { config =>
+    withScalamuCompiler(noNestedOrder, config) { (global, _) =>
+      val code =
+        """
+          |object Foo {
+          |  val a = 123
+          |  val b = a * -2
+          |
+          |  if (a * 2 >= 124) {
+          |    println("nested mutant")
+          |  }
+          |
+          |  a match {
+          |    case 123 => 0
+          |    case _   => a * a
+          |  }
+          |}
         """.stripMargin
-        compile(
-          NamedSnippet("Guards.scala", guards),
-          NamedSnippet("Foo.scala", code)
-        )(global)
-      }
+      compile(
+        NamedSnippet("Guards.scala", guards),
+        NamedSnippet("Foo.scala", code)
+      )(global)
+    }
   }
 
 }

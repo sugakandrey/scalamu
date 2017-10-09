@@ -10,9 +10,7 @@ import org.scalamu.utils.ClassLoadingUtils
 import scala.reflect.runtime.universe
 import scala.util.Try
 
-class UTestRunner(override val arguments: String)
-    extends TestRunner[Tree[Result]]
-    with TryBackCompatibility {
+class UTestRunner(override val arguments: String) extends TestRunner[Tree[Result]] with TryBackCompatibility {
 
   override protected def converter: SuiteResultTypeConverter[Tree[Result]] = UTestConverters
 

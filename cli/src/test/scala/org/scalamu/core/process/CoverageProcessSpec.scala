@@ -24,7 +24,7 @@ class CoverageProcessSpec
   override def instrumentationReporter: TestingInstrumentationReporter =
     new TestingInstrumentationReporter
 
-  override def mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
+  override def mutations: Seq[Mutator]  = ScalamuPluginConfig.allMutators
   override def testProject: TestProject = TestProject.Scoverage
   override def testClassDirs: Set[Path] = Set(testProject.testClasses)
 
@@ -41,53 +41,51 @@ class CoverageProcessSpec
     Yrangepos.value = true
   }
 
-  "CoverageRunner" should "calculate coverage of a single successful test suite" in withConfig {
-    config =>
-      withScalamuGlobal { (global, _, instrumentation) =>
-        val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
-        global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
-        val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
+  "CoverageRunner" should "calculate coverage of a single successful test suite" in withConfig { config =>
+    withScalamuGlobal { (global, _, instrumentation) =>
+      val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
+      global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
+      val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
 
-        withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
-          val coverage = CoverageProcess
-            .run(
-              (
-                config.derive[CoverageProcessConfig].copy(targetTests = Seq(".*Bad.*".r)),
-                compiledSourcesPath
-              ),
-              null,
-              null
-            )
-            .toList
-            .sequenceU
-            .toEither
-          val suiteCoverage = coverage.right.value
-          suiteCoverage should have size 1
-          forAll(suiteCoverage.map(_.coverage))(_.size should ===(11))
-        }
+      withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
+        val coverage = CoverageProcess
+          .run(
+            (
+              config.derive[CoverageProcessConfig].copy(targetTests = Seq(".*Bad.*".r)),
+              compiledSourcesPath
+            ),
+            null,
+            null
+          )
+          .toList
+          .sequenceU
+          .toEither
+        val suiteCoverage = coverage.right.value
+        suiteCoverage should have size 1
+        forAll(suiteCoverage.map(_.coverage))(_.size should ===(11))
       }
+    }
   }
 
-  it should "return ScalamuFailure if aborted or failed tests were present" in withConfig {
-    config =>
-      withScalamuGlobal { (global, _, instrumentation) =>
-        val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
-        global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
-        val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
+  it should "return ScalamuFailure if aborted or failed tests were present" in withConfig { config =>
+    withScalamuGlobal { (global, _, instrumentation) =>
+      val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
+      global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
+      val compiledSourcesPath = global.settings.outputDirs.getSingleOutput.get.file.toPath
 
-        withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
-          val coverage = CoverageProcess
-            .run(
-              (config.derive[CoverageProcessConfig], compiledSourcesPath),
-              null,
-              null
-            )
-            .toList
-            .sequenceU
-            .toEither
-          coverage.left.value.toList should have size 1
-        }
+      withContextClassLoader(Set(testProject.testClasses, compiledSourcesPath)) {
+        val coverage = CoverageProcess
+          .run(
+            (config.derive[CoverageProcessConfig], compiledSourcesPath),
+            null,
+            null
+          )
+          .toList
+          .sequenceU
+          .toEither
+        coverage.left.value.toList should have size 1
       }
+    }
   }
 
 }
