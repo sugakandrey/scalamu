@@ -1,6 +1,8 @@
 package org.scalamu.core
 package configuration
 
+import java.io.File
+
 import com.typesafe.scalalogging.Logger
 import org.scalamu.common.filtering.RegexFilter
 import org.scalamu.core.compilation.{IgnoreCoverageStatementsFilter, LoggingReporter}
@@ -23,7 +25,7 @@ trait SettingsDerivable {
     config => {
       val settings = new Settings {
         Yrangepos.value = true
-        classpath.value  += pathsToString(config.classPath)
+        classpath.value  += File.pathSeparator + pathsToString(config.classPath)
         classpath.value  += Properties.javaClassPath
         sourcepath.value += pathsToString(config.sourceDirs)
         outputDirs.setSingleOutput(dir)
