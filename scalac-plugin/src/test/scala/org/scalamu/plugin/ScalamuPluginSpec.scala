@@ -3,6 +3,7 @@ package org.scalamu.plugin
 import org.scalamu.common.filtering.{InverseRegexFilter, NameFilter}
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.mutators.controllflow.{NegateConditionals, NeverExecuteConditionals}
+import org.scalamu.plugin.mutators.methodcalls.ReplaceWithIdentityFunction
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
@@ -11,9 +12,9 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
   )
 
   override val mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
-  override val sanitizeTrees: Boolean  = true
-  override val verifyTrees: Boolean    = true
-  override val filter: NameFilter      = InverseRegexFilter(".*ignored.*".r)
+  override val sanitizeTrees: Boolean = true
+  override val verifyTrees: Boolean = true
+  override val filter: NameFilter = InverseRegexFilter(".*ignored.*".r)
 
   private val guards =
     s"""
@@ -157,6 +158,24 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
           |      }
           |    Nil
           |  }
+          |}
+        """.stripMargin
+      compile(
+        NamedSnippet("Guards.scala", guards),
+        NamedSnippet("Foo.scala", code)
+      )(global)
+    }
+  }
+
+  it should "correctly work when splicing original tree changes its owner" in withPluginConfig { cfg =>
+    withScalamuCompiler(Seq(ReplaceWithIdentityFunction), cfg) { (global, r) =>
+      val code =
+        """
+          |object Foo {
+          |  List(1, 2, 3).map { v => 
+          |    val t = v
+          |    v + 1
+          |  }.filter(_ > 0)
           |}
         """.stripMargin
       compile(
