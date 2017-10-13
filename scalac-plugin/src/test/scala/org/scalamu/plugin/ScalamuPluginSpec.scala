@@ -172,16 +172,15 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
       val code =
         """
           |object Foo {
-          |  List(1, 2, 3).map { v => 
-          |    val t = v
-          |    v + 1
-          |  }.filter(_ > 0)
+          |  Some(1).filter { v => val f = v; v > 0 } 
           |}
         """.stripMargin
       compile(
         NamedSnippet("Guards.scala", guards),
         NamedSnippet("Foo.scala", code)
       )(global)
+//      val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, r)
+//    println(mutantsInfo)
     }
   }
 }

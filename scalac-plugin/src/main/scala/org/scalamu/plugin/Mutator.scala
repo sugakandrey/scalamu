@@ -2,7 +2,7 @@ package org.scalamu.plugin
 
 import com.typesafe.scalalogging.Logger
 import org.scalamu.common.MutantId
-import org.scalamu.plugin.util.{CompilerAccess, GlobalExtractors, TreeSanitizer}
+import org.scalamu.plugin.util.{CompilerAccess, GlobalExtractors, TreeEnrichment, TreeSanitizer}
 
 import scala.tools.nsc.Global
 
@@ -24,7 +24,8 @@ abstract class MutatingTransformer(
   override implicit val global: Global
 ) extends CompilerAccess
     with GlobalExtractors
-    with TreeSanitizer {
+    with TreeSanitizer
+    with TreeEnrichment {
 
   override def isMutationGuard(symbolName: String): Boolean =
     config.guard.isGuardSymbol(symbolName)
