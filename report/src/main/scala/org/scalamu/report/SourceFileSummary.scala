@@ -5,7 +5,7 @@ import org.scalamu.core.{SourceInfo, TestedMutant}
 import org.scalamu.testapi.AbstractTestSuite
 
 import scala.io.Source
-import scala.collection.{Map, Set}
+import scala.collection.{Map, Set, SortedSet}
 
 final case class SourceFileSummary(
   name: String,
@@ -13,7 +13,7 @@ final case class SourceFileSummary(
   statements: Set[Statement],
   coveredStatements: Set[Statement],
   mutantsByLine: Map[Int, Set[TestedMutant]],
-  exercisedTests: Set[AbstractTestSuite]
+  exercisedTests: SortedSet[AbstractTestSuite]
 ) extends CoverageStats {
   override def mutants: Set[TestedMutant] = mutantsByLine.values.flatMap(identity)(collection.breakOut)
 }
@@ -38,13 +38,16 @@ object SourceFileSummary {
       }
       .toSeq
 
+    implicit val testSuiteOrdering: Ordering[AbstractTestSuite] =
+      Ordering.by[AbstractTestSuite, String](_.toString)
+
     SourceFileSummary(
       info.name.toString,
       lines,
       statements,
       invoked,
       mutantsByLine,
-      tests
+      tests.to[SortedSet]
     )
   }
 }

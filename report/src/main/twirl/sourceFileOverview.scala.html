@@ -7,8 +7,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/scala.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/github.min.css">
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 
     <style type="text/css">
@@ -46,7 +46,10 @@
         </td>
         <td width="99%">
             @for(mutant <- mutants.toSeq) {
-                <pre class=@mutantStatus(mutant)>@mutant.reportMessage</pre>
+                <pre class="@mutantStatus(mutant) mutant" data-toggle="popover" 
+                     data-placement="auto top" data-html="true" 
+                     title="Mutation" data-trigger="hover" 
+                     data-content="@mutant.astMutation">@mutant.reportMessage</pre>
             }
         </td>
     </tr>
@@ -56,10 +59,17 @@
 
 <h2>Examined tests</h2>
 <ol>
-    @for(test <- source.exercisedTests.sorted) {
+    @for(test <- source.exercisedTests) {
       <li class="mono" style="white-space:pre;">@(test.toString)</li>
     }
 </ol>
 <br/>
+
+<script>
+    $(document).ready(function(){
+      $('[data-toggle="popover"]').popover({ container: 'body' });
+    });
+</script>
+
 </body>
 </html>

@@ -59,8 +59,9 @@ object ScalamuGlobal extends GlobalDerivableInstances {
     mutationReporter: MutationReporter,
     outputDir: AbstractFile
   ): ScalamuGlobal = {
-    implicit val reporter = mutationReporter
-    implicit val dir      = outputDir
+    implicit val reporter: MutationReporter = mutationReporter
+    implicit val dir: AbstractFile          = outputDir
+    
     new ScalamuGlobal(
       config.derive[Settings],
       config.derive[Reporter],

@@ -36,6 +36,13 @@ pre {
     position: relative;
     overflow: hidden;
 }
+.popover {
+  max-width: 100%;
+}
+.popover-content {
+  font-size: 15px;
+  font-family: Fira Code, Fira Mono, monospace;
+}
 th {
     text-align: left;
 }
@@ -46,7 +53,7 @@ body {
     font-family: Raleway, sans-serif;
 }
 code, pre {
-    font-family: Fira Code, Fira Mono, monospace;
+    font-family: Fira Mono, monospace;
 }
 alert { 
     border: 0;
@@ -89,5 +96,5 @@ alert {
     background-color: #FFFF4D
 }
 .mono {
-    font-family: Fira Code, Fira Mono, monospace;
+    font-family: Fira Mono, monospace;
 }
