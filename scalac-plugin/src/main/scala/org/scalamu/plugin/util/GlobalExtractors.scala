@@ -11,6 +11,16 @@ trait GlobalExtractors extends TypeEnrichment { self: CompilerAccess =>
       else Some((tree, tree.tpe.simplify))
   }
 
+  object ScoverageInstrumentedStatement {
+    private[this] val fqn = "org.scalamu.compilation.ForgetfulInvoker.invoked"
+
+    def unapply(tree: Tree): Option[Tree] = tree match {
+      case Block(List(instrumented), original) if Option(instrumented.symbol).exists(_.fullName == fqn) =>
+        Some(original)
+      case _ => None
+    }
+  }
+
   object GuardedMutant {
     def unapply(tree: Tree): Option[(Tree, Tree, Tree)] = tree match {
       case If(cond @ q"$guard == $lit", thenp, elsep) if isMutationGuard(guard.symbol.fullName) =>

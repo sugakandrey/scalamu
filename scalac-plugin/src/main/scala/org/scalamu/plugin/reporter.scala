@@ -35,7 +35,7 @@ final case class MutantInfo(
 }
 
 object MutantInfo {
-  private var currentId = 0
+  private[this] var currentId = 0
 
   def apply(
     mutation: Mutator,
@@ -49,7 +49,9 @@ object MutantInfo {
       case _: UndefinedPosition => Position(pos.source.path, 0, 0, 0)
       case _: DefinedPosition   => Position(pos.source.path, pos.line, pos.start, pos.end)
     }
+    
     currentId += 1
+    
     MutantInfo(
       MutantId(currentId),
       mutation,

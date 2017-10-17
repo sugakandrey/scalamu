@@ -78,13 +78,16 @@ abstract class MutatingTransformer(
     }
 
     protected final def generateMutantReport(tree: Tree, mutated: Tree): MutantId = {
+      val oldTree = showCode(TreePrettifier(tree))
+      val mutatedTree = showCode(TreePrettifier(mutated))
+      
       val info = MutantInfo(
         mutator,
         currentRunId,
         currentPackage,
         tree.pos,
-        showCode(tree),
-        showCode(mutated)
+        oldTree,
+        mutatedTree
       )
       if (!tree.pos.isDefined) {
         Transformer.log.info(s"Mutant $info in tree $tree has undefined position.")
@@ -100,7 +103,7 @@ abstract class MutatingTransformer(
     protected def mutate: PartialFunction[Tree, Tree]
 
     private def sanitizeTree(tree: Tree): Tree =
-      if (config.sanitizeTrees) SanitizingTransformer(tree) else tree
+      if (config.sanitizeTrees) NestedMutantRemover(tree) else tree
 
     protected final def guard(mutated: Tree, alternative: Tree, id: MutantId): Tree =
       config.guard(global)(sanitizeTree(mutated), alternative, id)
