@@ -33,7 +33,7 @@ trait BinaryOperatorMutator extends Mutator with OperatorMutationRules with Supp
               && isAppropriateType(rhsTpe) =>
           val mutatedOp = encode(mutationRules(op.decodedName.toString))
           val mutant =
-            q"${lhs.duplicate}.$mutatedOp(${rhs.duplicate})".setPos(tree.pos.makeTransparent)
+            q"${lhs.safeDuplicate}.$mutatedOp(${rhs.safeDuplicate})".setPos(tree.pos.makeTransparent)
 
           val mutatedLhs = super.transform(lhs)
           val mutatedRhs = super.transform(rhs)

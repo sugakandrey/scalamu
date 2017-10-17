@@ -12,9 +12,9 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
   )
 
   override val mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
-  override val sanitizeTrees: Boolean = true
-  override val verifyTrees: Boolean = true
-  override val filter: NameFilter = InverseRegexFilter(".*ignored.*".r)
+  override val sanitizeTrees: Boolean  = true
+  override val verifyTrees: Boolean    = true
+  override val filter: NameFilter      = InverseRegexFilter(".*ignored.*".r)
 
   private val guards =
     s"""
@@ -172,15 +172,13 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
       val code =
         """
           |object Foo {
-          |  Some(1).filter { v => val f = v; v > 0 } 
+          |  Some(1).filter { v => val f = v; v > 0 }.filter { v => val f = v; v > 0 }.filter { v => val f = v; v > 0 }
           |}
         """.stripMargin
       compile(
         NamedSnippet("Guards.scala", guards),
         NamedSnippet("Foo.scala", code)
       )(global)
-//      val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, r)
-//    println(mutantsInfo)
     }
   }
 }

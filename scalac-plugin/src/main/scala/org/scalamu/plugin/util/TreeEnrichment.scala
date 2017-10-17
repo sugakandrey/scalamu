@@ -1,31 +1,50 @@
 package org.scalamu.plugin.util
 
-import scala.collection.Map
+import scala.collection.{mutable => m}
 
 trait TreeEnrichment { self: CompilerAccess =>
   import global._
 
-  implicit class RichTree(tree: Tree) {
-    def collectSymbolReplacements: Map[Symbol, Symbol] = {
-      import scala.collection.{mutable => m}
-      val replacements = m.HashMap.empty[Symbol, Symbol]
+  lazy val safeDuplicator = new SafeDuplicator
 
-      tree.collect {
-        case t @ (_: DefTree | _: Function) =>
-          val replacement = replacements.getOrElse(t.symbol, t.symbol.cloneSymbol)
-          replacements.get(replacement.owner).foreach(replacement.owner = _)
-          replacements += t.symbol -> replacement
-      }
+  private[plugin] class SafeDuplicator extends Transformer {
+    override val treeCopy: TreeCopier = newStrictTreeCopier
+    private val replacements          = m.HashMap.empty[Symbol, Symbol]
+    private val introducedSymbols     = m.HashSet.empty[Symbol]
 
-      replacements
+    def reset(): Unit = {
+      replacements.clear()
+      introducedSymbols.clear()
     }
 
-    def copySymbols(replacements: Map[Symbol, Symbol]): Unit =
-      tree.collect {
-        case t if t.hasExistingSymbol =>
-          replacements.get(t.symbol).foreach(t.symbol = _)
+    override def transform(t: Tree): Tree = {
+      t match {
+        case t @ (_: DefTree | _: Function) if t.hasExistingSymbol => introducedSymbols += t.symbol
+        case _                                                     => ()
       }
-    
-    def copySymbols(other: Tree): Unit = copySymbols(other.collectSymbolReplacements)
+
+      if (t.hasExistingSymbol && introducedSymbols(t.symbol)) {
+        val oldSymbol = t.symbol
+        val cloned    = replacements.getOrElse(oldSymbol, oldSymbol.cloneSymbol)
+        replacements.get(oldSymbol.owner).foreach(cloned.owner = _)
+        replacements += oldSymbol -> cloned
+      }
+
+      val t1 = super.transform(t)
+
+      if ((t1 ne t) && t1.pos.isRange) t1.setPos(t.pos.focus)
+
+      replacements.get(t1.symbol).foreach(t1.symbol = _)
+
+      t1
+    }
+  }
+
+  implicit class RichTree(tree: Tree) {
+    def safeDuplicate: Tree = {
+      val res = safeDuplicator.transform(tree)
+      safeDuplicator.reset()
+      res
+    }
   }
 }
