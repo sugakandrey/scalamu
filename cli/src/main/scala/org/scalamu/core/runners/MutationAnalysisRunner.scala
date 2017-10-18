@@ -32,7 +32,7 @@ class MutationAnalysisRunner(
   ): Seq[String] =
     super.generateProcessArgs(
       worker,
-      s"-Dworker.name=$workerId $jvmArgs",
+      s"""-Dworker.name="$workerId $jvmArgs"""",
       runnerArgs
     )
 }

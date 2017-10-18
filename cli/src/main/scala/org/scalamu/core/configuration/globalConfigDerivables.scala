@@ -24,7 +24,8 @@ trait SettingsDerivable {
   implicit def settingsDerivable(implicit dir: AbstractFile): Derivable[Settings] =
     config => {
       val settings = new Settings {
-        Yrangepos.value = true
+        Yrangepos.value     = true
+        Ycompacttrees.value = true
         classpath.value  += File.pathSeparator + pathsToString(config.classPath)
         classpath.value  += Properties.javaClassPath
         sourcepath.value += pathsToString(config.sourceDirs)
