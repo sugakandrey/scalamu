@@ -53,7 +53,7 @@ object ScalamuBuild {
       val tb = currentMirror.mkToolBox() 
       """,
     scalacOptions in (Compile, console) -= "-Ywarn-unused-import"
-  )
+  ) ++ publishSettings
 
   lazy val commonDeps = Seq(
     libraryDependencies ++= Seq(
@@ -164,7 +164,6 @@ object ScalamuBuild {
         ).map(shade)
     )
     .settings(commonSettings)
-    .settings(publishSettings)
     .disablePlugins(ScriptedPlugin)
 
   lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
@@ -184,7 +183,6 @@ object ScalamuBuild {
 
   lazy val compilation = Project(id = "compilation", base = file("compilation"))
     .settings(commonSettings)
-    .settings(publishSettings)
     .settings(name := "scalamu-compilation")
     .settings(
       libraryDependencies ++= Seq(
