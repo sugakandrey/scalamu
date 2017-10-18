@@ -220,7 +220,6 @@ object ScalamuBuild {
     .disablePlugins(ScriptedPlugin)
 
   lazy val ideaRunner = Project(id = "idea-runner", base = file("idea-plugin/target"))
-    .dependsOn(scalamuIdea)
     .settings(
       scalaVersion                := "2.11.11",
       autoScalaLibrary            := false,
@@ -235,6 +234,7 @@ object ScalamuBuild {
         "-XX:+HeapDumpOnOutOfMemoryError",
         "-ea",
         "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005",
+        s"-Didea.home=${(ideaBaseDirectory in scalamuIdea).value.getPath}",
         "-Didea.is.internal=true",
         "-Didea.debug.mode=true",
         "-Dapple.laf.useScreenMenuBar=true",
