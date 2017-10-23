@@ -1,4 +1,4 @@
-package org.scalamu.idea.configuration
+package org.scalamu.idea.runner
 
 import com.intellij.execution.configurations.{ConfigurationFactory, ConfigurationType, RunConfiguration}
 import com.intellij.openapi.project.Project

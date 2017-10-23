@@ -1,4 +1,4 @@
-package org.scalamu.idea.configuration
+package org.scalamu.idea.runner
 
 import java.io.BufferedOutputStream
 import java.nio.file.{Files, Path, Paths}
@@ -18,7 +18,9 @@ object ScalamuJarFetcher {
   private[this] val name         = "scalamu"
   private[this] val version      = "0.1-SNAPSHOT"
   private[this] val artifactType = "jars"
-  private[this] val artifactUrl  = ""
+
+  private def artifactUrl(scalaBinaryVersion: String): String =
+    s"https://oss.sonatype.org/service/local/repositories/snapshots/content/io/github/sugakandrey/scalamu_$scalaBinaryVersion/0.1-SNAPSHOT/scalamu_$scalaBinaryVersion-0.1-SNAPSHOT-assembly.jar"
 
   private def ivyCachePath: Path = {
     val ivyHome = Properties.propOrElse("ivy.home", Properties.userHome + "/.ivy2")
@@ -64,7 +66,7 @@ object ScalamuJarFetcher {
     if (Files.exists(path)) Success(path)
     else {
       FileUtil.createParentDirs(path.toFile)
-      downloadWithProgressIndicator("Downloading Scalamu Jar", path, artifactUrl)
+      downloadWithProgressIndicator("Downloading Scalamu Jar", path, artifactUrl(scalaBinaryVersion))
         .map(Function.const(path))
     }
   }

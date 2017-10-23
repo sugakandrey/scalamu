@@ -1,4 +1,4 @@
-package org.scalamu.idea.configuration
+package org.scalamu.idea.runner
 
 import com.intellij.openapi.compiler.CompilerPaths
 import com.intellij.openapi.module.Module

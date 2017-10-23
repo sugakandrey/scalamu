@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.scalamu.idea.gui.ScalamuConfigurationForm">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.scalamu.idea.runner.ui.ScalamuConfigurationForm">
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="14" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -16,14 +16,14 @@
           <text value="Target classes:"/>
         </properties>
       </component>
-      <component id="41c49" class="com.intellij.ui.RawCommandLineEditor" binding="targetSources">
+      <component id="a5706" class="org.scalamu.idea.runner.ui.ScalamuFilterTextFieldWithBrowseButton" binding="targetClasses" custom-create="true">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
         <properties>
-          <text value="*"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="f057f" class="javax.swing.JLabel">
@@ -34,14 +34,14 @@
           <text value="Target tests:"/>
         </properties>
       </component>
-      <component id="5ffb6" class="com.intellij.ui.RawCommandLineEditor" binding="targetTests">
+      <component id="c47e2" class="org.scalamu.idea.runner.ui.ScalamuFilterTextFieldWithBrowseButton" binding="targetTests" custom-create="true">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
         <properties>
-          <text value="*"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="f79a1" class="javax.swing.JLabel">

@@ -8,6 +8,6 @@
 
     <depends>org.intellij.scala</depends>
     <extensions defaultExtensionNs="com.intellij">
-        <configurationType implementation="org.scalamu.idea.configuration.ScalamuConfigurationType"/>
+        <configurationType implementation="org.scalamu.idea.runner.ScalamuConfigurationType"/>
     </extensions>
 </idea-plugin>

@@ -1,4 +1,4 @@
-package org.scalamu.idea.configuration
+package org.scalamu.idea.runner
 
 import java.nio.file.Paths
 
@@ -15,9 +15,11 @@ class ScalamuCommandLineState(
   configuration: ScalamuRunConfiguration,
   env: ExecutionEnvironment
 ) extends JavaCommandLineState(env) {
-  private[this] val mainClass            = "org.scalamu.entry.EntryPoint"
-  private[this] val scalamuVMParameters  = ""
-  private[this] val reportOverviewPath   = Paths.get(configuration.reportDir).resolve("overview.html")
+  private[this] val mainClass           = "org.scalamu.entry.EntryPoint"
+  private[this] val scalamuVMParameters = ""
+  private[this] val reportOverviewPath  = Paths.get(configuration.reportDir).resolve("overview.html")
+  private[this] val project             = configuration.project
+  private[this] val module              = configuration.getConfigurationModule.getModule
 
   private class ScalamuProcessAdapter extends ProcessAdapter {
     override def processTerminated(event: ProcessEvent): Unit = {
@@ -35,15 +37,14 @@ class ScalamuCommandLineState(
   override def startProcess(): OSProcessHandler = {
     val processHandler = super.startProcess()
     processHandler.addProcessListener(new ScalamuProcessAdapter)
+    processHandler
   }
 
   override def createJavaParameters(): JavaParameters = {
     val parameters       = new JavaParameters
-    val project          = configuration.project
     val workingDir       = Option(project.getBaseDir).fold(VfsUtil.getUserHomeDir.getPath)(_.getPath)
     val pathToScalamuJar = configuration.pathToJar
     val arguments        = buildScalamuArgumentsString(project)
-    val module           = configuration.getConfigurationModule.getModule
 
     parameters.configureByModule(module, JavaParameters.JDK_ONLY)
     parameters.setJarPath(pathToScalamuJar)
@@ -64,7 +65,7 @@ class ScalamuCommandLineState(
     else s"--$name ${args.mkString(separator)}"
 
   private def buildScalamuArgumentsString(project: Project): String = {
-    val extractor        = ModuleInfoExtractor(configuration.getConfigurationModule.getModule)
+    val extractor        = ModuleInfoExtractor(module)
     val sourceDirsString = extractor.sourcePaths.mkString(",")
     val testDirsString   = extractor.testTarget.mkString(",")
 
@@ -74,17 +75,18 @@ class ScalamuCommandLineState(
       testDirsString
     )
 
+    val classPath     = optionString(extractor.compileClassPath.map(_.getPath), ",", "cp")
+    val testClassPath = optionString(extractor.runClassPath.map(_.getPath), ",", "tcp")
+    val vmParameters  = optionString(configuration.vmParameters, " ", "vmParameters")
+    val scalacOptions = optionString(configuration.scalacParameters, " ", "scalacParameters")
+    val targetClasses = optionString(configuration.targetClasses, ",", "targetClasses")
+    val targetTests   = optionString(configuration.targetTests, ",", "targetTests")
+    val mutators      = optionString(configuration.activeMutators, ",", "activeMutators")
+    val ignoreSymbols = optionString(configuration.ignoredSymbols, ",", "ignoreSymbols")
     val verbose       = if (configuration.verboseLogging) "--verbose" else ""
     val timeoutFactor = s"--timeoutFactor ${configuration.timeoutFactor}"
     val timeoutConst  = s"--timeoutConst ${configuration.timeoutConst}"
     val parallelism   = s"--parallelism ${configuration.parallelism}"
-    val scalacOptions = optionString(configuration.scalacParameters, "", "scalacParameters")
-    val vmParameters  = optionString(configuration.vmParameters, "", "vmParameters")
-    val targetTests   = optionString(configuration.targetTests, ",", "targetTests")
-    val targetClasses = optionString(configuration.targetClasses, ",", "targetClasses")
-    val mutators      = optionString(configuration.activeMutators, ",", "activeMutators")
-    val classPath     = optionString(extractor.compileClassPath.map(_.getPath), ",", "cp")
-    val testClassPath = optionString(extractor.runClassPath.map(_.getPath), ",", "tcp")
 
     (Seq(
       verbose,

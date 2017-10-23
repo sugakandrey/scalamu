@@ -1,4 +1,5 @@
-package org.scalamu.idea.gui
+package org.scalamu.idea.runner
+package ui
 
 import java.awt.GridLayout
 import javax.swing.JPanel
@@ -7,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui._
 import com.intellij.ui.components.JBList
-import org.scalamu.idea.configuration.{ScalamuDefaultSettings, ScalamuRunConfiguration}
 
 import scala.collection.JavaConverters._
 
@@ -15,7 +15,7 @@ class ScalamuMutatorsForm(project: Project) {
   private[this] val listModel = new CollectionListModel[String]()
   private[this] val activeMutators = new JBList[String](listModel)
   
-  listModel.add(ScalamuDefaultSettings.activeMutators.asJava)
+  ScalamuDefaultSettings.activeMutators.asJava.forEach(listModel.add(_))
 
   val mainPanel: JPanel = {
     val panel = new JPanel()
@@ -25,9 +25,9 @@ class ScalamuMutatorsForm(project: Project) {
       .setAddAction(new AnActionButtonRunnable {
         override def run(t: AnActionButton): Unit = {
           val result = Messages.showInputDialog(project, "Enter mutator name:", "Add Mutator", null)
-          if (result != null) {
+          if (result != null && ScalamuDefaultSettings.activeMutators.contains(result)) {
             listModel.add(result)
-          }
+          } else Messages.showErrorDialog(project, "Empty or unsupported mutator name.", "Invalid Mutator.")
         }
       })
       .setRemoveAction(new AnActionButtonRunnable {
