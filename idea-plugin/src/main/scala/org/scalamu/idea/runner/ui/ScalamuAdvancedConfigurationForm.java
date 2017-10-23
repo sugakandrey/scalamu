@@ -1,5 +1,6 @@
 package org.scalamu.idea.runner.ui;
 
+import com.intellij.AbstractBundle;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
@@ -7,6 +8,7 @@ import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.scalamu.idea.ScalamuBundle$;
 import org.scalamu.idea.runner.ScalamuDefaultSettings;
 import org.scalamu.idea.runner.ScalamuRunConfiguration;
 
@@ -23,6 +25,8 @@ public class ScalamuAdvancedConfigurationForm {
   private JPanel mainPanel;
   private JCheckBox aggregateDependencyModulesCheckBox;
   private ScalamuFilterTextFieldWithBrowseButton ignoredSymbols;
+  private final AbstractBundle bundle = ScalamuBundle$.MODULE$;
+
 
   public ScalamuAdvancedConfigurationForm() {
     $$$setupUI$$$();
@@ -45,7 +49,7 @@ public class ScalamuAdvancedConfigurationForm {
   }
 
   private void setupTimeouts() {
-    timeoutConst.setText("2000");
+    timeoutConst.setText(Long.toString(ScalamuDefaultSettings.timeoutConst()));
     timeoutConst.setInputVerifier(new InputVerifier() {
       @Override
       public boolean verify(JComponent input) {
@@ -58,12 +62,17 @@ public class ScalamuAdvancedConfigurationForm {
       @Override
       public boolean shouldYieldFocus(JComponent input) {
         boolean isValid = verify(input);
-        if (!isValid) Messages.showErrorDialog("Please, enter a valid number > 0.", "Invalid Input.");
+        if (!isValid) {
+          Messages.showErrorDialog(
+                  bundle.getMessage("run.configuration.dialog.invalid.timeout.const"),
+                  bundle.getMessage("run.configuration.dialog.invalid.title")
+          );
+        }
         return isValid;
       }
     });
 
-    timeoutFactor.setText("1.5");
+    timeoutFactor.setText(Double.toString(ScalamuDefaultSettings.timeoutFactor()));
     timeoutFactor.setInputVerifier(new InputVerifier() {
       @Override
       public boolean verify(JComponent input) {
@@ -76,7 +85,12 @@ public class ScalamuAdvancedConfigurationForm {
       @Override
       public boolean shouldYieldFocus(JComponent input) {
         boolean isValid = verify(input);
-        if (!isValid) Messages.showErrorDialog("Please, enter a valid double > 0.", "Invalid Input.");
+        if (!isValid) {
+          Messages.showErrorDialog(
+                  bundle.getMessage("run.configuration.dialog.invalid.timeout.factor"),
+                  bundle.getMessage("run.configuration.dialog.invalid.title")
+          );
+        }
         return isValid;
       }
     });
@@ -117,7 +131,10 @@ public class ScalamuAdvancedConfigurationForm {
   }
 
   private void createUIComponents() {
-    ignoredSymbols = new ScalamuFilterTextFieldWithBrowseButton("Ignored symbols", "No ignored symbols");
+    ignoredSymbols = new ScalamuFilterTextFieldWithBrowseButton(
+            bundle.getMessage("run.configuration.target.ignored.symbols.title"),
+            bundle.getMessage("run.configuration.target.ignored.symbols.empty")
+    );
   }
 
   /**

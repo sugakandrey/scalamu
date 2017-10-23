@@ -117,13 +117,15 @@ class ScalamuRunConfiguration(
 
   override def checkConfiguration(): Unit = {
     if (pathToJar.isEmpty || !Files.exists(Paths.get(pathToJar)))
-      throw new RuntimeConfigurationError("Path to scalamu jar not specified.")
+      throw new RuntimeConfigurationError(ScalamuBundle.getMessage("run.configuration.validation.error.jar.not.specified"))
 
     if (activeMutators.isEmpty)
-      throw new RuntimeConfigurationWarning("No active mutators specified.")
+      throw new RuntimeConfigurationWarning(ScalamuBundle.getMessage("run.configuration.validation.error.mutators.not.specified"))
 
     if (reportDir.isEmpty)
-      throw new RuntimeConfigurationWarning("Report directory is not specified.")
+      throw new RuntimeConfigurationWarning(ScalamuBundle.getMessage("run.configuration.validation.error.directory.not.specified"))
+    
+    
   }
 
   override def getRefactoringElementListener(element: PsiElement): RefactoringElementListener = element match {

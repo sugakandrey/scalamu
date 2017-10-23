@@ -1,5 +1,6 @@
 package org.scalamu.idea.runner.ui;
 
+import com.intellij.AbstractBundle;
 import com.intellij.application.options.ModulesComboBox;
 import com.intellij.execution.ui.ConfigurationModuleSelector;
 import com.intellij.ide.browsers.BrowserFamily;
@@ -19,6 +20,7 @@ import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.scalamu.idea.ScalamuBundle$;
 import org.scalamu.idea.runner.ScalamuDefaultSettings;
 import org.scalamu.idea.runner.ScalamuJarFetcher;
 import org.scalamu.idea.runner.ScalamuRunConfiguration;
@@ -28,7 +30,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
 
-@SuppressWarnings({"unused", "FieldCanBeLocal", "unchecked"})
 public class ScalamuConfigurationForm {
   private JPanel mainPanel;
   private ScalamuFilterTextFieldWithBrowseButton targetClasses;
@@ -42,6 +43,7 @@ public class ScalamuConfigurationForm {
   private JCheckBox openReportInBrowserCheckBox;
   private JButton downloadScalamuJarButton;
   private ConfigurationModuleSelector moduleSelector;
+  private final AbstractBundle bundle = ScalamuBundle$.MODULE$;
 
   public ScalamuConfigurationForm(Project project) {
     $$$setupUI$$$();
@@ -117,13 +119,17 @@ public class ScalamuConfigurationForm {
     downloadScalamuJarButton.addActionListener(e -> {
       Module selectedModule = getModule();
       if (selectedModule == null) {
-        Messages.showErrorDialog(project, "No module selected, unable to determine jar version.", "No Module Selected");
+        Messages.showErrorDialog(
+                project,
+                bundle.getMessage("run.configuration.dialog.no.module.selected.message"),
+                bundle.getMessage("run.configuration.dialog.no.module.selected.title")
+        );
       } else {
         try {
           Path path = ScalamuJarFetcher.downloadScalamuJar(selectedModule).get();
           scalamuJarPath.setText(path.toString());
         } catch (Throwable t) {
-          Messages.showErrorDialog(project, t.getMessage(), "Error Downloading Scalamu Jar");
+          Messages.showErrorDialog(project, t.getMessage(), bundle.getMessage("run.configuration.dialog.error.downloading.jar"));
         }
       }
     });
@@ -152,12 +158,12 @@ public class ScalamuConfigurationForm {
 
   private void setupReportDir(Project project) {
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    reportDir.addBrowseFolderListener("Choose Report Directory", null, project, descriptor);
+    reportDir.addBrowseFolderListener(bundle.getMessage("run.configuration.directory.report"), null, project, descriptor);
   }
 
   private void setupPathToJar(Project project) {
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    scalamuJarPath.addBrowseFolderListener("Choose Scalamu Jar", null, project, descriptor);
+    scalamuJarPath.addBrowseFolderListener(bundle.getMessage("run.configuration.directory.jar"), null, project, descriptor);
   }
 
   private void setupParallelism() {
@@ -173,7 +179,11 @@ public class ScalamuConfigurationForm {
       @Override
       public boolean shouldYieldFocus(JComponent input) {
         boolean isValid = verify(input);
-        if (!isValid) Messages.showErrorDialog("Please, enter a valid integer >= 1.", "Invalid Input.");
+        if (!isValid)
+          Messages.showErrorDialog(
+                  bundle.getMessage("run.configuration.dialog.invalid.parallelism"),
+                  bundle.getMessage("run.configuration.dialog.invalid.title")
+          );
         return isValid;
       }
     });
@@ -197,8 +207,15 @@ public class ScalamuConfigurationForm {
   }
 
   private void createUIComponents() {
-    targetClasses = new ScalamuFilterTextFieldWithBrowseButton("Target classes", "All classes");
-    targetTests = new ScalamuFilterTextFieldWithBrowseButton("Target tests", "All tests");
+    targetClasses = new ScalamuFilterTextFieldWithBrowseButton(
+            bundle.getMessage("run.configuration.target.classes.title"),
+            bundle.getMessage("run.configuration.target.classes.empty")
+    );
+
+    targetTests = new ScalamuFilterTextFieldWithBrowseButton(
+            bundle.getMessage("run.configuration.target.tests.title"),
+            bundle.getMessage("run.configuration.target.tests.empty")
+    );
   }
 
   /**
