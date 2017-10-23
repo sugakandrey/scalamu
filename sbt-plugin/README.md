@@ -4,9 +4,9 @@ mutation testing into your build.
 
 ## Getting started
 Make sure your SBT version is supported (currently sbt-scalamu is cross-built
-against sbt 0.13.16 and 1.0.0).
+against sbt 0.13 and 1.0).
 ```
-sbt.version = 1.0.0
+sbt.version = 1.0.2
 ```
 Add the plugin to `project/plugins.sbt`:
 ```
@@ -17,9 +17,6 @@ Run the `mutationTest` command inside SBT shell:
 $ sbt mutationTest
 ```
 By default the report will be generated inside `target` directory. 
-*NOTE:* in a case of a multi project build definition all the subprojects
-will be aggregated and only one report will be generated.
-
 ## Plugin configuration
 sbt-scalamu aims to reuse as much of your sbt settings as possible.
 It will automatically make use of `scalacOptions`, `testOptions`,`javaOptions` etc.
@@ -27,7 +24,7 @@ It will automatically make use of `scalacOptions`, `testOptions`,`javaOptions` e
 You can choose from a set of available mutation operators via 
 `activeMutators` key:
 ```
-activeMutators := Seq(
+ScalamuKeys.activeMutators := Seq(
   "ReplaceMathOperators", 
   "NeverExecuteConditionals", 
   "ReplaceConditionalBoundaries",
@@ -42,16 +39,16 @@ waiting indefinitely every test is given `regular_execution_time * timeout_facto
 Default values are 1.5 and 2000.
 Example:
 ```
-timeoutFactor := 2,
-timeoutConst  := 5000
+ScalamuKeys.timeoutFactor := 2,
+ScalamuKeys.timeoutConst  := 5000
 ```
-### Class name constraints
-You can choose to only mutate certain classes/run certain tests by 
-providing a `Seq[Regex]` for class
+### Targets
+You can choose to only mutate certain classes/run certain tests and/or ignore trees with certain symbol names
 Example: 
 ```
-includeSources := Seq("org.example.Foo".r, "org.example2.baz.*".r),
-includeTests   := Seq("org.example.fast.*".r)
+ScalamuKeys.targetClasses := Seq("org.example.Foo".r, "org.example2.baz.*".r),
+ScalamuKeys.targetTests   := Seq("org.example.fast.*".r),
+ScalamuKeys.ignoreSymbols := Seq("scala.Predef.println".r)
 ```
 
 ### Misc
@@ -62,7 +59,7 @@ control options passed to a mutations analyser when forking (default value is `j
 
 Example:
 ```
-parallelism        := 4,
-verbose            := true   
-analyserJVMOptions := Seq("-Xmx1g", "-Dprop=foo")
+ScalamuKeys.parallelism         := 4,
+ScalamuKeys.verbose             := true   
+ScalamuKeys.analyserJavaOptions := Seq("-Xmx1g", "-Dprop=foo")
 ```
