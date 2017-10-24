@@ -16,11 +16,10 @@ Run the `mutationTest` command inside SBT shell:
 ```
 $ sbt mutationTest
 ```
-By default the report will be generated inside `target` directory. 
 ## Plugin configuration
 sbt-scalamu aims to reuse as much of your sbt settings as possible.
 It will automatically make use of `scalacOptions`, `testOptions`,`javaOptions` etc.
-### Active mutation operators
+### Active mutators
 You can choose from a set of available mutation operators via 
 `activeMutators` key:
 ```
@@ -55,11 +54,21 @@ ScalamuKeys.ignoreSymbols := Seq("scala.Predef.println".r)
 `parallelism` key controls the number of simultaneously running mutation
 analysis processes (defaults to 1) and `verbose` key is responsible for
 verbose logging (defaults to `false`). `analyserJavaOptions` allows to 
-control options passed to a mutations analyser when forking (default value is `javaOptions in Test`).
+control options passed to a mutations analyser when forking (default value is `javaOptions in Test`), 
+as a rule of thumb this should have all options required to run your tests as well as a little extra heap
+size if your application is memory-hungry.
 
 Example:
 ```
 ScalamuKeys.parallelism         := 4,
 ScalamuKeys.verbose             := true   
 ScalamuKeys.analyserJavaOptions := Seq("-Xmx1g", "-Dprop=foo")
+```
+
+You can specify a directory where report is generated using `target` key scoped `Scalamu`,
+in case of a really big project you might want to modify `javaOptions` of the mutation engine itself.
+Example:
+```
+target in Scalamu      := file(".") 
+javaOptions in Scalamu := Seq("-Xmx4g")
 ```

@@ -1,17 +1,19 @@
 package org.scalamu.sbt
 
+import sbt.Def.Classpath
 import sbt.{Def, Keys => K, _}
 import sbt.plugins.JvmPlugin
 
-object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
+import scala.util.matching.Regex
+
+object ScalamuPlugin extends AutoPlugin {
   private[this] val organization = "io.github.sugakandrey"
   private[this] val artifactId   = "scalamu"
   private[this] val version      = "0.1-SNAPSHOT"
-  private[this] val mainClass    = "org.scalamu.entry.EntryPoint"
 
   object autoImport extends ScalamuImport {
-    lazy val MutationTest: Configuration =
-      config("mutation-test")
+    lazy val Scalamu: Configuration =
+      config("scalamu")
         .describedAs("Dependencies and settings required for mutation testing.")
         .extend(Compile)
         .hide
@@ -23,12 +25,11 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
   override def requires: Plugins      = JvmPlugin
   override def trigger: PluginTrigger = allRequirements
 
-  override def projectConfigurations: Seq[Configuration] = Seq(MutationTest)
+  override def projectConfigurations: Seq[Configuration] = Seq(Scalamu)
 
   override def projectSettings: Seq[Def.Setting[_]] =
-    inConfig(MutationTest)(Defaults.configSettings) ++
+    inConfig(Compile)(Defaults.configSettings) ++
       Seq(
-        SK.mutationTest                := mutationTestTask.value,
         SK.timeoutFactor               := 1.5,
         SK.parallelism                 := 1,
         SK.timeoutConst                := 2000,
@@ -39,11 +40,59 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
         SK.analyserJavaOptions         := (K.javaOptions in Test).value,
         SK.verbose                     := false,
         SK.recompileOnly               := false,
-        K.aggregate in SK.mutationTest := false
+        K.aggregate in SK.mutationTest := false,
+        SK.mutationTest := {
+          val jar             = Classpaths.managedJars(Scalamu, Set("jar"), K.update.value)
+          val scalamuVmParams = (K.javaOptions in Scalamu).value
+          val log             = K.streams.value.log
+
+          val tcp      = testClassPath.value
+          val cp       = compileClassPath.value
+          val sources  = sourceDirs.value.flatten.toSet
+          val testDirs = testClassDirs.value.toSet
+
+          val runnerVmParams = SK.analyserJavaOptions.value
+          val factor         = SK.timeoutFactor.value
+          val const          = SK.timeoutConst.value
+          val verbose        = SK.verbose.value
+          val recompileOnly  = SK.recompileOnly.value
+          val parallelism    = SK.parallelism.value
+          val mutators       = SK.activeMutators.value
+          val ignored        = SK.ignoreSymbols.value
+          val targetTests    = SK.targetTests.value
+          val targetClasses  = SK.targetClasses.value
+
+          val reportDir    = (K.target in Scalamu).value / "mutation-analysis-report"
+          val testOptions  = K.testOptions.value
+          val scalacParams = K.scalacOptions.value
+
+          MutationTest(
+            jar,
+            scalamuVmParams,
+            log,
+            tcp,
+            cp,
+            sources,
+            testDirs,
+            reportDir,
+            runnerVmParams,
+            scalacParams,
+            targetClasses,
+            targetTests,
+            ignored,
+            mutators,
+            testOptions,
+            parallelism,
+            factor,
+            const,
+            verbose,
+            recompileOnly
+          )
+        }
       ) :+ dependencies
 
   def dependencies: Setting[Seq[ModuleID]] =
-    K.libraryDependencies += (organization % s"${artifactId}_${K.scalaBinaryVersion.value}" % version % MutationTest)
+    K.libraryDependencies += (organization % s"${artifactId}_${K.scalaBinaryVersion.value}" % version % Scalamu)
       .classifier("assembly")
       .intransitive()
 
@@ -63,14 +112,6 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
     "ReplaceWithNil"
   )
 
-  private def frameworkNames(maybeFramework: Option[TestFramework]): Seq[String] =
-    maybeFramework match {
-      case None                                                     => Seq("scalatest, specs2, utest, junit")
-      case Some(framework) if framework == TestFrameworks.ScalaTest => Seq("scalatest")
-      case Some(framework) if framework == TestFrameworks.JUnit     => Seq("junit")
-      case Some(framework) if framework == TestFrameworks.Specs2    => Seq("specs2")
-    }
-
   private def aggregateTask[T](
     taskKey: TaskKey[T],
     configurations: Configuration*
@@ -85,7 +126,7 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
     settingKey: SettingKey[T],
     configurations: Configuration*
   ): Def.Initialize[Seq[T]] = Def.settingDyn {
-    val projectRef = K.thisProjectRef.value
+    val projectRef          = K.thisProjectRef.value
     val projectFilter       = inAggregates(projectRef) && inDependencies(projectRef)
     val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
     val filter              = ScopeFilter(projectFilter, configurationFilter)
@@ -97,30 +138,98 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
       cps => cps.flatten.map(_.data)(collection.breakOut)
     )
 
-  private val testClassPath: Def.Initialize[Task[Set[File]]]    = aggregateClassPath(Test)
-  private val compileClassPath: Def.Initialize[Task[Set[File]]] = aggregateClassPath(Compile)
-  private val sourceDirs: Def.Initialize[Seq[Seq[File]]]        = aggregateSetting(K.sourceDirectories, Compile)
-  private val testClassDirs: Def.Initialize[Seq[File]]          = aggregateSetting(K.crossTarget)
+  private lazy val testClassPath: Def.Initialize[Task[Set[File]]]    = aggregateClassPath(Test)
+  private lazy val compileClassPath: Def.Initialize[Task[Set[File]]] = aggregateClassPath(Compile)
+  private lazy val sourceDirs: Def.Initialize[Seq[Seq[File]]]        = aggregateSetting(K.sourceDirectories, Compile)
+  private lazy val testClassDirs: Def.Initialize[Seq[File]]          = aggregateSetting(K.crossTarget)
+}
 
-  private def scalamuArguments: Def.Initialize[Task[Seq[String]]] = Def.task {
-    val aggregatedTestClassPath = testClassPath.value
-    val aggregatedClassPath     = compileClassPath.value
-    val aggregatedSourceDirs    = sourceDirs.value.flatten.distinct
-    val aggregatedTestDirs      = testClassDirs.value.distinct
+object MutationTest extends SbtBackCompat {
+  private[this] val mainClass = "org.scalamu.entry.EntryPoint"
 
-    val target           = K.target.value / "mutation-analysis-report"
-    val vmParameters     = SK.analyserJavaOptions.value
-    val scalacParameters = K.scalacOptions.value
-    val targetClasses    = SK.targetClasses.value
-    val targetTests      = SK.targetTests.value
-    val ignoreSymbols    = SK.ignoreSymbols.value
-    val timeoutFactor    = SK.timeoutFactor.value
-    val timeoutConst     = SK.timeoutConst.value
-    val parallelism      = SK.parallelism.value
-    val verbose          = SK.verbose.value
-    val recompileOnly    = SK.recompileOnly.value
-    val activeMutators   = SK.activeMutators.value
-    val testOptions      = K.testOptions.value
+  def apply(
+    scalamuJar: Classpath,
+    scalamuVmParameters: Seq[String],
+    log: Logger,
+    tcp: Set[File],
+    cp: Set[File],
+    sources: Set[File],
+    testDirs: Set[File],
+    target: File,
+    runnerVmParameters: Seq[String],
+    scalacParameters: Seq[String],
+    targetClasses: Seq[Regex],
+    targetTests: Seq[Regex],
+    ignoreSymbols: Seq[Regex],
+    activeMutators: Seq[String],
+    testOptions: Seq[TestOption],
+    parallelism: Int,
+    timeoutFactor: Double,
+    timeoutConst: Long,
+    verbose: Boolean,
+    recompileOnly: Boolean
+  ): File = {
+    val forkOptions = ForkOptions()
+    val run         = new ForkRun(forkOptions)
+
+    val arguments = scalamuArguments(
+      tcp,
+      cp,
+      sources,
+      testDirs,
+      target,
+      runnerVmParameters,
+      scalacParameters,
+      targetClasses,
+      targetTests,
+      ignoreSymbols,
+      activeMutators,
+      testOptions,
+      parallelism,
+      timeoutFactor,
+      timeoutConst,
+      verbose,
+      recompileOnly
+    )
+
+    runAndPropagateResult(
+      run,
+      mainClass,
+      scalamuJar.map(_.data),
+      scalamuVmParameters ++ arguments,
+      log
+    )
+
+    target
+  }
+
+  private def frameworkNames(maybeFramework: Option[TestFramework]): Seq[String] =
+    maybeFramework match {
+      case None                                                     => Seq("scalatest, specs2, utest, junit")
+      case Some(framework) if framework == TestFrameworks.ScalaTest => Seq("scalatest")
+      case Some(framework) if framework == TestFrameworks.JUnit     => Seq("junit")
+      case Some(framework) if framework == TestFrameworks.Specs2    => Seq("specs2")
+    }
+
+  private def scalamuArguments(
+    tcp: Set[File],
+    cp: Set[File],
+    sources: Set[File],
+    testDirs: Set[File],
+    target: File,
+    vmParameters: Seq[String],
+    scalacParameters: Seq[String],
+    targetClasses: Seq[Regex],
+    targetTests: Seq[Regex],
+    ignoreSymbols: Seq[Regex],
+    activeMutators: Seq[String],
+    testOptions: Seq[TestOption],
+    parallelism: Int,
+    timeoutFactor: Double,
+    timeoutConst: Long,
+    verbose: Boolean,
+    recompileOnly: Boolean
+  ): Seq[String] = {
 
     val testRunnerArgs = testOptions
       .foldLeft(Map.empty[String, String]) {
@@ -141,8 +250,8 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
       .mkString(",")
 
     val possiblyUndefinedOptions = Seq(
-      optionString(aggregatedClassPath.map(_.getAbsolutePath), ",", "cp"),
-      optionString(aggregatedTestClassPath.map(_.getAbsolutePath), ",", "tcp"),
+      optionString(cp.map(_.getAbsolutePath), ",", "cp"),
+      optionString(tcp.map(_.getAbsolutePath), ",", "tcp"),
       optionString(vmParameters, " ", "vmParameters"),
       optionString(targetClasses.map(_.toString), ",", "targetClasses"),
       optionString(targetTests.map(_.toString), ",", "targetTests"),
@@ -166,8 +275,8 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
 
     val arguments = Seq(
       target.getAbsolutePath,
-      aggregatedSourceDirs.map(_.getAbsolutePath).mkString(","),
-      aggregatedTestDirs.map(_.getAbsolutePath).mkString(",")
+      sources.map(_.getAbsolutePath).mkString(","),
+      testDirs.map(_.getAbsolutePath).mkString(",")
     )
 
     possiblyUndefinedOptions ++ options ++ arguments
@@ -180,21 +289,4 @@ object ScalamuPlugin extends AutoPlugin with SbtBackCompat {
   ): Seq[String] =
     if (options.isEmpty) Seq.empty
     else Seq(s"--$name", options.mkString(separator))
-
-  lazy val mutationTestTask: Def.Initialize[Task[Unit]] = Def.task {
-    val log         = K.streams.value.log
-    val cp          = Classpaths.managedJars(MutationTest, Set("jar"), K.update.value)
-    val forkOptions = ForkOptions()
-    val run         = new ForkRun(forkOptions)
-    val arguments   = scalamuArguments.value
-    val javaOptions = (K.javaOptions in SK.mutationTest).value
-
-    runAndPropagateResult(
-      run,
-      mainClass,
-      cp.map(_.data),
-      javaOptions ++ arguments,
-      log
-    )
-  }
 }

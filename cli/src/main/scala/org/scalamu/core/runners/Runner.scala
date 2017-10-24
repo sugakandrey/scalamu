@@ -6,6 +6,7 @@ import java.net.ServerSocket
 import java.nio.file.Path
 
 import cats.syntax.either._
+import com.typesafe.scalalogging.Logger
 import io.circe.{Decoder, Encoder}
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.process.Process
@@ -14,6 +15,8 @@ import scala.collection.mutable
 import scala.util.Properties
 
 abstract class Runner[I: Encoder, O: Decoder] {
+  import Runner._
+  
   def config: ScalamuConfig
   def compiledSourcesDir: Path
 
@@ -39,7 +42,7 @@ abstract class Runner[I: Encoder, O: Decoder] {
     val builder  = new ProcessBuilder(args: _*)
     configureProcessEnv(builder)
     builder.inheritIO()
-
+    log.debug(s"Configured builder: ${builder.command()}.")
     for {
       proc <- Either.catchNonFatal(builder.start()).leftMap(CommunicationException)
       pipe <- connectionHandler.handle()
@@ -52,7 +55,9 @@ abstract class Runner[I: Encoder, O: Decoder] {
     val classPathSegments = compiledSourcesDir :: config.testClassPath.toList
     val testClassPath     = pathsToString(classPathSegments)
     val currentClassPath  = Properties.javaClassPath
-    pb.environment().put("CLASSPATH", currentClassPath + File.pathSeparator + testClassPath)
+    val configuredClasspath = currentClassPath + File.pathSeparator + testClassPath
+    log.debug(s"Configured classpath: $configuredClasspath")
+    pb.environment().put("CLASSPATH", configuredClasspath)
   }
 
   protected def generateProcessArgs(
@@ -68,4 +73,8 @@ abstract class Runner[I: Encoder, O: Decoder] {
     args ++= runnerArgs
     args
   }
+}
+
+object Runner {
+  private val log = Logger[Runner.type]
 }
