@@ -1,15 +1,15 @@
 package org.scalamu.testapi
 package utest
 
-import _root_.utest.framework.{Result, Tree}
+import _root_.utest.framework.{Result, HTree}
 import org.scalamu.core.ClassName
 
-object UTestConverters extends SuiteResultTypeConverter[Tree[Result]] {
+object UTestConverters extends SuiteResultTypeConverter[HTree[String, Result]] {
   private def fromFailure(failure: Result): TestFailure =
     TestFailure(s"Test ${failure.name} failed.", failure.value.failed.map(_.getMessage).toOption)
 
-  override def fromResult(suite: ClassName)(result: Tree[Result]): TestSuiteResult = {
-    val results = result.toSeq
+  override def fromResult(suite: ClassName)(result: HTree[String, Result]): TestSuiteResult = {
+    val results = result.leaves.toSeq
     if (results.forall(_.value.isSuccess))
       SuiteSuccess(suite, results.map(_.milliDuration).sum)
     else

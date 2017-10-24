@@ -4,7 +4,7 @@ package specs2
 import org.scalamu.common.TryBackCompatibility
 import org.scalamu.core.ClassName
 import org.scalamu.utils.ClassLoadingUtils
-import org.specs2.control
+import org.specs2.control.ExecuteActions.executeAction
 import org.specs2.main.{Arguments, ArgumentsShortcuts}
 import org.specs2.reporter.NotifierPrinter
 import org.specs2.runner.Runner
@@ -32,14 +32,14 @@ class Specs2Runner(override val arguments: String) extends TestRunner[Stats] wit
       val args               = argumentsOverrides.fold(userArguments)(_ <| _)
       val env                = Env(args)
 
-      val errorOrStats = control.runAction(
+      val (errorOrStats, _) = executeAction(
         Runner.runSpecStructure(
           s.structure(env),
           env,
           ClassLoadingUtils.contextClassLoader,
           List(NotifierPrinter.printer(notifier))
         )
-      )
+      )(env.executionEnv)
 
       errorOrStats.fold(
         err =>
