@@ -202,7 +202,7 @@ object ScalamuBuild {
       organization     := "io.github.sugakandrey",
       sbtPlugin        := true,
       name             := "sbt-scalamu",
-      crossSbtVersions := Seq("0.13.16", "1.0.0")
+      crossSbtVersions := Seq("0.13.16", "1.0.2")
     )
 
   lazy val scalamuIdea = Project(id = "idea-plugin", base = file("idea-plugin"))
