@@ -1,7 +1,6 @@
 package org.scalamu.testing.utest
 
 import utest._
-import utest.framework.{Test, Tree}
 
 class FlakyThing {
   var runs = 0
@@ -15,7 +14,7 @@ object Retries extends TestSuite.Retries {
   override val utestRetryCount = 3
   val flaky                    = new FlakyThing
 
-  override def tests: Tree[Test] = this {
+  override def tests: Tests = this {
     'hello {
       flaky.run()
     }

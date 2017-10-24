@@ -1,9 +1,8 @@
 package org.scalamu.testapi
 package utest
 
-import _root_.utest.TestSuite
-import _root_.utest.TestRunner
-import _root_.utest.framework.{ExecutionContext, HTree, Result}
+import _root_.utest.{TestRunner, TestSuite}
+import _root_.utest.framework.{HTree, Result}
 import org.scalamu.common.TryBackCompatibility
 import org.scalamu.core.ClassName
 import org.scalamu.utils.ClassLoadingUtils
@@ -23,7 +22,7 @@ class UTestRunner(override val arguments: String) extends TestRunner[HTree[Strin
       SuiteExecutionAborted(suiteName, _),
       mirror.reflectModule _
         andThen { _.instance.asInstanceOf[TestSuite] }
-        andThen { suite => TestRunner.run(suite.tests) }
+        andThen { suite => TestRunner.run(suite.tests, executor = suite) }
         andThen converter.fromResult(suiteName)
     )
   }

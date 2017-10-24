@@ -270,8 +270,8 @@ object ScalamuTestingBuild {
   lazy val withScoverage = testProject("scoverage")
     .settings(
       libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "3.0.1" % Test,
-        "junit"         % "junit"      % "4.12"  % Test
+        ScalamuBuild.scalatest % Test,
+        ScalamuBuild.junit % Test
       )
     )
 }
