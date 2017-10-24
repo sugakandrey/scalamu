@@ -1,4 +1,5 @@
 import com.typesafe.sbt.pgp.PgpKeys
+import com.typesafe.sbt.GitVersioning
 import org.jetbrains.sbtidea.Keys._
 import org.jetbrains.sbtidea.SbtIdeaPlugin
 import play.twirl.sbt.Import.TwirlKeys
@@ -193,16 +194,24 @@ object ScalamuBuild {
     .disablePlugins(ScriptedPlugin)
 
   import ScriptedPlugin.autoImport._
+  import com.typesafe.sbt.GitPlugin.autoImport._
   lazy val scalamuSbt = Project(id = "sbt-plugin", base = file("sbt-plugin"))
     .settings(
       scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value),
       scriptedBufferLog  := false
     )
     .settings(
+      isSnapshot       := false,
       organization     := "io.github.sugakandrey",
       sbtPlugin        := true,
       name             := "sbt-scalamu",
       crossSbtVersions := Seq("0.13.16", "1.0.2")
+    )
+    .enablePlugins(GitVersioning)
+    .settings(
+      publishMavenStyle := false,
+      git.baseVersion := "0.1.0",
+      git.uncommittedSignifier := None,
     )
 
   lazy val scalamuIdea = Project(id = "idea-plugin", base = file("idea-plugin"))
@@ -271,7 +280,7 @@ object ScalamuTestingBuild {
     .settings(
       libraryDependencies ++= Seq(
         ScalamuBuild.scalatest % Test,
-        ScalamuBuild.junit % Test
+        ScalamuBuild.junit     % Test
       )
     )
 }
