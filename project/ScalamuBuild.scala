@@ -11,9 +11,9 @@ import sbtassembly.ShadeRule
 object ScalamuBuild {
   val GPL3 = "GPL 3.0" -> url("http://www.gnu.org/licenses/gpl-3.0.en.html")
 
-  val specs2    = "org.specs2"    %% "specs2-core" % "3.8.9"
-  val scalatest = "org.scalatest" %% "scalatest"   % "3.0.1"
-  val utest     = "com.lihaoyi"   %% "utest"       % "0.4.5"
+  val specs2    = "org.specs2"    %% "specs2-core" % "4.0.0"
+  val scalatest = "org.scalatest" %% "scalatest"   % "3.0.4"
+  val utest     = "com.lihaoyi"   %% "utest"       % "0.6.0"
   val junit     = "junit"         % "junit"        % "4.12"
 
   val circe = Seq(
