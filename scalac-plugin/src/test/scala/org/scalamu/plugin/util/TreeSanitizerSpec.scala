@@ -10,7 +10,7 @@ import org.scalatest.{FlatSpec, Matchers}
 class TreeSanitizerSpec extends FlatSpec with Matchers with MutationTestRunner with IsolatedScalamuCompilerFixture {
 
   // Purposefully wrong mutation order
-  override def mutations: Seq[Mutator] = Seq(
+  override def mutators: Seq[Mutator] = Seq(
     InvertNegations,
     ReplaceMathOperators,
     ReplaceConditionalBoundaries,

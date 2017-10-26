@@ -24,7 +24,7 @@ class CoverageProcessSpec
   override def instrumentationReporter: TestingInstrumentationReporter =
     new TestingInstrumentationReporter
 
-  override def mutations: Seq[Mutator]  = ScalamuPluginConfig.allMutators
+  override def mutators: Seq[Mutator]  = ScalamuPluginConfig.allMutators
   override def testProject: TestProject = TestProject.Scoverage
   override def testClassDirs: Set[Path] = Set(testProject.testClasses)
 

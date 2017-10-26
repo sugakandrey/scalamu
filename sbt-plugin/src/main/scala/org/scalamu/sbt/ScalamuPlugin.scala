@@ -219,9 +219,9 @@ object MutationTest extends SbtBackCompat {
     target: File,
     vmParameters: Seq[String],
     scalacParameters: Seq[String],
-    targetClasses: Seq[Regex],
+    targetOwners: Seq[Regex],
     targetTests: Seq[Regex],
-    ignoreSymbols: Seq[Regex],
+    ignoreOwners: Seq[Regex],
     activeMutators: Seq[String],
     testOptions: Seq[TestOption],
     parallelism: Int,
@@ -253,10 +253,10 @@ object MutationTest extends SbtBackCompat {
       optionString(cp.map(_.getAbsolutePath), ",", "cp"),
       optionString(tcp.map(_.getAbsolutePath), ",", "tcp"),
       optionString(vmParameters, " ", "vmParameters"),
-      optionString(targetClasses.map(_.toString), ",", "targetClasses"),
+      optionString(targetOwners.map(_.toString), ",", "targetOwners"),
       optionString(targetTests.map(_.toString), ",", "targetTests"),
       optionString(scalacParameters, " ", "scalacParameters"),
-      optionString(ignoreSymbols, ",", "ignoreSymbols")
+      optionString(ignoreOwners, ",", "ignoreOwners")
     ).flatten
 
     val options = Seq(

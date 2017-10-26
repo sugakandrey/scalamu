@@ -1,7 +1,7 @@
 package org.scalamu.common.filtering
 
-trait NameFilter extends (String => Boolean) {
+trait NameFilter {
   def accepts: String => Boolean
 
-  override def apply(symbolName: String): Boolean = accepts(symbolName)
+  def apply(symbolName: String): Boolean = accepts(symbolName)
 }

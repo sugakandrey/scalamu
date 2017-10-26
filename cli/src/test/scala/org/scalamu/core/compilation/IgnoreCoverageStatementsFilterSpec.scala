@@ -8,7 +8,7 @@ class IgnoreCoverageStatementsFilterSpec extends ScalamuSpec with MutationTestRu
 
   override def instrumentationReporter: TestingInstrumentationReporter =
     new TestingInstrumentationReporter
-  override def mutations: Seq[Mutator] = ScalamuPluginConfig.allMutators
+  override def mutators: Seq[Mutator] = ScalamuPluginConfig.allMutators
 
   override val guard = FqnGuard(
     s"${ScalamuPluginConfig.mutationGuardPrefix}.FooGuard.enabledMutation"
@@ -40,7 +40,7 @@ class IgnoreCoverageStatementsFilterSpec extends ScalamuSpec with MutationTestRu
     }
 
   it should "ignore scoverage instrumentation if enabled" in withPluginConfig { cfg =>
-    withScalamuGlobal(cfg.copy(ignoreSymbols = IgnoreCoverageStatementsFilter)) { (global, reporter, instrumentation) =>
+    withScalamuGlobal(cfg.copy(ignoreOwners = IgnoreCoverageStatementsFilter)) { (global, reporter, instrumentation) =>
       val code =
         """
           |object Foo {

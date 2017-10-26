@@ -7,7 +7,7 @@ import org.scalatest.{BeforeAndAfterAll, TestSuite}
 trait PluginConfigFixture extends TestSuite {
   def mutationReporter: MemoryReporter
   def guard: MutationGuard
-  def mutations: Seq[Mutator]
+  def mutators: Seq[Mutator]
   def verifyTrees: Boolean
   def sanitizeTrees: Boolean
   def filter: NameFilter
@@ -25,7 +25,7 @@ trait IsolatedPluginConfigFixture extends PluginConfigFixture {
       mutationReporter,
       guard,
       filter,
-      mutations,
+      mutators,
       sanitizeTrees = sanitizeTrees,
       verifyTrees = verifyTrees
     )
@@ -41,7 +41,7 @@ trait SharedPluginConfigFixture extends PluginConfigFixture with BeforeAndAfterA
       mutationReporter,
       guard,
       filter,
-      mutations,
+      mutators,
       sanitizeTrees = sanitizeTrees,
       verifyTrees = verifyTrees
     )

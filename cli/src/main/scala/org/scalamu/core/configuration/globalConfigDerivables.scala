@@ -68,6 +68,6 @@ trait MutationConfigDerivable {
         guard,
         IgnoreCoverageStatementsFilter,
         config.activeMutators,
-        RegexFilter(config.targetClasses: _*)
+        RegexFilter(config.targetOwners: _*)
     )
 }

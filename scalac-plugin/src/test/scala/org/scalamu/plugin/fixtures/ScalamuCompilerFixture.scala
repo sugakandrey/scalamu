@@ -83,6 +83,6 @@ trait IsolatedScalamuCompilerFixture
   def withScalamuCompiler(
     testCode: (Global, MemoryReporter) => Any
   ): Any = withPluginConfig { config =>
-    withScalamuCompiler(mutations, config)(testCode)
+    withScalamuCompiler(mutators, config)(testCode)
   }
 }

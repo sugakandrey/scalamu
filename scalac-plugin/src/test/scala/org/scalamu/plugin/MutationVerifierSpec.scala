@@ -11,7 +11,7 @@ import scala.tools.nsc.reporters.{ConsoleReporter, Reporter}
 class MutationVerifierSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
 
   // Purposefully wrong mutation order
-  override val mutations: Seq[Mutator] = Seq(
+  override val mutators: Seq[Mutator] = Seq(
     InvertNegations,
     ReplaceMathOperators,
     ReplaceConditionalBoundaries,

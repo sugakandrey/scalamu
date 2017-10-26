@@ -26,6 +26,6 @@ trait TestingDerivableInstance {
         mutationReporter,
         guard,
         IgnoreCoverageStatementsFilter,
-        targetClasses = RegexFilter(config.targetClasses: _*)
+        targetOwners = RegexFilter(config.targetOwners: _*)
     )
 }
