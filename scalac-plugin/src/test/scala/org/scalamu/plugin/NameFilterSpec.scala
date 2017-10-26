@@ -38,7 +38,7 @@ class NameFilterSpec extends MutationTestRunner with IsolatedScalamuCompilerFixt
     }
 
   it should "not ignore any symbols if AcceptAllFilter is used" in withPluginConfig { cfg =>
-    withScalamuCompiler(mutators, cfg.copy(ignoreOwners = AcceptAllFilter)) { (global, reporter) =>
+    withScalamuCompiler(mutators, cfg.copy(ignoreSymbols = AcceptAllFilter)) { (global, reporter) =>
       val code =
         """
           |object Foo {

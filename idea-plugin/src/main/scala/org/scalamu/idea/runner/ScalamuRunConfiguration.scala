@@ -35,7 +35,7 @@ class ScalamuRunConfiguration(
   private def readCommaSeparatedSeq(source: String): Seq[String] =
     if (source.isEmpty) Seq.empty else source.split(",").map(_.trim)
 
-  private[idea] var targetClasses: Seq[RegexFilter]        = ScalamuDefaultSettings.targetSources
+  private[idea] var targetOwners: Seq[RegexFilter]         = ScalamuDefaultSettings.targetOwners
   private[idea] var targetTests: Seq[RegexFilter]          = ScalamuDefaultSettings.targetTests
   private[idea] var verboseLogging: Boolean                = ScalamuDefaultSettings.verboseLogging
   private[idea] var openInBrowser: Boolean                 = ScalamuDefaultSettings.openInBrowser
@@ -46,7 +46,7 @@ class ScalamuRunConfiguration(
   private[idea] var parallelism: Int                       = ScalamuDefaultSettings.parallelism
   private[idea] var browser: Option[WebBrowser]            = ScalamuDefaultSettings.browser
   private[idea] var activeMutators: Seq[String]            = ScalamuDefaultSettings.activeMutators
-  private[idea] var ignoredSymbols: Seq[RegexFilter]       = ScalamuDefaultSettings.ignoredSymbols
+  private[idea] var ignoreSymbols: Seq[RegexFilter]        = ScalamuDefaultSettings.ignoreSymbols
   private[idea] var envVariables: util.Map[String, String] = new util.HashMap[String, String]
   private[idea] var pathToJar: String                      = ""
   private[idea] var reportDir: String                      = ""
@@ -54,32 +54,33 @@ class ScalamuRunConfiguration(
 
   def scalaSeqAsString[T](seq: Seq[T]): String = seq.mkString(" , ")
 
-  def getTargetClassesAsJava: util.List[RegexFilter]  = targetClasses.asJava
+  def getTargetClassesAsJava: util.List[RegexFilter]  = targetOwners.asJava
   def getTargetTestsAsJava: util.List[RegexFilter]    = targetTests.asJava
-  def getIgnoredSymbolsAsJava: util.List[RegexFilter] = ignoredSymbols.asJava
+  def getIgnoredSymbolsAsJava: util.List[RegexFilter] = ignoreSymbols.asJava
 
   def apply(form: ScalamuConfigurationForm): Unit = {
     setModule(form.getModule)
 
-    parallelism   = form.getParallelism
+    try { parallelism = form.getParallelismText.toInt } catch { case _: NumberFormatException => }
     vmParameters  = form.getVMParameters
     pathToJar     = form.getJarPath
     reportDir     = form.getReportDir
     openInBrowser = form.getOpenInBrowser
     browser       = Option(WebBrowserManager.getInstance().findBrowserById(form.getBrowserFamily.getName))
-    targetClasses = readCommaSeparatedSeq(form.getTargetClasses).map(RegexFilter.apply)
+    targetOwners  = readCommaSeparatedSeq(form.getTargetClasses).map(RegexFilter.apply)
     targetTests   = readCommaSeparatedSeq(form.getTargetTests).map(RegexFilter.apply)
   }
 
   def apply(form: ScalamuMutatorsForm): Unit = activeMutators = form.getActiveMutators
 
   def apply(form: ScalamuAdvancedConfigurationForm): Unit = {
-    timeoutFactor    = form.getTimeoutFactor
-    timeoutConst     = form.getTimeoutConst
+    try { timeoutFactor = form.getTimeoutFactorText.toDouble } catch { case _: NumberFormatException => }
+    try { timeoutConst  = form.getTimeoutConstText.toLong } catch { case _: NumberFormatException    => }
+
     scalacParameters = form.getScalacParameters
     verboseLogging   = form.getVerboseLogging
     aggregate        = form.getAggregate
-    ignoredSymbols   = readCommaSeparatedSeq(form.getIgnoredSymbols).map(RegexFilter.apply)
+    ignoreSymbols    = readCommaSeparatedSeq(form.getIgnoredSymbols).map(RegexFilter.apply)
 
     envVariables.clear()
     envVariables.putAll(form.getEnvVariables)
@@ -117,15 +118,34 @@ class ScalamuRunConfiguration(
 
   override def checkConfiguration(): Unit = {
     if (pathToJar.isEmpty || !Files.exists(Paths.get(pathToJar)))
-      throw new RuntimeConfigurationError(ScalamuBundle.getMessage("run.configuration.validation.error.jar.not.specified"))
+      throw new RuntimeConfigurationError(
+        ScalamuBundle.getMessage("run.configuration.validation.error.jar.not.specified")
+      )
 
     if (activeMutators.isEmpty)
-      throw new RuntimeConfigurationWarning(ScalamuBundle.getMessage("run.configuration.validation.error.mutators.not.specified"))
+      throw new RuntimeConfigurationWarning(
+        ScalamuBundle.getMessage("run.configuration.validation.error.mutators.not.specified")
+      )
 
     if (reportDir.isEmpty)
-      throw new RuntimeConfigurationWarning(ScalamuBundle.getMessage("run.configuration.validation.error.directory.not.specified"))
-    
-    
+      throw new RuntimeConfigurationWarning(
+        ScalamuBundle.getMessage("run.configuration.validation.error.directory.not.specified")
+      )
+
+    if (parallelism <= 0)
+      throw new RuntimeConfigurationError(
+        s"Invalid value $parallelism for parameter parallelism. Default: ${ScalamuDefaultSettings.parallelism}."
+      )
+
+    if (timeoutFactor <= 1)
+      throw new RuntimeConfigurationError(
+        s"Invalid value $timeoutFactor for parameter timeoutFactor. Default: ${ScalamuDefaultSettings.timeoutFactor}."
+      )
+
+    if (timeoutConst <= 0)
+      throw new RuntimeConfigurationError(
+        s"Invalid value $timeoutConst for parameter timeoutConst. Default: ${ScalamuDefaultSettings.timeoutConst}."
+      )
   }
 
   override def getRefactoringElementListener(element: PsiElement): RefactoringElementListener = element match {
@@ -163,7 +183,7 @@ class ScalamuRunConfiguration(
       "timeoutConst"   -> timeoutConst,
       "timeoutFactor"  -> timeoutFactor,
       "openInBrowser"  -> openInBrowser,
-      "targetSources"  -> regexSeqToString(targetClasses),
+      "targetOwners"   -> regexSeqToString(targetOwners),
       "targetTests"    -> regexSeqToString(targetTests),
       "vmOptions"      -> vmParameters,
       "scalacOptions"  -> scalacParameters,
@@ -171,7 +191,7 @@ class ScalamuRunConfiguration(
       "reportDir"      -> reportDir,
       "pathToJar"      -> pathToJar,
       "activeMutators" -> activeMutators.mkString(","),
-      "ignoredSymbols" -> regexSeqToString(ignoredSymbols)
+      "ignoreSymbols"  -> regexSeqToString(ignoreSymbols)
     ).mapValues(_.toString)
 
     JavaRunConfigurationExtensionManager.getInstance.writeExternal(this, element)
@@ -196,11 +216,10 @@ class ScalamuRunConfiguration(
     parallelism      = JDOMExternalizer.readInteger(element, "parallelism", ScalamuDefaultSettings.parallelism)
     browser          = Option(WebBrowserManager.getInstance().findBrowserById(JDOMExternalizer.readString(element, "browser")))
     activeMutators   = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "activeMutators"))
-    targetClasses    = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "targetSources")).map(RegexFilter.apply)
+    targetOwners     = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "targetOwners")).map(RegexFilter.apply)
     targetTests      = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "targetTests")).map(RegexFilter.apply)
     reportDir        = JDOMExternalizer.readString(element, "reportDir")
     pathToJar        = JDOMExternalizer.readString(element, "pathToJar")
-    ignoredSymbols =
-      readCommaSeparatedSeq(JDOMExternalizer.readString(element, "ignoredSymbols")).map(RegexFilter.apply)
+    ignoreSymbols    = readCommaSeparatedSeq(JDOMExternalizer.readString(element, "ignoreSymbols")).map(RegexFilter.apply)
   }
 }

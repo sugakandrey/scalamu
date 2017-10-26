@@ -96,14 +96,12 @@ public class ScalamuAdvancedConfigurationForm {
     });
   }
 
-  public long getTimeoutConst() {
-    String text = timeoutConst.getText();
-    return StringUtil.isEmpty(text) ? ScalamuDefaultSettings.timeoutConst() : Long.parseLong(text);
+  public String getTimeoutConstText() {
+    return timeoutConst.getText();
   }
 
-  public double getTimeoutFactor() {
-    String text = timeoutConst.getText();
-    return StringUtil.isEmpty(text) ? ScalamuDefaultSettings.timeoutFactor() : Double.parseDouble(text);
+  public String getTimeoutFactorText() {
+    return timeoutConst.getText();
   }
 
   public boolean getVerboseLogging() {

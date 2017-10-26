@@ -79,10 +79,10 @@ class ScalamuCommandLineState(
     val testClassPath = optionString(extractor.runClassPath.map(_.getPath), ",", "tcp")
     val vmParameters  = optionString(configuration.vmParameters, " ", "vmParameters")
     val scalacOptions = optionString(configuration.scalacParameters, " ", "scalacParameters")
-    val targetOwners  = optionString(configuration.targetClasses, ",", "targetOwners")
+    val targetOwners  = optionString(configuration.targetOwners, ",", "targetOwners")
     val targetTests   = optionString(configuration.targetTests, ",", "targetTests")
     val mutators      = optionString(configuration.activeMutators, ",", "activeMutators")
-    val ignoreOwners  = optionString(configuration.ignoredSymbols, ",", "ignoreOwners")
+    val ignoreOwners  = optionString(configuration.ignoreSymbols, ",", "ignoreSymbols")
     val verbose       = if (configuration.verboseLogging) "--verbose" else ""
     val timeoutFactor = s"--timeoutFactor ${configuration.timeoutFactor}"
     val timeoutConst  = s"--timeoutConst ${configuration.timeoutConst}"

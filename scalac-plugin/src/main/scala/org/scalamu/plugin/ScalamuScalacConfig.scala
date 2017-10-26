@@ -9,7 +9,7 @@ import org.scalamu.common.filtering.{AcceptAllFilter, NameFilter}
  *                      used to save information about inserted mutants
  * @param guard         the [[org.scalamu.plugin.MutationGuard]], which is used
  *                      to "guard" inserted mutants (i.e. to allow to enable/disable them programmatically).
- * @param ignoreOwners the [[NameFilter]], used to
+ * @param ignoreSymbols the [[NameFilter]], used to
  *                      exclude some symbols from being mutated
  * @param verifyTrees   Should trees be checked for nested mutants
  * @param sanitizeTrees Should nested mutants be explicitly removed
@@ -17,7 +17,7 @@ import org.scalamu.common.filtering.{AcceptAllFilter, NameFilter}
 final case class ScalamuScalacConfig(
   reporter: MutationReporter,
   guard: MutationGuard,
-  ignoreOwners: NameFilter = AcceptAllFilter,
+  ignoreSymbols: NameFilter = AcceptAllFilter,
   mutators: Seq[Mutator] = ScalamuPluginConfig.allMutators,
   targetOwners: NameFilter = AcceptAllFilter,
   verifyTrees: Boolean = false,

@@ -11,11 +11,12 @@ trait ScalamuImport {
     lazy val timeoutConst        = settingKey[Long]("additional flat amount of allowed test run time")
     lazy val parallelism         = settingKey[Int]("number of simultaneously running analyser JVMs")
     lazy val verbose             = settingKey[Boolean]("enables verbose logging")
-    lazy val targetClasses       = settingKey[Seq[Regex]]("only include certain classes in the mutation process")
+    lazy val targetOwners        = settingKey[Seq[Regex]]("only mutate trees with certain owner names")
     lazy val targetTests         = settingKey[Seq[Regex]]("only run certain tests")
     lazy val ignoreSymbols       = settingKey[Seq[Regex]]("ignore symbols with certain names")
     lazy val activeMutators      = settingKey[Seq[String]]("set of active mutation operators")
     lazy val recompileOnly       = settingKey[Boolean]("do not run any analysis (for internal testing)")
     lazy val analyserJavaOptions = taskKey[Seq[String]]("options passed to mutation analysis process when forking")
+    lazy val aggregateDependencies = settingKey[Boolean]("if true, aggregate dependency modules in mutationTest")
   }
 }

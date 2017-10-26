@@ -30,10 +30,11 @@ object ScalamuPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] =
     inConfig(Compile)(Defaults.configSettings) ++
       Seq(
+        SK.aggregateDependencies       := true,
         SK.timeoutFactor               := 1.5,
         SK.parallelism                 := 1,
         SK.timeoutConst                := 2000,
-        SK.targetClasses               := Seq.empty,
+        SK.targetOwners                := Seq.empty,
         SK.targetTests                 := Seq.empty,
         SK.ignoreSymbols               := Seq.empty,
         SK.activeMutators              := allMutators,
@@ -60,7 +61,7 @@ object ScalamuPlugin extends AutoPlugin {
           val mutators       = SK.activeMutators.value
           val ignored        = SK.ignoreSymbols.value
           val targetTests    = SK.targetTests.value
-          val targetClasses  = SK.targetClasses.value
+          val targetClasses  = SK.targetOwners.value
 
           val reportDir    = (K.target in Scalamu).value / "mutation-analysis-report"
           val testOptions  = K.testOptions.value
@@ -116,7 +117,8 @@ object ScalamuPlugin extends AutoPlugin {
     taskKey: TaskKey[T],
     configurations: Configuration*
   ): Def.Initialize[Task[Seq[T]]] = Def.taskDyn {
-    val projectFilter       = inAggregates(K.thisProjectRef.value)
+    val projectRef          = K.thisProjectRef.value
+    val projectFilter       = if (SK.aggregateDependencies.value) inDependencies(projectRef) else inProjects(projectRef)
     val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
     val filter              = ScopeFilter(projectFilter, configurationFilter)
     taskKey.all(filter)
@@ -127,7 +129,7 @@ object ScalamuPlugin extends AutoPlugin {
     configurations: Configuration*
   ): Def.Initialize[Seq[T]] = Def.settingDyn {
     val projectRef          = K.thisProjectRef.value
-    val projectFilter       = inAggregates(projectRef) && inDependencies(projectRef)
+    val projectFilter       = if (SK.aggregateDependencies.value) inDependencies(projectRef) else inProjects(projectRef)
     val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
     val filter              = ScopeFilter(projectFilter, configurationFilter)
     settingKey.all(filter)
@@ -221,7 +223,7 @@ object MutationTest extends SbtBackCompat {
     scalacParameters: Seq[String],
     targetOwners: Seq[Regex],
     targetTests: Seq[Regex],
-    ignoreOwners: Seq[Regex],
+    ignoreSymbols: Seq[Regex],
     activeMutators: Seq[String],
     testOptions: Seq[TestOption],
     parallelism: Int,
@@ -256,7 +258,7 @@ object MutationTest extends SbtBackCompat {
       optionString(targetOwners.map(_.toString), ",", "targetOwners"),
       optionString(targetTests.map(_.toString), ",", "targetTests"),
       optionString(scalacParameters, " ", "scalacParameters"),
-      optionString(ignoreOwners, ",", "ignoreOwners")
+      optionString(ignoreSymbols, ",", "ignoreSymbols")
     ).flatten
 
     val options = Seq(

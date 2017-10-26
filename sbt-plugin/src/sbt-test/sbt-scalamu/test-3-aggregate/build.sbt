@@ -8,7 +8,6 @@ lazy val foo = Project(id = "foo", base = file("foo"))
   .settings(
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test
   )
-  .aggregate(baz)  
   .dependsOn(baz)
 
 lazy val bar = Project(id = "bar", base = file("bar")).settings(
@@ -18,7 +17,7 @@ lazy val bar = Project(id = "bar", base = file("bar")).settings(
   )
 )
 
-lazy val root = Project(id = "root", base = file(".")).aggregate(foo, bar).dependsOn(foo, bar)
+lazy val root = Project(id = "root", base = file(".")).dependsOn(foo, bar)
 
 lazy val check = TaskKey[Unit]("check")
 

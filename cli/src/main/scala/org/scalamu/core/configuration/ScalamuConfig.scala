@@ -20,7 +20,7 @@ import scala.util.matching.Regex
  * @param activeMutators set of active mutation operators
  * @param targetOwners filters, used to only include certain source files into mutation process
  * @param targetTests filters, used to only run certain test classes
- * @param ignoreOwners ignore symbols with their fullname matching provided regexes
+ * @param ignoreSymbols ignore symbols with their fullname matching provided regexes
  * @param testingOptions options to pass to framework's test runner
  * @param scalacParameters options to be passed to scalac
  * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
@@ -37,9 +37,9 @@ final case class ScalamuConfig(
   testClassPath: Set[Path]            = Set.empty,
   vmParameters: String                = "",
   activeMutators: Seq[Mutator]        = ScalamuPluginConfig.allMutators,
-  targetOwners: Seq[Regex]           = Seq.empty,
+  targetOwners: Seq[Regex]            = Seq.empty,
   targetTests: Seq[Regex]             = Seq.empty,
-  ignoreOwners: Seq[Regex]           = Seq.empty,
+  ignoreSymbols: Seq[Regex]           = Seq.empty,
   testingOptions: Map[String, String] = Map.empty,
   scalacParameters: String            = "",
   timeoutFactor: Double               = 1.5,
@@ -109,10 +109,10 @@ object ScalamuConfig {
       .text("only run certain test classes")
       .action((filters, config) => config.copy(targetTests = filters))
 
-    opt[Seq[Regex]]("ignoreOwners")
+    opt[Seq[Regex]]("ignoreSymbols")
       .valueName("<regex1>,<regex2>..")
       .text("ignore trees with certain owner names")
-      .action((ignoreSymbols, config) => config.copy(ignoreOwners = ignoreSymbols))
+      .action((ignoreSymbols, config) => config.copy(ignoreSymbols = ignoreSymbols))
 
     opt[Map[String, String]]("testOptions")
       .valueName("framework1=optionString1, framework2=optionString2...")

@@ -14,14 +14,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.scalamu.idea.ScalamuBundle$;
-import org.scalamu.idea.runner.ScalamuDefaultSettings;
 import org.scalamu.idea.runner.ScalamuJarFetcher;
 import org.scalamu.idea.runner.ScalamuRunConfiguration;
 import scala.Option;
@@ -63,9 +61,8 @@ public class ScalamuConfigurationForm {
     return moduleSelector.getModule();
   }
 
-  public int getParallelism() {
-    String text = parallelism.getText();
-    return StringUtil.isEmpty(text) ? ScalamuDefaultSettings.parallelism() : Integer.parseInt(text);
+  public String getParallelismText() {
+    return parallelism.getText();
   }
 
   public boolean getOpenInBrowser() {

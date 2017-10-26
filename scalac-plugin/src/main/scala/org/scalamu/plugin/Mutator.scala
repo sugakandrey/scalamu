@@ -51,7 +51,7 @@ abstract class MutatingTransformer(
 
     override final def transform(tree: Tree): Tree = tree match {
       case t if t.attachments.all.toString.contains("MacroExpansionAttachment")        => tree
-      case t if Option(t.symbol).exists(s => !config.ignoreOwners.accepts(s.fullName)) => tree
+      case t if Option(t.symbol).exists(s => !config.ignoreSymbols.accepts(s.fullName)) => tree
       case DefDef(mods, _, _, _, _, _) if mods.isSynthetic || mods.isMacro             => tree
       case macroImpl: DefDef if Option(macroImpl.tpt.symbol).exists(fullName andThen excludedSymbols.contains) =>
         tree
@@ -69,7 +69,7 @@ abstract class MutatingTransformer(
     }
 
     protected final def generateMutantReport(tree: Tree, mutated: Tree): MutantId = {
-      val oldTree = showCode(TreePrettifier(tree))
+      val oldTree     = showCode(TreePrettifier(tree))
       val mutatedTree = showCode(TreePrettifier(mutated))
 
       val info = MutantInfo(
@@ -87,9 +87,8 @@ abstract class MutatingTransformer(
       info.id
     }
 
-    private val continue: PartialFunction[Tree, Tree] = PartialFunction(super.transform)
-
-    protected final val retype: PartialFunction[Tree, Tree] = PartialFunction(typer.typed)
+    private final val continue: PartialFunction[Tree, Tree] = PartialFunction(super.transform)
+    private final val retype: PartialFunction[Tree, Tree]   = PartialFunction(typer.typed)
 
     protected def mutate: PartialFunction[Tree, Tree]
 

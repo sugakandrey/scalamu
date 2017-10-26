@@ -17,7 +17,7 @@ object ScalamuDefaultSettings {
   val vmParameters: String            = ""
   val browser: Option[WebBrowser]     = Option(WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.CHROME))
   val targetTests: Seq[RegexFilter]   = Seq.empty
-  val targetSources: Seq[RegexFilter] = Seq.empty
+  val targetOwners: Seq[RegexFilter] = Seq.empty
 
   val activeMutators: Seq[String] = Seq(
     "ReplaceCaseWithWildcard",
@@ -35,11 +35,11 @@ object ScalamuDefaultSettings {
     "ReplaceWithNil"
   )
 
-  val ignoredSymbols: Seq[RegexFilter] = Seq(
+  val ignoreSymbols: Seq[RegexFilter] = Seq(
     "scala.Predef.println",
     "com.typesafe.scalalogging.Logger.*",
     "org.slf4j.Logger.*"
   ).map(RegexFilter.apply)
 
-  def getIgnoredSymbolsAsJava: util.List[RegexFilter] = ignoredSymbols.asJava
+  def getIgnoredSymbolsAsJava: util.List[RegexFilter] = ignoreSymbols.asJava
 }
