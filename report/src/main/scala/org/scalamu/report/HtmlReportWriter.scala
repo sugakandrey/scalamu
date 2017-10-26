@@ -17,18 +17,23 @@ object HtmlReportWriter {
     }
 
     summary.packages.foreach { p =>
-      val nameSegments    = p.name.split("\\.")
-      val reportPath      = Paths.get(dir.toString, nameSegments: _*)
-      val packageOverview = html.packageOverview(p, css)
-      Files.createDirectories(reportPath)
-      tryWith(Files.newBufferedWriter(reportPath / "overview.html")) { writer =>
-        writer.write(packageOverview.body)
-      }
+      if (p.mutants.nonEmpty) {
+        val nameSegments    = p.name.split("\\.")
+        val reportPath      = Paths.get(dir.toString, nameSegments: _*)
+        val packageOverview = html.packageOverview(p, css)
+        Files.createDirectories(reportPath)
 
-      p.sourceFiles.foreach { sf =>
-        val sourceFileOverview = html.sourceFileOverview(sf, css)
-        tryWith(Files.newBufferedWriter(reportPath / s"${sf.name}.html")) { writer =>
-          writer.write(sourceFileOverview.body)
+        tryWith(Files.newBufferedWriter(reportPath / "overview.html")) { writer =>
+          writer.write(packageOverview.body)
+        }
+
+        p.sourceFiles.foreach { sf =>
+          if (sf.mutants.nonEmpty) {
+            val sourceFileOverview = html.sourceFileOverview(sf, css)
+            tryWith(Files.newBufferedWriter(reportPath / s"${sf.name}.html")) { writer =>
+              writer.write(sourceFileOverview.body)
+            }
+          }
         }
       }
     }
