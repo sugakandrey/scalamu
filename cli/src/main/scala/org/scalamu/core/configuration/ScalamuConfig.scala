@@ -18,9 +18,9 @@ import scala.util.matching.Regex
  * @param testClassPath list of classpath elements for application "test" config
  * @param vmParameters arguments, passed to spawned JVMs
  * @param activeMutators set of active mutation operators
- * @param targetClasses filters, used to only include certain source files into mutation process
+ * @param targetOwners filters, used to only include certain source files into mutation process
  * @param targetTests filters, used to only run certain test classes
- * @param ignoreSymbols ignore symbols with their fullname matching provided regexes
+ * @param ignoreOwners ignore symbols with their fullname matching provided regexes
  * @param testingOptions options to pass to framework's test runner
  * @param scalacParameters options to be passed to scalac
  * @param timeoutFactor a factor to apply to normal test duration before considering an inf. loop
@@ -30,23 +30,23 @@ import scala.util.matching.Regex
  * @param recompileOnly Only run project recompilation (for internal testing)
  */
 final case class ScalamuConfig(
-  reportDir: Path = Paths.get("."),
-  sourceDirs: Set[Path] = Set.empty,
-  testClassDirs: Set[Path] = Set.empty,
-  classPath: Set[Path] = Set.empty,
-  testClassPath: Set[Path] = Set.empty,
-  vmParameters: String = "",
-  activeMutators: Seq[Mutator] = ScalamuPluginConfig.allMutators,
-  targetClasses: Seq[Regex] = Seq.empty,
-  targetTests: Seq[Regex] = Seq.empty,
-  ignoreSymbols: Seq[Regex] = Seq.empty,
+  reportDir: Path                     = Paths.get("."),
+  sourceDirs: Set[Path]               = Set.empty,
+  testClassDirs: Set[Path]            = Set.empty,
+  classPath: Set[Path]                = Set.empty,
+  testClassPath: Set[Path]            = Set.empty,
+  vmParameters: String                = "",
+  activeMutators: Seq[Mutator]        = ScalamuPluginConfig.allMutators,
+  targetOwners: Seq[Regex]           = Seq.empty,
+  targetTests: Seq[Regex]             = Seq.empty,
+  ignoreOwners: Seq[Regex]           = Seq.empty,
   testingOptions: Map[String, String] = Map.empty,
-  scalacParameters: String = "",
-  timeoutFactor: Double = 1.5,
-  timeoutConst: Long = 2000,
-  parallelism: Int = 1,
-  verbose: Boolean = false,
-  recompileOnly: Boolean = false
+  scalacParameters: String            = "",
+  timeoutFactor: Double               = 1.5,
+  timeoutConst: Long                  = 2000,
+  parallelism: Int                    = 1,
+  verbose: Boolean                    = false,
+  recompileOnly: Boolean              = false
 ) {
   def derive[T: Derivable]: T = Derivable[T].fromConfig(this)
 }
@@ -99,20 +99,20 @@ object ScalamuConfig {
         (mutations, config) => config.copy(activeMutators = mutations.map(ScalamuPluginConfig.mutatorsByName))
       )
 
-    opt[Seq[Regex]]("targetClasses")
+    opt[Seq[Regex]]("targetOwners")
       .valueName("<regex1>,<regex2>..")
-      .text("only mutate certain classes")
-      .action((filters, config) => config.copy(targetClasses = filters))
+      .text("only mutate trees with certain owners")
+      .action((filters, config) => config.copy(targetOwners = filters))
 
     opt[Seq[Regex]]("targetTests")
       .valueName("<regex1>,<regex2>..")
       .text("only run certain test classes")
       .action((filters, config) => config.copy(targetTests = filters))
 
-    opt[Seq[Regex]]("ignoreSymbols")
+    opt[Seq[Regex]]("ignoreOwners")
       .valueName("<regex1>,<regex2>..")
-      .text("ignore symbols with certain names")
-      .action((ignoreSymbols, config) => config.copy(ignoreSymbols = ignoreSymbols))
+      .text("ignore trees with certain owner names")
+      .action((ignoreSymbols, config) => config.copy(ignoreOwners = ignoreSymbols))
 
     opt[Map[String, String]]("testOptions")
       .valueName("framework1=optionString1, framework2=optionString2...")
