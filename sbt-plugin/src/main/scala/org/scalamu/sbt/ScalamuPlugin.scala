@@ -30,7 +30,6 @@ object ScalamuPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] =
     inConfig(Compile)(Defaults.configSettings) ++
       Seq(
-        SK.aggregateDependencies       := true,
         SK.timeoutFactor               := 1.5,
         SK.parallelism                 := 1,
         SK.timeoutConst                := 2000,
@@ -42,6 +41,8 @@ object ScalamuPlugin extends AutoPlugin {
         SK.verbose                     := false,
         SK.recompileOnly               := false,
         K.aggregate in SK.mutationTest := false,
+        K.aggregate in Scalamu         := true,
+        K.target in Scalamu            := (K.target in Compile).value / "mutation-analysis-report",
         SK.mutationTest := {
           val jar             = Classpaths.managedJars(Scalamu, Set("jar"), K.update.value)
           val scalamuVmParams = (K.javaOptions in Scalamu).value
@@ -63,7 +64,7 @@ object ScalamuPlugin extends AutoPlugin {
           val targetTests    = SK.targetTests.value
           val targetClasses  = SK.targetOwners.value
 
-          val reportDir    = (K.target in Scalamu).value / "mutation-analysis-report"
+          val reportDir    = (K.target in Scalamu).value
           val testOptions  = K.testOptions.value
           val scalacParams = K.scalacOptions.value
 
@@ -118,7 +119,8 @@ object ScalamuPlugin extends AutoPlugin {
     configurations: Configuration*
   ): Def.Initialize[Task[Seq[T]]] = Def.taskDyn {
     val projectRef          = K.thisProjectRef.value
-    val projectFilter       = if (SK.aggregateDependencies.value) inDependencies(projectRef) else inProjects(projectRef)
+    val aggregate           = (K.aggregate in Scalamu).value
+    val projectFilter       = if (aggregate) inDependencies(projectRef) else inProjects(projectRef)
     val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
     val filter              = ScopeFilter(projectFilter, configurationFilter)
     taskKey.all(filter)
@@ -129,7 +131,8 @@ object ScalamuPlugin extends AutoPlugin {
     configurations: Configuration*
   ): Def.Initialize[Seq[T]] = Def.settingDyn {
     val projectRef          = K.thisProjectRef.value
-    val projectFilter       = if (SK.aggregateDependencies.value) inDependencies(projectRef) else inProjects(projectRef)
+    val aggregate           = (K.aggregate in Scalamu).value
+    val projectFilter       = if (aggregate) inDependencies(projectRef) else inProjects(projectRef)
     val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
     val filter              = ScopeFilter(projectFilter, configurationFilter)
     settingKey.all(filter)
