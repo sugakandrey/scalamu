@@ -1,4 +1,5 @@
 import com.typesafe.sbt.pgp.PgpKeys
+import bintray.BintrayKeys._
 import com.typesafe.sbt.GitVersioning
 import org.jetbrains.sbtidea.Keys._
 import org.jetbrains.sbtidea.SbtIdeaPlugin
@@ -209,9 +210,13 @@ object ScalamuBuild {
     )
     .enablePlugins(GitVersioning)
     .settings(
-      publishMavenStyle := false,
-      git.baseVersion := "0.1.0",
-      git.uncommittedSignifier := None,
+      licenses                 := Seq(GPL3),
+      publishArtifact in Test  := false,
+      publishMavenStyle        := false,
+      bintrayRepository        := "sbt-plugins",
+      bintrayOrganization      := None,
+      git.baseVersion          := "0.2.0",
+      git.uncommittedSignifier := None
     )
 
   lazy val scalamuIdea = Project(id = "idea-plugin", base = file("idea-plugin"))
