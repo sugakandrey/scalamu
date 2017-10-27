@@ -15,7 +15,7 @@ trait ScalamuConfigFixture extends TestSuite {
   def classPath: Set[Path]                = Set.empty
   def testClassPath: Set[Path]            = Set.empty
   def vmParameters: String                = ""
-  def mutations: Seq[Mutator]             = ScalamuPluginConfig.allMutators
+  def mutators: Seq[Mutator]              = ScalamuPluginConfig.allMutators
   def targetSources: Seq[Regex]           = Seq.empty
   def targetTests: Seq[Regex]             = Seq.empty
   def ignoreSymbols: Seq[Regex]           = Seq.empty
@@ -36,7 +36,7 @@ trait ScalamuConfigFixture extends TestSuite {
         classPath,
         testClassPath,
         vmParameters,
-        mutations,
+        mutators,
         targetSources,
         targetTests,
         ignoreSymbols,

@@ -3,9 +3,9 @@ scalaVersion := "2.12.3"
 target in Scalamu := file("./scalamu")
 
 libraryDependencies ++= Seq(
-  "org.specs2"    %% "specs2-core" % "3.8.9" % Test,
-  "org.scalatest" %% "scalatest"   % "3.0.1" % Test,
-  "com.lihaoyi"   %% "utest"       % "0.4.5" % Test,
+  "org.specs2"    %% "specs2-core" % "4.0.0" % Test,
+  "org.scalatest" %% "scalatest"   % "3.0.4" % Test,
+  "com.lihaoyi"   %% "utest"       % "0.6.0" % Test,
   "junit"         % "junit"        % "4.12"  % Test
 )
 
