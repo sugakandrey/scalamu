@@ -1,6 +1,6 @@
 scalaVersion := "2.12.3"
 
-target in Scalamu := file(".")
+target in Scalamu := file("./scalamu")
 
 libraryDependencies ++= Seq(
   "org.specs2"    %% "specs2-core" % "3.8.9" % Test,
@@ -15,7 +15,7 @@ check := {
   val defaultReportDir = file("target/mutation-analysis-report")
   if (defaultReportDir.exists()) sys.error("Default report directory must not exist.")
   
-  val reportDir = file("./mutation-analysis-report")
+  val reportDir = file("./scalamu")
   if (!reportDir.exists()) sys.error("Report directory doesn't exist.")
 
   val barAnnSource = reportDir / "example" / "Bar.scala.html"

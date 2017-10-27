@@ -1,6 +1,7 @@
 import com.typesafe.sbt.pgp.PgpKeys
+import bintray.BintrayPlugin
 import bintray.BintrayKeys._
-import com.typesafe.sbt.GitVersioning
+import com.typesafe.sbt.{GitPlugin, GitVersioning, SbtPgp}
 import org.jetbrains.sbtidea.Keys._
 import org.jetbrains.sbtidea.SbtIdeaPlugin
 import play.twirl.sbt.Import.TwirlKeys
@@ -9,6 +10,8 @@ import sbt.Keys._
 import sbt._
 import sbtassembly.AssemblyKeys._
 import sbtassembly.ShadeRule
+import scoverage.ScoverageSbtPlugin
+import xerial.sbt.Sonatype
 
 object ScalamuBuild {
   val GPL3 = "GPL 3.0" -> url("http://www.gnu.org/licenses/gpl-3.0.en.html")
@@ -25,11 +28,12 @@ object ScalamuBuild {
   ).map(_ % "0.8.0")
 
   lazy val commonSettings = Seq(
+    version            := "0.1.0-SNAPSHOT",
     isSnapshot         := true,
     test in assembly   := {},
     organization       := "io.github.sugakandrey",
-    scalaVersion       := "2.12.3",
-    crossScalaVersions := Seq("2.11.11", "2.12.3"),
+    scalaVersion       := "2.12.4",
+    crossScalaVersions := Seq("2.11.11", "2.12.4"),
     scalacOptions := Seq(
       "-encoding",
       "UTF-8",
@@ -56,6 +60,11 @@ object ScalamuBuild {
       """,
     scalacOptions in (Compile, console) -= "-Ywarn-unused-import"
   ) ++ publishSettings
+
+  private def createProject(id: String, base: File): Project =
+    Project(id, base)
+      .disablePlugins(ScriptedPlugin, BintrayPlugin, GitPlugin, ScoverageSbtPlugin)
+      .settings(commonSettings)
 
   lazy val commonDeps = Seq(
     libraryDependencies ++= Seq(
@@ -97,24 +106,22 @@ object ScalamuBuild {
     }
   )
 
-  lazy val common = Project(id = "common", base = file("common"))
-    .settings(commonSettings ++ commonDeps)
+  lazy val common = createProject(id = "common", base = file("common"))
+    .settings(commonDeps)
     .settings(name := "scalamu-common")
-    .disablePlugins(ScriptedPlugin)
 
-  lazy val scalacPlugin = Project(id = "scalac-plugin", base = file("scalac-plugin"))
-    .settings(commonSettings ++ commonDeps)
+  lazy val scalacPlugin = createProject(id = "scalac-plugin", base = file("scalac-plugin"))
+    .settings(commonDeps)
     .settings(
       name                := "scalamu-scalac",
       libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
     )
     .dependsOn(common)
-    .disablePlugins(ScriptedPlugin)
 
   private lazy val testingFrameworks = Seq(scalatest, specs2, utest, junit)
 
-  lazy val commandLine = Project(id = "cli", base = file("cli"))
-    .settings(commonSettings ++ commonDeps)
+  lazy val commandLine = createProject(id = "cli", base = file("cli"))
+    .settings(commonDeps)
     .settings(
       name := "scalamu-cli",
       libraryDependencies ++= Seq(
@@ -129,19 +136,17 @@ object ScalamuBuild {
     )
     .dependsOn(scalacPlugin % "compile->compile;test->test")
     .dependsOn(common, compilation)
-    .disablePlugins(ScriptedPlugin)
 
-  lazy val report = Project(id = "report", base = file("report"))
-    .settings(commonSettings ++ commonDeps)
+  lazy val report = createProject(id = "report", base = file("report"))
+    .settings(commonDeps)
     .enablePlugins(SbtTwirl)
     .settings(
       name                      := "scalamu-report",
       TwirlKeys.templateImports := Seq()
     )
     .dependsOn(commandLine, common, scalacPlugin)
-    .disablePlugins(ScriptedPlugin)
 
-  lazy val root = Project(id = "scalamu", base = file("."))
+  lazy val root = createProject(id = "scalamu", base = file("."))
     .dependsOn(
       entryPoint
     )
@@ -165,11 +170,9 @@ object ScalamuBuild {
           "org.slf4j.**"
         ).map(shade)
     )
-    .settings(commonSettings)
-    .disablePlugins(ScriptedPlugin)
 
-  lazy val entryPoint = Project(id = "entry-point", base = file("entry-point"))
-    .settings(commonSettings ++ commonDeps)
+  lazy val entryPoint = createProject(id = "entry-point", base = file("entry-point"))
+    .settings(commonDeps)
     .settings(name := "scalamu-entry-point")
     .dependsOn(
       commandLine,
@@ -178,13 +181,11 @@ object ScalamuBuild {
       report,
       compilation
     )
-    .disablePlugins(ScriptedPlugin)
 
   private def shade(pattern: String): ShadeRule =
     ShadeRule.rename(pattern -> "shaded.@0").inAll
 
-  lazy val compilation = Project(id = "compilation", base = file("compilation"))
-    .settings(commonSettings)
+  lazy val compilation = createProject(id = "compilation", base = file("compilation"))
     .settings(name := "scalamu-compilation")
     .settings(
       libraryDependencies ++= Seq(
@@ -192,7 +193,6 @@ object ScalamuBuild {
         "org.scoverage" %% "scalac-scoverage-runtime" % "1.3.0"
       )
     )
-    .disablePlugins(ScriptedPlugin)
 
   import ScriptedPlugin.autoImport._
   import com.typesafe.sbt.GitPlugin.autoImport._
@@ -208,6 +208,7 @@ object ScalamuBuild {
       name             := "sbt-scalamu",
       crossSbtVersions := Seq("0.13.16", "1.0.2")
     )
+    .disablePlugins(Sonatype, SbtPgp)
     .enablePlugins(GitVersioning)
     .settings(
       licenses                 := Seq(GPL3),
@@ -219,8 +220,7 @@ object ScalamuBuild {
       git.uncommittedSignifier := None
     )
 
-  lazy val scalamuIdea = Project(id = "idea-plugin", base = file("idea-plugin"))
-    .settings(commonSettings)
+  lazy val scalamuIdea = createProject(id = "idea-plugin", base = file("idea-plugin"))
     .enablePlugins(SbtIdeaPlugin)
     .settings(
       scalaVersion                     := "2.11.11",
@@ -231,7 +231,7 @@ object ScalamuBuild {
       ideaExternalPlugins += IdeaPlugin
         .Zip("scala-plugin", url("https://download.plugins.jetbrains.com/1347/37646/scala-intellij-bin-2017.2.6.zip"))
     )
-    .disablePlugins(ScriptedPlugin)
+    .disablePlugins(ScriptedPlugin, BintrayPlugin)
 
   lazy val ideaRunner = Project(id = "idea-runner", base = file("idea-plugin/target"))
     .settings(
@@ -256,7 +256,7 @@ object ScalamuBuild {
         "-Didea.ProcessCanceledException=disabled"
       )
     )
-    .disablePlugins(ScriptedPlugin)
+    .disablePlugins(ScriptedPlugin, BintrayPlugin)
 }
 
 object ScalamuTestingBuild {
@@ -265,6 +265,7 @@ object ScalamuTestingBuild {
   private def testProject(name: String): Project =
     Project(id = s"testing-$name", base = file(s"testing/$name"))
       .settings(commonSettings ++ commonDeps)
+      .disablePlugins(ScriptedPlugin, BintrayPlugin, GitPlugin)
 
   lazy val testingSimple = testProject("simple")
     .settings(testFrameworks += new TestFramework("utest.runner.Framework"))

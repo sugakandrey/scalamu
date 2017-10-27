@@ -7,7 +7,7 @@ check := {
   if (ccp.exists(_.data.getName.contains("scalamu")))
     sys.error("Compile classpath contains scalamu jar.")
 
-  val tcp = (fullClasspath in MutationTest).value
+  val tcp = (fullClasspath in Scalamu).value
   if (!tcp.exists(_.data.getName.contains("scalamu-assembly")))
     sys.error("MutationTest classpath doesn't contain scalamu jar.")
 }

@@ -7,7 +7,7 @@ libraryDependencies ++= Seq(
   "junit"         % "junit"        % "4.12"  % Test
 )
 
-ScalamuKeys.targetClasses := Seq("example.Foo.*".r, "example.Bar.*".r)
+ScalamuKeys.targetOwners := Seq("example\\.Foo.*".r, "example\\.Bar.*".r)
 
 testOptions ++= Seq(
   Tests.Argument(TestFrameworks.ScalaTest, "-l", "tags.Ignored"),
