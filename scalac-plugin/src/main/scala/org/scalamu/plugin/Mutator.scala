@@ -43,16 +43,15 @@ abstract class MutatingTransformer(
 
     private[this] var currentPackage: String = _
 
-    private final def tryUpdatePackage(tree: Tree): Unit =
-      tree match {
+    private final def tryUpdatePackage(tree: Tree): Unit = tree match {
         case t: SymTree => currentPackage = t.symbol.enclosingPackage.fullName
         case _          =>
       }
 
     override final def transform(tree: Tree): Tree = tree match {
-      case t if t.attachments.all.toString.contains("MacroExpansionAttachment")        => tree
+      case t if t.attachments.all.toString.contains("MacroExpansionAttachment")         => tree
       case t if Option(t.symbol).exists(s => !config.ignoreSymbols.accepts(s.fullName)) => tree
-      case DefDef(mods, _, _, _, _, _) if mods.isSynthetic || mods.isMacro             => tree
+      case DefDef(mods, _, _, _, _, _) if mods.isSynthetic || mods.isMacro              => tree
       case macroImpl: DefDef if Option(macroImpl.tpt.symbol).exists(fullName andThen excludedSymbols.contains) =>
         tree
       case ClassDef(_, _, _, Template(parents, _, _))
@@ -63,6 +62,7 @@ abstract class MutatingTransformer(
         treeCopy.If(t, guard, mutated, transform(alternative))
       case _ =>
         tryUpdatePackage(tree)
+        
         if (config.targetOwners.accepts(currentOwner.fullName)) {
           (mutate andThen retype).applyOrElse(tree, continue)
         } else continue(tree)
@@ -80,9 +80,11 @@ abstract class MutatingTransformer(
         oldTree,
         mutatedTree
       )
+      
       if (!tree.pos.isDefined) {
         Transformer.log.info(s"Mutant $info in tree $tree has undefined position.")
       }
+      
       config.reporter.report(info)
       info.id
     }
