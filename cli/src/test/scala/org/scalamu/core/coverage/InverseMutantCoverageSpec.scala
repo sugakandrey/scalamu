@@ -72,14 +72,14 @@ class InverseMutantCoverageSpec extends ScalamuSpec with MockFactory {
       )
 
     val expected = Map(
-      foo1 -> Set(suite1, suite2, suite3),
-      foo2 -> Set(suite1, suite3),
-      bar  -> Set(suite1, suite2),
-      baz  -> Set(suite3, suite2),
-      qux  -> Set.empty
+      foo1.id -> Set(suite1, suite2, suite3),
+      foo2.id -> Set(suite1, suite3),
+      bar.id  -> Set(suite1, suite2),
+      baz.id  -> Set(suite3, suite2),
+      qux.id  -> Set.empty
     )
 
-    inverseMutantCoverage should ===(expected)
+    inverseMutantCoverage.mapValues(_.map(_.suite)) should ===(expected)
   }
 
 }
