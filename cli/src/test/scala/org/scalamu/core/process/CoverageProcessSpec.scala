@@ -24,7 +24,7 @@ class CoverageProcessSpec
   override def instrumentationReporter: TestingInstrumentationReporter =
     new TestingInstrumentationReporter
 
-  override def mutators: Seq[Mutator]  = ScalamuPluginConfig.allMutators
+  override def mutators: Seq[Mutator]   = ScalamuPluginConfig.allMutators
   override def testProject: TestProject = TestProject.Scoverage
   override def testClassDirs: Set[Path] = Set(testProject.testClasses)
 
@@ -51,7 +51,7 @@ class CoverageProcessSpec
         val coverage = CoverageProcess
           .run(
             (
-              config.derive[CoverageProcessConfig].copy(targetTests = Seq(".*Bad.*".r)),
+              config.derive[CoverageProcessConfig].copy(targetTests = Seq(".*Good.*".r)),
               compiledSourcesPath
             ),
             null,

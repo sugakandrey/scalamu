@@ -33,14 +33,16 @@ class CoverageRunnerSpec
   )
 
   override def testClassDirs: Set[Path] = Set(testProject.testClasses)
-  override def spanScaleFactor: Double  = 200.0
+  override def spanScaleFactor: Double = 200.0
 
   override def classPath: Set[Path] =
     System
       .getProperty("java.class.path")
       .split(File.pathSeparator)
       .map(Paths.get(_))
-      .toSet | testClassDirs
+      .toSet
+
+  override def testClassPath: Set[Path] = classPath | testClassDirs
 
   override def createSettings(): Settings = new Settings {
     usejavacp.value = true
@@ -56,7 +58,7 @@ class CoverageRunnerSpec
 
         val analyser = new CoverageAnalyser(
           config
-            .copy(targetTests = Seq(".*Bad.*".r)),
+            .copy(targetTests = Seq(".*Good.*".r)),
           global.outputDir.file.toPath
         )
 
@@ -64,33 +66,5 @@ class CoverageRunnerSpec
         coverage should have size 1
         forAll(coverage.values)(_.size should ===(11))
       }
-  }
-
-  it should "return info about failed test suites" in withConfig { config =>
-    withScalamuGlobal { (global, _, instrumentation) =>
-      val sources = new SourceFileFinder().findAll(Set(testProject.rootDir / "src" / "main"))
-      global.withPhasesSkipped(ScalamuMutationPhase).compile(sources)
-
-      val analyser = new CoverageAnalyser(
-        config,
-        global.outputDir.file.toPath
-      )
-
-      val failures = analyser.analyse(instrumentation)
-      failures should have size 1
-      failures should ===(
-        List(
-          TestsFailed(
-            ClassName("org.example.failure.FooSpecBad"),
-            Vector(
-              TestFailure(
-                "Test Foo should do bar() in suite FooSpecBad failed.",
-                Some("-1 was not greater than 0")
-              )
-            )
-          )
-        )
-      )
-    }
   }
 }

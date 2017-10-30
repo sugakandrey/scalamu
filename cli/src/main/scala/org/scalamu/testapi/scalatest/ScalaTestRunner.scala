@@ -37,9 +37,8 @@ class ScalaTestRunner(override val arguments: String) extends TestRunner[Status]
   override def run(suite: ClassName): TestSuiteResult = {
     val tryLoadTestClass = suite.loadFromContextClassLoader
     val suiteClass       = tryLoadTestClass.flatMap(resolveRunnerClass)
-
-    val parseArgs   = ScalaTestInteractionLayer.parseArgumentsString(arguments)
-    val defaultArgs = Args(converter.reporter, converter.stopper)
+    val parseArgs        = ScalaTestInteractionLayer.parseArgumentsString(arguments)
+    val defaultArgs      = Args(converter.reporter, converter.stopper)
 
     val args = parseArgs.right.map {
       case ScalaTestArgs(configMap, include, exclude, scale) =>
