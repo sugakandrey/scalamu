@@ -67,7 +67,9 @@ abstract class Runner[I: Encoder, O: Decoder] {
   ): Seq[String] = {
     val args = mutable.ArrayBuffer.empty[String]
     args += javaExecutable
-    args += jvmArgs
+    if (jvmArgs.nonEmpty) {
+      args += jvmArgs
+    }
     args += mainRunnerClass
     args += worker.name
     args ++= runnerArgs

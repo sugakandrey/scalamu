@@ -159,6 +159,7 @@ object ScalamuBuild {
       compilation
     )
     .settings(
+      aggregate in assembly := false,
       artifact in (Compile, assembly) ~= { _.withClassifier(Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
       assemblyShadeRules in assembly :=
