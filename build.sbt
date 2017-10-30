@@ -1,3 +1,5 @@
+cancelable in ThisBuild := true
+
 lazy val root = ScalamuBuild.root
 
 /* Main modules */
