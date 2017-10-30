@@ -31,6 +31,7 @@ class Specs2Runner(override val arguments: String) extends TestRunner[Stats] wit
       val argumentsOverrides = Seq(ArgumentsShortcuts.stopOnFail, ArgumentsShortcuts.sequential)
       val args               = argumentsOverrides.fold(userArguments)(_ <| _)
       val env                = Env(args)
+      val executionEnv       = env.executionEnv
 
       val (errorOrStats, _) = executeAction(
         Runner.runSpecStructure(
@@ -39,7 +40,9 @@ class Specs2Runner(override val arguments: String) extends TestRunner[Stats] wit
           ClassLoadingUtils.contextClassLoader,
           List(NotifierPrinter.printer(notifier))
         )
-      )(env.executionEnv)
+      )(executionEnv)
+
+      executionEnv.shutdown()
 
       errorOrStats.fold(
         err =>

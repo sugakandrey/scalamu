@@ -45,6 +45,7 @@ class CoverageAnalyser(
           s"Timed out while waiting for coverage report: $communicationException. " +
             s"Make sure the environment is correctly set up."
         )
+        supervisor.kill()
         die(InternalFailure)
       case Right(result) => result.sequenceU.toEither.leftMap(FailingSuites)
     }
