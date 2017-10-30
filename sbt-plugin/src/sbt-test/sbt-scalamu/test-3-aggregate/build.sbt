@@ -1,18 +1,18 @@
 scalaVersion := "2.12.3"
 
 lazy val baz = Project(id = "baz", base = file("baz")).settings(
-  libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.9" % Test
+  libraryDependencies += "org.specs2" %% "specs2-core" % "4.0.0" % Test
 )
 
 lazy val foo = Project(id = "foo", base = file("foo"))
   .settings(
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % Test
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
   )
   .dependsOn(baz)
 
 lazy val bar = Project(id = "bar", base = file("bar")).settings(
   libraryDependencies ++= Seq(
-    "com.lihaoyi" %% "utest" % "0.4.5" % Test,
+    "com.lihaoyi" %% "utest" % "0.6.0" % Test,
     "junit"       % "junit"  % "4.12"  % Test
   )
 )

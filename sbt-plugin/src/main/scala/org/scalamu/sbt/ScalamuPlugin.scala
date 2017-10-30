@@ -28,7 +28,7 @@ object ScalamuPlugin extends AutoPlugin {
   override def projectConfigurations: Seq[Configuration] = Seq(Scalamu)
 
   override def projectSettings: Seq[Def.Setting[_]] =
-    inConfig(Compile)(Defaults.configSettings) ++
+    inConfig(Scalamu)(Defaults.configSettings) ++
       Seq(
         SK.timeoutFactor               := 1.5,
         SK.parallelism                 := 1,

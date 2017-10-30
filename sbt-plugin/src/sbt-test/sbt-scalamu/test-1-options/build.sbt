@@ -24,7 +24,9 @@ check := {
   val bazAnnSource = reportDir / "example" / "Baz.scala.html"
   val fooAnnSource = reportDir / "example" / "Foo.scala.html"
 
-  Seq(barAnnSource, fooAnnSource, bazAnnSource).foreach { f =>
+  Seq(barAnnSource, fooAnnSource).foreach { f =>
     if (!f.exists()) sys.error(s"Annotated source file: ${f.getName} doesn't exist.")
   }
+  
+  if (bazAnnSource.exists()) sys.error("Must not generate reports for files without mutations.")
 }
