@@ -14,6 +14,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -194,7 +195,14 @@ public class ScalamuConfigurationForm {
     modulesComboBox.addActionListener(e -> {
       Module selectedModule = modulesComboBox.getSelectedModule();
       if (selectedModule != null) {
-        reportDir.setText(CompilerPaths.getModuleOutputPath(selectedModule, false));
+        VirtualFile outputDir = CompilerPaths.getModuleOutputDirectory(selectedModule, false);
+        if (outputDir != null) {
+          reportDir.setText(outputDir.getPath());
+          VirtualFile supposedlyTarget = outputDir.getParent();
+          if (supposedlyTarget != null) {
+            reportDir.setText(supposedlyTarget.getPath());
+          }
+        }
         Option<Path> cachedScalamuJar = ScalamuJarFetcher.getCachedScalamuJar(selectedModule);
         if (cachedScalamuJar.isDefined()) {
           scalamuJarPath.setText(cachedScalamuJar.get().toString());

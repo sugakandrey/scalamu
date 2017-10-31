@@ -8,15 +8,15 @@ import org.scalamu.idea.runner.ui.RegexFilter
 import scala.collection.JavaConverters._
 
 object ScalamuDefaultSettings {
-  val parallelism: Int                = 1
-  val timeoutConst: Long              = 2000
-  val timeoutFactor: Double           = 1.5
-  val verboseLogging: Boolean         = false
-  val openInBrowser: Boolean          = false
-  val scalacParameters: String        = ""
-  val vmParameters: String            = ""
-  val browser: Option[WebBrowser]     = Option(WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.CHROME))
-  val targetTests: Seq[RegexFilter]   = Seq.empty
+  val parallelism: Int               = 1
+  val timeoutConst: Long             = 2000
+  val timeoutFactor: Double          = 1.5
+  val verboseLogging: Boolean        = false
+  val openInBrowser: Boolean         = false
+  val scalacParameters: String       = ""
+  val vmParameters: String           = ""
+  val browser: Option[WebBrowser]    = Option(WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.CHROME))
+  val targetTests: Seq[RegexFilter]  = Seq.empty
   val targetOwners: Seq[RegexFilter] = Seq.empty
 
   val activeMutators: Seq[String] = Seq(
