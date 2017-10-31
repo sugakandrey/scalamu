@@ -123,7 +123,7 @@ class ScalamuRunConfiguration(
       )
 
     if (activeMutators.isEmpty)
-      throw new RuntimeConfigurationWarning(
+      throw new RuntimeConfigurationError(
         ScalamuBundle.getMessage("run.configuration.validation.error.mutators.not.specified")
       )
 

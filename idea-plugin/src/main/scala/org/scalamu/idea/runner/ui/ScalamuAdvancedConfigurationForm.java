@@ -63,7 +63,7 @@ public class ScalamuAdvancedConfigurationForm {
         boolean isValid = verify(input);
         if (!isValid) {
           Messages.showErrorDialog(
-                  bundle.getMessage("run.configuration.dialog.invalid.timeout.const"),
+                  bundle.getMessage("run.configuration.dialog.timeout.const.invalid"),
                   bundle.getMessage("run.configuration.dialog.invalid.title")
           );
         }
@@ -86,7 +86,7 @@ public class ScalamuAdvancedConfigurationForm {
         boolean isValid = verify(input);
         if (!isValid) {
           Messages.showErrorDialog(
-                  bundle.getMessage("run.configuration.dialog.invalid.timeout.factor"),
+                  bundle.getMessage("run.configuration.dialog.timeout.factor.invalid"),
                   bundle.getMessage("run.configuration.dialog.invalid.title")
           );
         }

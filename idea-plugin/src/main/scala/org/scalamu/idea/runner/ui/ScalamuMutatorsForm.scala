@@ -37,7 +37,7 @@ class ScalamuMutatorsForm(project: Project) {
           } else
             Messages.showErrorDialog(
               project,
-              ScalamuBundle.getMessage("run.configuration.dialog.invalid.mutator"),
+              ScalamuBundle.getMessage("run.configuration.dialog.mutator.invalid"),
               ScalamuBundle.getMessage("run.configuration.dialog.invalid.title")
             )
         }

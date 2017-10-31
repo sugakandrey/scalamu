@@ -178,7 +178,7 @@ public class ScalamuConfigurationForm {
         boolean isValid = verify(input);
         if (!isValid)
           Messages.showErrorDialog(
-                  bundle.getMessage("run.configuration.dialog.invalid.parallelism"),
+                  bundle.getMessage("run.configuration.dialog.parallelism.invalid"),
                   bundle.getMessage("run.configuration.dialog.invalid.title")
           );
         return isValid;
