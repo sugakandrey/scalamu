@@ -82,7 +82,7 @@ class ScalamuCommandLineState(
     val targetOwners  = optionString(configuration.targetOwners, ",", "targetOwners")
     val targetTests   = optionString(configuration.targetTests, ",", "targetTests")
     val mutators      = optionString(configuration.activeMutators, ",", "activeMutators")
-    val ignoreOwners  = optionString(configuration.ignoreSymbols, ",", "ignoreSymbols")
+    val ignoreSymbols = optionString(configuration.ignoreSymbols, ",", "ignoreSymbols")
     val verbose       = if (configuration.verboseLogging) "--verbose" else ""
     val timeoutFactor = s"--timeoutFactor ${configuration.timeoutFactor}"
     val timeoutConst  = s"--timeoutConst ${configuration.timeoutConst}"
@@ -98,6 +98,7 @@ class ScalamuCommandLineState(
       targetOwners,
       targetTests,
       mutators,
+      ignoreSymbols,
       classPath,
       testClassPath
     ) ++ arguments).mkString(" ")

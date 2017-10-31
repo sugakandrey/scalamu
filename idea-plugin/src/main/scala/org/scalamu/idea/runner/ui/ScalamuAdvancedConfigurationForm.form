@@ -77,11 +77,10 @@
           <text value="Aggregate dependency modules"/>
         </properties>
       </component>
-      <component id="da829" class="org.scalamu.idea.runner.ui.ScalamuFilterTextFieldWithBrowseButton" binding="ignoredSymbols" custom-create="true">
+      <component id="135af" class="org.scalamu.idea.runner.ui.ScalamuFilterTextFieldWithBrowseButton" binding="ignoredSymbols">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
       </component>
       <component id="84722" class="javax.swing.JLabel">
         <constraints>
