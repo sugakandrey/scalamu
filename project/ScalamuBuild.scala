@@ -141,8 +141,8 @@ object ScalamuBuild {
     .settings(commonDeps)
     .enablePlugins(SbtTwirl)
     .settings(
-      name                      := "scalamu-report",
-      TwirlKeys.templateImports := Seq()
+      TwirlKeys.templateImports := Seq(),
+      name                      := "scalamu-report"
     )
     .dependsOn(commandLine, common, scalacPlugin)
 
@@ -207,7 +207,7 @@ object ScalamuBuild {
       organization     := "io.github.sugakandrey",
       sbtPlugin        := true,
       name             := "sbt-scalamu",
-      crossSbtVersions := Seq("0.13.16", "1.0.2")
+      crossSbtVersions := Seq("0.13.16", "1.0.3")
     )
     .disablePlugins(Sonatype, SbtPgp)
     .enablePlugins(GitVersioning)
@@ -224,19 +224,19 @@ object ScalamuBuild {
   lazy val scalamuIdea = createProject(id = "idea-plugin", base = file("idea-plugin"))
     .enablePlugins(SbtIdeaPlugin)
     .settings(
-      scalaVersion                     := "2.11.11",
-      ideaBuild                        := "172.3968.16",
+      scalaVersion                     := "2.12.4",
+//      ideaBuild                        := "173.1751",
       onLoad in Global                 ~= { _.andThen("idea-plugin/updateIdea" :: _) },
       assemblyOption in assembly       ~= { _.copy(includeScala = false) },
       assemblyExcludedJars in assembly ++= ideaFullJars.value,
       ideaExternalPlugins += IdeaPlugin
-        .Zip("scala-plugin", url("https://download.plugins.jetbrains.com/1347/37646/scala-intellij-bin-2017.2.6.zip"))
+        .Zip("scala-plugin", url("https://plugins.jetbrains.com/files/1347/40017/scala-intellij-bin-2017.3.5.zip"))
     )
     .disablePlugins(ScriptedPlugin, BintrayPlugin)
 
   lazy val ideaRunner = Project(id = "idea-runner", base = file("idea-plugin/target"))
     .settings(
-      scalaVersion                := "2.11.11",
+      scalaVersion                := "2.12.4",
       autoScalaLibrary            := false,
       unmanagedJars in Compile    := (ideaMainJars in scalamuIdea).value,
       unmanagedJars in Compile    += file(System.getProperty("java.home")).getParentFile / "lib" / "tools.jar",
