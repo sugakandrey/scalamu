@@ -16,7 +16,7 @@ import scala.util.{Properties, Success, Try}
 object ScalamuJarFetcher {
   private[this] val organization = "io.github.sugakandrey"
   private[this] val name         = "scalamu"
-  private[this] val version      = "0.1-SNAPSHOT"
+  private[this] val version      = "0.1.0-SNAPSHOT"
   private[this] val artifactType = "jars"
 
   private def artifactUrl(scalaBinaryVersion: String): String =
