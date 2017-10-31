@@ -100,7 +100,7 @@ public class ScalamuAdvancedConfigurationForm {
   }
 
   public String getTimeoutFactorText() {
-    return timeoutConst.getText();
+    return timeoutFactor.getText();
   }
 
   public boolean getVerboseLogging() {

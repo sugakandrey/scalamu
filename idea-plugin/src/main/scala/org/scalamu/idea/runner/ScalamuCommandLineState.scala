@@ -1,6 +1,6 @@
 package org.scalamu.idea.runner
 
-import java.nio.file.Paths
+import java.nio.file.{Files, Paths}
 
 import com.intellij.execution.configurations.{JavaCommandLineState, JavaParameters}
 import com.intellij.execution.process.{OSProcessHandler, ProcessAdapter, ProcessEvent}
@@ -24,7 +24,7 @@ class ScalamuCommandLineState(
   private class ScalamuProcessAdapter extends ProcessAdapter {
     override def processTerminated(event: ProcessEvent): Unit = {
       super.processTerminated(event)
-      if (configuration.openInBrowser) {
+      if (configuration.openInBrowser && Files.exists(reportOverviewPath)) {
         invokeLater {
           configuration.browser.fold(BrowserUtil.browse(reportOverviewPath.toFile))(
             BrowserLauncher.getInstance().browse(reportOverviewPath.toUri.toString, _)
