@@ -8,7 +8,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.browsers.BrowserLauncher
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.{VfsUtil, VirtualFile}
 import org.jetbrains.plugins.scala.extensions.invokeLater
 
 class ScalamuCommandLineState(
@@ -63,24 +63,27 @@ class ScalamuCommandLineState(
     if (args.isEmpty) ""
     else s"--$name ${args.mkString(separator)}"
 
+  private def wrapPathArg(vf: VirtualFile): String = wrapArg(vf.getPath)
+  private def wrapArg(arg: String): String         = s""""$arg""""
+
   private def buildScalamuArgumentsString(project: Project): String = {
     val extractor        = ModuleInfoExtractor(module)
-    val sourceDirsString = extractor.sourcePaths.mkString(",")
-    val testDirsString   = extractor.testTarget.mkString(",")
+    val sourceDirsString = extractor.sourcePaths.map(wrapPathArg).mkString(",")
+    val testDirsString   = extractor.testTarget.map(wrapPathArg).mkString(",")
 
     val arguments = Seq(
-      configuration.reportDir,
+      wrapArg(configuration.reportDir),
       sourceDirsString,
       testDirsString
     )
 
-    val classPath     = optionString(extractor.compileClassPath.map(_.getPath), ",", "cp")
-    val testClassPath = optionString(extractor.runClassPath.map(_.getPath), ",", "tcp")
+    val classPath     = optionString(extractor.compileClassPath.map(wrapPathArg), ",", "cp")
+    val testClassPath = optionString(extractor.runClassPath.map(wrapPathArg), ",", "tcp")
     val vmParameters  = optionString(configuration.vmParameters, " ", "vmParameters")
     val scalacOptions = optionString(configuration.scalacParameters, " ", "scalacParameters")
     val targetOwners  = optionString(configuration.targetOwners, ",", "targetOwners")
     val targetTests   = optionString(configuration.targetTests, ",", "targetTests")
-    val mutators      = optionString(configuration.activeMutators, ",", "activeMutators")
+    val mutators      = optionString(configuration.activeMutators, ",", "mutators")
     val ignoreSymbols = optionString(configuration.ignoreSymbols, ",", "ignoreSymbols")
     val verbose       = if (configuration.verboseLogging) "--verbose" else ""
     val timeoutFactor = s"--timeoutFactor ${configuration.timeoutFactor}"
