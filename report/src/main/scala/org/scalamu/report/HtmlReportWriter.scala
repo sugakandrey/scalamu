@@ -4,7 +4,7 @@ import java.nio.file.{Files, Path, Paths}
 
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.runners._
-import org.scalamu.utils.FileSystemUtils._
+import org.scalamu.core.utils.FileSystemUtils._
 
 object HtmlReportWriter {
   def generateFromProjectSummary(summary: ProjectSummary, config: ScalamuConfig, dir: Path): Unit = {

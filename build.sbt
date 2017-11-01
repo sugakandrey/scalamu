@@ -4,11 +4,11 @@ lazy val root = ScalamuBuild.root
 
 /* Main modules */
 lazy val plugin      = ScalamuBuild.scalacPlugin
-lazy val commandLine = ScalamuBuild.commandLine
+lazy val core        = ScalamuBuild.core
 lazy val common      = ScalamuBuild.common
 lazy val report      = ScalamuBuild.report
 lazy val compilation = ScalamuBuild.compilation
-lazy val entryPoint  = ScalamuBuild.entryPoint
+lazy val cli         = ScalamuBuild.cli
 lazy val scalamuSbt  = ScalamuBuild.scalamuSbt
 lazy val scalamuIdea = ScalamuBuild.scalamuIdea
 

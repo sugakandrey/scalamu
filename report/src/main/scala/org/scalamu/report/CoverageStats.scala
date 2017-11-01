@@ -3,7 +3,7 @@ package org.scalamu.report
 import java.text.NumberFormat
 import java.util.Locale
 
-import org.scalamu.core.TestedMutant
+import org.scalamu.core.api.TestedMutant
 import org.scalamu.core.coverage.Statement
 
 import scala.collection.Set

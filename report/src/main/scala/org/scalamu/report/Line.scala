@@ -1,6 +1,7 @@
 package org.scalamu.report
 
 import org.scalamu.core._
+import org.scalamu.core.api.TestedMutant
 
 import scala.collection.Set
 

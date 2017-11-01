@@ -15,7 +15,6 @@ class ScalamuCommandLineState(
   configuration: ScalamuRunConfiguration,
   env: ExecutionEnvironment
 ) extends JavaCommandLineState(env) {
-  private[this] val mainClass           = "org.scalamu.entry.EntryPoint"
   private[this] val scalamuVMParameters = ""
   private[this] val reportOverviewPath  = Paths.get(configuration.reportDir).resolve("overview.html")
   private[this] val project             = configuration.project
@@ -47,9 +46,9 @@ class ScalamuCommandLineState(
     val arguments        = buildScalamuArgumentsString(project)
 
     parameters.configureByModule(module, JavaParameters.JDK_ONLY)
+    parameters.setPassParentEnvs(false)
     parameters.setJarPath(pathToScalamuJar)
     parameters.setWorkingDirectory(workingDir)
-    parameters.setMainClass(mainClass)
     parameters.setEnv(configuration.envVariables)
     parameters.getVMParametersList.addParametersString(scalamuVMParameters)
     parameters.getProgramParametersList.addParametersString(arguments)

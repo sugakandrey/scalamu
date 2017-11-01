@@ -1,6 +1,6 @@
 package org.scalamu.report
 
-import org.scalamu.core._
+import org.scalamu.core.api._
 
 object HtmlUtils {
   def mutantStatus(mutant: TestedMutant): String = mutant.status match {

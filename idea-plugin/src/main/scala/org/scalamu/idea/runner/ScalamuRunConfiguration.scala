@@ -4,6 +4,7 @@ import java.nio.file.{Files, Paths}
 import java.util
 
 import com.intellij.execution.configurations._
+import com.intellij.execution.jar.JarApplicationConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.{ExecutionBundle, Executor, JavaRunConfigurationExtensionManager}
 import com.intellij.ide.browsers.{WebBrowser, WebBrowserManager}

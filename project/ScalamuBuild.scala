@@ -120,10 +120,10 @@ object ScalamuBuild {
 
   private lazy val testingFrameworks = Seq(scalatest, specs2, utest, junit)
 
-  lazy val commandLine = createProject(id = "cli", base = file("cli"))
+  lazy val core = createProject(id = "core", base = file("core"))
     .settings(commonDeps)
     .settings(
-      name := "scalamu-cli",
+      name := "scalamu-core",
       libraryDependencies ++= Seq(
         "org.ow2.asm"      % "asm-commons"                  % "5.2",
         "org.ow2.asm"      % "asm-util"                     % "5.2",
@@ -144,22 +144,23 @@ object ScalamuBuild {
       TwirlKeys.templateImports := Seq(),
       name                      := "scalamu-report"
     )
-    .dependsOn(commandLine, common, scalacPlugin)
+    .dependsOn(core, common, scalacPlugin)
 
   lazy val root = createProject(id = "scalamu", base = file("."))
     .dependsOn(
-      entryPoint
+      cli
     )
     .aggregate(
       scalacPlugin,
-      commandLine,
+      core,
       report,
       common,
-      entryPoint,
+      cli,
       compilation
     )
     .settings(
-      aggregate in assembly := false,
+      aggregate in assembly           := false,
+      mainClass in assembly           := Some("org.scalamu.cli.EntryPoint"),
       artifact in (Compile, assembly) ~= { _.withClassifier(Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
       assemblyShadeRules in assembly :=
@@ -172,11 +173,11 @@ object ScalamuBuild {
         ).map(shade)
     )
 
-  lazy val entryPoint = createProject(id = "entry-point", base = file("entry-point"))
+  lazy val cli = createProject(id = "cli", base = file("cli"))
     .settings(commonDeps)
-    .settings(name := "scalamu-entry-point")
+    .settings(name := "scalamu-cli")
     .dependsOn(
-      commandLine,
+      core,
       common,
       scalacPlugin,
       report,
@@ -225,7 +226,6 @@ object ScalamuBuild {
     .enablePlugins(SbtIdeaPlugin)
     .settings(
       scalaVersion                     := "2.12.4",
-//      ideaBuild                        := "173.1751",
       onLoad in Global                 ~= { _.andThen("idea-plugin/updateIdea" :: _) },
       assemblyOption in assembly       ~= { _.copy(includeScala = false) },
       assemblyExcludedJars in assembly ++= ideaFullJars.value,

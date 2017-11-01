@@ -1,8 +1,8 @@
 package org.scalamu.report
 
-import org.scalamu.core.{SourceInfo, TestedMutant}
+import org.scalamu.core.api.{SourceInfo, TestedMutant}
 import org.scalamu.core.coverage.Statement
-import org.scalamu.testapi.AbstractTestSuite
+import org.scalamu.core.testapi.AbstractTestSuite
 
 import scala.collection.{Map, Set}
 
