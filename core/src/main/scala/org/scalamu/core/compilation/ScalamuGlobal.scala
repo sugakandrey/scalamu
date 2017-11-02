@@ -21,6 +21,7 @@ class ScalamuGlobal private[compilation] (
   mutationConfig: ScalamuScalacConfig,
   instrumentationReporter: InstrumentationReporter
 ) extends Global(settings, reporter) {
+  ScalamuGlobal.log.debug(s"Initialised ScalamuGlobal with classpath: ${settings.classpath}.")
 
   require(
     settings.outputDirs.getSingleOutput.isDefined,
