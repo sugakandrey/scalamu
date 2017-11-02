@@ -1,20 +1,17 @@
 package org.scalamu.idea.runner.ui
 
-import org.apache.commons.lang3.StringEscapeUtils
+import scala.util.matching.Regex
 
-class RegexFilter(var filter: String) {
+case class RegexFilter(var filter: String) {
   override def toString: String = filter
   
-  def toUnescapedString: String = StringEscapeUtils.unescapeJava(toString)
-}
-
-object RegexFilter {
-  def apply(filter: String): RegexFilter = {
+  def toRegex: Regex =  {
     val builder = StringBuilder.newBuilder
-    filter.foreach { c =>
-      if (c == '.') builder ++= "\\"
-      builder += c
+    filter.foreach {
+      case '.' => builder ++= "\\."
+      case '*' => builder ++= ".*"
+      case ch => builder += ch
     }
-    new RegexFilter(builder.mkString)
+    builder.result().r
   }
 }

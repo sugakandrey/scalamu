@@ -19,7 +19,7 @@ class ScalamuFilterTable(emptyText: String) extends ListTableWithButtons[RegexFi
     val filter = new ElementsColumnInfoBase[RegexFilter]("Filters") {
       override def isCellEditable(item: RegexFilter): Boolean   = true
       override def getDescription(element: RegexFilter): String = null
-      override def valueOf(item: RegexFilter): String           = item.toUnescapedString
+      override def valueOf(item: RegexFilter): String           = item.toString
 
       override def setValue(item: RegexFilter, value: String): Unit =
         if (!value.equals(item.filter)) {

@@ -22,7 +22,7 @@ class ScalamuFilterTextFieldWithBrowseButton(val dialogTitle: String, val emptyT
   def setData(data: util.List[RegexFilter]): Unit = {
     filters.clear()
     data.forEach(t => filters += t)
-    setText(data.asScala.map(_.toUnescapedString).mkString(", "))
+    setText(data.asScala.map(_.toString).mkString(", "))
   }
 
   private class ScalamuFilterDialog extends DialogWrapper(self, true) {
