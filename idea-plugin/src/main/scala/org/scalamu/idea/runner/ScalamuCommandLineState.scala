@@ -46,7 +46,6 @@ class ScalamuCommandLineState(
     val arguments        = buildScalamuArgumentsString(project)
 
     parameters.configureByModule(module, JavaParameters.JDK_ONLY)
-    parameters.setPassParentEnvs(false)
     parameters.setJarPath(pathToScalamuJar)
     parameters.setWorkingDirectory(workingDir)
     parameters.setEnv(configuration.envVariables)
@@ -63,13 +62,18 @@ class ScalamuCommandLineState(
     if (args.isEmpty) ""
     else s"--$name ${args.mkString(separator)}"
 
-  private def wrapPathArg(vf: VirtualFile): String = wrapArg(vf.getPath)
-  private def wrapArg(arg: String): String         = s""""$arg""""
+  private def wrapClassRoot(vf: VirtualFile): String = {
+    val path = vf.getPath
+    val arg  = if (path.endsWith("!/")) path.dropRight(2) else path
+    wrapArg(arg)
+  }
+
+  private def wrapArg(arg: String): String = s""""$arg""""
 
   private def buildScalamuArgumentsString(project: Project): String = {
     val extractor        = ModuleInfoExtractor(module)
-    val sourceDirsString = extractor.sourcePaths.map(wrapPathArg).mkString(",")
-    val testDirsString   = extractor.testTarget.map(wrapPathArg).mkString(",")
+    val sourceDirsString = extractor.sourcePaths.map(wrapClassRoot).mkString(",")
+    val testDirsString   = extractor.testTarget.map(wrapClassRoot).mkString(",")
 
     val arguments = Seq(
       wrapArg(configuration.reportDir),
@@ -77,8 +81,8 @@ class ScalamuCommandLineState(
       testDirsString
     )
 
-    val classPath     = optionString(extractor.compileClassPath.map(wrapPathArg), ",", "cp")
-    val testClassPath = optionString(extractor.runClassPath.map(wrapPathArg), ",", "tcp")
+    val classPath     = optionString(extractor.compileClassPath.map(wrapClassRoot), ",", "cp")
+    val testClassPath = optionString(extractor.runClassPath.map(wrapClassRoot), ",", "tcp")
     val vmParameters  = optionString(configuration.vmParameters, " ", "vmParameters")
     val scalacOptions = optionString(configuration.scalacParameters, " ", "scalacParameters")
     val targetOwners  = optionString(configuration.targetOwners, ",", "targetOwners")
