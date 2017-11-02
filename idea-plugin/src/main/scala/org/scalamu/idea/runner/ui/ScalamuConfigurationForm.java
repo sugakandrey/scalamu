@@ -198,9 +198,12 @@ public class ScalamuConfigurationForm {
         VirtualFile outputDir = CompilerPaths.getModuleOutputDirectory(selectedModule, false);
         if (outputDir != null) {
           reportDir.setText(outputDir.getPath());
-          VirtualFile supposedlyTarget = outputDir.getParent();
-          if (supposedlyTarget != null) {
-            reportDir.setText(supposedlyTarget.getPath());
+          VirtualFile parent = outputDir.getParent();
+          if (parent != null) {
+            VirtualFile supposedlyTarget = parent.getParent();
+            if (supposedlyTarget != null) {
+              reportDir.setText(supposedlyTarget.getPath());
+            }
           }
         }
         Option<Path> cachedScalamuJar = ScalamuJarFetcher.getCachedScalamuJar(selectedModule);
