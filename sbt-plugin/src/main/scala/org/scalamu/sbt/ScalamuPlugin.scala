@@ -144,13 +144,13 @@ object ScalamuPlugin extends AutoPlugin {
     )
 
   private lazy val testClassPath: Def.Initialize[Task[Set[File]]]    = aggregateClassPath(Test)
-  private lazy val compileClassPath: Def.Initialize[Task[Set[File]]] = aggregateClassPath(Compile)
+  private lazy val compileClassPath: Def.Initialize[Task[Set[File]]] = aggregateClassPath(Scalamu)
   private lazy val sourceDirs: Def.Initialize[Seq[Seq[File]]]        = aggregateSetting(K.sourceDirectories, Compile)
   private lazy val testClassDirs: Def.Initialize[Seq[File]]          = aggregateSetting(K.crossTarget)
 }
 
 object MutationTest extends SbtBackCompat {
-  private[this] val mainClass = "org.scalamu.entry.EntryPoint"
+  private[this] val mainClass = "org.scalamu.cli.EntryPoint"
 
   def apply(
     scalamuJar: Classpath,

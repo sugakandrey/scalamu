@@ -1,6 +1,7 @@
 package org.scalamu.idea.runner
 
 import java.nio.file.{Files, Paths}
+import java.util
 
 import com.intellij.execution.configurations.{JavaCommandLineState, JavaParameters}
 import com.intellij.execution.process.{OSProcessHandler, ProcessAdapter, ProcessEvent}
@@ -9,6 +10,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.ide.browsers.BrowserLauncher
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.{VfsUtil, VirtualFile}
+import com.intellij.util.EnvironmentUtil
 import org.jetbrains.plugins.scala.extensions.invokeLater
 
 class ScalamuCommandLineState(
@@ -45,10 +47,19 @@ class ScalamuCommandLineState(
     val pathToScalamuJar = configuration.pathToJar
     val arguments        = buildScalamuArgumentsString(project)
 
+    val combinedEnv = new util.HashMap[String, String]() {
+      {
+        putAll(configuration.envVariables)
+        val parentEnv = EnvironmentUtil.getEnvironmentMap
+        parentEnv.forEach((k, v) => if (k != "CLASSPATH") put(k, v))
+      }
+    }
+
     parameters.configureByModule(module, JavaParameters.JDK_ONLY)
     parameters.setJarPath(pathToScalamuJar)
     parameters.setWorkingDirectory(workingDir)
-    parameters.setEnv(configuration.envVariables)
+    parameters.setPassParentEnvs(false)
+    parameters.setEnv(combinedEnv)
     parameters.getVMParametersList.addParametersString(scalamuVMParameters)
     parameters.getProgramParametersList.addParametersString(arguments)
     parameters
