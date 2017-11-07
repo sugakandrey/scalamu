@@ -26,7 +26,7 @@ abstract class Runner[I: Encoder, O: Decoder] {
   protected def sendConfigurationToWorker(dos: DataOutputStream): Unit
 
   type Result = O
-  type Input = I
+  type Input  = I
 
   protected val mainRunnerClass = "scala.tools.nsc.MainGenericRunner"
 
@@ -39,8 +39,8 @@ abstract class Runner[I: Encoder, O: Decoder] {
 
   def start(): Either[CommunicationException, ProcessSupervisor[I, O]] = {
     val mainArgs = List(socket.getLocalPort.toString)
-    val args = generateProcessArgs(worker, config.vmParameters, mainArgs)
-    val builder = new ProcessBuilder(args: _*)
+    val args     = generateProcessArgs(worker, config.vmParameters, mainArgs)
+    val builder  = new ProcessBuilder(args: _*)
     configureProcessEnv(builder)
     builder.inheritIO()
     log.debug(s"Configured builder: ${builder.command()}.")
@@ -53,9 +53,9 @@ abstract class Runner[I: Encoder, O: Decoder] {
   protected def configureProcessEnv(
     pb: ProcessBuilder
   ): Unit = {
-    val classPathSegments = compiledSourcesDir :: config.testClassPath.toList
-    val testClassPath = concatPaths(classPathSegments)
-    val currentClassPath = Properties.javaClassPath
+    val classPathSegments   = compiledSourcesDir :: config.testClassPath.toList
+    val testClassPath       = concatPaths(classPathSegments)
+    val currentClassPath    = Properties.javaClassPath
     val configuredClasspath = currentClassPath + File.pathSeparator + testClassPath
     log.debug(s"Configured classpath: $configuredClasspath")
     pb.environment().put("CLASSPATH", configuredClasspath)

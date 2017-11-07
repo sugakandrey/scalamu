@@ -144,7 +144,7 @@ object ScalamuPlugin extends AutoPlugin {
     )
 
   private lazy val testClassPath: Def.Initialize[Task[Set[File]]]    = aggregateClassPath(Test)
-  private lazy val compileClassPath: Def.Initialize[Task[Set[File]]] = aggregateClassPath(Scalamu)
+  private lazy val compileClassPath: Def.Initialize[Task[Set[File]]] = aggregateClassPath(Compile)
   private lazy val sourceDirs: Def.Initialize[Seq[Seq[File]]]        = aggregateSetting(K.sourceDirectories, Compile)
   private lazy val testClassDirs: Def.Initialize[Seq[File]]          = aggregateSetting(K.crossTarget)
 }
