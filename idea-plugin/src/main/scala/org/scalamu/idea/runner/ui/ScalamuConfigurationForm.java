@@ -248,7 +248,7 @@ public class ScalamuConfigurationForm {
     targetTests.setText("");
     mainPanel.add(targetTests, new GridConstraints(3, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     final JLabel label3 = new JLabel();
-    label3.setText("VM options:");
+    label3.setText("Analyser VM parameters:");
     mainPanel.add(label3, new GridConstraints(4, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     vmParameters = new RawCommandLineEditor();
     vmParameters.setText("");

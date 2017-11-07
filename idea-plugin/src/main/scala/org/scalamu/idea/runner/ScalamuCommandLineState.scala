@@ -17,7 +17,6 @@ class ScalamuCommandLineState(
   configuration: ScalamuRunConfiguration,
   env: ExecutionEnvironment
 ) extends JavaCommandLineState(env) {
-  private[this] val scalamuVMParameters = ""
   private[this] val reportOverviewPath  = Paths.get(configuration.reportDir).resolve("overview.html")
   private[this] val project             = configuration.project
   private[this] val module              = configuration.getConfigurationModule.getModule
@@ -60,7 +59,7 @@ class ScalamuCommandLineState(
     parameters.setWorkingDirectory(workingDir)
     parameters.setPassParentEnvs(false)
     parameters.setEnv(combinedEnv)
-    parameters.getVMParametersList.addParametersString(scalamuVMParameters)
+    parameters.getVMParametersList.addParametersString(configuration.scalamuRunnerVmParams)
     parameters.getProgramParametersList.addParametersString(arguments)
     parameters
   }

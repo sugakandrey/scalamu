@@ -4,7 +4,6 @@ import java.nio.file.{Files, Paths}
 import java.util
 
 import com.intellij.execution.configurations._
-import com.intellij.execution.jar.JarApplicationConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.{ExecutionBundle, Executor, JavaRunConfigurationExtensionManager}
 import com.intellij.ide.browsers.{WebBrowser, WebBrowserManager}
@@ -40,7 +39,7 @@ class ScalamuRunConfiguration(
   private[idea] var targetTests: Seq[RegexFilter]          = ScalamuDefaultSettings.targetTests
   private[idea] var verboseLogging: Boolean                = ScalamuDefaultSettings.verboseLogging
   private[idea] var openInBrowser: Boolean                 = ScalamuDefaultSettings.openInBrowser
-  private[idea] var vmParameters: String                   = ScalamuDefaultSettings.vmParameters
+  private[idea] var vmParameters: String                   = ScalamuDefaultSettings.analyserVmParameters
   private[idea] var scalacParameters: String               = ScalamuDefaultSettings.scalacParameters
   private[idea] var timeoutConst: Long                     = ScalamuDefaultSettings.timeoutConst
   private[idea] var timeoutFactor: Double                  = ScalamuDefaultSettings.timeoutFactor
@@ -48,6 +47,7 @@ class ScalamuRunConfiguration(
   private[idea] var browser: Option[WebBrowser]            = ScalamuDefaultSettings.browser
   private[idea] var activeMutators: Seq[String]            = ScalamuDefaultSettings.activeMutators
   private[idea] var ignoreSymbols: Seq[RegexFilter]        = ScalamuDefaultSettings.ignoreSymbols
+  private[idea] var scalamuRunnerVmParams: String          = ScalamuDefaultSettings.scalamuRunnerVmParameters
   private[idea] var envVariables: util.Map[String, String] = new util.HashMap[String, String]
   private[idea] var pathToJar: String                      = ""
   private[idea] var reportDir: String                      = ""
@@ -78,10 +78,11 @@ class ScalamuRunConfiguration(
     try { timeoutFactor = form.getTimeoutFactorText.toDouble } catch { case _: NumberFormatException => }
     try { timeoutConst  = form.getTimeoutConstText.toLong } catch { case _: NumberFormatException    => }
 
-    scalacParameters = form.getScalacParameters
-    verboseLogging   = form.getVerboseLogging
-    aggregate        = form.getAggregate
-    ignoreSymbols    = readCommaSeparatedSeq(form.getIgnoredSymbols).map(RegexFilter.apply)
+    scalacParameters      = form.getScalacParameters
+    verboseLogging        = form.getVerboseLogging
+    aggregate             = form.getAggregate
+    scalamuRunnerVmParams = form.getScalamuJarRunnerVmParams
+    ignoreSymbols         = readCommaSeparatedSeq(form.getIgnoredSymbols).map(RegexFilter.apply)
 
     envVariables.clear()
     envVariables.putAll(form.getEnvVariables)
