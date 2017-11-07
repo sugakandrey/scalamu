@@ -1,13 +1,13 @@
 package org.scalamu.plugin
 
-import org.scalamu.common.MutantId
+import org.scalamu.common.MutationId
 
 import scala.tools.nsc.Global
 
 trait MutationGuard {
   def apply(
     global: Global
-  )(mutated: global.Tree, untouched: global.Tree, id: MutantId): global.Tree
+  )(mutated: global.Tree, untouched: global.Tree, id: MutationId): global.Tree
 
   def isGuardSymbol(symbolName: String): Boolean
 }
@@ -15,7 +15,7 @@ trait MutationGuard {
 private[plugin] case object NoOpGuard extends MutationGuard {
   override def apply(
     global: Global
-  )(mutated: global.Tree, untouched: global.Tree, id: MutantId): global.Tree =
+  )(mutated: global.Tree, untouched: global.Tree, id: MutationId): global.Tree =
     mutated
 
   override def isGuardSymbol(symbolName: String): Boolean = false
@@ -27,7 +27,7 @@ final case class FqnGuard(
 
   override def apply(
     global: Global
-  )(mutated: global.Tree, untouched: global.Tree, id: MutantId): global.Tree = {
+  )(mutated: global.Tree, untouched: global.Tree, id: MutationId): global.Tree = {
     import global._
     val guardTerm = findMemberFromRoot(TermName(fqn))
     val guard     = q"$guardTerm == ${Literal(Constant(id.id))}"

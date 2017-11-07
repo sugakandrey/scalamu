@@ -1,6 +1,6 @@
 package org.scalamu.plugin.testutil
 
-import org.scalamu.plugin.{MemoryReporter, MutantInfo}
+import org.scalamu.plugin.{MemoryReporter, MutationInfo}
 
 import scala.reflect.internal.util.{BatchSourceFile, NoFile, SourceFile}
 import scala.tools.nsc.Global
@@ -35,7 +35,7 @@ trait CompilationUtils {
   )(
     implicit global: Global,
     reporter: MemoryReporter
-  ): Set[MutantInfo] =
+  ): Set[MutationInfo] =
     reporter.mutantsForRunId(compile(code))
 
   def mutantsFor(
@@ -43,6 +43,6 @@ trait CompilationUtils {
   )(
     implicit global: Global,
     reporter: MemoryReporter
-  ): Set[MutantInfo] =
+  ): Set[MutationInfo] =
     reporter.mutantsForRunId(compile(namedSnippet))
 }

@@ -18,7 +18,7 @@ import scala.tools.nsc.{Global, Settings}
 class ScalamuGlobal private[compilation] (
   settings: Settings,
   reporter: Reporter,
-  mutationConfig: ScalamuScalacConfig,
+  scalacPluginConfig: ScalamuScalacConfig,
   instrumentationReporter: InstrumentationReporter
 ) extends Global(settings, reporter) {
   ScalamuGlobal.log.debug(s"Initialised ScalamuGlobal with classpath: ${settings.classpath}.")
@@ -29,7 +29,7 @@ class ScalamuGlobal private[compilation] (
   )
 
   private val coveragePlugin = new CoveragePlugin(this, instrumentationReporter)
-  private val scalamuPlugin  = new ScalamuPlugin(this, mutationConfig)
+  private val scalamuPlugin  = new ScalamuPlugin(this, scalacPluginConfig)
 
   override protected def loadRoughPluginsList(): List[Plugin] =
     coveragePlugin :: scalamuPlugin :: super.loadRoughPluginsList()
@@ -62,7 +62,7 @@ object ScalamuGlobal extends GlobalDerivableInstances {
   ): ScalamuGlobal = {
     implicit val reporter: MutationReporter = mutationReporter
     implicit val dir: AbstractFile          = outputDir
-    
+
     new ScalamuGlobal(
       config.derive[Settings],
       config.derive[Reporter],

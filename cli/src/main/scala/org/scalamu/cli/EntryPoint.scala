@@ -6,7 +6,7 @@ import java.nio.file.{Files, Path}
 import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
 import io.circe.syntax._
-import org.scalamu.common.MutantId
+import org.scalamu.common.MutationId
 import org.scalamu.core.api.{SourceInfo, TestedMutant}
 import org.scalamu.core.compilation.ScalamuGlobal
 import org.scalamu.core.configuration.ScalamuConfig
@@ -16,7 +16,7 @@ import org.scalamu.core.runners._
 import org.scalamu.core.api._
 import org.scalamu.core.{LoggerConfiguration, die, coverage => cov}
 import org.scalamu.plugin
-import org.scalamu.plugin.MutantInfo
+import org.scalamu.plugin.MutationInfo
 import org.scalamu.report.{HtmlReportWriter, ProjectSummaryFactory}
 import org.scalamu.core.testapi.AbstractTestSuite
 import org.scalamu.core.utils.FileSystemUtils._
@@ -62,18 +62,18 @@ object EntryPoint {
     global.compile(sourceFiles)
     val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
     log.info(s"Finished recompilation in $compilationTime seconds.")
-    log.info(s"Total mutations generated: ${reporter.mutants.size}")
+    log.info(s"Total mutations generated: ${reporter.mutations.size}")
 
-    if (reporter.mutants.isEmpty) {
+    if (reporter.mutations.isEmpty) {
       log.error(
-        "No mutants were generated. Make sure you have correctly applied exclusion filters."
+        "No mutations were generated. Make sure you have correctly applied exclusion filters."
       )
       die(InternalFailure)
     }
 
     if (config.verbose) {
       tryWith(Files.newBufferedWriter(reportDir / "mutations.log")) { writer =>
-        reporter.mutants.foreach(m => writer.write(m.asJson.spaces2 + "\n"))
+        reporter.mutations.foreach(m => writer.write(m.asJson.spaces2 + "\n"))
       }
     }
 
@@ -95,9 +95,9 @@ object EntryPoint {
       }
     }
 
-    val inverseCoverage = CoverageConversionUtils.statementCoverageToInverseMutantCoverage(
+    val inverseCoverage = CoverageConversionUtils.statementCoverageToInverseMutationCoverage(
       coverage,
-      reporter.mutants
+      reporter.mutations
     )
 
     if (config.verbose) {
@@ -106,10 +106,10 @@ object EntryPoint {
       }
     }
 
-    val mutantsById: Map[MutantId, MutantInfo] = reporter.mutants.map(m => m.id -> m)(breakOut)
+    val mutationsById: Map[MutationId, MutationInfo] = reporter.mutations.map(m => m.id -> m)(breakOut)
 
     val analyser      = new MutationAnalyser(config, outputPath)
-    val testedMutants = analyser.analyse(inverseCoverage, mutantsById)
+    val testedMutants = analyser.analyse(inverseCoverage, mutationsById)
 
     if (config.verbose) {
       tryWith(Files.newBufferedWriter(reportDir / "results.log")) { writer =>
@@ -120,7 +120,7 @@ object EntryPoint {
     val invoked: Set[Statement] = coverage.valuesIterator.flatten.toSet
 
     val inverseFileCoverage =
-      CoverageConversionUtils.inverseMutantCoverageToInverseFileCoverage(inverseCoverage, mutantsById)
+      CoverageConversionUtils.inverseMutationCoverageToInverseFileCoverage(inverseCoverage, mutationsById)
 
     generateReport(
       reportDir,

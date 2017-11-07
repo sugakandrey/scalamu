@@ -6,7 +6,7 @@ import java.nio.file.Path
 
 import io.circe.generic.auto._
 import io.circe.syntax._
-import org.scalamu.common.MutantId
+import org.scalamu.common.MutationId
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.process.{MutationAnalysisProcess, _}
 
@@ -15,7 +15,7 @@ class MutationAnalysisRunner(
   override val config: ScalamuConfig,
   override val compiledSourcesDir: Path,
   val workerId: Long
-) extends Runner[(MutantId, Set[MeasuredSuite]), MutationAnalysisProcess.Result] {
+) extends Runner[(MutationId, Set[MeasuredSuite]), MutationAnalysisProcess.Result] {
 
   override protected def worker: Process[Result] = MutationAnalysisProcess
 

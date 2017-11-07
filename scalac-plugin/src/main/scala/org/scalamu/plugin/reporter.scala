@@ -1,6 +1,6 @@
 package org.scalamu.plugin
 
-import org.scalamu.common.MutantId
+import org.scalamu.common.MutationId
 import org.scalamu.common.position.Position
 
 import scala.reflect.internal.util.{DefinedPosition, UndefinedPosition, Position => ReflectPosition}
@@ -9,8 +9,8 @@ import scala.reflect.internal.util.{DefinedPosition, UndefinedPosition, Position
  * Used to save information about inserted mutants.
  */
 trait MutationReporter {
-  def report(mutantInfo: MutantInfo): Unit
-  def mutants: Set[MutantInfo]
+  def report(mutantInfo: MutationInfo): Unit
+  def mutations: Set[MutationInfo]
 }
 
 /**
@@ -22,19 +22,19 @@ trait MutationReporter {
  * @param oldTree  Original tree
  * @param mutated  Mutated tree
  */
-final case class MutantInfo(
-  id: MutantId,
-  mutation: Mutator,
-  runId: Int,
-  packageName: String,
-  pos: Position,
-  oldTree: String,
-  mutated: String
+final case class MutationInfo(
+                               id: MutationId,
+                               mutation: Mutator,
+                               runId: Int,
+                               packageName: String,
+                               pos: Position,
+                               oldTree: String,
+                               mutated: String
 ) {
   def description: String = mutation.description
 }
 
-object MutantInfo {
+object MutationInfo {
   private[this] var currentId = 0
 
   def apply(
@@ -44,16 +44,16 @@ object MutantInfo {
     pos: ReflectPosition,
     oldTree: String,
     mutated: String
-  ): MutantInfo = {
+  ): MutationInfo = {
     val position = pos match {
       case _: UndefinedPosition => Position(pos.source.path, 0, 0, 0)
       case _: DefinedPosition   => Position(pos.source.path, pos.line, pos.start, pos.end)
     }
     
     currentId += 1
-    
-    MutantInfo(
-      MutantId(currentId),
+
+    MutationInfo(
+      MutationId(currentId),
       mutation,
       runId,
       packageName,

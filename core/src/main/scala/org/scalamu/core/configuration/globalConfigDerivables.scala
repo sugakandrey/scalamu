@@ -17,7 +17,7 @@ import scala.util.Properties
 /**
  * Aggregates derivable instances, needed for the creation of [[org.scalamu.core.compilation.ScalamuGlobal]]
  */
-trait GlobalDerivableInstances extends SettingsDerivable with ReporterDerivable with MutationConfigDerivable
+trait GlobalDerivableInstances extends SettingsDerivable with ReporterDerivable with ScalamuScalacPluginConfigDerivable
 
 trait SettingsDerivable {
   def log: Logger
@@ -55,7 +55,7 @@ trait ReporterDerivable extends SettingsDerivable {
     config => new LoggingReporter(log, config.derive[Settings])
 }
 
-trait MutationConfigDerivable {
+trait ScalamuScalacPluginConfigDerivable {
   def guard: MutationGuard = FqnGuard(
     "org.scalamu.compilation.MutationGuard.enabledMutation"
   )

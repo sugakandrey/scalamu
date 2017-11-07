@@ -3,7 +3,7 @@ package org.scalamu.core.coverage
 import org.scalamock.scalatest.MockFactory
 import org.scalamu.common.position.Position
 import org.scalamu.core.process.MeasuredSuite
-import org.scalamu.plugin.MutantInfo
+import org.scalamu.plugin.MutationInfo
 import org.scalamu.plugin.mutators.arithmetic.ReplaceMathOperators
 import org.scalamu.core.testapi.AbstractTestSuite
 import org.scalamu.testutil.ScalamuSpec
@@ -13,8 +13,8 @@ import scala.reflect.internal.util.{BatchSourceFile, RangePosition, SourceFile}
 
 class InverseMutantCoverageSpec extends ScalamuSpec with MockFactory {
 
-  private def createStubMutant(file: SourceFile, line: Int, from: Int, to: Int): MutantInfo =
-    MutantInfo(
+  private def createStubMutant(file: SourceFile, line: Int, from: Int, to: Int): MutationInfo =
+    MutationInfo(
       ReplaceMathOperators,
       1,
       "org.example",
@@ -66,7 +66,7 @@ class InverseMutantCoverageSpec extends ScalamuSpec with MockFactory {
     )
 
     val inverseMutantCoverage =
-      CoverageConversionUtils.statementCoverageToInverseMutantCoverage(
+      CoverageConversionUtils.statementCoverageToInverseMutationCoverage(
         statementCoverage,
         Set(foo1, foo2, bar, baz, qux)
       )

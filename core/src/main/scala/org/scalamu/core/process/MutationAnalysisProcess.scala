@@ -6,11 +6,11 @@ import java.io.{DataInputStream, DataOutputStream}
 import cats.syntax.either._
 import io.circe.generic.auto._
 import io.circe.parser.decode
-import org.scalamu.common.MutantId
+import org.scalamu.common.MutationId
 import org.scalamu.core.api.InternalFailure
 
-object MutationAnalysisProcess extends Process[MutationProcessResponse] {
-  override type Configuration = (MutationAnalysisProcessConfig)
+object MutationAnalysisProcess extends Process[MutationAnalysisProcessResponse] {
+  override type Configuration = MutationAnalysisProcessConfig
 
   override def readConfigurationFromParent(
     dis: DataInputStream
@@ -20,9 +20,9 @@ object MutationAnalysisProcess extends Process[MutationProcessResponse] {
     runner: SuiteRunner,
     dis: DataInputStream,
     dos: DataOutputStream
-  ): Either[Throwable, MutationProcessResponse] = Either.catchNonFatal {
+  ): Either[Throwable, MutationAnalysisProcessResponse] = Either.catchNonFatal {
     val data         = dis.readUTF()
-    val mutationData = decode[(MutantId, Set[MeasuredSuite])](data)
+    val mutationData = decode[(MutationId, Set[MeasuredSuite])](data)
 
     mutationData match {
       case Left(parsingError) =>
@@ -36,7 +36,7 @@ object MutationAnalysisProcess extends Process[MutationProcessResponse] {
     configuration: Configuration,
     dis: DataInputStream,
     dos: DataOutputStream
-  ): Iterator[MutationProcessResponse] = {
+  ): Iterator[MutationAnalysisProcessResponse] = {
     val id     = System.getProperty("worker.name")
     val runner = new SuiteRunner(configuration)
 

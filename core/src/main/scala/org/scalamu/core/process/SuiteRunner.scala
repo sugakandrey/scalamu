@@ -4,7 +4,7 @@ package process
 import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
 import org.scalamu.core.api._
-import org.scalamu.common.MutantId
+import org.scalamu.common.MutationId
 import org.scalamu.compilation.MutationGuard
 import org.scalamu.core.testapi.{SuiteExecutionAborted, SuiteSuccess, TestsFailed}
 
@@ -18,16 +18,16 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
   private val log = Logger[SuiteRunner]
 
   def runMutantInverseCoverage(
-    id: MutantId,
+    id: MutationId,
     suites: Set[MeasuredSuite]
-  ): MutationProcessResponse = MutationProcessResponse(id, runSuites(suites, id))
+  ): MutationAnalysisProcessResponse = MutationAnalysisProcessResponse(id, runSuites(suites, id))
 
   def runMutantsInverseCoverage(
-    inverseCov: Map[MutantId, Set[MeasuredSuite]]
-  ): Set[MutationProcessResponse] =
+    inverseCov: Map[MutationId, Set[MeasuredSuite]]
+  ): Set[MutationAnalysisProcessResponse] =
     inverseCov.map(Function.tupled(runMutantInverseCoverage))(collection.breakOut)
 
-  private def runSuites(suites: Set[MeasuredSuite], id: MutantId): DetectionStatus = {
+  private def runSuites(suites: Set[MeasuredSuite], id: MutationId): DetectionStatus = {
     MutationGuard.enableForId(id.id)
     @tailrec
     def loop(suites: Iterator[MeasuredSuite]): DetectionStatus =

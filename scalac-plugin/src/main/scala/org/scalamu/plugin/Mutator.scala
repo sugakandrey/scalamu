@@ -1,7 +1,7 @@
 package org.scalamu.plugin
 
 import com.typesafe.scalalogging.Logger
-import org.scalamu.common.MutantId
+import org.scalamu.common.MutationId
 import org.scalamu.plugin.util.{CompilerAccess, GlobalExtractors, TreeEnrichment, TreeSanitizer}
 
 import scala.tools.nsc.Global
@@ -68,11 +68,11 @@ abstract class MutatingTransformer(
         } else continue(tree)
     }
 
-    protected final def generateMutantReport(tree: Tree, mutated: Tree): MutantId = {
+    protected final def generateMutantReport(tree: Tree, mutated: Tree): MutationId = {
       val oldTree     = showCode(TreePrettifier(tree))
       val mutatedTree = showCode(TreePrettifier(mutated))
 
-      val info = MutantInfo(
+      val info = MutationInfo(
         mutator,
         currentRunId,
         currentPackage,
@@ -97,7 +97,7 @@ abstract class MutatingTransformer(
     private def sanitizeTree(tree: Tree): Tree =
       if (config.sanitizeTrees) NestedMutantRemover(tree) else tree
 
-    protected final def guard(mutated: Tree, alternative: Tree, id: MutantId): Tree =
+    protected final def guard(mutated: Tree, alternative: Tree, id: MutationId): Tree =
       config.guard(global)(sanitizeTree(mutated), alternative, id)
   }
 

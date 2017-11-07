@@ -1,8 +1,8 @@
 package org.scalamu.core.api
 
-import org.scalamu.plugin.MutantInfo
+import org.scalamu.plugin.MutationInfo
 
-final case class TestedMutant(info: MutantInfo, status: DetectionStatus) {
+final case class TestedMutant(info: MutationInfo, status: DetectionStatus) {
   def reportMessage: String = s"${info.description.formatted("%-50s")} -> ${status.toString}"
   
   def render: String =

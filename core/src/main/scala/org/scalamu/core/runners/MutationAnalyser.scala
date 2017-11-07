@@ -7,12 +7,12 @@ import java.util.concurrent._
 
 import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
-import org.scalamu.common.MutantId
+import org.scalamu.common.MutationId
 import org.scalamu.core.configuration.ScalamuConfig
-import org.scalamu.core.process.{MeasuredSuite, MutationProcessResponse}
+import org.scalamu.core.process.{MeasuredSuite, MutationAnalysisProcessResponse}
 import org.scalamu.core._
 import org.scalamu.core.api._
-import org.scalamu.plugin.MutantInfo
+import org.scalamu.plugin.MutationInfo
 
 import scala.collection.JavaConverters._
 import scala.collection.breakOut
@@ -23,7 +23,7 @@ class MutationAnalyser(
 ) {
   import MutationAnalyser._
 
-  private type Task   = (MutantId, Set[MeasuredSuite])
+  private type Task   = (MutationId, Set[MeasuredSuite])
   private type Result = MutationAnalysisRunner#Result
 
   private val pool        = Executors.newFixedThreadPool(config.parallelism)
@@ -63,7 +63,7 @@ class MutationAnalyser(
               case _ => InternalFailure -> false
             }
 
-            MutationProcessResponse(task._1, status) -> restart
+            MutationAnalysisProcessResponse(task._1, status) -> restart
         }
 
         resultQueue.add(result)
@@ -79,7 +79,7 @@ class MutationAnalyser(
     override def run(): Unit = initialiseProcessSupervisor().foreach(drainJobQueue)
   }
 
-  private def timeLimitInSeconds(coverage: Map[MutantId, Set[MeasuredSuite]]): Long = {
+  private def timeLimitInSeconds(coverage: Map[MutationId, Set[MeasuredSuite]]): Long = {
     val testTimeLimiter: (Long) => Long =
       process.testTimeLimit(_, config.timeoutFactor, config.timeoutConst)
 
@@ -93,8 +93,8 @@ class MutationAnalyser(
   }
 
   def analyse(
-    coverage: Map[MutantId, Set[MeasuredSuite]],
-    mutationsById: Map[MutantId, MutantInfo]
+               coverage: Map[MutationId, Set[MeasuredSuite]],
+               mutationsById: Map[MutationId, MutationInfo]
   ): Set[TestedMutant] = {
     jobQueue.addAll(coverage.toSeq.asJavaCollection)
     (1 to config.parallelism).foreach { id =>
