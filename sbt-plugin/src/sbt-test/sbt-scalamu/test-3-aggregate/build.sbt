@@ -43,7 +43,7 @@ check := {
 }
 
 checkNoAggregation := {
-  val reportDir = file("target/mutation-analysis-report")
+  val reportDir = file("foo/target/mutation-analysis-report")
   if (!reportDir.exists()) sys.error("Report directory doesn't exist.")
 
   val fooDir = reportDir / "example/foo"

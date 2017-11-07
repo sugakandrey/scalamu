@@ -1,7 +1,7 @@
 > mutationTest
 > check
 $ delete target/mutation-analysis-report
-> set aggregate in Scalamu := false
 > project foo
+> set aggregate in Scalamu := false
 > mutationTest
-> checkNoAggregation
+> root/checkNoAggregation
