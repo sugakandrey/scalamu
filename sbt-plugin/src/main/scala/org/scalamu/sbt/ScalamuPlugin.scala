@@ -1,6 +1,5 @@
 package org.scalamu.sbt
 
-import sbt.Def.Classpath
 import sbt.{Def, Keys => K, _}
 import sbt.plugins.JvmPlugin
 
@@ -44,7 +43,14 @@ object ScalamuPlugin extends AutoPlugin {
         K.aggregate in Scalamu         := true,
         K.target in Scalamu            := (K.target in Compile).value / "mutation-analysis-report",
         SK.mutationTest := {
-          val jar             = Classpaths.managedJars(Scalamu, Set("jar"), K.update.value)
+          val report =
+            K.update.value.matching(
+              configurationFilter(Scalamu.name) &&
+                artifactFilter(`type` = "jar", name = "*scalamu*", classifier = "assembly")
+            )
+          assert(report.size == 1, "Update report contains more than one scalamu-assembly jar.")
+
+          val jar             = report.head
           val scalamuVmParams = (K.javaOptions in Scalamu).value
           val log             = K.streams.value.log
 
@@ -140,7 +146,10 @@ object ScalamuPlugin extends AutoPlugin {
 
   private def aggregateClassPath(config: Configuration): Def.Initialize[Task[Set[File]]] =
     aggregateTask(K.fullClasspath, config).map(
-      cps => cps.flatten.map(_.data)(collection.breakOut)
+      cps =>
+        cps.flatten.collect { case entry if !entry.data.getPath.contains("org.scala-lang") => entry.data }(
+          collection.breakOut
+      )
     )
 
   private lazy val testClassPath: Def.Initialize[Task[Set[File]]]    = aggregateClassPath(Test)
@@ -149,11 +158,9 @@ object ScalamuPlugin extends AutoPlugin {
   private lazy val testClassDirs: Def.Initialize[Seq[File]]          = aggregateSetting(K.crossTarget)
 }
 
-object MutationTest extends SbtBackCompat {
-  private[this] val mainClass = "org.scalamu.cli.EntryPoint"
-
+object MutationTest {
   def apply(
-    scalamuJar: Classpath,
+    scalamuJar: File,
     scalamuVmParameters: Seq[String],
     log: Logger,
     tcp: Set[File],
@@ -174,9 +181,6 @@ object MutationTest extends SbtBackCompat {
     verbose: Boolean,
     recompileOnly: Boolean
   ): File = {
-    val forkOptions = ForkOptions()
-    val run         = new ForkRun(forkOptions)
-
     val arguments = scalamuArguments(
       tcp,
       cp,
@@ -197,15 +201,18 @@ object MutationTest extends SbtBackCompat {
       recompileOnly
     )
 
-    runAndPropagateResult(
-      run,
-      mainClass,
-      scalamuJar.map(_.data),
-      scalamuVmParameters ++ arguments,
-      log
-    )
+    val forkOptions = ForkOptions()
+    val jarOpt      = Seq("-jar", s"${scalamuJar.getPath}")
+    val exitCode    = Fork.java(forkOptions, jarOpt ++ scalamuVmParameters ++ arguments)
 
-    target
+    exitCode match {
+      case 0 => target
+      case errorCode =>
+        sys.error(
+          s"Scalamu Runner failed with code: $errorCode." +
+            s" You may want to turn verbose logging on to inspect the failure."
+        )
+    }
   }
 
   private def frameworkNames(maybeFramework: Option[TestFramework]): Seq[String] =
