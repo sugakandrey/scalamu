@@ -1,5 +1,6 @@
 > mutationTest
 > check
+$ delete target/mutation-analysis-report
 > set testOptions := Seq()
 > set ScalamuKeys.targetTests := Seq("example.FooTest".r)
 > mutationTest

@@ -20,6 +20,7 @@ lazy val bar = Project(id = "bar", base = file("bar")).settings(
 lazy val root = Project(id = "root", base = file(".")).dependsOn(foo, bar)
 
 lazy val check = TaskKey[Unit]("check")
+lazy val checkNoAggregation = TaskKey[Unit]("checkNoAggregation")
 
 check := {
   val reportDir = file("target/mutation-analysis-report")
@@ -39,4 +40,15 @@ check := {
   Seq(fooAnnSource, barAnnSource, bazAnnSource).foreach { f =>
     if (!f.exists()) sys.error(s"Annotated source file: ${f.getName} doesn't exist.")
   }
+}
+
+checkNoAggregation := {
+  val reportDir = file("target/mutation-analysis-report")
+  if (!reportDir.exists()) sys.error("Report directory doesn't exist.")
+
+  val fooDir = reportDir / "example/foo"
+  val bazDir = reportDir / "example/baz"
+  
+  if (!fooDir.exists()) sys.error(s""""Report directory $fooDir for package "foo" does not exist.""")
+  if (bazDir.exists()) sys.error(s"Directory $bazDir should not be created, when aggregation is disabled.")
 }
