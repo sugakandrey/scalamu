@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.net.NetUtils
 import org.jetbrains.plugins.scala.extensions._
-import org.jetbrains.plugins.scala.project.{ScalaModule, ScalaSdkCache}
+import org.jetbrains.plugins.scala.project.ScalaModule
 
 import scala.util.{Properties, Success, Try}
 
@@ -46,7 +46,7 @@ object ScalamuJarFetcher {
 
       HttpRequests.request(url).connect { request =>
         val contentSize = request.getConnection.getContentLength
-        NetUtils.copyStreamContent(indicator, request.getInputStream(), outputStream, contentSize)
+        NetUtils.copyStreamContent(indicator, request.getInputStream, outputStream, contentSize)
       }
     }
 

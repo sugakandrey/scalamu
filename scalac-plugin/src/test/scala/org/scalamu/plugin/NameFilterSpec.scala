@@ -9,7 +9,7 @@ import org.scalamu.plugin.testutil.MutationTestRunner
 class NameFilterSpec extends MutationTestRunner with IsolatedScalamuCompilerFixture {
 
   override val filter: NameFilter = InverseRegexFilter(
-    ".*scala.Predef.print.*".r,
+    "scala\\.Predef\\.print.*".r,
     ".*foobar.*".r,
     ".*Foo.Bar".r
   )

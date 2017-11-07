@@ -4,7 +4,7 @@ package configuration
 import java.io.File
 
 import com.typesafe.scalalogging.Logger
-import org.scalamu.common.filtering.RegexFilter
+import org.scalamu.common.filtering.{CompositeNameFilter, InverseRegexFilter, RegexFilter}
 import org.scalamu.core.api.InternalFailure
 import org.scalamu.core.compilation.{IgnoreCoverageStatementsFilter, LoggingReporter}
 import org.scalamu.plugin._
@@ -67,7 +67,10 @@ trait MutationConfigDerivable {
       ScalamuScalacConfig(
         reporter,
         guard,
-        IgnoreCoverageStatementsFilter,
+        new CompositeNameFilter(
+          InverseRegexFilter(config.ignoreSymbols: _*),
+          IgnoreCoverageStatementsFilter,
+        ),
         config.activeMutators,
         RegexFilter(config.targetOwners: _*)
     )
