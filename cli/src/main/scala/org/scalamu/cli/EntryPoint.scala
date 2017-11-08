@@ -28,21 +28,21 @@ import scala.reflect.io.{Directory, PlainDirectory}
 object EntryPoint {
   private val log = Logger[EntryPoint.type]
 
-  private def ensureDirExits(dir: Path): Unit =
+  private def ensureDirExits(dir: Path): Path =
     if (!Files.exists(dir)) {
       Files.createDirectories(dir)
-    }
+    } else dir
 
   def main(args: Array[String]): Unit = {
     LoggerConfiguration.configureLoggingForName("MAIN-APP")
     val config = ScalamuConfig.parseConfig(args)
     if (config.verbose) {
       log.info(s"Running Scalamu with config:\n ${config.asJson.spaces2}")
+    } else {
+      log.info("Verbose logging is disabled, if you encounter any problems you may want to turn it on.")
     }
 
-    val reportDir = config.reportDir
-    ensureDirExits(reportDir)
-
+    val reportDir       = ensureDirExits(config.reportDir)
     val instrumentation = new cov.MemoryReporter
     val reporter        = new plugin.MemoryReporter
 
@@ -82,7 +82,7 @@ object EntryPoint {
     val coverageAnalyser = new CoverageAnalyser(config, outputPath)
     val coverage         = coverageAnalyser.analyse(instrumentation)
 
-    log.debug(s"Test suites examined: ${coverage.keySet.mkString("[\n\t", "\n\t", "\n]")}.")
+    log.info(s"Test suites examined: ${coverage.keySet.mkString("[\n\t", "\n\t", "\n]")}.")
 
     if (config.verbose) {
       tryWith(Files.newBufferedWriter(reportDir / "testSuites.log")) { writer =>

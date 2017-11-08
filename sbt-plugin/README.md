@@ -6,11 +6,11 @@ mutation testing into your build.
 Make sure your SBT version is supported (currently sbt-scalamu is cross-built
 against sbt 0.13 and 1.0).
 ```
-sbt.version = 1.0.2
+sbt.version = 1.0.3
 ```
 Add the plugin to `project/plugins.sbt`:
 ```
-addSbtPlugin("org.scalamu" % "sbt-scalamu" % "0.1-SNAPSHOT")
+addSbtPlugin("io.github.sugakandrey" % "sbt-scalamu" % "0.1.0-SNAPSHOT")
 ```
 Run the `mutationTest` command inside SBT shell:
 ```
@@ -42,10 +42,10 @@ ScalamuKeys.timeoutFactor := 2,
 ScalamuKeys.timeoutConst  := 5000
 ```
 ### Targets
-You can choose to only mutate certain classes/run certain tests and/or ignore trees with certain symbol names
+You can choose to only mutate certain packages/classes and/or run certain tests and/or ignore trees with certain symbol names
 Example: 
 ```
-ScalamuKeys.targetClasses := Seq("org.example.Foo".r, "org.example2.baz.*".r),
+ScalamuKeys.targetOwners  := Seq("org.example.Foo".r, "org.example2.baz.*".r),
 ScalamuKeys.targetTests   := Seq("org.example.fast.*".r),
 ScalamuKeys.ignoreSymbols := Seq("scala.Predef.println".r)
 ```
@@ -67,8 +67,10 @@ ScalamuKeys.analyserJavaOptions := Seq("-Xmx1g", "-Dprop=foo")
 
 You can specify a directory where report is generated using `target` key scoped `Scalamu`,
 in case of a really big project you might want to modify `javaOptions` of the mutation engine itself.
+By default `mutationTest` will aggregate all (if any) project in the `.dependsOn` clause, to disable this behaviour
+set `aggregate in Scalamu` to `false`.
 Example:
 ```
-target in Scalamu      := file(".") 
+target in Scalamu      := file("./scalamu"),
 javaOptions in Scalamu := Seq("-Xmx4g")
 ```

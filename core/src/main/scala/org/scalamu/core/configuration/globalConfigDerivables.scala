@@ -41,7 +41,7 @@ trait SettingsDerivable {
       }
 
       if (unprocessed.nonEmpty) {
-        log.debug(s"Unprocessed scalac options: ${unprocessed.mkString("[", " , ", "]")}")
+        log.warn(s"Unprocessed scalac options: ${unprocessed.mkString("[", " , ", "]")}")
       }
 
       settings

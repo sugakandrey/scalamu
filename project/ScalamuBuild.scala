@@ -28,7 +28,7 @@ object ScalamuBuild {
   ).map(_ % "0.8.0")
 
   lazy val commonSettings = Seq(
-    version            := "0.1.0-SNAPSHOT",
+    version            := "0.1.0",
     isSnapshot         := true,
     test in assembly   := {},
     organization       := "io.github.sugakandrey",
@@ -74,7 +74,7 @@ object ScalamuBuild {
       (if (scalaBinaryVersion.value == "2.10") Seq()
        else
          Seq(
-           "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+           "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
          ))
   )
 

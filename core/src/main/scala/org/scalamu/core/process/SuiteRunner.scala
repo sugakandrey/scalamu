@@ -33,7 +33,8 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
     def loop(suites: Iterator[MeasuredSuite]): DetectionStatus =
       if (suites.hasNext) {
         val MeasuredSuite(suite, completionTime) = suites.next()
-        log.debug(s"Executing suite ${suite.info.name.fullName} with mutant #${id.id}.")
+        val suiteName = suite.info.name.fullName
+        log.debug(s"Executing suite $suiteName with mutant #${id.id}.")
         val testResult      = Future { blocking { suite.execute() } }
         val timeLimit       = testTimeLimit(completionTime, config.timeoutFactor, config.timeoutConst)
         val executionResult = Either.catchNonFatal(Await.result(testResult, timeLimit millis))
@@ -42,11 +43,13 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
           case Right(result) =>
             result match {
               case _: SuiteSuccess => loop(suites)
-              case f: TestsFailed  => Killed(f.name)
+              case f: TestsFailed  => 
+                log.debug(s"Mutation #${id.id} killed by suite $suiteName")
+                Killed(f.name)
               case e: SuiteExecutionAborted =>
                 log.debug(
-                  s"Something went wrong when trying to run a test suite named " +
-                    s"${suite.info.name.fullName}. Cause: $e."
+                  s"Something went wrong when trying to run " +
+                    s"$suiteName. Cause: $e."
                 )
                 die(InternalFailure)
             }
@@ -58,7 +61,7 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
               case e =>
                 log.debug(
                   s"An exception occurred, while waiting for test " +
-                    s"${suite.info.name.fullName} to finish. Cause: $e."
+                    s"$suiteName to finish. Cause: $e."
                 )
                 die(InternalFailure)
             }

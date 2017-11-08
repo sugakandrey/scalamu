@@ -36,11 +36,14 @@ class MutationAnalyser(
   ) extends Runnable {
     private def initialiseProcessSupervisor(): Either[CommunicationException, ProcessSupervisor[Task, Result]] = {
       log.debug(s"Creating MutationAnalysisRunner#$processId ...")
+      
       val runner        = new MutationAnalysisRunner(socket, config, compiledSourcesDir, processId)
       val tryInitialise = runner.start()
+      
       tryInitialise.left.foreach(
         failure => s"Failed to start mutation analysis process. Cause: ${failure.cause}"
       )
+      
       tryInitialise
     }
 
@@ -93,10 +96,12 @@ class MutationAnalyser(
   }
 
   def analyse(
-               coverage: Map[MutationId, Set[MeasuredSuite]],
-               mutationsById: Map[MutationId, MutationInfo]
+    coverage: Map[MutationId, Set[MeasuredSuite]],
+    mutationsById: Map[MutationId, MutationInfo]
   ): Set[TestedMutant] = {
+    log.info(s"Starting mutation analysis. Number of analysers: ${config.parallelism}.")
     jobQueue.addAll(coverage.toSeq.asJavaCollection)
+    
     (1 to config.parallelism).foreach { id =>
       val socket   = new ServerSocket(0)
       val runnable = new ProcessCommunicationWorker(socket, id)
@@ -110,9 +115,11 @@ class MutationAnalyser(
     val completed: Set[TestedMutant] =
       resultQueue.asScala.map(r => TestedMutant(mutationsById(r.id), r.status))(breakOut)
 
-    if (terminated) completed
-    else {
-      log.debug(
+    if (terminated) {
+      log.info(s"Successfully finished mutation analysis. No untested mutations.")
+      completed
+    } else {
+      log.error(
         s"Some mutation analysis workers have timed out (time limit $timeLimit)." +
           s" Make sure timeoutFactor & timeoutConst are set correctly."
       )
@@ -120,7 +127,9 @@ class MutationAnalyser(
 
       val unfinished: Set[TestedMutant] =
         jobQueue.asScala.map(task => TestedMutant(mutationsById(task._1), Untested))(breakOut)
-
+      
+      log.warn(s"${unfinished.size} untested mutations.")
+      
       completed | unfinished
     }
   }
