@@ -98,11 +98,8 @@ object ScalamuBuild {
     ),
     pomIncludeRepository := Function.const(false),
     publishTo := {
-      val nexus = "https://oss.sonatype.org/"
-      if (isSnapshot.value)
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+      if (isSnapshot.value) Some(Opts.resolver.sonatypeSnapshots)
+      else Some(Opts.resolver.sonatypeStaging)
     }
   )
 
@@ -150,14 +147,7 @@ object ScalamuBuild {
     .dependsOn(
       cli
     )
-    .aggregate(
-      scalacPlugin,
-      core,
-      report,
-      common,
-      cli,
-      compilation
-    )
+    .settings(publishSettings)
     .settings(
       aggregate in assembly           := false,
       mainClass in assembly           := Some("org.scalamu.cli.EntryPoint"),
