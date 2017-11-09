@@ -10,7 +10,7 @@ sbt.version = 1.0.3
 ```
 Add the plugin to `project/plugins.sbt`:
 ```
-addSbtPlugin("io.github.sugakandrey" % "sbt-scalamu" % "0.1.0-SNAPSHOT")
+addSbtPlugin("io.github.sugakandrey" % "sbt-scalamu" % "0.1.0")
 ```
 Run the `mutationTest` command inside SBT shell:
 ```
