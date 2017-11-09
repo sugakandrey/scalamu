@@ -1,14 +1,15 @@
 package org.scalamu.sbt
 
+import org.scalamu.buildinfo.BuildInfo
 import sbt.{Def, Keys => K, _}
 import sbt.plugins.JvmPlugin
 
 import scala.util.matching.Regex
 
 object ScalamuPlugin extends AutoPlugin {
-  private[this] val organization = "io.github.sugakandrey"
-  private[this] val artifactId   = "scalamu"
-  private[this] val version      = "0.1.0"
+  private[this] val organization = BuildInfo.scalamuOrganization
+  private[this] val artifactId   = BuildInfo.scalamuName
+  private[this] val version      = BuildInfo.scalamuVersion
 
   object autoImport extends ScalamuImport {
     lazy val Scalamu: Configuration =

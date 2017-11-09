@@ -10,13 +10,14 @@ import com.intellij.util.io.HttpRequests
 import com.intellij.util.net.NetUtils
 import org.jetbrains.plugins.scala.extensions._
 import org.jetbrains.plugins.scala.project.ScalaModule
+import org.scalamu.buildinfo.BuildInfo
 
 import scala.util.{Properties, Success, Try}
 
 object ScalamuJarFetcher {
-  private[this] val organization = "io.github.sugakandrey"
-  private[this] val name         = "scalamu"
-  private[this] val version      = "0.1.0"
+  private[this] val organization = BuildInfo.scalamuOrganization
+  private[this] val name         = BuildInfo.scalamuName
+  private[this] val version      = BuildInfo.scalamuVersion
   private[this] val artifactType = "jars"
 
   private def artifactUrl(scalaBinaryVersion: String): String =

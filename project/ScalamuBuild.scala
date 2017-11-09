@@ -10,7 +10,9 @@ import sbt.Keys._
 import sbt._
 import sbtassembly.AssemblyKeys._
 import sbtassembly.ShadeRule
-import scoverage.ScoverageSbtPlugin
+import sbtbuildinfo.BuildInfoPlugin
+import sbtbuildinfo.BuildInfoPlugin._
+import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import xerial.sbt.Sonatype
 
 object ScalamuBuild {
@@ -28,7 +30,7 @@ object ScalamuBuild {
   ).map(_ % "0.8.0")
 
   lazy val commonSettings = Seq(
-    version            := "0.1.0",
+    version            := "0.1.1",
     isSnapshot         := true,
     test in assembly   := {},
     organization       := "io.github.sugakandrey",
@@ -63,7 +65,7 @@ object ScalamuBuild {
 
   private def createProject(id: String, base: File): Project =
     Project(id, base)
-      .disablePlugins(ScriptedPlugin, BintrayPlugin, GitPlugin, ScoverageSbtPlugin)
+      .disablePlugins(ScriptedPlugin, BintrayPlugin, GitPlugin)
       .settings(commonSettings)
 
   lazy val commonDeps = Seq(
@@ -201,8 +203,14 @@ object ScalamuBuild {
       crossSbtVersions := Seq("0.13.16", "1.0.3")
     )
     .disablePlugins(Sonatype, SbtPgp)
-    .enablePlugins(GitVersioning)
+    .enablePlugins(GitVersioning, BuildInfoPlugin)
     .settings(
+      buildInfoKeys := Seq[BuildInfoKey](
+        version in root,
+        organization in root,
+        name in root
+      ).map(k => BuildInfoKey.map(k) { case (k, v) => "scalamu" + k.capitalize -> v }),
+      buildInfoPackage         := "org.scalamu.buildinfo",
       licenses                 := Seq(GPL3),
       publishArtifact in Test  := false,
       publishMavenStyle        := false,
@@ -213,8 +221,14 @@ object ScalamuBuild {
     )
 
   lazy val scalamuIdea = createProject(id = "idea-plugin", base = file("idea-plugin"))
-    .enablePlugins(SbtIdeaPlugin)
+    .enablePlugins(SbtIdeaPlugin, BuildInfoPlugin)
     .settings(
+      buildInfoKeys := Seq[BuildInfoKey](
+        version in root,
+        organization in root,
+        name in root
+      ).map(k => BuildInfoKey.map(k) { case (k, v) => "scalamu" + k.capitalize -> v }),
+      buildInfoPackage                 := "org.scalamu.buildinfo",
       scalaVersion                     := "2.12.4",
       onLoad in Global                 ~= { _.andThen("idea-plugin/updateIdea" :: _) },
       assemblyOption in assembly       ~= { _.copy(includeScala = false) },
