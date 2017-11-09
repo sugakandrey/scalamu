@@ -101,16 +101,17 @@ class MutationAnalyser(
   ): Set[TestedMutant] = {
     log.info(s"Starting mutation analysis. Number of analysers: ${config.parallelism}.")
     jobQueue.addAll(coverage.toSeq.asJavaCollection)
-    
+
     val pbUpdateThread = new Thread(() => {
-      val cursors = Seq("|", "/", "-", "\\")
+      val cursors  = Seq("|", "/", "-", "\\")
       val template = s"Analysing (%d/${mutationsById.size}) ... %s\r"
       while (!Thread.currentThread.isInterrupted) {
-        for (c <- cursors) {
-          printf(template, resultQueue.size(), c)
-          Thread.sleep(300)
-        }
-        try { Thread.sleep(500) } catch { case _: InterruptedException => Thread.currentThread().interrupt() }
+        try {
+          for (c <- cursors) {
+            printf(template, resultQueue.size(), c)
+            Thread.sleep(300)
+          }
+        } catch { case _: InterruptedException => Thread.currentThread().interrupt() }
       }
     })
 
@@ -119,14 +120,13 @@ class MutationAnalyser(
       val runnable = new ProcessCommunicationWorker(socket, id)
       pool.submit(runnable)
     }
-    
+
     if (!config.verbose) {
       pbUpdateThread.start()
     }
-    
+
     pool.shutdown()
 
-    
     val timeLimit  = timeLimitInSeconds(coverage)
     val terminated = pool.awaitTermination(timeLimit, TimeUnit.SECONDS)
     pbUpdateThread.interrupt()
