@@ -1,6 +1,6 @@
 [![Bintray](https://api.bintray.com/packages/sugakandrey/sbt-plugins/sbt-scalamu/images/download.svg?style=flat-square)](https://bintray.com/sugakandrey/sbt-plugins/sbt-scalamu/_latestVersion)
 # sbt-scalamu
-sbt-scalamu is a plugin for SBT that allows for convinient integration of 
+sbt-scalamu is a plugin for SBT that allows for convenient integration of 
 mutation testing into your build.
 
 ## Getting started
