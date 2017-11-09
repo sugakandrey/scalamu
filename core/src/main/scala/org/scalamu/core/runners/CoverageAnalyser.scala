@@ -68,7 +68,7 @@ class CoverageAnalyser(
       .valueOr(error => reportAndExit(s"Failed to launch coverage process. Cause: $error."))
 
     val coverageFuture = Future { blocking { receiveCoverageData(supervisor) } }
-    val timeLimit      = 1 minute
+    val timeLimit      = Duration(10, HOURS)
     val coverageData   = Either.catchNonFatal(Await.result(coverageFuture, timeLimit))
 
     val coverage: Map[MeasuredSuite, Set[StatementId]] = coverageData match {
