@@ -31,7 +31,7 @@ import java.nio.file.Path;
 
 public class ScalamuConfigurationForm {
   private JPanel mainPanel;
-  private ScalamuFilterTextFieldWithBrowseButton targetClasses;
+  private ScalamuFilterTextFieldWithBrowseButton targetOwners;
   private ScalamuFilterTextFieldWithBrowseButton targetTests;
   private TextFieldWithBrowseButton scalamuJarPath;
   private JFormattedTextField parallelism;
@@ -82,8 +82,8 @@ public class ScalamuConfigurationForm {
     return targetTests.getText();
   }
 
-  public String getTargetClasses() {
-    return targetClasses.getText();
+  public String getTargetOwners() {
+    return targetOwners.getText();
   }
 
   public String getJarPath() {
@@ -108,7 +108,7 @@ public class ScalamuConfigurationForm {
     reportDir.setText(configuration.reportDir());
     openReportInBrowserCheckBox.setSelected(configuration.openInBrowser());
     scalamuJarPath.setText(configuration.pathToJar());
-    targetClasses.setData(configuration.getTargetClassesAsJava());
+    targetOwners.setData(configuration.getTargetClassesAsJava());
     targetTests.setData(configuration.getTargetTestsAsJava());
     vmParameters.setText(configuration.vmParameters());
   }
@@ -215,7 +215,7 @@ public class ScalamuConfigurationForm {
   }
 
   private void createUIComponents() {
-    targetClasses = new ScalamuFilterTextFieldWithBrowseButton(
+    targetOwners = new ScalamuFilterTextFieldWithBrowseButton(
             bundle.getMessage("run.configuration.target.classes.title"),
             bundle.getMessage("run.configuration.target.classes.empty")
     );
@@ -238,10 +238,10 @@ public class ScalamuConfigurationForm {
     mainPanel = new JPanel();
     mainPanel.setLayout(new GridLayoutManager(14, 3, new Insets(0, 0, 0, 0), -1, -1));
     final JLabel label1 = new JLabel();
-    label1.setText("Target classes:");
-    mainPanel.add(label1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    targetClasses.setText("");
-    mainPanel.add(targetClasses, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+    label1.setText("Target owners:");
+    mainPanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    targetOwners.setText("");
+    mainPanel.add(targetOwners, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     final JLabel label2 = new JLabel();
     label2.setText("Target tests:");
     mainPanel.add(label2, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

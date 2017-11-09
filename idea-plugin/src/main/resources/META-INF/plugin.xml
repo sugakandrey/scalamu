@@ -1,10 +1,13 @@
-<idea-plugin url="https://github.com/mjedynak/pit-idea-plugin">
+<idea-plugin url="https://github.com/sugakandrey/scalamu/idea-plugin">
     <name>Scalamu mutation testing plugin</name>
-    <version>0.0.1</version>
+    <description><![CDATA[
+      Plugin for scala mutation testing (https://github.com/sugakandrey/scalamu).
+      Provides Run Configuration that allows to launch Scalamu from within IDEA.
+    ]]></description>
+    <version>0.1.0</version>
 
     <vendor email="sugak.andr3y@gmail.com">Andrey Sugak</vendor>
     <idea-version since-build="172.3968.16"/>
-
 
     <depends>org.intellij.scala</depends>
     <extensions defaultExtensionNs="com.intellij">

@@ -68,7 +68,7 @@ class ScalamuRunConfiguration(
     reportDir     = form.getReportDir
     openInBrowser = form.getOpenInBrowser
     browser       = Option(WebBrowserManager.getInstance().findBrowserById(form.getBrowserFamily.getName))
-    targetOwners  = readCommaSeparatedSeq(form.getTargetClasses).map(RegexFilter.apply)
+    targetOwners  = readCommaSeparatedSeq(form.getTargetOwners).map(RegexFilter.apply)
     targetTests   = readCommaSeparatedSeq(form.getTargetTests).map(RegexFilter.apply)
   }
 

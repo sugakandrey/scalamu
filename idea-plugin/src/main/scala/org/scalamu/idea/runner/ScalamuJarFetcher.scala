@@ -16,11 +16,11 @@ import scala.util.{Properties, Success, Try}
 object ScalamuJarFetcher {
   private[this] val organization = "io.github.sugakandrey"
   private[this] val name         = "scalamu"
-  private[this] val version      = "0.1.0-SNAPSHOT"
+  private[this] val version      = "0.1.0"
   private[this] val artifactType = "jars"
 
   private def artifactUrl(scalaBinaryVersion: String): String =
-    s"https://oss.sonatype.org/service/local/repositories/snapshots/content/io/github/sugakandrey/scalamu_$scalaBinaryVersion/0.1-SNAPSHOT/scalamu_$scalaBinaryVersion-0.1-SNAPSHOT-assembly.jar"
+    s"http://repo1.maven.org/maven2/${organization.replaceAll("\\.", "/")}/${name}_$scalaBinaryVersion/$version/${name}_$scalaBinaryVersion-$version-assembly.jar"
 
   private def ivyCachePath: Path = {
     val ivyHome = Properties.propOrElse("ivy.home", Properties.userHome + "/.ivy2")

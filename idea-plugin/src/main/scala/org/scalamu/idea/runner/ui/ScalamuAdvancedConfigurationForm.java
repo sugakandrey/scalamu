@@ -180,7 +180,7 @@ public class ScalamuAdvancedConfigurationForm {
     label4.setText("Ignored symbols:");
     mainPanel.add(label4, new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JLabel label5 = new JLabel();
-    label5.setText("Scalamu Jar runner VM  parameters:");
+    label5.setText("Scalamu runner VM parameters:");
     mainPanel.add(label5, new GridConstraints(5, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     scalamuRunnerVmParams = new RawCommandLineEditor();
     scalamuRunnerVmParams.setText("-Xms512m -Xmx1500m");
