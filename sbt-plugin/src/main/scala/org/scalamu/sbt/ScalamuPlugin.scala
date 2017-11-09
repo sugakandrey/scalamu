@@ -8,7 +8,7 @@ import scala.util.matching.Regex
 object ScalamuPlugin extends AutoPlugin {
   private[this] val organization = "io.github.sugakandrey"
   private[this] val artifactId   = "scalamu"
-  private[this] val version      = "0.1.0-SNAPSHOT"
+  private[this] val version      = "0.1.0"
 
   object autoImport extends ScalamuImport {
     lazy val Scalamu: Configuration =
