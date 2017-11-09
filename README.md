@@ -1,3 +1,5 @@
+[![Maven metadata URI](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/io/github/sugakandrey/scalamu_2.12/maven-metadata.xml.svg?style=flat-square)](http://repo1.maven.org/maven2/io/github/sugakandrey/scalamu_2.12/)
+
 # Scalamu 
 
 Scalamu is a mutation testing engine for Scala.
