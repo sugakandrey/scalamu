@@ -69,7 +69,7 @@ trait ScalamuScalacPluginConfigDerivable {
         guard,
         new CompositeNameFilter(
           InverseRegexFilter(config.ignoreSymbols: _*),
-          IgnoreCoverageStatementsFilter,
+          IgnoreCoverageStatementsFilter
         ),
         config.activeMutators,
         RegexFilter(config.targetOwners: _*)
