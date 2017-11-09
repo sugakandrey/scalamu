@@ -7,6 +7,7 @@ import java.util.concurrent._
 
 import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
+import me.tongfei.progressbar.ProgressBar
 import org.scalamu.common.MutationId
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.process.{MeasuredSuite, MutationAnalysisProcessResponse}
@@ -36,14 +37,14 @@ class MutationAnalyser(
   ) extends Runnable {
     private def initialiseProcessSupervisor(): Either[CommunicationException, ProcessSupervisor[Task, Result]] = {
       log.debug(s"Creating MutationAnalysisRunner#$processId ...")
-      
+
       val runner        = new MutationAnalysisRunner(socket, config, compiledSourcesDir, processId)
       val tryInitialise = runner.start()
-      
+
       tryInitialise.left.foreach(
         failure => s"Failed to start mutation analysis process. Cause: ${failure.cause}"
       )
-      
+
       tryInitialise
     }
 
@@ -101,7 +102,7 @@ class MutationAnalyser(
   ): Set[TestedMutant] = {
     log.info(s"Starting mutation analysis. Number of analysers: ${config.parallelism}.")
     jobQueue.addAll(coverage.toSeq.asJavaCollection)
-    
+
     (1 to config.parallelism).foreach { id =>
       val socket   = new ServerSocket(0)
       val runnable = new ProcessCommunicationWorker(socket, id)
@@ -109,8 +110,21 @@ class MutationAnalyser(
     }
     pool.shutdown()
 
+    val pbUpdateThread = new Thread(() => {
+      val cursors = Seq("|", "/", "-", "\\")
+      val template = s"Analysing (%d/${mutationsById.size}) ... %c\r"
+      while (!Thread.currentThread.isInterrupted) {
+        for (c <- cursors) {
+          printf(template, resultQueue.size(), c)
+          Thread.sleep(300)
+        }
+        try { Thread.sleep(500) } catch { case _: InterruptedException => Thread.currentThread().interrupt() }
+      }
+    })
+
     val timeLimit  = timeLimitInSeconds(coverage)
     val terminated = pool.awaitTermination(timeLimit, TimeUnit.SECONDS)
+    pbUpdateThread.interrupt()
 
     val completed: Set[TestedMutant] =
       resultQueue.asScala.map(r => TestedMutant(mutationsById(r.id), r.status))(breakOut)
@@ -127,9 +141,9 @@ class MutationAnalyser(
 
       val unfinished: Set[TestedMutant] =
         jobQueue.asScala.map(task => TestedMutant(mutationsById(task._1), Untested))(breakOut)
-      
+
       log.warn(s"${unfinished.size} untested mutations.")
-      
+
       completed | unfinished
     }
   }
