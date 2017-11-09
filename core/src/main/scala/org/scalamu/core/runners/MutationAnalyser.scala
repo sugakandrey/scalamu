@@ -7,7 +7,6 @@ import java.util.concurrent._
 
 import cats.syntax.either._
 import com.typesafe.scalalogging.Logger
-import me.tongfei.progressbar.ProgressBar
 import org.scalamu.common.MutationId
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.process.{MeasuredSuite, MutationAnalysisProcessResponse}
@@ -102,17 +101,10 @@ class MutationAnalyser(
   ): Set[TestedMutant] = {
     log.info(s"Starting mutation analysis. Number of analysers: ${config.parallelism}.")
     jobQueue.addAll(coverage.toSeq.asJavaCollection)
-
-    (1 to config.parallelism).foreach { id =>
-      val socket   = new ServerSocket(0)
-      val runnable = new ProcessCommunicationWorker(socket, id)
-      pool.submit(runnable)
-    }
-    pool.shutdown()
-
+    
     val pbUpdateThread = new Thread(() => {
       val cursors = Seq("|", "/", "-", "\\")
-      val template = s"Analysing (%d/${mutationsById.size}) ... %c\r"
+      val template = s"Analysing (%d/${mutationsById.size}) ... %s\r"
       while (!Thread.currentThread.isInterrupted) {
         for (c <- cursors) {
           printf(template, resultQueue.size(), c)
@@ -122,6 +114,19 @@ class MutationAnalyser(
       }
     })
 
+    (1 to config.parallelism).foreach { id =>
+      val socket   = new ServerSocket(0)
+      val runnable = new ProcessCommunicationWorker(socket, id)
+      pool.submit(runnable)
+    }
+    
+    if (!config.verbose) {
+      pbUpdateThread.start()
+    }
+    
+    pool.shutdown()
+
+    
     val timeLimit  = timeLimitInSeconds(coverage)
     val terminated = pool.awaitTermination(timeLimit, TimeUnit.SECONDS)
     pbUpdateThread.interrupt()
