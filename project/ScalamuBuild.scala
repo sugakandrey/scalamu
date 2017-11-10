@@ -161,7 +161,9 @@ object ScalamuBuild {
           "org.ow2.asm.**",
           "org.typelevel.**",
           "shapeless.**",
-          "org.slf4j.**"
+          "org.slf4j.**",
+          "cats.**",
+          "com.typesafe.**"
         ).map(shade)
     )
 
