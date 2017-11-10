@@ -10,12 +10,11 @@ Although the preferred method is to use SBT/IntelliJ plugin scalamu can be run
 from the command line too. Simply download `org.scalamu.entry-point` jar
 and launch it from the command line as follows:
 ```
-scala -cp %path to scalamu jar% \
-    org.scalamu.entry.EntryPoint \
+java -jar %path to scalamu jar% \
+    %optional configuration parameters%
     %report directory% \
     %directories containing source files% \
     %directories containing test classes% \
-    %optional configuration parameters%
 ```
 For an in-depth explanation on configuration parameters see usage info below.
 ```

@@ -31,7 +31,7 @@ ScalamuKeys.activeMutators := Seq(
   "ReplaceWithNone"
 )
 ```
-For the list of all available mutators see [available mutators](../plugin/src/main/scala/org/scalamu/plugin/ScalamuPluginConfig.scala#L9L-L23).
+For the list of all available mutators see [available mutators](../scalac-plugin/src/main/scala/org/scalamu/plugin/ScalamuPluginConfig.scala#L9L-L23).
 ### Timeouts
 Every now and then mutations will cause infinite loops/recursion to avoid
 waiting indefinitely every test is given `regular_execution_time * timeout_factor + timeout_const` ms of run time.
