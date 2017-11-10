@@ -4,7 +4,7 @@ import org.scalamu.core.api.ClassName
 
 /**
  * Allows to convert between internal, framework dependent suite
- * result type and [[org.scalamu.testapi.TestSuiteResult]]
+ * result type and [[org.scalamu.core.testapi.TestSuiteResult]]
  *
  * @tparam R Internal framework suite result type
  */

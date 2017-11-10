@@ -8,7 +8,6 @@ import cats.instances.list._
 import cats.instances.either._
 import cats.syntax.either._
 import cats.syntax.traverse._
-import com.typesafe.scalalogging.Logger
 import org.scalamu.core.api._
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.coverage.{InstrumentationReporter, Statement, StatementId, SuiteCoverage}
@@ -23,11 +22,10 @@ class CoverageAnalyser(
   val config: ScalamuConfig,
   val compiledSourcesDir: Path
 ) {
-  import CoverageAnalyser._
   private type Result = CoverageRunner#Result
 
   private def reportAndExit(message: String): Nothing = {
-    log.error(message)
+    scribe.error(message)
     die(InternalFailure)
   }
 
@@ -42,7 +40,7 @@ class CoverageAnalyser(
 
     val coverageData = workerData match {
       case Left(communicationException) =>
-        log.error(
+        scribe.error(
           s"Timed out while waiting for coverage report: $communicationException. " +
             s"Make sure the environment is correctly set up."
         )
@@ -52,7 +50,7 @@ class CoverageAnalyser(
     }
 
     val coverageDuration = (System.currentTimeMillis() - coverageStart) / 1000
-    log.info(
+    scribe.info(
       s"Coverage process finished in $coverageDuration seconds with exit code ${supervisor.waitFor()}."
     )
 
@@ -91,8 +89,4 @@ class CoverageAnalyser(
 
     coverage.mapValues(_.map(instrumentation.getStatementById))
   }
-}
-
-object CoverageAnalyser {
-  private val log = Logger[CoverageAnalyser]
 }

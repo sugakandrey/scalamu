@@ -2,17 +2,14 @@ package org.scalamu.core.coverage
 
 import java.{util => ju}
 
-import com.typesafe.scalalogging.Logger
 import org.scalamu.common.position.Position
 import scoverage.Coverage
 
 class MemoryReporter(
   val instrumentedStatements: ju.Map[StatementId, Statement] = new ju.HashMap[StatementId, Statement]
 ) extends InstrumentationReporter {
-  import MemoryReporter._
-
   def onInstrumentationFinished(coverage: Coverage): Unit = {
-    log.info(s"Finished coverage instrumentation. Total ${coverage.statements.size} statements.")
+    scribe.info(s"Finished coverage instrumentation. Total ${coverage.statements.size} statements.")
     coverage.statements.foreach(
       stm =>
         instrumentedStatements.put(
@@ -27,8 +24,4 @@ class MemoryReporter(
   }
 
   override def getStatementById(id: StatementId): Statement = instrumentedStatements.get(id)
-}
-
-object MemoryReporter {
-  private val log = Logger[MemoryReporter]
 }

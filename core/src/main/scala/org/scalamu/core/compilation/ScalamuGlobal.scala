@@ -1,10 +1,10 @@
 package org.scalamu.core.compilation
 
-import com.typesafe.scalalogging.Logger
 import org.scalamu.core.api.SourceInfo
 import org.scalamu.core.configuration.{GlobalDerivableInstances, ScalamuConfig}
 import org.scalamu.core.coverage.{CoveragePlugin, InstrumentationReporter}
 import org.scalamu.plugin.{MutationReporter, ScalamuPlugin, ScalamuScalacConfig}
+import scribe.Logging
 
 import scala.reflect.io.AbstractFile
 import scala.tools.nsc.plugins.Plugin
@@ -21,7 +21,7 @@ class ScalamuGlobal private[compilation] (
   scalacPluginConfig: ScalamuScalacConfig,
   instrumentationReporter: InstrumentationReporter
 ) extends Global(settings, reporter) {
-  ScalamuGlobal.log.debug(s"Initialised ScalamuGlobal with classpath: ${settings.classpath}.")
+  scribe.debug(s"Initialised ScalamuGlobal with classpath: ${settings.classpath}.")
 
   require(
     settings.outputDirs.getSingleOutput.isDefined,
@@ -43,8 +43,8 @@ class ScalamuGlobal private[compilation] (
 
   def compile(suites: List[SourceInfo]): Int = {
     val sourceFiles = suites.map(suite => getSourceFile(suite.fullPath.toString))
-    ScalamuGlobal.log.info(s"Compiling ${sourceFiles.size} source files.")
-    ScalamuGlobal.log.debug(s"Source files: ${sourceFiles.mkString("[\n\t", "\n\t", "\n]")}")
+    scribe.info(s"Compiling ${sourceFiles.size} source files.")
+    scribe.debug(s"Source files: ${sourceFiles.mkString("[\n\t", "\n\t", "\n]")}")
     val run = new Run
     val id  = currentRunId
     run.compileSources(sourceFiles)
@@ -52,9 +52,7 @@ class ScalamuGlobal private[compilation] (
   }
 }
 
-object ScalamuGlobal extends GlobalDerivableInstances {
-  override val log: Logger = Logger[ScalamuGlobal]
-
+object ScalamuGlobal extends GlobalDerivableInstances with Logging {
   def apply(
     config: ScalamuConfig,
     instrumentationReporter: InstrumentationReporter,

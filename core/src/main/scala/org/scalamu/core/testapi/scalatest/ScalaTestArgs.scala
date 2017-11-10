@@ -7,5 +7,5 @@ final case class ScalaTestArgs(
   configMap: ConfigMap,
   tagsToInclude: Set[String] = Set.empty,
   tagsToExclude: Set[String] = Set.empty,
-  spanScaleFactor: Double = 1
+  spanScaleFactor: Double    = 1
 )

@@ -3,7 +3,6 @@ package org.scalamu.cli
 import java.io.{BufferedWriter, FileWriter}
 import java.nio.file.{Files, Path}
 
-import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.scalamu.common.MutationId
@@ -26,8 +25,6 @@ import scala.collection.breakOut
 import scala.reflect.io.{Directory, PlainDirectory}
 
 object EntryPoint {
-  private val log = Logger[EntryPoint.type]
-
   private def ensureDirExits(dir: Path): Path =
     if (!Files.exists(dir)) {
       Files.createDirectories(dir)
@@ -37,9 +34,9 @@ object EntryPoint {
     LoggerConfiguration.configureLoggingForName("MAIN-APP")
     val config = ScalamuConfig.parseConfig(args)
     if (config.verbose) {
-      log.info(s"Running Scalamu with config:\n ${config.asJson.spaces2}")
+      scribe.info(s"Running Scalamu with config:\n ${config.asJson.spaces2}")
     } else {
-      log.info("Verbose logging is disabled, if you encounter any problems you may want to turn it on.")
+      scribe.info("Verbose logging is disabled, if you encounter any problems you may want to turn it on.")
     }
 
     val reportDir       = ensureDirExits(config.reportDir)
@@ -61,11 +58,11 @@ object EntryPoint {
     val compilationStart = System.currentTimeMillis()
     global.compile(sourceFiles)
     val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
-    log.info(s"Finished recompilation in $compilationTime seconds.")
-    log.info(s"Total mutations generated: ${reporter.mutations.size}")
+    scribe.info(s"Finished recompilation in $compilationTime seconds.")
+    scribe.info(s"Total mutations generated: ${reporter.mutations.size}")
 
     if (reporter.mutations.isEmpty) {
-      log.error(
+      scribe.error(
         "No mutations were generated. Make sure you have correctly applied exclusion filters."
       )
       die(InternalFailure)
@@ -82,7 +79,7 @@ object EntryPoint {
     val coverageAnalyser = new CoverageAnalyser(config, outputPath)
     val coverage         = coverageAnalyser.analyse(instrumentation)
 
-    log.info(s"Test suites examined: ${coverage.keySet.mkString("[\n\t", "\n\t", "\n]")}.")
+    scribe.info(s"Test suites examined: ${coverage.keySet.mkString("[\n\t", "\n\t", "\n]")}.")
 
     if (config.verbose) {
       tryWith(Files.newBufferedWriter(reportDir / "testSuites.log")) { writer =>
@@ -131,7 +128,7 @@ object EntryPoint {
       inverseFileCoverage,
       config
     )
-    log.info(s"Mutation analysis is finished. Report was written to $reportDir.")
+    scribe.info(s"Mutation analysis is finished. Report was written to $reportDir.")
   }
 
   def generateReport(

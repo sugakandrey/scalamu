@@ -5,7 +5,6 @@ import java.io.{DataInputStream, DataOutputStream}
 import java.nio.file.Path
 
 import cats.data.ValidatedNel
-import com.typesafe.scalalogging.Logger
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.scalamu.core.coverage._
@@ -13,8 +12,6 @@ import org.scalamu.core.runners._
 import org.scalamu.core.testapi.{SuiteFailure, TestClassFileFinder, TestClassFilter, TestingFramework}
 
 object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]] {
-  private val log = Logger[CoverageProcess.type]
-
   override type Configuration = (CoverageProcessConfig, Path)
 
   override def readConfigurationFromParent(
@@ -34,17 +31,17 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
     val reader                      = new InvocationDataReader(invocationDataDir)
 
     reader.clearData()
-    log.debug(s"Initialized InvocationDataReader in $invocationDataDir.")
+    scribe.debug(s"Initialized InvocationDataReader in $invocationDataDir.")
     val analyzer   = new StatementCoverageAnalyzer(reader)
     val frameworks = TestingFramework.instantiateAvailableFrameworks(config.testingOptions)
-    log.debug(
+    scribe.debug(
       s"Searching for tests conforming to the following frameworks: ${frameworks.map(_.name).mkString(", ")}."
     )
 
     val filter = TestClassFilter.forFrameworks(frameworks, config.targetTests)
     val finder = new TestClassFileFinder(filter)
     val suites = finder.findAll(config.testClassDirs)
-    log.info(s"Discovered ${suites.size} test suites. Analyzing coverage now...")
+    scribe.info(s"Discovered ${suites.size} test suites. Analyzing coverage now...")
     suites.iterator.map(analyzer.forSuite)
   }
 

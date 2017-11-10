@@ -6,7 +6,6 @@ import java.net.ServerSocket
 import java.nio.file.Path
 
 import cats.syntax.either._
-import com.typesafe.scalalogging.Logger
 import io.circe.{Decoder, Encoder}
 import org.scalamu.core.api.CommunicationException
 import org.scalamu.core.configuration.{concatPaths, ScalamuConfig}
@@ -16,8 +15,6 @@ import scala.collection.mutable
 import scala.util.Properties
 
 abstract class Runner[I: Encoder, O: Decoder] {
-  import Runner._
-
   def config: ScalamuConfig
   def compiledSourcesDir: Path
 
@@ -43,7 +40,7 @@ abstract class Runner[I: Encoder, O: Decoder] {
     val builder  = new ProcessBuilder(args: _*)
     configureProcessEnv(builder)
     builder.inheritIO()
-    log.debug(s"Configured builder: ${builder.command()}.")
+    scribe.debug(s"Configured builder: ${builder.command()}.")
     for {
       proc <- Either.catchNonFatal(builder.start()).leftMap(CommunicationException)
       pipe <- connectionHandler.handle()
@@ -57,7 +54,7 @@ abstract class Runner[I: Encoder, O: Decoder] {
     val testClassPath       = concatPaths(classPathSegments)
     val currentClassPath    = Properties.javaClassPath
     val configuredClasspath = currentClassPath + File.pathSeparator + testClassPath
-    log.debug(s"Configured classpath: $configuredClasspath")
+    scribe.debug(s"Configured classpath: $configuredClasspath")
     pb.environment().put("CLASSPATH", configuredClasspath)
   }
 
@@ -76,8 +73,4 @@ abstract class Runner[I: Encoder, O: Decoder] {
     args ++= runnerArgs
     args
   }
-}
-
-object Runner {
-  private val log = Logger[Runner.type]
 }

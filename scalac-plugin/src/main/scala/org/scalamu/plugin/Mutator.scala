@@ -1,6 +1,5 @@
 package org.scalamu.plugin
 
-import com.typesafe.scalalogging.Logger
 import org.scalamu.common.MutationId
 import org.scalamu.plugin.util.{CompilerAccess, GlobalExtractors, TreeEnrichment, TreeSanitizer}
 
@@ -82,7 +81,7 @@ abstract class MutatingTransformer(
       )
       
       if (!tree.pos.isDefined) {
-        Transformer.log.info(s"Mutant $info in tree $tree has undefined position.")
+        scribe.info(s"Mutant $info in tree $tree has undefined position.")
       }
       
       config.reporter.report(info)
@@ -99,10 +98,6 @@ abstract class MutatingTransformer(
 
     protected final def guard(mutated: Tree, alternative: Tree, id: MutationId): Tree =
       config.guard(global)(sanitizeTree(mutated), alternative, id)
-  }
-
-  object Transformer {
-    private val log = Logger[Transformer]
   }
 
   protected def mutator: Mutator

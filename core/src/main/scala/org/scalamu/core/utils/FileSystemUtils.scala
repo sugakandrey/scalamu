@@ -5,16 +5,12 @@ import java.nio.charset.Charset
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 
-import com.typesafe.scalalogging.Logger
-
 import scala.collection.JavaConverters._
 import scala.reflect.io.AbstractFile
 import scala.util.Try
 import scala.util.control.NonFatal
 
 trait FileSystemUtils {
-  import FileSystemUtils._
-
   implicit class RichAbstractFile(val f: AbstractFile) {
     def isClassFile: Boolean = f.name.endsWith(".class")
 
@@ -59,7 +55,7 @@ trait FileSystemUtils {
     }
 
     override def visitFileFailed(file: Path, exc: IOException): FileVisitResult = {
-      log.error(s"Failed to visit file $file. Cause: ${exc.getMessage}.")
+      scribe.error(s"Failed to visit file $file. Cause: ${exc.getMessage}.")
       FileVisitResult.CONTINUE
     }
   }
@@ -73,7 +69,7 @@ trait FileSystemUtils {
         } catch {
           case NonFatal(e) =>
             println(e.getMessage)
-            log.error(s"Error creating FileSystem for archive. Cause: ${e.getMessage}")
+            scribe.error(s"Error creating FileSystem for archive. Cause: ${e.getMessage}")
         }
       case p if p.isDirectory => Files.walkFileTree(p, FileVisitor(f))
       case p                  => f(p)
@@ -81,6 +77,4 @@ trait FileSystemUtils {
   }
 }
 
-object FileSystemUtils extends FileSystemUtils {
-  private val log = Logger[FileSystemUtils]
-}
+object FileSystemUtils extends FileSystemUtils

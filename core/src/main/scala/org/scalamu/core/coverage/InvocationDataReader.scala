@@ -3,15 +3,12 @@ package org.scalamu.core.coverage
 import java.io.File
 import java.nio.file.{Files, Path}
 
-import com.typesafe.scalalogging.Logger
 import org.scalamu.compilation.ForgetfulInvoker
 import scoverage.IOUtils
 
 import scala.util.control.NonFatal
 
 class InvocationDataReader(dir: Path) {
-  import InvocationDataReader._
-
   def invokedStatements(): Set[Int] = {
     val measurementFiles = IOUtils.findMeasurementFiles(dir.toFile)
     val invocations      = IOUtils.invoked(measurementFiles)
@@ -28,11 +25,7 @@ class InvocationDataReader(dir: Path) {
     try {
       Files.newOutputStream(file.toPath) // truncate invocation data file
     } catch {
-      case NonFatal(e) => log.error(s"Unable to clear invocation data file. Cause: $e")
+      case NonFatal(e) => scribe.error(s"Unable to clear invocation data file. Cause: $e")
     }
   }
-}
-
-object InvocationDataReader {
-  private val log = Logger[InvocationDataReader]
 }

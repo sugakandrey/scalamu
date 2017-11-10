@@ -2,7 +2,6 @@ package org.scalamu.core
 package process
 
 import cats.syntax.either._
-import com.typesafe.scalalogging.Logger
 import org.scalamu.core.api._
 import org.scalamu.common.MutationId
 import org.scalamu.compilation.MutationGuard
@@ -15,8 +14,6 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SuiteRunner(config: MutationAnalysisProcessConfig) {
-  private val log = Logger[SuiteRunner]
-
   def runMutantInverseCoverage(
     id: MutationId,
     suites: Set[MeasuredSuite]
@@ -34,7 +31,7 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
       if (suites.hasNext) {
         val MeasuredSuite(suite, completionTime) = suites.next()
         val suiteName = suite.info.name.fullName
-        log.debug(s"Executing suite $suiteName with mutant #${id.id}.")
+        scribe.debug(s"Executing suite $suiteName with mutant #${id.id}.")
         val testResult      = Future { blocking { suite.execute() } }
         val timeLimit       = testTimeLimit(completionTime, config.timeoutFactor, config.timeoutConst)
         val executionResult = Either.catchNonFatal(Await.result(testResult, timeLimit millis))
@@ -44,10 +41,10 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
             result match {
               case _: SuiteSuccess => loop(suites)
               case f: TestsFailed  => 
-                log.debug(s"Mutation #${id.id} killed by suite $suiteName")
+                scribe.debug(s"Mutation #${id.id} killed by suite $suiteName")
                 Killed(f.name)
               case e: SuiteExecutionAborted =>
-                log.debug(
+                scribe.debug(
                   s"Something went wrong when trying to run " +
                     s"$suiteName. Cause: $e."
                 )
@@ -56,10 +53,10 @@ class SuiteRunner(config: MutationAnalysisProcessConfig) {
           case Left(err) =>
             err match {
               case _: TimeoutException =>
-                log.debug(s"Mutation #${id.id} timed out. Worker will now shutdown.")
+                scribe.debug(s"Mutation #${id.id} timed out. Worker will now shutdown.")
                 die(TimedOut)
               case e =>
-                log.debug(
+                scribe.debug(
                   s"An exception occurred, while waiting for test " +
                     s"$suiteName to finish. Cause: $e."
                 )

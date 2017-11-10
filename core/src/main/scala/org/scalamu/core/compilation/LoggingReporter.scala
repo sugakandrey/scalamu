@@ -1,6 +1,6 @@
 package org.scalamu.core.compilation
 
-import com.typesafe.scalalogging.Logger
+import scribe.Logger
 
 import scala.reflect.internal.util.Position
 import scala.tools.nsc.Settings

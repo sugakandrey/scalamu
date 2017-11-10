@@ -3,11 +3,11 @@ package configuration
 
 import java.io.File
 
-import com.typesafe.scalalogging.Logger
 import org.scalamu.common.filtering.{CompositeNameFilter, InverseRegexFilter, RegexFilter}
 import org.scalamu.core.api.InternalFailure
 import org.scalamu.core.compilation.{IgnoreCoverageStatementsFilter, LoggingReporter}
 import org.scalamu.plugin._
+import scribe.Logger
 
 import scala.reflect.io.AbstractFile
 import scala.tools.nsc.Settings
@@ -20,8 +20,6 @@ import scala.util.Properties
 trait GlobalDerivableInstances extends SettingsDerivable with ReporterDerivable with ScalamuScalacPluginConfigDerivable
 
 trait SettingsDerivable {
-  def log: Logger
-
   implicit def settingsDerivable(implicit dir: AbstractFile): Derivable[Settings] =
     config => {
       val settings = new Settings {
@@ -36,12 +34,12 @@ trait SettingsDerivable {
       val (success, unprocessed) = settings.processArgumentString(config.scalacParameters)
 
       if (!success) {
-        log.error(s"Bad scalac options in ${config.scalacParameters}.")
+        scribe.error(s"Bad scalac options in ${config.scalacParameters}.")
         die(InternalFailure)
       }
 
       if (unprocessed.nonEmpty) {
-        log.warn(s"Unprocessed scalac options: ${unprocessed.mkString("[", " , ", "]")}")
+        scribe.warn(s"Unprocessed scalac options: ${unprocessed.mkString("[", " , ", "]")}")
       }
 
       settings
@@ -49,10 +47,10 @@ trait SettingsDerivable {
 }
 
 trait ReporterDerivable extends SettingsDerivable {
-  def log: Logger
+  protected def logger: Logger
 
   implicit def reporterDerivable(implicit dir: AbstractFile): Derivable[Reporter] =
-    config => new LoggingReporter(log, config.derive[Settings])
+    config => new LoggingReporter(logger, config.derive[Settings])
 }
 
 trait ScalamuScalacPluginConfigDerivable {

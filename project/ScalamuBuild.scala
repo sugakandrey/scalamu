@@ -70,13 +70,12 @@ object ScalamuBuild {
 
   lazy val commonDeps = Seq(
     libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % "1.2.3",
       scalatest        % Test
     ) ++
       (if (scalaBinaryVersion.value == "2.10") Seq()
        else
          Seq(
-           "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
+           "com.outr" %% "scribe" % "1.4.5",
          ))
   )
 
@@ -161,9 +160,9 @@ object ScalamuBuild {
           "org.ow2.asm.**",
           "org.typelevel.**",
           "shapeless.**",
-          "org.slf4j.**",
           "cats.**",
-          "com.typesafe.**"
+          "com.typesafe.**",
+          "com.outr.**"
         ).map(shade)
     )
 

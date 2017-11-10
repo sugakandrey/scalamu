@@ -6,7 +6,6 @@ import java.nio.file.Path
 import java.util.concurrent._
 
 import cats.syntax.either._
-import com.typesafe.scalalogging.Logger
 import org.scalamu.common.MutationId
 import org.scalamu.core.configuration.ScalamuConfig
 import org.scalamu.core.process.{MeasuredSuite, MutationAnalysisProcessResponse}
@@ -21,8 +20,6 @@ class MutationAnalyser(
   val config: ScalamuConfig,
   val compiledSourcesDir: Path
 ) {
-  import MutationAnalyser._
-
   private type Task   = (MutationId, Set[MeasuredSuite])
   private type Result = MutationAnalysisRunner#Result
 
@@ -35,7 +32,7 @@ class MutationAnalyser(
     processId: Long
   ) extends Runnable {
     private def initialiseProcessSupervisor(): Either[CommunicationException, ProcessSupervisor[Task, Result]] = {
-      log.debug(s"Creating MutationAnalysisRunner#$processId ...")
+      scribe.debug(s"Creating MutationAnalysisRunner#$processId ...")
 
       val runner        = new MutationAnalysisRunner(socket, config, compiledSourcesDir, processId)
       val tryInitialise = runner.start()
@@ -57,7 +54,7 @@ class MutationAnalyser(
         val (result, shouldRestart) = response match {
           case Right(res) => res -> false
           case Left(failure) =>
-            log.debug(s"Task $task failed with $failure.")
+            scribe.debug(s"Task $task failed with $failure.")
 
             val (status, restart) = failure.cause match {
               case _: IOException if supervisor.waitFor(3, TimeUnit.SECONDS) =>
@@ -72,7 +69,7 @@ class MutationAnalyser(
         resultQueue.add(result)
 
         if (shouldRestart) {
-          log.debug(s"Process#$processId was shut down. Restarting ...")
+          scribe.debug(s"Process#$processId was shut down. Restarting ...")
           if (!jobQueue.isEmpty) {
             initialiseProcessSupervisor().foreach(drainJobQueue)
           }
@@ -99,7 +96,7 @@ class MutationAnalyser(
     coverage: Map[MutationId, Set[MeasuredSuite]],
     mutationsById: Map[MutationId, MutationInfo]
   ): Set[TestedMutant] = {
-    log.info(s"Starting mutation analysis. Number of analysers: ${config.parallelism}.")
+    scribe.info(s"Starting mutation analysis. Number of analysers: ${config.parallelism}.")
     jobQueue.addAll(coverage.toSeq.asJavaCollection)
 
     val pbUpdateThread = new Thread(() => {
@@ -135,10 +132,10 @@ class MutationAnalyser(
       resultQueue.asScala.map(r => TestedMutant(mutationsById(r.id), r.status))(breakOut)
 
     if (terminated) {
-      log.info(s"Successfully finished mutation analysis. No untested mutations.")
+      scribe.info(s"Successfully finished mutation analysis. No untested mutations.")
       completed
     } else {
-      log.error(
+      scribe.error(
         s"Some mutation analysis workers have timed out (time limit $timeLimit)." +
           s" Make sure timeoutFactor & timeoutConst are set correctly."
       )
@@ -147,13 +144,9 @@ class MutationAnalyser(
       val unfinished: Set[TestedMutant] =
         jobQueue.asScala.map(task => TestedMutant(mutationsById(task._1), Untested))(breakOut)
 
-      log.warn(s"${unfinished.size} untested mutations.")
+      scribe.warn(s"${unfinished.size} untested mutations.")
 
       completed | unfinished
     }
   }
-}
-
-object MutationAnalyser {
-  private val log = Logger[MutationAnalyser]
 }
