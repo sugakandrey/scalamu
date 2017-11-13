@@ -27,7 +27,7 @@ object ScalamuBuild {
     "io.circe" %% "circe-core",
     "io.circe" %% "circe-generic",
     "io.circe" %% "circe-parser"
-  ).map(_ % "0.8.0")
+  ).map(_ % "0.9.0-M2")
 
   lazy val commonSettings = Seq(
     version            := "0.1.1",
@@ -37,6 +37,7 @@ object ScalamuBuild {
     scalaVersion       := "2.12.4",
     crossScalaVersions := Seq("2.11.11", "2.12.4"),
     scalacOptions := Seq(
+      "-Ypartial-unification",
       "-encoding",
       "UTF-8",
       "-feature",
@@ -70,12 +71,12 @@ object ScalamuBuild {
 
   lazy val commonDeps = Seq(
     libraryDependencies ++= Seq(
-      scalatest        % Test
+      scalatest % Test
     ) ++
       (if (scalaBinaryVersion.value == "2.10") Seq()
        else
          Seq(
-           "com.outr" %% "scribe" % "1.4.5",
+           "com.outr" %% "scribe" % "1.4.5"
          ))
   )
 
@@ -125,10 +126,10 @@ object ScalamuBuild {
       libraryDependencies ++= Seq(
         "org.ow2.asm"      % "asm-commons"                  % "5.2",
         "org.ow2.asm"      % "asm-util"                     % "5.2",
-        "org.typelevel"    %% "cats"                        % "0.9.0",
+        "org.typelevel"    %% "cats-core"                   % "1.0.0-RC1",
         "com.github.scopt" %% "scopt"                       % "3.5.0",
         "org.scalamock"    %% "scalamock-scalatest-support" % "3.5.0" % Test,
-        "com.ironcorelabs" %% "cats-scalatest"              % "2.2.0" % Test
+        "com.ironcorelabs" %% "cats-scalatest"              % "2.3.0" % Test
       ) ++
         testingFrameworks.map(_ % Optional) ++ circe
     )
@@ -154,17 +155,22 @@ object ScalamuBuild {
       mainClass in assembly           := Some("org.scalamu.cli.EntryPoint"),
       artifact in (Compile, assembly) ~= { _.withClassifier(Some("assembly")) },
       addArtifact(artifact in (Compile, assembly), assembly),
-      assemblyShadeRules in assembly :=
-        Seq(
-          "io.circe.**",
-          "org.ow2.asm.**",
-          "org.typelevel.**",
-          "shapeless.**",
-          "cats.**",
-          "com.typesafe.**",
-          "com.outr.**"
-        ).map(shade)
+      assemblyShadeRules in assembly := Seq(
+        "io.circe.**",
+        "org.objectweb.asm.**",
+        "shapeless.**",
+        "cats.**",
+        "jawn.**",
+        "scoverage.**",
+        "scopt.**",
+        "machinist.**",
+        "macrocompat.**",
+        "play.**"
+      ).map(shade)
     )
+
+  private def shade(pattern: String): ShadeRule =
+    ShadeRule.rename(pattern -> "shaded.@0").inAll
 
   lazy val cli = createProject(id = "cli", base = file("cli"))
     .settings(commonDeps)
@@ -176,9 +182,6 @@ object ScalamuBuild {
       report,
       compilation
     )
-
-  private def shade(pattern: String): ShadeRule =
-    ShadeRule.rename(pattern -> "shaded.@0").inAll
 
   lazy val compilation = createProject(id = "compilation", base = file("compilation"))
     .settings(name := "scalamu-compilation")

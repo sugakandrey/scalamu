@@ -1,7 +1,6 @@
 package org.scalamu.core.testapi
 
-import cats.instances.function._
-import cats.syntax.cartesian._
+import cats.implicits._
 import org.scalamu.common.filtering.NameFilter
 import org.scalamu.core.api.ClassInfo
 
@@ -9,7 +8,7 @@ trait TestClassFilterMixin extends TestClassFilter {
   protected def additionalReq: ClassInfo => Boolean
 
   override abstract lazy val predicate: (ClassInfo) => Boolean =
-    (additionalReq |@| super.predicate).map { _ && _ }
+    (additionalReq, super.predicate).mapN(_ && _)
 }
 
 trait HasNoArgConstructor extends TestClassFilterMixin {

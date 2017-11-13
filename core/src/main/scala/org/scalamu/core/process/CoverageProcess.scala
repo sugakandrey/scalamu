@@ -29,6 +29,8 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
   ): Iterator[Result] = {
     val (config, invocationDataDir) = configuration
     val reader                      = new InvocationDataReader(invocationDataDir)
+    
+    LoggerConfiguration.configureLoggingForName("COVERAGE-WORKER", config.verbose)
 
     reader.clearData()
     scribe.debug(s"Initialized InvocationDataReader in $invocationDataDir.")
@@ -45,8 +47,6 @@ object CoverageProcess extends Process[ValidatedNel[SuiteFailure, SuiteCoverage]
     suites.iterator.map(analyzer.forSuite)
   }
 
-  def main(args: Array[String]): Unit = {
-    LoggerConfiguration.configureLoggingForName("COVERAGE-WORKER")
+  def main(args: Array[String]): Unit =
     execute(args)
-  }
 }

@@ -40,7 +40,7 @@ object MutationAnalysisProcess extends Process[MutationAnalysisProcessResponse] 
     val id     = System.getProperty("worker.name")
     val runner = new SuiteRunner(configuration)
 
-    LoggerConfiguration.configureLoggingForName(s"MUTATION-WORKER-$id")
+    LoggerConfiguration.configureLoggingForName(s"MUTATION-WORKER-$id", configuration.verbose)
     MemoryWatcher.startMemoryWatcher(90)
 
     Iterator

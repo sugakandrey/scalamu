@@ -31,8 +31,8 @@ object EntryPoint {
     } else dir
 
   def main(args: Array[String]): Unit = {
-    LoggerConfiguration.configureLoggingForName("MAIN-APP")
     val config = ScalamuConfig.parseConfig(args)
+    LoggerConfiguration.configureLoggingForName("MAIN-APP", config.verbose)
     if (config.verbose) {
       scribe.info(s"Running Scalamu with config:\n ${config.asJson.spaces2}")
     } else {

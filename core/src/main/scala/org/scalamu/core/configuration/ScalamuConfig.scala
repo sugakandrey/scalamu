@@ -161,6 +161,6 @@ object ScalamuConfig {
   def parseConfig[T](args: Seq[String]): ScalamuConfig =
     parser.parse(args, ScalamuConfig()) match {
       case Some(config) => config
-      case None         => System.exit(1); ???
+      case None         => sys.exit(1)
     }
 }

@@ -21,8 +21,6 @@ class ScalamuGlobal private[compilation] (
   scalacPluginConfig: ScalamuScalacConfig,
   instrumentationReporter: InstrumentationReporter
 ) extends Global(settings, reporter) {
-  scribe.debug(s"Initialised ScalamuGlobal with classpath: ${settings.classpath}.")
-
   require(
     settings.outputDirs.getSingleOutput.isDefined,
     "Single output dir must be set for ScalamuGlobal"

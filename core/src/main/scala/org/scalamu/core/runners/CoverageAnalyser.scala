@@ -36,7 +36,7 @@ class CoverageAnalyser(
     val pipe          = supervisor.communicationPipe
 
     val workerData: Either[CommunicationException, List[Result]] =
-      Iterator.continually(pipe.receive()).takeWhile(_.isRight).toList.sequenceU
+      Iterator.continually(pipe.receive()).takeWhile(_.isRight).toList.sequence
 
     val coverageData = workerData match {
       case Left(communicationException) =>
@@ -46,7 +46,7 @@ class CoverageAnalyser(
         )
         supervisor.kill()
         die(InternalFailure)
-      case Right(result) => result.sequenceU.toEither.leftMap(FailingSuites)
+      case Right(result) => result.sequence.toEither.leftMap(FailingSuites)
     }
 
     val coverageDuration = (System.currentTimeMillis() - coverageStart) / 1000
