@@ -57,6 +57,12 @@ object EntryPoint {
 
     val compilationStart = System.currentTimeMillis()
     global.compile(sourceFiles)
+    
+    if (global.reporter.hasErrors) {
+      scribe.error("Failed to compile sources, exiting.")
+      die(1)
+    }
+    
     val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
     scribe.info(s"Finished recompilation in $compilationTime seconds.")
     scribe.info(s"Total mutations generated: ${reporter.mutations.size}")

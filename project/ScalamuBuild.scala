@@ -165,6 +165,7 @@ object ScalamuBuild {
         "scopt.**",
         "machinist.**",
         "macrocompat.**",
+        "scribe.**",
         "play.**"
       ).map(shade)
     )

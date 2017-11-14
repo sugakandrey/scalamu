@@ -32,8 +32,7 @@ class CoveragePlugin(override val global: Global, listener: InstrumentationRepor
       override def invokeCall(id: Int): Tree = {
         val target = findMemberFromRoot(TermName("org.scalamu.compilation.ForgetfulInvoker.invoked")).asTerm
         val idLit  = Literal(Constant(id))
-        val outDir = Literal(Constant(global.settings.outputDirs.getSingleOutput.get.path))
-        q"$target($idLit, $outDir)"
+        q"$target($idLit)"
       }
     }
   }

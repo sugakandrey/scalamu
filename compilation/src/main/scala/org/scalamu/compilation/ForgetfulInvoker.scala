@@ -1,25 +1,13 @@
 package org.scalamu.compilation
 
-import scoverage.Invoker.measurementFile
-import scoverage.Platform.{FileWriter, ThreadSafeMap}
+import java.util.concurrent.ConcurrentHashMap
+import scala.collection.JavaConverters._
+import scala.collection.Set
 
 object ForgetfulInvoker {
+  private[this] val ids = ConcurrentHashMap.newKeySet[Int](1000)
 
-  private val threadFiles = new ThreadLocal[ThreadSafeMap[String, FileWriter]]
-  private val ids         = ThreadSafeMap.empty[(String, Int), Any]
-
-  def invoked(id: Int, dataDir: String): Unit =
-    if (!ids.contains((dataDir, id))) {
-      var files = threadFiles.get()
-      if (files == null) {
-        files = ThreadSafeMap.empty[String, FileWriter]
-        threadFiles.set(files)
-      }
-      val writer = files.getOrElseUpdate(dataDir, new FileWriter(measurementFile(dataDir), true))
-      writer.append(id.toString + '\n').flush()
-
-      ids.put((dataDir, id), ())
-    }
-
-  def forget(): Unit = ids.clear()
+  def invoked(id: Int): Unit      = ids.add(id)
+  def invokedStatements: Set[Int] = ids.asScala
+  def forget(): Unit              = ids.clear()
 }
