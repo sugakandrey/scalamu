@@ -55,8 +55,8 @@ object ScalamuPlugin extends AutoPlugin {
           val scalamuVmParams = (K.javaOptions in Scalamu).value
           val log             = K.streams.value.log
 
-          val tcp      = testClassPath.value
-          val cp       = compileClassPath.value
+          val tcp      = classpathIn(Test).value
+          val cp       = classpathIn(Compile).value
           val sources  = sourceDirs.value.flatten.toSet
           val testDirs = testClassDirs.value.toSet
 
@@ -145,16 +145,12 @@ object ScalamuPlugin extends AutoPlugin {
     settingKey.all(filter)
   }
 
-  private def aggregateClassPath(config: Configuration): Def.Initialize[Task[Set[File]]] =
-    aggregateTask(K.fullClasspath, config).map(
+  private def classpathIn(config: Configuration): Def.Initialize[Task[Seq[File]]] =
+    (K.fullClasspath in config).map(
       cps =>
-        cps.flatten.collect { case entry if !entry.data.getPath.contains("org.scala-lang") => entry.data }(
-          collection.breakOut
-      )
+        cps.collect { case entry if !entry.data.getPath.contains("org.scala-lang") => entry.data }
     )
 
-  private lazy val testClassPath: Def.Initialize[Task[Set[File]]]    = aggregateClassPath(Test)
-  private lazy val compileClassPath: Def.Initialize[Task[Set[File]]] = aggregateClassPath(Compile)
   private lazy val sourceDirs: Def.Initialize[Seq[Seq[File]]]        = aggregateSetting(K.sourceDirectories, Compile)
   private lazy val testClassDirs: Def.Initialize[Seq[File]]          = aggregateSetting(K.crossTarget)
 }
@@ -164,8 +160,8 @@ object MutationTest {
     scalamuJar: File,
     scalamuVmParameters: Seq[String],
     log: Logger,
-    tcp: Set[File],
-    cp: Set[File],
+    tcp: Seq[File],
+    cp: Seq[File],
     sources: Set[File],
     testDirs: Set[File],
     target: File,
@@ -225,8 +221,8 @@ object MutationTest {
     }
 
   private def scalamuArguments(
-    tcp: Set[File],
-    cp: Set[File],
+    tcp: Seq[File],
+    cp: Seq[File],
     sources: Set[File],
     testDirs: Set[File],
     target: File,
