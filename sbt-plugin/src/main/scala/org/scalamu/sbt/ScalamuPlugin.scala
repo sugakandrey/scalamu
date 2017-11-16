@@ -121,18 +121,6 @@ object ScalamuPlugin extends AutoPlugin {
     "ReplaceWithNil"
   )
 
-  private def aggregateTask[T](
-    taskKey: TaskKey[T],
-    configurations: Configuration*
-  ): Def.Initialize[Task[Seq[T]]] = Def.taskDyn {
-    val projectRef          = K.thisProjectRef.value
-    val aggregate           = (K.aggregate in Scalamu).value
-    val projectFilter       = if (aggregate) inDependencies(projectRef) else inProjects(projectRef)
-    val configurationFilter = if (configurations.isEmpty) inAnyConfiguration else inConfigurations(configurations: _*)
-    val filter              = ScopeFilter(projectFilter, configurationFilter)
-    taskKey.all(filter)
-  }
-
   private def aggregateSetting[T](
     settingKey: SettingKey[T],
     configurations: Configuration*
