@@ -135,12 +135,11 @@ object ScalamuPlugin extends AutoPlugin {
 
   private def classpathIn(config: Configuration): Def.Initialize[Task[Seq[File]]] =
     (K.fullClasspath in config).map(
-      cps =>
-        cps.collect { case entry if !entry.data.getPath.contains("org.scala-lang") => entry.data }
+      cps => cps.collect { case entry if !entry.data.getPath.contains("org.scala-lang") => entry.data }
     )
 
-  private lazy val sourceDirs: Def.Initialize[Seq[Seq[File]]]        = aggregateSetting(K.sourceDirectories, Compile)
-  private lazy val testClassDirs: Def.Initialize[Seq[File]]          = aggregateSetting(K.crossTarget)
+  private lazy val sourceDirs: Def.Initialize[Seq[Seq[File]]] = aggregateSetting(K.sourceDirectories, Compile)
+  private lazy val testClassDirs: Def.Initialize[Seq[File]]   = aggregateSetting(K.crossTarget)
 }
 
 object MutationTest {
@@ -253,7 +252,8 @@ object MutationTest {
       optionString(targetOwners.map(_.toString), ",", "targetOwners"),
       optionString(targetTests.map(_.toString), ",", "targetTests"),
       optionString(scalacParameters, " ", "scalacParameters"),
-      optionString(ignoreSymbols, ",", "ignoreSymbols")
+      optionString(ignoreSymbols, ",", "ignoreSymbols"),
+      optionString(activeMutators, ",", "mutators")
     ).flatten
 
     val options = Seq(
@@ -262,9 +262,7 @@ object MutationTest {
       "--timeoutConst",
       timeoutConst.toString,
       "--parallelism",
-      parallelism.toString,
-      "--mutators",
-      activeMutators.mkString(",")
+      parallelism.toString
     ) ++
       (if (verbose) Seq("--verbose")                                     else Seq.empty) ++
       (if (testRunnerArgs.nonEmpty) Seq("--testOptions", testRunnerArgs) else Seq.empty) ++
