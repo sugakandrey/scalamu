@@ -39,9 +39,10 @@ class ScalamuGlobal private[compilation] (
     this
   }
 
-  def compile(suites: List[SourceInfo]): Int = {
-    val sourceFiles = suites.map(suite => getSourceFile(suite.fullPath.toString))
-    scribe.info(s"Compiling ${sourceFiles.size} source files.")
+  def compile(sources: List[SourceInfo]): Int = {
+    val sourceFiles = sources.map(suite => getSourceFile(suite.fullPath.toString))
+    val scalaSources  = sources.count(_.name.endsWith(".scala"))
+    scribe.info(s"Compiling $scalaSources scala sources and ${sources.size - scalaSources} java sources.")
     scribe.debug(s"Source files: ${sourceFiles.mkString("[\n\t", "\n\t", "\n]")}")
     val run = new Run
     val id  = currentRunId
