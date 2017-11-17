@@ -1,6 +1,7 @@
 package org.scalamu.sbt
 
 import org.scalamu.buildinfo.BuildInfo
+import sbt.Def.Classpath
 import sbt.{Def, Keys => K, _}
 import sbt.plugins.JvmPlugin
 
@@ -55,8 +56,8 @@ object ScalamuPlugin extends AutoPlugin {
           val scalamuVmParams = (K.javaOptions in Scalamu).value
           val log             = K.streams.value.log
 
-          val tcp      = classpathIn(Test).value
-          val cp       = classpathIn(Compile).value
+          val tcp      = classpathIn(K.fullClasspath, Test).value
+          val cp       = classpathIn(K.dependencyClasspath, Compile).value
           val sources  = sourceDirs.value.flatten.toSet
           val testDirs = testClassDirs.value.toSet
 
@@ -133,8 +134,8 @@ object ScalamuPlugin extends AutoPlugin {
     settingKey.all(filter)
   }
 
-  private def classpathIn(config: Configuration): Def.Initialize[Task[Seq[File]]] =
-    (K.fullClasspath in config).map(
+  private def classpathIn(cpTask: TaskKey[Classpath], config: Configuration): Def.Initialize[Task[Seq[File]]] =
+    (cpTask in config).map(
       cps => cps.collect { case entry if !entry.data.getPath.contains("org.scala-lang") => entry.data }
     )
 
