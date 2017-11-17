@@ -25,7 +25,7 @@ trait FileSystemUtils {
     private[this] val fileSystem        = FileSystems.getDefault
     private[this] val archiveMatcher    = fileSystem.getPathMatcher("glob:**.{jar,zip}")
     private[this] val classFileMatcher  = fileSystem.getPathMatcher("glob:**.class")
-    private[this] val sourceFileMatcher = fileSystem.getPathMatcher("glob:**.scala")
+    private[this] val sourceFileMatcher = fileSystem.getPathMatcher("glob:**.{java,scala}")
 
     def isJarOrZip: Boolean   = path != null && archiveMatcher.matches(path)
     def isClassFile: Boolean  = path != null && classFileMatcher.matches(path)
