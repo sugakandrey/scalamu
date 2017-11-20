@@ -4,6 +4,7 @@ import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
 
 import scribe.formatter.FormatterBuilder
+import scribe.writer.FileWriter
 import scribe.{Level, LogHandler, Logger}
 
 object LoggerConfiguration {
@@ -23,8 +24,11 @@ object LoggerConfiguration {
       .string(" - ").message.newLine
 
     val handler = LogHandler(level, formatter)
+    
+    val fileHandler = LogHandler(level, writer = FileWriter.flat())
 
     Logger.root.clearHandlers()
     Logger.root.addHandler(handler)
+    Logger.root.addHandler(fileHandler)
   }
 }

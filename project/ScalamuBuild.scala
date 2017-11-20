@@ -30,7 +30,7 @@ object ScalamuBuild {
   ).map(_ % "0.9.0-M2")
 
   lazy val commonSettings = Seq(
-    version            := "0.1.1",
+    version            := "0.1.2",
     isSnapshot         := true,
     test in assembly   := {},
     organization       := "io.github.sugakandrey",
@@ -149,6 +149,7 @@ object ScalamuBuild {
     .dependsOn(
       cli
     )
+    .aggregate(cli, core, report, scalacPlugin, common, compilation)
     .settings(publishSettings)
     .settings(
       aggregate in assembly           := false,
@@ -201,6 +202,7 @@ object ScalamuBuild {
       scriptedBufferLog  := false
     )
     .settings(
+      version          := "0.1.2",
       isSnapshot       := false,
       organization     := "io.github.sugakandrey",
       sbtPlugin        := true,
