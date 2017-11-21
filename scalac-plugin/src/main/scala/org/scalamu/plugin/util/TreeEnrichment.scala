@@ -34,7 +34,12 @@ trait TreeEnrichment { self: CompilerAccess =>
 
       if ((t1 ne t) && t1.pos.isRange) t1.setPos(t.pos.focus)
 
-      replacements.get(t1.symbol).foreach(t1.symbol = _)
+      replacements.get(t1.symbol).foreach(replacement =>
+        try { t1.symbol = replacement } catch { 
+          case _: UnsupportedOperationException => 
+            scribe.debug(s"Unable to apply symbol_= to class = ${t1.getClass} in ${t1.pos}.")
+        }
+      )
 
       t1
     }
