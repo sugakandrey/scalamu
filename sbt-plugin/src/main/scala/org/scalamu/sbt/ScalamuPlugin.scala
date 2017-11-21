@@ -191,7 +191,7 @@ object MutationTest {
 
     val forkOptions = ForkOptions()
     val jarOpt      = Seq("-jar", s"${scalamuJar.getPath}")
-    val exitCode    = Fork.java(forkOptions, jarOpt ++ scalamuVmParameters ++ arguments)
+    val exitCode    = Fork.java(forkOptions, scalamuVmParameters ++ jarOpt ++ arguments)
 
     exitCode match {
       case 0 => target
