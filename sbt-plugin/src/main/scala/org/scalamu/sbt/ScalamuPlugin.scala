@@ -45,14 +45,15 @@ object ScalamuPlugin extends AutoPlugin {
         K.aggregate in Scalamu         := true,
         K.target in Scalamu            := (K.target in Compile).value / "mutation-analysis-report",
         SK.mutationTest := {
-          val report =
-            K.update.value.matching(
-              configurationFilter(Scalamu.name) &&
-                artifactFilter(`type` = "jar", name = "*scalamu*", classifier = "assembly")
-            )
-          assert(report.size == 1, "Update report contains more than one scalamu-assembly jar.")
+          val report = K.update.value
 
-          val jar             = report.head
+          val scalamuJar = report.matching(
+            configurationFilter(Scalamu.name) &&
+              artifactFilter(`type` = "jar", name = "*scalamu*", classifier = "assembly")
+          )
+          assert(scalamuJar.size == 1, "Update report contains more than one scalamu-assembly jar.")
+
+          val jar             = scalamuJar.head
           val scalamuVmParams = (K.javaOptions in Scalamu).value
           val log             = K.streams.value.log
 
@@ -60,6 +61,8 @@ object ScalamuPlugin extends AutoPlugin {
           val cp       = classpathIn(K.dependencyClasspath, Compile).value
           val sources  = sourceDirs.value.flatten.toSet
           val testDirs = testClassDirs.value.toSet
+
+          val compilerPluginOpts = Classpaths.autoPlugins(report, Seq.empty)
 
           val runnerVmParams = SK.analyserJavaOptions.value
           val factor         = SK.timeoutFactor.value
@@ -86,7 +89,7 @@ object ScalamuPlugin extends AutoPlugin {
             testDirs,
             reportDir,
             runnerVmParams,
-            scalacParams,
+            scalacParams ++ compilerPluginOpts,
             targetClasses,
             targetTests,
             ignored,
