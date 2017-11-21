@@ -37,7 +37,7 @@ object ScalamuPlugin extends AutoPlugin {
         SK.targetOwners                := Seq.empty,
         SK.targetTests                 := Seq.empty,
         SK.ignoreSymbols               := Seq.empty,
-        SK.activeMutators              := allMutators,
+        SK.activeMutators              := defaultMutators,
         SK.analyserJavaOptions         := (K.javaOptions in Test).value,
         SK.verbose                     := false,
         SK.recompileOnly               := false,
@@ -109,10 +109,8 @@ object ScalamuPlugin extends AutoPlugin {
       .classifier("assembly")
       .intransitive()
 
-  private def allMutators: Seq[String] = Seq(
-    "ReplaceCaseWithWildcard",
+  private def defaultMutators: Seq[String] = Seq(
     "ReplaceMathOperators",
-    "ReplaceWithIdentityFunction",
     "InvertNegations",
     "AlwaysExecuteConditionals",
     "NeverExecuteConditionals",
@@ -122,7 +120,11 @@ object ScalamuPlugin extends AutoPlugin {
     "ChangeRangeBoundary",
     "ReplaceLogicalOperators",
     "ReplaceWithNone",
-    "ReplaceWithNil"
+    "ReplaceWithNil",
+    "ReplaceBooleanLiterals",
+    "ReplaceIntegerLiterals",
+    "ReplaceLongLiterals",
+    "ReplaceFloatingPointLiterals"
   )
 
   private def aggregateSetting[T](
