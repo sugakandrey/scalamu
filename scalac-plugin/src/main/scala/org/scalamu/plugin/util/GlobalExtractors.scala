@@ -23,7 +23,8 @@ trait GlobalExtractors extends TypeEnrichment { self: CompilerAccess =>
 
   object GuardedMutant {
     def unapply(tree: Tree): Option[(Tree, Tree, Tree)] = tree match {
-      case If(cond @ q"$guard == $lit", thenp, elsep) if isMutationGuard(guard.symbol.fullName) =>
+      case If(cond @ q"$guard == $lit", thenp, elsep)
+          if Option(guard.symbol).exists(s => isMutationGuard(s.fullName)) =>
         Some((cond, thenp, elsep))
       case _ => None
     }
