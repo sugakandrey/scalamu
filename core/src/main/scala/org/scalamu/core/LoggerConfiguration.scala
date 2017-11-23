@@ -25,7 +25,7 @@ object LoggerConfiguration {
 
     val handler = LogHandler(level, formatter)
     
-    val fileHandler = LogHandler(level, writer = FileWriter.flat())
+    val fileHandler = LogHandler(level, writer = FileWriter.flat(append = false))
 
     Logger.root.clearHandlers()
     Logger.root.addHandler(handler)
