@@ -45,7 +45,7 @@ class ScalamuRunConfiguration(
   private[idea] var timeoutFactor: Double                  = ScalamuDefaultSettings.timeoutFactor
   private[idea] var parallelism: Int                       = ScalamuDefaultSettings.parallelism
   private[idea] var browser: Option[WebBrowser]            = ScalamuDefaultSettings.browser
-  private[idea] var activeMutators: Seq[String]            = ScalamuDefaultSettings.activeMutators
+  private[idea] var activeMutators: Seq[String]            = ScalamuDefaultSettings.activeByDefaultMutators
   private[idea] var ignoreSymbols: Seq[RegexFilter]        = ScalamuDefaultSettings.ignoreSymbols
   private[idea] var scalamuRunnerVmParams: String          = ScalamuDefaultSettings.scalamuRunnerVmParameters
   private[idea] var envVariables: util.Map[String, String] = new util.HashMap[String, String]

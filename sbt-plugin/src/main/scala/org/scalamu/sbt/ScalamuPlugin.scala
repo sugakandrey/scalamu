@@ -120,11 +120,7 @@ object ScalamuPlugin extends AutoPlugin {
     "ChangeRangeBoundary",
     "ReplaceLogicalOperators",
     "ReplaceWithNone",
-    "ReplaceWithNil",
-    "ReplaceBooleanLiterals",
-    "ReplaceIntegerLiterals",
-    "ReplaceLongLiterals",
-    "ReplaceFloatingPointLiterals"
+    "ReplaceWithNil"
   )
 
   private def aggregateSetting[T](
