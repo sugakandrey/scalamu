@@ -25,6 +25,8 @@ class ScalamuGlobal private[compilation] (
     settings.outputDirs.getSingleOutput.isDefined,
     "Single output dir must be set for ScalamuGlobal"
   )
+  
+  scribe.debug(s"Instantiated nsc.Global with classpath: ${settings.classpath.value}")
 
   private val coveragePlugin = new CoveragePlugin(this, instrumentationReporter)
   private val scalamuPlugin  = new ScalamuPlugin(this, scalacPluginConfig)

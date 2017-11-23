@@ -1,6 +1,7 @@
 package org.scalamu.plugin.mutators.controllflow
 
-import org.scalamu.plugin.mutators.{BinaryOperatorMutator, NumericTypesSupport}
+import org.scalamu.plugin.mutators.{AbstractBinaryOperatorMutator, NumericTypesSupport}
+import org.scalamu.plugin.{MutatingTransformer, ScalamuScalacConfig}
 
 import scala.runtime._
 import scala.tools.nsc.Global
@@ -16,24 +17,27 @@ import scala.tools.nsc.Global
  * (1 until 10).foreach(println)
  * }}}
  */
-case object ChangeRangeBoundary extends BinaryOperatorMutator with NumericTypesSupport { self =>
+case object ChangeRangeBoundary extends AbstractBinaryOperatorMutator { self =>
   override val description: String = "Changed range boundary inclusive <=> exclusive"
 
-  override protected def supportedTypes(implicit global: Global): Seq[global.Type] = {
-    import global._
-    super.supportedTypes ++ Seq(
-      typeOf[RichByte],
-      typeOf[RichShort],
-      typeOf[RichChar],
-      typeOf[RichInt],
-      typeOf[RichLong],
-      typeOf[RichFloat],
-      typeOf[RichDouble]
-    )
-  }
+  override def mutatingTransformer(global: Global, config: ScalamuScalacConfig): MutatingTransformer =
+    new BinaryOperatorTransformer(config)(global) with NumericTypesSupport {
+      import global._
 
-  override protected def mutationRules: Map[String, String] = Map(
-    "until" -> "to",
-    "to"    -> "until"
-  )
+      override protected def operatorNameMapping: Map[String, String] = Map(
+        "until" -> "to",
+        "to"    -> "until"
+      )
+
+      override protected def isApplicableType(tpe: Type): Boolean =
+        super.isApplicableType(tpe) || Seq(
+          typeOf[RichByte],
+          typeOf[RichShort],
+          typeOf[RichChar],
+          typeOf[RichInt],
+          typeOf[RichLong],
+          typeOf[RichFloat],
+          typeOf[RichDouble]
+        ).exists(tpe =:= _)
+    }
 }

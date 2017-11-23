@@ -31,7 +31,6 @@ case object ReplaceWithIdentityFunction extends Mutator { self =>
 
     override protected def mutator: Mutator = self
 
-    // @TODO: This does not play nicely with chained function calls, partially applied functions or implicit parameters.
     override protected val transformer: Transformer = new Transformer {
       override def mutate: PartialFunction[Tree, Tree] = {
         case TreeWithType(

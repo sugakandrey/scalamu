@@ -1,6 +1,9 @@
 package org.scalamu.plugin.mutators.arithmetic
 
-import org.scalamu.plugin.mutators.NumericTypesSupport
+import org.scalamu.plugin.{MutatingTransformer, ScalamuScalacConfig}
+import org.scalamu.plugin.mutators.{AbstractBinaryOperatorMutator, NumericTypesSupport}
+
+import scala.tools.nsc.Global
 
 /**
  * Mutation operator that replaces integer and floating point arithmetic operators with
@@ -18,6 +21,22 @@ import org.scalamu.plugin.mutators.NumericTypesSupport
  * val c = foo(a) / b
  * }}}
  */
-case object ReplaceMathOperators extends ArithmeticOperatorMutator with NumericTypesSupport {
-  override def description: String = "Replaced math operator"
+case object ReplaceMathOperators extends AbstractBinaryOperatorMutator {
+  override def description: String = "Replaced math operator."
+
+  override def mutatingTransformer(global: Global, config: ScalamuScalacConfig): MutatingTransformer =
+    new BinaryOperatorTransformer(config)(global) with NumericTypesSupport {
+      override protected def operatorNameMapping: Map[String, String] = Map(
+        "+"  -> "-",
+        "-"  -> "+",
+        "/"  -> "*",
+        "%"  -> "*",
+        "*"  -> "/",
+        "&"  -> "|",
+        "|"  -> "&",
+        "^"  -> "&",
+        "<<" -> ">>",
+        ">>" -> "<<"
+      )
+    }
 }

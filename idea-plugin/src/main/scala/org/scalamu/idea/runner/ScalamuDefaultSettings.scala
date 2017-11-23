@@ -20,14 +20,33 @@ object ScalamuDefaultSettings {
   val targetOwners: Seq[RegexFilter]    = Seq.empty
   val scalamuRunnerVmParameters: String = "-Xms512m -Xmx1500m"
 
-  val activeMutators: Seq[String] = Seq(
+  val allMutators: Seq[String] = Seq(
     "ReplaceCaseWithWildcard",
     "ReplaceMathOperators",
     "ReplaceWithIdentityFunction",
     "InvertNegations",
     "AlwaysExecuteConditionals",
     "NeverExecuteConditionals",
-    "ReplaceConditionalBoundaries",
+    "ChangeConditionalBoundaries",
+    "NegateConditionals",
+    "RemoveUnitMethodCalls",
+    "ChangeRangeBoundary",
+    "ReplaceLogicalOperators",
+    "ReplaceWithNone",
+    "ReplaceWithNil",
+    "ReplaceBooleanLiterals",
+    "ReplaceLongLiterals",
+    "ReplaceIntegerLiterals",
+    "ReplaceFloatingPointLiterals"
+  )
+
+  val activeByDefaultMutators: Seq[String] = Seq(
+    "ReplaceCaseWithWildcard",
+    "ReplaceMathOperators",
+    "InvertNegations",
+    "AlwaysExecuteConditionals",
+    "NeverExecuteConditionals",
+    "ChangeConditionalBoundaries",
     "NegateConditionals",
     "RemoveUnitMethodCalls",
     "ChangeRangeBoundary",

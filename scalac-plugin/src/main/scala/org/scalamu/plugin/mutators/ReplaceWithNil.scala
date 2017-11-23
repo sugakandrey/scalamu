@@ -1,13 +1,18 @@
 package org.scalamu.plugin.mutators
 
+import org.scalamu.plugin.{MutatingTransformer, ScalamuScalacConfig}
+
 import scala.tools.nsc.Global
 
-case object ReplaceWithNil extends GenericApplyMutator with SupportedTypes {
+case object ReplaceWithNil extends AbstractApplyMutator {
   override def description: String = "Replaced List.apply[T] with Nil"
 
-  override protected def replaceWith(global: Global): global.Tree =
-    global.reify(List.empty).tree
+  override def mutatingTransformer(global: Global, config: ScalamuScalacConfig): MutatingTransformer =
+    new ApplyTransformer(config)(global) {
+      override protected def replaceWith(input: global.Tree): global.Tree =
+        global.reify(List.empty).tree
 
-  override protected def supportedTypes(implicit global: Global): Seq[global.Type] =
-    Seq(global.definitions.ListModule.tpe)
+      override protected def isApplicableType(tpe: global.Type): Boolean =
+        tpe =:= global.definitions.ListModule.tpe
+    }
 }

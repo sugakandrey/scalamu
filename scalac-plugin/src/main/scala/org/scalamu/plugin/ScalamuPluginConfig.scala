@@ -2,8 +2,9 @@ package org.scalamu.plugin
 
 import org.scalamu.plugin.mutators.arithmetic._
 import org.scalamu.plugin.mutators.controllflow._
+import org.scalamu.plugin.mutators.literals._
 import org.scalamu.plugin.mutators.methodcalls._
-import org.scalamu.plugin.mutators.{ReplaceWithNil, ReplaceWithNone}
+import org.scalamu.plugin.mutators._
 
 object ScalamuPluginConfig {
   val allMutators: Seq[Mutator] = Seq(
@@ -13,13 +14,17 @@ object ScalamuPluginConfig {
     InvertNegations,
     AlwaysExecuteConditionals,
     NeverExecuteConditionals,
-    ReplaceConditionalBoundaries,
+    ChangeConditionalBoundaries,
     NegateConditionals,
     RemoveUnitMethodCalls,
     ChangeRangeBoundary,
     ReplaceLogicalOperators,
     ReplaceWithNone,
-    ReplaceWithNil
+    ReplaceWithNil,
+    ReplaceBooleanLiterals,
+    ReplaceIntegerLiterals,
+    ReplaceLongLiterals,
+    ReplaceFloatingPointLiterals
   )
 
   val mutatorsByName: Map[String, Mutator] =

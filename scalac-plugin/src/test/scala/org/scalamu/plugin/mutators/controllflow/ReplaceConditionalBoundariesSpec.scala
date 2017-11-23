@@ -4,9 +4,9 @@ import org.scalamu.plugin.Mutator
 import org.scalamu.plugin.testutil.SingleMutationSpec
 
 class ReplaceConditionalBoundariesSpec extends SingleMutationSpec {
-  override def mutation: Mutator = ReplaceConditionalBoundaries
+  override def mutation: Mutator = ChangeConditionalBoundaries
 
-  "ReplaceConditionalBoundaries" should "change conditional boundaries" in withScalamuCompiler { (global, reporter) =>
+  "ChangeConditionalBoundaries" should "change conditional boundaries" in withScalamuCompiler { (global, reporter) =>
     val code =
       """
         |object Foo {

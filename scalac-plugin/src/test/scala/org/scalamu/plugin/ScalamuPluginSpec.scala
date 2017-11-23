@@ -13,8 +13,8 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
 
   override val mutators: Seq[Mutator] = ScalamuPluginConfig.allMutators
   override val sanitizeTrees: Boolean = true
-  override val verifyTrees: Boolean = true
-  override val filter: NameFilter = InverseRegexFilter(".*ignored.*".r)
+  override val verifyTrees: Boolean   = true
+  override val filter: NameFilter     = InverseRegexFilter(".*ignored.*".r)
 
   private val guards =
     s"""

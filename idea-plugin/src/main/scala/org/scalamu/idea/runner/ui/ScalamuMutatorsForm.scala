@@ -16,7 +16,7 @@ class ScalamuMutatorsForm(project: Project) {
   private[this] val listModel      = new CollectionListModel[String]()
   private[this] val activeMutators = new JBList[String](listModel)
 
-  ScalamuDefaultSettings.activeMutators.asJava.forEach(listModel.add(_))
+  ScalamuDefaultSettings.activeByDefaultMutators.asJava.forEach(listModel.add(_))
 
   val mainPanel: JPanel = {
     val panel     = new JPanel()
@@ -32,7 +32,7 @@ class ScalamuMutatorsForm(project: Project) {
             null
           )
 
-          if (result != null && ScalamuDefaultSettings.activeMutators.contains(result)) {
+          if (result != null && ScalamuDefaultSettings.allMutators.contains(result)) {
             listModel.add(result)
           } else
             Messages.showErrorDialog(

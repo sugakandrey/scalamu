@@ -25,9 +25,12 @@ case object ReplaceCaseWithWildcard extends Mutator { self =>
             case c @ cq"${Ident(nme.WILDCARD)} => $body"         => c
             case c @ cq"$name @ ${Ident(nme.WILDCARD)} => $body" => c
           }
+          
+          val pos = tree.pos.makeTransparent
+          
           wildcardCase.fold(tree) { wcc =>
             val mutant =
-              q"${expr.safeDuplicate} match { case ..${List(wcc.safeDuplicate)} }".setPos(tree.pos)
+              q"${expr.safeDuplicate} match { case ..${List(wcc.safeDuplicate)} }".setPos(pos)
             val id = generateMutantReport(tree, mutant)
             guard(mutant, tree, id)
           }
