@@ -42,7 +42,7 @@ object ScalamuPlugin extends AutoPlugin {
         scalamuVerbose             := false,
         scalamuRecompileOnly       := false,
         K.aggregate in scalamuRun  := false,
-        K.aggregate in Scalamu     := true,
+        K.aggregate in Scalamu     := false,
         K.target in Scalamu        := (K.target in Compile).value / "mutation-analysis-report",
         scalamuRun := {
           val report = K.update.value
