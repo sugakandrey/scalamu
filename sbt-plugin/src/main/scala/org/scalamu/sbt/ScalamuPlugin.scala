@@ -1,6 +1,7 @@
 package org.scalamu.sbt
 
 import org.scalamu.buildinfo.BuildInfo
+import org.scalamu.sbt.Mutators.Mutator
 import sbt.Def.Classpath
 import sbt.{Def, Keys => K, _}
 import sbt.plugins.JvmPlugin
@@ -12,7 +13,7 @@ object ScalamuPlugin extends AutoPlugin {
   private[this] val artifactId   = BuildInfo.scalamuName
   private[this] val version      = BuildInfo.scalamuVersion
 
-  object autoImport extends ScalamuImport {
+  object autoImport extends ScalamuKeys {
     lazy val Scalamu: Configuration =
       config("scalamu")
         .describedAs("Dependencies and settings required for mutation testing.")
@@ -20,7 +21,6 @@ object ScalamuPlugin extends AutoPlugin {
         .hide
   }
 
-  import autoImport.{ScalamuKeys => SK}
   import autoImport._
 
   override def requires: Plugins      = JvmPlugin
@@ -31,20 +31,20 @@ object ScalamuPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] =
     inConfig(Scalamu)(Defaults.configSettings) ++
       Seq(
-        SK.timeoutFactor               := 1.5,
-        SK.parallelism                 := 1,
-        SK.timeoutConst                := 2000,
-        SK.targetOwners                := Seq.empty,
-        SK.targetTests                 := Seq.empty,
-        SK.ignoreSymbols               := Seq.empty,
-        SK.activeMutators              := defaultMutators,
-        SK.analyserJavaOptions         := (K.javaOptions in Test).value,
-        SK.verbose                     := false,
-        SK.recompileOnly               := false,
-        K.aggregate in SK.mutationTest := false,
-        K.aggregate in Scalamu         := true,
-        K.target in Scalamu            := (K.target in Compile).value / "mutation-analysis-report",
-        SK.mutationTest := {
+        scalamuTimeoutFactor       := 1.5,
+        scalamuParallelism         := 1,
+        scalamuTimeoutConst        := 2000,
+        scalamuTargetOwners        := Seq.empty,
+        scalamuTargetTests         := Seq.empty,
+        scalamuIgnoreSymbols       := Seq.empty,
+        scalamuEnabledMutators     := Mutators.enabledByDefault,
+        scalamuAnalyserJavaOptions := (K.javaOptions in Test).value,
+        scalamuVerbose             := false,
+        scalamuRecompileOnly       := false,
+        K.aggregate in scalamuRun  := false,
+        K.aggregate in Scalamu     := true,
+        K.target in Scalamu        := (K.target in Compile).value / "mutation-analysis-report",
+        scalamuRun := {
           val report = K.update.value
 
           val scalamuJar = report.matching(
@@ -64,16 +64,16 @@ object ScalamuPlugin extends AutoPlugin {
 
           val compilerPluginOpts = Classpaths.autoPlugins(report, Seq.empty)
 
-          val runnerVmParams = SK.analyserJavaOptions.value
-          val factor         = SK.timeoutFactor.value
-          val const          = SK.timeoutConst.value
-          val verbose        = SK.verbose.value
-          val recompileOnly  = SK.recompileOnly.value
-          val parallelism    = SK.parallelism.value
-          val mutators       = SK.activeMutators.value
-          val ignored        = SK.ignoreSymbols.value
-          val targetTests    = SK.targetTests.value
-          val targetClasses  = SK.targetOwners.value
+          val runnerVmParams = scalamuAnalyserJavaOptions.value
+          val factor         = scalamuTimeoutFactor.value
+          val const          = scalamuTimeoutConst.value
+          val verbose        = scalamuVerbose.value
+          val recompileOnly  = scalamuRecompileOnly.value
+          val parallelism    = scalamuParallelism.value
+          val mutators       = scalamuEnabledMutators.value
+          val ignored        = scalamuIgnoreSymbols.value
+          val targetTests    = scalamuTargetTests.value
+          val targetClasses  = scalamuTargetOwners.value
 
           val reportDir    = (K.target in Scalamu).value
           val testOptions  = K.testOptions.value
@@ -108,20 +108,6 @@ object ScalamuPlugin extends AutoPlugin {
     K.libraryDependencies += (organization % s"${artifactId}_${K.scalaBinaryVersion.value}" % version % Scalamu)
       .classifier("assembly")
       .intransitive()
-
-  private def defaultMutators: Seq[String] = Seq(
-    "ReplaceMathOperators",
-    "InvertNegations",
-    "AlwaysExecuteConditionals",
-    "NeverExecuteConditionals",
-    "ChangeConditionalBoundaries",
-    "NegateConditionals",
-    "RemoveUnitMethodCalls",
-    "ChangeRangeBoundary",
-    "ReplaceLogicalOperators",
-    "ReplaceWithNone",
-    "ReplaceWithNil"
-  )
 
   private def aggregateSetting[T](
     settingKey: SettingKey[T],
@@ -159,7 +145,7 @@ object MutationTest {
     targetClasses: Seq[Regex],
     targetTests: Seq[Regex],
     ignoreSymbols: Seq[Regex],
-    activeMutators: Seq[String],
+    enabledMutators: Seq[Mutator],
     testOptions: Seq[TestOption],
     parallelism: Int,
     timeoutFactor: Double,
@@ -178,7 +164,7 @@ object MutationTest {
       targetClasses,
       targetTests,
       ignoreSymbols,
-      activeMutators,
+      enabledMutators,
       testOptions,
       parallelism,
       timeoutFactor,
@@ -220,7 +206,7 @@ object MutationTest {
     targetOwners: Seq[Regex],
     targetTests: Seq[Regex],
     ignoreSymbols: Seq[Regex],
-    activeMutators: Seq[String],
+    enabledMutators: Seq[Mutator],
     testOptions: Seq[TestOption],
     parallelism: Int,
     timeoutFactor: Double,
@@ -255,7 +241,7 @@ object MutationTest {
       optionString(targetTests.map(_.toString), ",", "targetTests"),
       optionString(scalacParameters, " ", "scalacParameters"),
       optionString(ignoreSymbols, ",", "ignoreSymbols"),
-      optionString(activeMutators, ",", "mutators")
+      optionString(enabledMutators, ",", "mutators")
     ).flatten
 
     val options = Seq(
