@@ -13,8 +13,8 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
 
   override val mutators: Seq[Mutator] = ScalamuPluginConfig.allMutators
   override val sanitizeTrees: Boolean = true
-  override val verifyTrees: Boolean   = true
-  override val filter: NameFilter     = InverseRegexFilter(".*ignored.*".r)
+  override val verifyTrees: Boolean = true
+  override val filter: NameFilter = InverseRegexFilter(".*ignored.*".r)
 
   private val guards =
     s"""
@@ -181,15 +181,35 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
       )(global)
     }
   }
-  
-  it should "not fail when using GuardedMutant.unapply" in withScalamuCompiler { (global, _)  =>
-    val  code  =
+
+  it should "not fail when using GuardedMutant.unapply" in withScalamuCompiler { (global, _) =>
+    val code =
       """
         |object Foo {
         |  val x = 1
         |  if (1 == x) {
         |    println(123)
         |  }
+        |}
+      """.stripMargin
+    compile(
+      NamedSnippet("Guards.scala", guards),
+      NamedSnippet("Foo.scala", code)
+    )(global)
+  }
+
+  it should "not mutate case patterns" in withScalamuCompiler { (global, reporter) =>
+    val code =
+      """
+        |object Foo {
+        | val x = 123
+        | 
+        | object Bar { def unapply(b: Int): Option[Boolean] = Some(true) }
+        | 
+        | val y = x match {
+        |   case -1 => 1
+        |   case _  => 2
+        | }
         |}
       """.stripMargin
     compile(
