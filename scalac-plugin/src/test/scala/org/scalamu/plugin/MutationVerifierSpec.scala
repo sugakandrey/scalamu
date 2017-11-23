@@ -2,7 +2,7 @@ package org.scalamu.plugin
 
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.mutators.arithmetic.{InvertNegations, ReplaceMathOperators}
-import org.scalamu.plugin.mutators.controllflow.{ReplaceCaseWithWildcard, ReplaceConditionalBoundaries}
+import org.scalamu.plugin.mutators.controllflow.{ReplaceCaseWithWildcard, ChangeConditionalBoundaries}
 import org.scalamu.plugin.testutil.MutationTestRunner
 
 import scala.tools.nsc.Settings
@@ -14,7 +14,7 @@ class MutationVerifierSpec extends MutationTestRunner with IsolatedScalamuCompil
   override val mutators: Seq[Mutator] = Seq(
     InvertNegations,
     ReplaceMathOperators,
-    ReplaceConditionalBoundaries,
+    ChangeConditionalBoundaries,
     ReplaceCaseWithWildcard
   )
 
@@ -63,7 +63,7 @@ class MutationVerifierSpec extends MutationTestRunner with IsolatedScalamuCompil
   }
 
   private val noNestedOrder = Seq(
-    ReplaceConditionalBoundaries,
+    ChangeConditionalBoundaries,
     ReplaceCaseWithWildcard,
     ReplaceMathOperators,
     InvertNegations

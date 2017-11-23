@@ -27,13 +27,17 @@ object ScalamuDefaultSettings {
     "InvertNegations",
     "AlwaysExecuteConditionals",
     "NeverExecuteConditionals",
-    "ReplaceConditionalBoundaries",
+    "ChangeConditionalBoundaries",
     "NegateConditionals",
     "RemoveUnitMethodCalls",
     "ChangeRangeBoundary",
     "ReplaceLogicalOperators",
     "ReplaceWithNone",
-    "ReplaceWithNil"
+    "ReplaceWithNil",
+    "ReplaceBooleanLiterals",
+    "ReplaceLongLiterals",
+    "ReplaceIntegerLiterals",
+    "ReplaceFloatingPointLiterals"
   )
 
   val ignoreSymbols: Seq[RegexFilter] = Seq(

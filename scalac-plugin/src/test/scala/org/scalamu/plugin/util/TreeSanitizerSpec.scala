@@ -2,7 +2,7 @@ package org.scalamu.plugin.util
 
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
 import org.scalamu.plugin.mutators.arithmetic.{InvertNegations, ReplaceMathOperators}
-import org.scalamu.plugin.mutators.controllflow.{ReplaceCaseWithWildcard, ReplaceConditionalBoundaries}
+import org.scalamu.plugin.mutators.controllflow.{ReplaceCaseWithWildcard, ChangeConditionalBoundaries}
 import org.scalamu.plugin.testutil.MutationTestRunner
 import org.scalamu.plugin.{FqnGuard, MutationGuard, Mutator, ScalamuPluginConfig}
 import org.scalatest.{FlatSpec, Matchers}
@@ -13,7 +13,7 @@ class TreeSanitizerSpec extends FlatSpec with Matchers with MutationTestRunner w
   override def mutators: Seq[Mutator] = Seq(
     InvertNegations,
     ReplaceMathOperators,
-    ReplaceConditionalBoundaries,
+    ChangeConditionalBoundaries,
     ReplaceCaseWithWildcard
   )
   override val guard: MutationGuard = FqnGuard(

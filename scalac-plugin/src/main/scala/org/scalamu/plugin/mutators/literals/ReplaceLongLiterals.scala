@@ -1,17 +1,20 @@
 package org.scalamu.plugin.mutators.literals
+import org.scalamu.plugin.{MutatingTransformer, ScalamuScalacConfig}
+
 import scala.tools.nsc.Global
 
-class ReplaceLongLiterals extends LiteralMutator {
+case object ReplaceLongLiterals extends AbstractLiteralMutator {
   override def description: String = """Replaced long literal "x" with x + 1."""
 
-  override protected def replaceWith(global: Global)(original: global.Constant): global.Constant = {
-    import global._
+  override def mutatingTransformer(global: Global, config: ScalamuScalacConfig): MutatingTransformer =
+    new LiteralTransformer(config)(global) {
+      import global._
+      override protected def isApplicableType(tpe: Type): Boolean = tpe =:= definitions.LongTpe
 
-    val longValue        = original.longValue
-    val replacementValue = longValue + 1
-    Constant(replacementValue)
-  }
-
-  override protected def supportedTypes(implicit global: Global): Seq[global.Type] =
-    Seq(global.definitions.LongTpe)
+      override protected def replaceWith(input: Literal): Tree = {
+        val longValue   = input.value.longValue
+        val replacement = longValue + 1
+        Literal(Constant(replacement))
+      }
+    }
 }

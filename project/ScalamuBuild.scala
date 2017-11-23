@@ -34,8 +34,8 @@ object ScalamuBuild {
     isSnapshot         := true,
     test in assembly   := {},
     organization       := "io.github.sugakandrey",
-    scalaVersion       := "2.12.4",
-    crossScalaVersions := Seq("2.11.11", "2.12.4"),
+    scalaVersion       := "2.12.3",
+    crossScalaVersions := Seq("2.11.11", "2.12.3"),
     scalacOptions := Seq(
       "-Ypartial-unification",
       "-encoding",
@@ -51,6 +51,7 @@ object ScalamuBuild {
       "-Ywarn-dead-code",
 //      "-Ywarn-unused-import",
       "-Xfuture",
+      "-Ybreak-cycles",
       "-Xexperimental"
 //      "-Xfatal-warnings"
     ),
@@ -238,7 +239,6 @@ object ScalamuBuild {
       buildInfoPackage                 := "org.scalamu.buildinfo",
       scalaVersion                     := "2.12.4",
       onLoad in Global                 ~= { _.andThen("idea-plugin/updateIdea" :: _) },
-      assemblyOption in assembly       ~= { _.copy(includeScala = false) },
       assemblyExcludedJars in assembly ++= ideaFullJars.value,
       ideaExternalPlugins += IdeaPlugin
         .Zip("scala-plugin", url("https://plugins.jetbrains.com/files/1347/40017/scala-intellij-bin-2017.3.5.zip"))

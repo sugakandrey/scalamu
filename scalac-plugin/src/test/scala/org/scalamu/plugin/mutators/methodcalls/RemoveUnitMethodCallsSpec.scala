@@ -50,4 +50,17 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
       val mutantsInfo = mutantsFor(code)(global, reporter)
       mutantsInfo should have size 2
     }
+  
+  it should "work in test case isolated from plugin spec" in withScalamuCompiler { (global, reporter) =>
+    val code =
+      """
+        |object Foo {
+        |  def foo(): Unit = println(123)
+        |  val xs = List(1, 2, 3)
+        |  (xs.toSet | Set(4)).foreach(f => foo())
+        |}
+      """.stripMargin
+    val mutantsInfo = mutantsFor(code)(global, reporter)
+    mutantsInfo should have size 2
+  }
 }

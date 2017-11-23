@@ -2,7 +2,6 @@ package org.scalamu.plugin
 
 import org.scalamu.common.filtering.{InverseRegexFilter, NameFilter}
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
-import org.scalamu.plugin.mutators.ReplaceWithNone
 import org.scalamu.plugin.mutators.controllflow.{NegateConditionals, NeverExecuteConditionals}
 import org.scalamu.plugin.mutators.methodcalls.ReplaceWithIdentityFunction
 import org.scalamu.plugin.testutil.MutationTestRunner
@@ -14,8 +13,8 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
 
   override val mutators: Seq[Mutator] = ScalamuPluginConfig.allMutators
   override val sanitizeTrees: Boolean = true
-  override val verifyTrees: Boolean = true
-  override val filter: NameFilter = InverseRegexFilter(".*ignored.*".r)
+  override val verifyTrees: Boolean   = true
+  override val filter: NameFilter     = InverseRegexFilter(".*ignored.*".r)
 
   private val guards =
     s"""
@@ -180,29 +179,6 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
         NamedSnippet("Guards.scala", guards),
         NamedSnippet("Foo.scala", code)
       )(global)
-    }
-  }
-
-  it should "not break compilation when inferred  type was Some[T]" in withPluginConfig { cfg =>
-    withScalamuCompiler(Seq(ReplaceWithNone), cfg) { (global, reporter) =>
-      val code =
-        """
-          |object Foo {
-          |   class Foo(val foo: Option[Int], val bar: List[(Int, Int)])
-          |
-          |   private def getParams(p: List[(Foo, Int)]): List[Int] = {
-          |    p.map(_._1).flatMap(pc => pc.foo :: pc.bar.map(p => Some(p._2))).flatten
-          |  }
-          |
-          |  
-          |}
-        """.stripMargin
-      val id = compile(
-        NamedSnippet("Guards.scala", guards),
-        NamedSnippet("Foo.scala", code)
-      )(global)
-      val mutantsInfo = reporter.mutantsForRunId(id)
-      mutantsInfo should have size 1
     }
   }
 }

@@ -16,13 +16,13 @@ import scala.tools.nsc.Global
  * val a = b
  * }}}
  */
-case object InvertNegations extends Mutator with NumericTypesSupport { self =>
+case object InvertNegations extends Mutator { self =>
   override val description: String = "Removed numeric negation"
 
   override def mutatingTransformer(
     global: Global,
     config: ScalamuScalacConfig
-  ): MutatingTransformer = new MutatingTransformer(config)(global) {
+  ): MutatingTransformer = new MutatingTransformer(config)(global) with NumericTypesSupport {
     import global._
 
     override protected def mutator: Mutator = self
@@ -50,7 +50,7 @@ case object InvertNegations extends Mutator with NumericTypesSupport { self =>
           mutant.setType(tree.tpe.simplify)
           val id = generateMutantReport(tree, mutant)
           guard(mutant, tree, id)
-        case tree @ q"-${TreeWithType(term, tpe)}" if supportedTypes.exists(_ =:= tpe) =>
+        case tree @ q"-${TreeWithType(term, tpe)}" if isApplicableType(tpe) =>
           val mutant      = term.safeDuplicate
           val alternative = super.transform(term)
           val id          = generateMutantReport(tree, mutant)

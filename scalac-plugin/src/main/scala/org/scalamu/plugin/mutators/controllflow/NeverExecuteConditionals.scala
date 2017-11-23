@@ -19,29 +19,13 @@ import scala.tools.nsc.Global
  * bar()
  * }}}
  */
-case object NeverExecuteConditionals extends ConditionalsMutator { self =>
+case object NeverExecuteConditionals extends AbstractConditionalMutator {
   override val description: String = "Replaced conditional with its \"else\" branch"
 
-  override def mutatingTransformer(
-    global: Global,
-    config: ScalamuScalacConfig
-  ): MutatingTransformer = new MutatingTransformer(config)(global) {
-    import global._
-
-    override protected def mutator: Mutator = self
-
-    override protected def transformer: Transformer = new Transformer {
-      override protected val mutate: PartialFunction[Tree, Tree] = {
-        case tree @ q"if ($cond) $thenp else $elsep" =>
-          val mutation        = q"false"
-          val id              = generateMutantReport(cond, mutation)
-          val guardedMutation = typer.typed(guard(mutation, cond, id)).setPos(cond.pos.makeTransparent)
-
-          val mutatedThen = super.transform(thenp)
-          val mutatedElse = super.transform(elsep)
-
-          treeCopy.If(tree, guardedMutation, mutatedThen, mutatedElse)
-      }
+  override def mutatingTransformer(global: Global, config: ScalamuScalacConfig): MutatingTransformer =
+    new ConditionalTransformer(config)(global) {
+      import global._
+      
+      override protected def replaceWith(input: Tree): Tree = q"false"
     }
-  }
 }

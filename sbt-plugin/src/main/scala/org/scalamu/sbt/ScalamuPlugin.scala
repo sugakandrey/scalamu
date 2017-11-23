@@ -114,7 +114,7 @@ object ScalamuPlugin extends AutoPlugin {
     "InvertNegations",
     "AlwaysExecuteConditionals",
     "NeverExecuteConditionals",
-    "ReplaceConditionalBoundaries",
+    "ChangeConditionalBoundaries",
     "NegateConditionals",
     "RemoveUnitMethodCalls",
     "ChangeRangeBoundary",
