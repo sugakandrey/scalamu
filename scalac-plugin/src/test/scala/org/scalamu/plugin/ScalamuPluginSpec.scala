@@ -59,7 +59,7 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
       """.stripMargin
     compile(NamedSnippet("Guards.scala", guards))(global)
     val mutantsInfo = mutantsFor(NamedSnippet("Foo.scala", code))(global, reporter)
-    mutantsInfo should have size 26
+    mutantsInfo should have size 41
   }
 
   it should "ignore macro bodies" in withScalamuCompiler { (global, reporter) =>
@@ -104,8 +104,7 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
       """
         |object Foo {
         |  import Macro._
-        |  val c = true
-        |  val a = test(c)
+        |  val a = test(1 > 10)
         |}
       """.stripMargin
     compile(
@@ -198,7 +197,7 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
     )(global)
   }
 
-  it should "not mutate case patterns" in withScalamuCompiler { (global, reporter) =>
+  it should "not mutate case patterns" in withScalamuCompiler { (global, _) =>
     val code =
       """
         |object Foo {

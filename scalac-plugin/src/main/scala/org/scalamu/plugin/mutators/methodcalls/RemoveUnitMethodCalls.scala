@@ -31,13 +31,10 @@ case object RemoveUnitMethodCalls extends Mutator { self =>
     override val transformer: Transformer = new Transformer {
       override protected val mutate: PartialFunction[Tree, Tree] = {
         case TreeWithType(
-            tree @ Apply(qualifier, args),
+            tree: Apply,
             definitions.UnitTpe
             ) =>
-          val mutatedArgs = args.map(super.transform)
-          val mutant      = q"()".setPos(tree.pos.makeTransparent)
-          val id          = generateMutantReport(tree, mutant)
-          guard(mutant, q"$qualifier(..$mutatedArgs)".setPos(tree.pos), id)
+          q"()".setPos(tree.pos.makeTransparent)
       }
     }
   }

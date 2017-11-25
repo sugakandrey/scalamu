@@ -26,13 +26,7 @@ trait AbstractApplyMutator extends Mutator { self =>
     override def transformer: Transformer = new Transformer {
       override protected def mutate: PartialFunction[Tree, Tree] = {
         case tree @ q"$qual.apply[$targs](..$args)" if isApplicableTo(qual) =>
-          val pos         = tree.pos.makeTransparent
-          val mutant      = q"${replaceWith(tree)}[$targs]".setPos(pos)
-          val mutatedArgs = args.map(super.transform)
-          val alternative = q"$qual.apply[$targs](..$mutatedArgs)".setPos(pos)
-
-          val id = generateMutantReport(tree, mutant)
-          guard(mutant, alternative, id)
+          q"${replaceWith(tree)}[$targs]".setPos(tree.pos.makeTransparent)
       }
     }
   }

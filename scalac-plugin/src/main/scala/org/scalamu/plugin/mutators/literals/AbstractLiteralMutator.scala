@@ -13,7 +13,7 @@ trait AbstractLiteralMutator extends Mutator { self =>
     import global._
 
     override type Domain = Literal
-    
+
     override def mutator: Mutator = self
 
     override def isApplicableTo(input: Literal): Boolean = isApplicableType(input.value.tpe)
@@ -21,12 +21,9 @@ trait AbstractLiteralMutator extends Mutator { self =>
     override val transformer: Transformer = new Transformer {
       override protected def mutate: PartialFunction[Tree, Tree] = {
         case tree @ Literal(Constant(_)) if isApplicableTo(tree) =>
-          val mutant = replaceWith(tree)
+          replaceWith(tree)
             .setType(tree.tpe.simplify)
             .setPos(tree.pos.makeTransparent)
-
-          val id = generateMutantReport(tree, mutant)
-          guard(mutant, tree, id)
       }
     }
   }

@@ -31,7 +31,7 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
     mutantsInfo should have size 6
   }
 
-  it should "handle partially functions with multiple parameter lists and implicit parameters" ignore
+  it should "handle functions with multiple parameter lists and implicit parameters" in
     withScalamuCompiler { (global, reporter) =>
       val code =
         """
@@ -61,6 +61,6 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
         |}
       """.stripMargin
     val mutantsInfo = mutantsFor(code)(global, reporter)
-    mutantsInfo should have size 2
+    mutantsInfo should have size 3
   }
 }

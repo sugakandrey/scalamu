@@ -46,15 +46,11 @@ case object InvertNegations extends Mutator { self =>
             case _: Float  => -lit.doubleValue
             case _: Double => -lit.floatValue
           }
-          val mutant = Literal(Constant(value)).setPos(tree.pos)
-          mutant.setType(tree.tpe.simplify)
-          val id = generateMutantReport(tree, mutant)
-          guard(mutant, tree, id)
-        case tree @ q"-${TreeWithType(term, tpe)}" if isApplicableType(tpe) =>
-          val mutant      = term.safeDuplicate
-          val alternative = super.transform(term)
-          val id          = generateMutantReport(tree, mutant)
-          guard(mutant, q"-$alternative", id)
+          Literal(Constant(value))
+            .setPos(tree.pos)
+            .setType(tree.tpe.simplify)
+        case q"-${TreeWithType(term, tpe)}" if isApplicableType(tpe) =>
+          term.safeDuplicate
       }
     }
   }

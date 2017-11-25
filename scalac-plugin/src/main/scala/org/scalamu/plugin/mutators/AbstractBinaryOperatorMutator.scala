@@ -24,8 +24,8 @@ trait AbstractBinaryOperatorMutator extends Mutator { self =>
 
     override def isApplicableTo(input: Apply): Boolean = input match {
       case Apply(
-          Select(TreeWithType(lhs, lhsTpe), op @ TermName(_)),
-          List(TreeWithType(rhs, rhsTpe))
+          Select(TreeWithType(_, lhsTpe), op @ TermName(_)),
+          List(TreeWithType(_, rhsTpe))
           ) =>
         operatorNameMapping.contains(op.decodedName.toString) && isApplicableType(lhsTpe) && isApplicableType(rhsTpe)
       case _ => false
@@ -34,20 +34,12 @@ trait AbstractBinaryOperatorMutator extends Mutator { self =>
     override def transformer: Transformer = new Transformer {
       override val mutate: PartialFunction[Tree, Tree] = {
         case tree @ Apply(
-              Select(TreeWithType(lhs, lhsTpe), op @ TermName(_)),
-              List(TreeWithType(rhs, rhsTpe))
+              Select(lhs, op @ TermName(_)),
+              List(rhs)
             ) if isApplicableTo(tree) =>
           val mutatedOp = encode(operatorNameMapping(op.decodedName.toString))
           val pos       = tree.pos.makeTransparent
-          val mutant    = q"${lhs.safeDuplicate}.$mutatedOp(${rhs.safeDuplicate})".setPos(pos)
-
-          val mutatedLhs = super.transform(lhs)
-          val mutatedRhs = super.transform(rhs)
-
-          val id          = generateMutantReport(tree, mutant)
-          val alternative = q"$mutatedLhs.$op(..${List(mutatedRhs)})".setPos(pos)
-
-          guard(mutant, alternative, id)
+          q"${lhs.safeDuplicate}.$mutatedOp(${rhs.safeDuplicate})".setPos(pos)
       }
     }
   }

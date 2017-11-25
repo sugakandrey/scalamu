@@ -26,6 +26,6 @@ case object AlwaysExecuteConditionals extends AbstractConditionalMutator {
     new ConditionalTransformer(config)(global) {
       import global._
 
-      override protected def replaceWith(input: Tree): Tree = q"true"
+      override protected def replaceWith(input: If): Tree = input.thenp.safeDuplicate
     }
 }

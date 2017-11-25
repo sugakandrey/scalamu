@@ -56,7 +56,7 @@ class NameFilterSpec extends MutationTestRunner with IsolatedScalamuCompilerFixt
           |}
         """.stripMargin
       val mutantsInfo = mutantsFor(code)(global, reporter)
-      mutantsInfo should have size 7
+      mutantsInfo should have size 9
     }
   }
 

@@ -46,7 +46,6 @@ object EntryPoint {
     val outputPath = Files.createTempDirectory("mutated-classes")
     val outDir     = new PlainDirectory(new Directory(outputPath.toFile))
 
-    val global      = ScalamuGlobal(config, instrumentation, reporter, outDir)
     val sourceFiles = new SourceFileFinder().findAll(config.sourceDirs)
 
     if (config.verbose) {
@@ -54,18 +53,20 @@ object EntryPoint {
         sourceFiles.foreach(sf => writer.write(sf.asJson.spaces2 + "\n"))
       }
     }
+    
+    {
+      val global = ScalamuGlobal(config, instrumentation, reporter, outDir)
+      val compilationStart = System.currentTimeMillis()
+      global.compile(sourceFiles)
 
-    val compilationStart = System.currentTimeMillis()
-    global.compile(sourceFiles)
-    
-    if (global.reporter.hasErrors) {
-      scribe.error("Failed to compile sources, exiting.")
-      die(1)
+      if (global.reporter.hasErrors) {
+        scribe.error("Failed to compile sources, exiting.")
+        die(1)
+      }
+      val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
+      scribe.info(s"Finished recompilation in $compilationTime seconds.")
+      scribe.info(s"Total mutations generated: ${reporter.mutations.size}")
     }
-    
-    val compilationTime = (System.currentTimeMillis() - compilationStart) / 1000
-    scribe.info(s"Finished recompilation in $compilationTime seconds.")
-    scribe.info(s"Total mutations generated: ${reporter.mutations.size}")
 
     if (reporter.mutations.isEmpty) {
       scribe.error(
