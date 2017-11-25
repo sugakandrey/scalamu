@@ -28,15 +28,15 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
           |}
         """.stripMargin
       val mutantsInfo = mutantsFor(code)(global, reporter)
-      mutantsInfo should have size 8
+      mutantsInfo should have size 11
     }
 
-  it should "handle functions with multiple parameter lists, chained function calls and implicit parameters" ignore
+  it should "handle functions with multiple parameter lists, chained function calls and implicit parameters" in
     withScalamuCompiler { (global, reporter) =>
       val code =
         """
           |object Foo {
-          |  val xs = Set(1, 2, 3).map(x => x.toString())
+          |  val xs = Set(1, 2, 3).map(x => x + 1)
           |  
           |  class Bar() {
           |    def bar(i: Int)(s: String): Bar = this
@@ -47,6 +47,6 @@ class ReplaceWithIdentityFunctionSpec extends SingleMutationSpec {
           |}
         """.stripMargin
       val mutantsInfo = mutantsFor(code)(global, reporter)
-      mutantsInfo should have size 2
+      mutantsInfo should have size 3
     }
 }

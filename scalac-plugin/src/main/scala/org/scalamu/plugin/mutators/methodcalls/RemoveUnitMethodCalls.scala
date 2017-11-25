@@ -31,7 +31,7 @@ case object RemoveUnitMethodCalls extends Mutator { self =>
     override val transformer: Transformer = new Transformer {
       override protected val mutate: PartialFunction[Tree, Tree] = {
         case TreeWithType(
-            tree: Apply,
+            tree: GenericApply,
             definitions.UnitTpe
             ) =>
           q"()".setPos(tree.pos.makeTransparent)

@@ -34,7 +34,7 @@ trait AbstractBinaryOperatorMutator extends Mutator { self =>
     override def transformer: Transformer = new Transformer {
       override val mutate: PartialFunction[Tree, Tree] = {
         case tree @ Apply(
-              Select(lhs, op @ TermName(_)),
+              Select(lhs, op),
               List(rhs)
             ) if isApplicableTo(tree) =>
           val mutatedOp = encode(operatorNameMapping(op.decodedName.toString))

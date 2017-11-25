@@ -33,10 +33,10 @@ case object ReplaceWithIdentityFunction extends Mutator { self =>
 
     override protected val transformer: Transformer = new Transformer {
       override def mutate: PartialFunction[Tree, Tree] = {
-        case TreeWithType(
-            tree @ MaybeTypedApply(qualifier, name, args),
-            tpe
-            ) if qualifier.tpe <~< tpe && !name.containsName(nme.CONSTRUCTOR) =>
+        case tree @ q"${Select(qualifier, name)}[..$targs](...$args)"
+            if args.nonEmpty &&
+              qualifier.tpe <~< tree.tpe &&
+              !name.containsName(nme.CONSTRUCTOR) =>
           qualifier.safeDuplicate
       }
     }

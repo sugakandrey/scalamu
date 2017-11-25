@@ -45,10 +45,16 @@ class RemoveUnitMethodCallsSpec extends SingleMutationSpec {
           |  
           |  baz(1)(2)(3)
           |  
+          |  def foo[T]: Unit = ???
+          |  
+          |  foo[Int]
+          |  
+          |  def implicitOnly(implicit i: Int): Unit = ???
+          |  implicitOnly
           |}
         """.stripMargin
       val mutantsInfo = mutantsFor(code)(global, reporter)
-      mutantsInfo should have size 2
+      mutantsInfo should have size 4
     }
   
   it should "work in test case isolated from plugin spec" in withScalamuCompiler { (global, reporter) =>
