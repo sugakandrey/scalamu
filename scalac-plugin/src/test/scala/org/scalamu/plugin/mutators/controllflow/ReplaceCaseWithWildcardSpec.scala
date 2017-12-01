@@ -19,12 +19,17 @@ class ReplaceCaseWithWildcardSpec extends SingleMutationSpec {
           | 
           |  val x = Some("Hello") match {
           |    case Some(s @ "Hello") => s + "World!"
-          |    case s @ _  => s
+          |    case s @ _  => "123"
+          |  }
+          |  
+          |  x match {
+          |    case s if s.length == 1 => 111
+          |    case s => 222
           |  }
           |}
         """.stripMargin
       val mutantsInfo = mutantsFor(code)(global, reporter)
-      mutantsInfo should have size 2
+      mutantsInfo should have size 3
   }
 
   it should "do nothing if wildcard patter is restricted with guard or type ascription" in withScalamuCompiler {

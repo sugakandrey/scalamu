@@ -2,7 +2,7 @@ package org.scalamu.plugin
 
 import org.scalamu.common.filtering.{InverseRegexFilter, NameFilter}
 import org.scalamu.plugin.fixtures.IsolatedScalamuCompilerFixture
-import org.scalamu.plugin.mutators.controllflow.{NegateConditionals, NeverExecuteConditionals}
+import org.scalamu.plugin.mutators.controllflow.{NegateConditionals, NeverExecuteConditionals, ReplaceCaseWithWildcard}
 import org.scalamu.plugin.mutators.methodcalls.ReplaceWithIdentityFunction
 import org.scalamu.plugin.testutil.MutationTestRunner
 
@@ -215,5 +215,25 @@ class ScalamuPluginSpec extends MutationTestRunner with IsolatedScalamuCompilerF
       NamedSnippet("Guards.scala", guards),
       NamedSnippet("Foo.scala", code)
     )(global)
+  }
+
+  it should "work with anonymous classes" in withPluginConfig { cfg =>
+    withScalamuCompiler(Seq(ReplaceCaseWithWildcard), cfg) { (global, r) =>
+      val code =
+        """
+          |object Foo {
+          |  val x = 123
+          |  
+          |  x match {
+          |    case 0 => ???
+          |    case _ => val v = new Runnable { def run(): Unit = println(123) }
+          |  }
+          |}
+        """.stripMargin
+      compile(
+        NamedSnippet("Guards.scala", guards),
+        NamedSnippet("Foo.scala", code)
+      )(global)
+    }
   }
 }
