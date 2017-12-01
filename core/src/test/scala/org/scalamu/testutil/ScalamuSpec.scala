@@ -1,7 +1,6 @@
 package org.scalamu.testutil
 
 import cats.scalatest.{ValidatedMatchers, ValidatedValues}
-import com.typesafe.scalalogging.StrictLogging
 import org.scalamu.core.api.ClassInfo
 import org.scalamu.core.utils.{ASMUtils, ClassLoadingUtils, FileSystemUtils}
 import org.scalatest._
@@ -20,7 +19,6 @@ trait ScalamuSpec
     with FileSystemSpec
     with ASMUtils
     with ClassLoadingUtils
-    with StrictLogging
     with TestSuiteResultMatchers
     with ValidatedValues
     with ValidatedMatchers {

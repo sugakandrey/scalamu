@@ -58,7 +58,7 @@ class CoverageProcessSpec
             null
           )
           .toList
-          .sequenceU
+          .sequence
           .toEither
         val suiteCoverage = coverage.right.value
         suiteCoverage should have size 1
@@ -81,7 +81,7 @@ class CoverageProcessSpec
             null
           )
           .toList
-          .sequenceU
+          .sequence
           .toEither
         coverage.left.value.toList should have size 1
       }
