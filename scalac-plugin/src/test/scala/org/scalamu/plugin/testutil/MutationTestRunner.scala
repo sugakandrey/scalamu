@@ -22,6 +22,7 @@ trait MutationTestRunner
     usejavacp.value = true
     outputDirs.setSingleOutput(outputDir)
     Yrangepos.value = true
+    check.value  = List("all")
   }
   override def createReporter(settings: Settings): Reporter = new ConsoleReporter(settings)
 
